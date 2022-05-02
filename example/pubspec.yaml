@@ -1,5 +1,5 @@
-name: dart_frog
-description: A fast, minimalistic web framework for Dart
+name: example
+description: An example application built with dart_frog
 version: 1.0.0+1
 publish_to: none
 
@@ -7,8 +7,8 @@ environment:
   sdk: ">=2.16.0 <3.0.0"
 
 dependencies:
-  shelf: ^1.1.0
-  shelf_router: ^1.0.0
+  dart_frog:
+    path: ../packages/dart_frog
 
 dev_dependencies:
   mocktail: ^0.2.0
