@@ -12,12 +12,20 @@ Future<void> run(HookContext context) async {
     exit(1);
   }
 
+  var index = 0;
   final routes = routesDirectory
       .listSync(recursive: true)
       .where((entity) => entity.isRoute)
-      .map((entity) =>
-          path.join('..', path.relative(entity.path).replaceAll(r'\', '/')))
-      .toList();
+      .map(
+    (entity) {
+      index++;
+      return {
+        'path':
+            path.join('..', path.relative(entity.path).replaceAll(r'\', '/')),
+        'alias': 'r$index',
+      };
+    },
+  ).toList();
 
   context.vars = {'routes': routes};
 }

@@ -1,27 +1,20 @@
 library dart_frog;
 
-import 'dart:io';
-
-import 'package:shelf/shelf.dart' as shelf;
-import 'package:shelf/shelf_io.dart' as shelf_io;
+import 'package:path/path.dart' as p;
 
 export 'package:shelf/shelf.dart' show Request, Response;
-export 'package:shelf_router/shelf_router.dart' show Router;
+export 'package:shelf/shelf_io.dart' show serve;
+export 'package:shelf_hotreload/shelf_hotreload.dart' show withHotreload;
+export 'package:shelf_router/shelf_router.dart' show Router, RouterParams;
 
-/// {@template app}
-/// A DartFrog application.
-/// {endtemplate}
-class App {
-  /// {@macro app}
-  const App();
+/// Converts an import path to a route
+String toRoute(String path) {
+  var route =
+      '/${p.relative(path, from: '../routes').split('.dart').first.replaceAll('index', '')}';
 
-  /// Create an [HttpServer] on [port] with the provided [handler].
-  Future<HttpServer> serve(shelf.Handler handler, {int? port}) async {
-    port ??= int.parse(Platform.environment['PORT'] ?? '8080');
-    return shelf_io.serve(
-      const shelf.Pipeline().addHandler(handler),
-      InternetAddress.anyIPv4,
-      port,
-    );
+  if (route.length > 1 && route.endsWith('/')) {
+    route = route.substring(0, route.length - 1);
   }
+
+  return route;
 }

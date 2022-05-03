@@ -23,7 +23,6 @@ class DevCommand extends DartFrogCommand {
   @override
   Future<int> run() async {
     final generator = await MasonGenerator.fromBundle(dartFrogServerBundle);
-    Process? process;
 
     Future<void> codegen() async {
       var vars = <String, dynamic>{};
@@ -40,34 +39,30 @@ class DevCommand extends DartFrogCommand {
     }
 
     Future<void> serve() async {
-      process?.kill();
-      await Process.run('pkill', ['-f', '.dart_frog/server.dart']);
-      await process?.exitCode;
-      process = await Process.start(
+      final process = await Process.start(
         'dart',
-        [path.join('.dart_frog', 'server.dart')],
+        ['--enable-vm-service', path.join('.dart_frog', 'server.dart')],
         runInShell: true,
       );
 
-      process?.stdout.listen((_) => logger.info(utf8.decode(_)));
+      process.stdout.listen((_) => logger.info(utf8.decode(_)));
+      process.stderr.listen((_) => logger.err(utf8.decode(_)));
     }
 
-    Future<void> start({bool restart = false}) async {
-      final done = logger.progress(restart ? 'Reloading' : 'Serving');
-      await codegen();
-      await serve();
-      done();
-
-      if (!restart) {
-        logger.alert('Running at ${InternetAddress.anyIPv4.address}:8080');
-      }
-    }
-
-    await start();
+    final done = logger.progress('Serving');
+    await codegen();
+    await serve();
+    done();
 
     final watcher = DirectoryWatcher(path.join(cwd.path, 'routes'));
-    final subscription = watcher.events.listen((_) {
-      start(restart: true);
+    final subscription = watcher.events.listen((event) async {
+      final file = File(event.path);
+      if (file.existsSync()) {
+        final contents = await file.readAsString();
+        if (contents.isNotEmpty) {
+          await codegen();
+        }
+      }
     });
 
     await subscription.asFuture<void>();
