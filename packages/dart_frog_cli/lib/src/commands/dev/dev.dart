@@ -52,7 +52,7 @@ class DevCommand extends DartFrogCommand {
     final done = logger.progress('Serving');
     await codegen();
     await serve();
-    done();
+    done('Running on http://localhost:8080');
 
     final watcher = DirectoryWatcher(path.join(cwd.path, 'routes'));
     final subscription = watcher.events.listen((event) async {
