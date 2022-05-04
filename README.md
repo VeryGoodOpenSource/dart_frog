@@ -17,6 +17,30 @@ cd ./example
 dart_frog dev
 ```
 
+## Feature Set ✨
+
+✅ File-System Routing 🚏
+
+✅ Index Routes 🗂
+
+✅ Nested Routes 🪆
+
+✅ Dynamic Routes 🌓
+
+✅ Hot Reload ⚡️
+
+🚧 Middleware 🪝
+
+🚧 Dependency Injection 💉
+
+🚧 Production Builds 👷‍♂️
+
+🚧 Docker Container 🐳
+
+🚧 Generated Dart Client Package 📦
+
+🚧 Generated Open API Documentation 📔
+
 [dart_frog_link_dark]: https://github.com/verygoodopensource/dart_frog#gh-dark-mode-only
 [dart_frog_link_light]: https://github.com/verygoodopensource/dart_frog#gh-light-mode-only
 [license_badge]: https://img.shields.io/badge/license-MIT-blue.svg
