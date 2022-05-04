@@ -6,6 +6,17 @@
 
 A fast, minimalistic backend framework for Dart
 
+## Quick Start 🚀
+
+```sh
+# 📦 Install the dart_frog cli
+dart pub global activate --source path ./packages/dart_frog_cli
+
+# 🧑‍💻 Run the example dev server
+cd ./example
+dart_frog dev
+```
+
 [dart_frog_link_dark]: https://github.com/verygoodopensource/dart_frog#gh-dark-mode-only
 [dart_frog_link_light]: https://github.com/verygoodopensource/dart_frog#gh-light-mode-only
 [license_badge]: https://img.shields.io/badge/license-MIT-blue.svg
