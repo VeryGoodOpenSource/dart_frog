@@ -1,0 +1,13 @@
+name: create_dart_frog
+description: A Dart Frog starter app template
+version: 0.1.0+1
+
+environment:
+  mason: ">=0.1.0-dev <0.1.0"
+
+vars:
+  name:
+    type: string
+    description: Your applicatiton name
+    default: example
+    prompt: What is your app name?
