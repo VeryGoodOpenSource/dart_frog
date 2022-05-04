@@ -1,7 +1,19 @@
-on: pull_request
+name: ci
+
+on:
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
-    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@v1
-    with:
-      working_directory: packages/dart_frog
+    runs-on: ubuntu-latest
+    steps:
+      - name: noop
+        run: echo 'noop'
+
+  pana:
+    runs-on: ubuntu-latest
+    steps:
+      - name: noop
+        run: echo 'noop'
