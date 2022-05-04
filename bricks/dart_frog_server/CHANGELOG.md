@@ -1,3 +1,3 @@
 # 0.1.0+1
 
-- TODO: Describe initial release.
+- feat: basic implementation for the dart frog server entrypoint
