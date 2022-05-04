@@ -9,6 +9,6 @@ import 'package:path/path.dart' as path;
 void main() => withHotreload(() => createServer());
 
 Future<HttpServer> createServer() async {
-  final router = Router(){{#routes}}..all(toRoute('{{{path}}}'), {{#snakeCase}}{{{alias}}}{{/snakeCase}}.onRequest){{/routes}};
+  final router = Router(){{#routes}}..all(pathToRoute('{{{path}}}'), {{#snakeCase}}{{{alias}}}{{/snakeCase}}.onRequest){{/routes}};
   return serve(router, 'localhost', int.parse(Platform.environment["PORT"] ?? '8080'));  
 }

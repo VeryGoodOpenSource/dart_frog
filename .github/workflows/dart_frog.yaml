@@ -1,0 +1,23 @@
+name: dart_frog
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/dart_frog.yaml"
+      - "packages/dart_frog/lib/**"
+      - "packages/dart_frog/test/**"
+      - "packages/dart_frog/pubspec.yaml"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/dart_frog.yaml"
+      - "packages/dart_frog/lib/**"
+      - "packages/dart_frog/test/**"
+      - "packages/dart_frog/pubspec.yaml"
+
+jobs:
+  build:
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@v1
+    with:
+      working_directory: packages/dart_frog
