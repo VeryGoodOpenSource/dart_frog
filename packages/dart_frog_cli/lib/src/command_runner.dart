@@ -10,6 +10,10 @@ const packageName = 'dart_frog_cli';
 /// The executable name.
 const executableName = 'dart_frog';
 
+/// The executable description.
+const executableDescription =
+    'A fast, minimalistic backend framework for Dart.';
+
 /// {@template dart_frog_command_runner}
 /// A [CommandRunner] for the Dart Frog CLI.
 /// {@endtemplate}
@@ -18,9 +22,10 @@ class DartFrogCommandRunner extends CommandRunner<int> {
   DartFrogCommandRunner({
     Logger? logger,
   })  : _logger = logger ?? Logger(),
-        super(executableName, 'A fast, minimalistic web framework for Dart.') {
+        super(executableName, executableDescription) {
     argParser.addFlags();
-    addCommand(DevCommand());
+    addCommand(CreateCommand(logger: _logger));
+    addCommand(DevCommand(logger: _logger));
   }
 
   final Logger _logger;

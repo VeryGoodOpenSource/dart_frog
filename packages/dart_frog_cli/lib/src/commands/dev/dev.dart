@@ -15,7 +15,7 @@ class DevCommand extends DartFrogCommand {
   DevCommand({Logger? logger}) : super(logger: logger);
 
   @override
-  final String description = 'Starts the dev server';
+  final String description = 'Run a local development server.';
 
   @override
   final String name = 'dev';
