@@ -5,8 +5,9 @@ import 'dart:io';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:path/path.dart' as path;
 
-{{#routes}}import '{{{path}}}' as {{#snakeCase}}{{{name}}}{{/snakeCase}};
-{{/routes}}
+import './routes/index.dart' as r1;
+import './routes/hello.dart' as r2;
+import './routes/api/v1/index.dart' as r3;
 
 void main() => withHotreload(createServer);
 
@@ -18,22 +19,37 @@ Future<HttpServer> createServer() async {
 }
 
 Handler buildRouterGraph() {
-  return Router(){{#directories}}
-    ..mount('{{{path}}}', (r) => build{{#pascalCase}}{{{name}}}{{/pascalCase}}Router()(r)){{/directories}};
+  return Router()
+    ..mount('/', (r) => buildD1Router()(r))
+    ..mount('/api', (r) => buildD2Router()(r))
+    ..mount('/api/v1', (r) => buildD3Router()(r));
 }
-{{#directories}}
-Handler build{{#pascalCase}}{{{name}}}{{/pascalCase}}Router() {
-  var pipeline = Pipeline();{{#middleware}}pipeline = pipeline.addMiddleware(
+
+Handler buildD1Router() {
+  var pipeline = Pipeline();
+  final router = Router()
+    ..all('/', r1.onRequest)
+    ..all('/hello', r2.onRequest);
+  return pipeline.addHandler(router);
+}
+
+Handler buildD2Router() {
+  var pipeline = Pipeline();
+  pipeline = pipeline.addMiddleware(
     (innerHandler) => (request) async {
-      final name = '{{{name}}}';
+      final name = 'd2';
       print('$name onRequest');
       final response = await innerHandler(request);
       print('$name onResponse');
       return response;
     },
-  );{{/middleware}}
-  final router = Router()
-    {{#files}}..all('{{{route}}}', {{#snakeCase}}{{{name}}}{{/snakeCase}}.onRequest){{/files}};
+  );
+  final router = Router();
   return pipeline.addHandler(router);
 }
-{{/directories}}
+
+Handler buildD3Router() {
+  var pipeline = Pipeline();
+  final router = Router()..all('/', r3.onRequest);
+  return pipeline.addHandler(router);
+}
