@@ -30,7 +30,7 @@ dart_frog dev
 
 ✅ Hot Reload ⚡️
 
-✅ Middleware 🪝
+✅ Middleware 🍔
 
 🚧 Dependency Injection 💉
 
