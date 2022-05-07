@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart' show pathToRoute;
@@ -14,118 +13,96 @@ Future<void> run(HookContext context) async {
     exit(1);
   }
 
-  final directories = <RouteDirectory>[
-    RouteDirectory(
-      name: 'd1',
-      path: '/',
-      middleware: false,
-      files: [
-        RouteFile(
-          name: 'r1',
-          path: './routes/index.dart',
-          route: '/',
-        ),
-        RouteFile(
-          name: 'r2',
-          path: './routes/hello.dart',
-          route: '/hello',
-        )
-      ],
-    ),
-    RouteDirectory(
-      name: 'd2',
-      path: '/api',
-      middleware: true,
-      files: [],
-    ),
-    RouteDirectory(
-      name: 'd3',
-      path: '/api/v1',
-      middleware: false,
-      files: [
-        RouteFile(
-          name: 'r3',
-          path: './routes/api/v1/index.dart',
-          route: '/',
-        )
-      ],
-    )
-  ];
-  final routes = <RouteFile>[
-    RouteFile(
-      name: 'r1',
-      path: './routes/index.dart',
-      route: '/',
-    ),
-    RouteFile(
-      name: 'r2',
-      path: './routes/hello.dart',
-      route: '/hello',
-    ),
-    RouteFile(
-      name: 'r3',
-      path: './routes/api/v1/index.dart',
-      route: '/api/v1',
-    )
-  ];
+  final routes = <RouteFile>[];
+  final middleware = <MiddlewareFile>[];
+  final directories = buildGraph(
+    routesDirectory,
+    onRoute: routes.add,
+    onMiddleware: middleware.add,
+  );
 
   context.vars = {
     'directories': directories.map((c) => c.toJson()).toList(),
     'routes': routes.map((r) => r.toJson()).toList(),
+    'middleware': middleware.map((m) => m.toJson()).toList(),
   };
 }
 
-// RouteDirectory buildConfiguration(
-//   Directory directory, {
-//   void Function(RouteFile route)? onRoute,
-//   int depth = 0,
-// }) {
-//   final configuration = RouteDirectory(
-//     name: '/${path.basenameWithoutExtension(path.relative(directory.path))}',
-//     middleware:
-//         File(path.join(directory.path, '_middleware.dart')).existsSync(),
-//     files: [],
-//     directories: [],
-//   );
+List<RouteDirectory> buildGraph(
+  Directory directory, {
+  void Function(RouteFile route)? onRoute,
+  void Function(MiddlewareFile route)? onMiddleware,
+  int depth = 0,
+}) {
+  depth++;
+  final directories = <RouteDirectory>[];
+  final entities = directory.listSync();
+  final directorySegment = directory.path.split('routes').last;
+  final directoryPath = directorySegment.startsWith('/')
+      ? directorySegment
+      : '/$directorySegment';
 
-//   directory.listSync().forEach(
-//     (entity) {
-//       if (entity.isRoute) {
-//         depth++;
-//         final filePath = path.join(
-//           '..',
-//           path.relative(entity.path).replaceAll(r'\', '/'),
-//         );
-//         final fileRoute = pathToRoute(filePath).split(configuration.name).last;
-//         final route = RouteFile(
-//           name: 'r$depth',
-//           path: filePath,
-//           route: fileRoute.isEmpty ? '/' : fileRoute,
-//         );
-//         onRoute?.call(route);
-//         configuration.files.add(route);
-//       } else if (entity is Directory) {
-//         configuration.directories.add(buildConfiguration(
-//           entity,
-//           onRoute: onRoute,
-//           depth: depth,
-//         ));
-//       }
-//     },
-//   );
+  final files = <RouteFile>[];
+  var fileDepth = depth;
+  entities.where((e) => e.isRoute).cast<File>().forEach((entity) {
+    final filePath = path.join(
+      '..',
+      path.relative(entity.path).replaceAll(r'\', '/'),
+    );
+    final fileRoute = pathToRoute(filePath).split(directoryPath).last;
+    final route = RouteFile(
+      name: 'r$fileDepth',
+      path: filePath,
+      route: fileRoute.isEmpty
+          ? '/'
+          : fileRoute.startsWith('/')
+              ? fileRoute
+              : '/$fileRoute',
+    );
+    onRoute?.call(route);
+    files.add(route);
+    fileDepth++;
+  });
 
-//   return configuration;
-// }
+  MiddlewareFile? middleware;
+  final _middleware = File(path.join(directory.path, '_middleware.dart'));
+  if (_middleware.existsSync()) {
+    final middlewarePath = path.join(
+      '..',
+      path.relative(_middleware.path).replaceAll(r'\', '/'),
+    );
+    middleware = MiddlewareFile(name: 'm$depth', path: middlewarePath);
+    onMiddleware?.call(middleware);
+  }
+
+  directories.add(
+    RouteDirectory(
+      name: 'd$depth',
+      path: directoryPath,
+      middleware: middleware,
+      files: files,
+    ),
+  );
+
+  entities.whereType<Directory>().forEach((entity) {
+    directories.addAll(
+      buildGraph(
+        entity,
+        onRoute: onRoute,
+        onMiddleware: onMiddleware,
+        depth: depth,
+      ),
+    );
+  });
+
+  return directories;
+}
 
 extension on FileSystemEntity {
   bool get isRoute {
     return this is File &&
         path.basename(this.path).endsWith('.dart') &&
-        !this.isMiddleware;
-  }
-
-  bool get isMiddleware {
-    return this is File && path.basename(this.path) == '_middleware.dart';
+        path.basename(this.path) != '_middleware.dart';
   }
 }
 
@@ -139,13 +116,13 @@ class RouteDirectory {
 
   final String name;
   final String path;
-  final bool middleware;
+  final MiddlewareFile? middleware;
   final List<RouteFile> files;
 
   RouteDirectory copyWith({
     String? name,
     String? path,
-    bool? middleware,
+    MiddlewareFile? middleware,
     List<RouteFile>? files,
   }) {
     return RouteDirectory(
@@ -160,7 +137,7 @@ class RouteDirectory {
     return <String, dynamic>{
       'name': name,
       'path': path,
-      'middleware': middleware,
+      'middleware': middleware?.toJson() ?? null,
       'files': files.map((f) => f.toJson()).toList(),
     };
   }
@@ -190,6 +167,30 @@ class RouteFile {
       'name': name,
       'path': path,
       'route': route,
+    };
+  }
+}
+
+class MiddlewareFile {
+  const MiddlewareFile({
+    required this.name,
+    required this.path,
+  });
+
+  final String name;
+  final String path;
+
+  MiddlewareFile copyWith({String? name, String? path}) {
+    return MiddlewareFile(
+      name: name ?? this.name,
+      path: path ?? this.path,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'name': name,
+      'path': path,
     };
   }
 }

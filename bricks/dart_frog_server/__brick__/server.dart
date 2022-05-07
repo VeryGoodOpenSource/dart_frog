@@ -7,7 +7,8 @@ import 'package:path/path.dart' as path;
 
 {{#routes}}import '{{{path}}}' as {{#snakeCase}}{{{name}}}{{/snakeCase}};
 {{/routes}}
-
+{{#middleware}}import '{{{path}}}' as {{#snakeCase}}{{{name}}}{{/snakeCase}};
+{{/middleware}}
 void main() => withHotreload(createServer);
 
 Future<HttpServer> createServer() async {
@@ -23,15 +24,7 @@ Handler buildRouterGraph() {
 }
 {{#directories}}
 Handler build{{#pascalCase}}{{{name}}}{{/pascalCase}}Router() {
-  var pipeline = Pipeline();{{#middleware}}pipeline = pipeline.addMiddleware(
-    (innerHandler) => (request) async {
-      final name = '{{{name}}}';
-      print('$name onRequest');
-      final response = await innerHandler(request);
-      print('$name onResponse');
-      return response;
-    },
-  );{{/middleware}}
+  var pipeline = Pipeline();{{#middleware}}pipeline = pipeline.addMiddleware({{#snakeCase}}{{{name}}}{{/snakeCase}}.middleware);{{/middleware}}
   final router = Router()
     {{#files}}..all('{{{route}}}', {{#snakeCase}}{{{name}}}{{/snakeCase}}.onRequest){{/files}};
   return pipeline.addHandler(router);
