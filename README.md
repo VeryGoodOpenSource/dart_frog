@@ -40,7 +40,7 @@ dart_frog dev
 
 🚧 Generated Dart Client Package 📦
 
-🚧 Generated Open API Documentation 📔
+🚧 Generated API Documentation 📔
 
 [ci_badge]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog.yaml/badge.svg
 [ci_link]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog.yaml
