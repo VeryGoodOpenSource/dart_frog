@@ -14,11 +14,11 @@ void main() => withHotreload(createServer);
 Future<HttpServer> createServer() async {
   final ip = InternetAddress.anyIPv4;
   final port = int.parse(Platform.environment['PORT'] ?? '8080');
-  final handler = buildRouterGraph();
+  final handler = buildHandler();
   return serve(handler, ip, port);
 }
 
-Handler buildRouterGraph() {
+Handler buildHandler() {
   return Router(){{#directories}}
     ..mount('{{{path}}}', (r) => build{{#pascalCase}}{{{name}}}{{/pascalCase}}Router()(r)){{/directories}};
 }
