@@ -29,13 +29,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
-  clock:
-    dependency: transitive
-    description:
-      name: clock
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.0"
   collection:
     dependency: transitive
     description:
@@ -50,22 +43,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.2"
-  dart_frog:
+  dart_frog_gen:
     dependency: "direct main"
     description:
-      path: "packages/dart_frog"
+      path: "packages/dart_frog_gen"
       ref: HEAD
-      resolved-ref: "087e9a98b1413ec8e2ee0429e1382264d20d480d"
+      resolved-ref: "5456bf9a6db76d617a0bb5f3dc7a30312a952a47"
       url: "https://github.com/VeryGoodOpenSource/dart_frog"
     source: git
     version: "1.0.0+1"
-  hotreloader:
-    dependency: transitive
-    description:
-      name: hotreloader
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.0.4"
   http:
     dependency: transitive
     description:
@@ -73,13 +59,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.13.4"
-  http_methods:
-    dependency: transitive
-    description:
-      name: http_methods
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.0"
   http_parser:
     dependency: transitive
     description:
@@ -87,13 +66,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.0.0"
-  intl:
-    dependency: transitive
-    description:
-      name: intl
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.17.0"
   json_annotation:
     dependency: transitive
     description:
@@ -101,13 +73,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.5.0"
-  logging:
-    dependency: transitive
-    description:
-      name: logging
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.2"
   mason:
     dependency: "direct main"
     description:
@@ -157,27 +122,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.0.0"
-  shelf:
-    dependency: transitive
-    description:
-      name: shelf
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.3.0"
-  shelf_hotreload:
-    dependency: transitive
-    description:
-      name: shelf_hotreload
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.0"
-  shelf_router:
-    dependency: transitive
-    description:
-      name: shelf_router
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.2"
   source_span:
     dependency: transitive
     description:
@@ -185,27 +129,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.9.0"
-  stack_trace:
-    dependency: transitive
-    description:
-      name: stack_trace
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.10.0"
-  stream_channel:
-    dependency: transitive
-    description:
-      name: stream_channel
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.1.0"
-  stream_transform:
-    dependency: transitive
-    description:
-      name: stream_transform
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.0"
   string_scanner:
     dependency: transitive
     description:
@@ -234,20 +157,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.4"
-  vm_service:
-    dependency: transitive
-    description:
-      name: vm_service
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "8.2.2"
-  watcher:
-    dependency: transitive
-    description:
-      name: watcher
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.1"
   yaml:
     dependency: transitive
     description:

@@ -1,0 +1,23 @@
+name: dart_frog_gen
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/dart_frog_gen.yaml"
+      - "packages/dart_frog_gen/lib/**"
+      - "packages/dart_frog_gen/test/**"
+      - "packages/dart_frog_gen/pubspec.yaml"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/dart_frog_gen.yaml"
+      - "packages/dart_frog_gen/lib/**"
+      - "packages/dart_frog_gen/test/**"
+      - "packages/dart_frog_gen/pubspec.yaml"
+
+jobs:
+  build:
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@v1
+    with:
+      working_directory: packages/dart_frog_gen

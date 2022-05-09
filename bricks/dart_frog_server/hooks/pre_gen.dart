@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:dart_frog/dart_frog.dart' show pathToRoute;
+import 'package:dart_frog_gen/dart_frog_gen.dart' show pathToRoute;
 import 'package:mason/mason.dart';
 import 'package:path/path.dart' as path;
 

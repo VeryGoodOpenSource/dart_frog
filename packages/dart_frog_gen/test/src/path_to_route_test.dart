@@ -1,4 +1,4 @@
-import 'package:dart_frog/dart_frog.dart';
+import 'package:dart_frog_gen/dart_frog_gen.dart';
 import 'package:test/test.dart';
 
 void main() {

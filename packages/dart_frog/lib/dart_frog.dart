@@ -8,5 +8,4 @@ export 'package:shelf_hotreload/shelf_hotreload.dart' show withHotreload;
 export 'package:shelf_router/shelf_router.dart' show Router, RouterParams;
 
 export 'src/middleware.dart' show HandlerUse;
-export 'src/path_to_route.dart' show pathToRoute;
 export 'src/provide.dart' show HandlerProvide, RequestResolve;
