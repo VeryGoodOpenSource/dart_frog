@@ -32,7 +32,7 @@ dart_frog dev
 
 ✅ Middleware 🍔
 
-🚧 Dependency Injection 💉
+✅ Dependency Injection 💉
 
 🚧 Production Builds 👷‍♂️
 
