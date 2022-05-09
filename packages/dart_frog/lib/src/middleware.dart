@@ -1,4 +1,4 @@
-import 'package:dart_frog/dart_frog.dart';
+import 'package:shelf/shelf.dart';
 
 /// Extension on [Handler] which adds support
 /// for applying middleware to the request pipeline.
