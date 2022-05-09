@@ -13,15 +13,15 @@ extension HandlerProvide on Handler {
   }
 }
 
-/// Extension on [Request] which adds support
-/// for accessing values from the request context.
-extension RequestResolve on Request {
-  /// Lookup an instance of [T] from context.
-  T resolve<T>() {
-    final value = context['$T'];
-    if (value == null) {
-      throw StateError(
-        '''
+/// Lookup an instance of [T] from context.
+///
+/// A [StateError] is thrown if [T] is not available within the
+/// provided [request] context.
+T read<T>(Request request) {
+  final value = request.context['$T'];
+  if (value == null) {
+    throw StateError(
+      '''
 request.resolve<$T>() called with a request context that does not contain a $T.
 
 This can happen if $T was not provided to the reqquest context:
@@ -32,8 +32,7 @@ This can happen if $T was not provided to the reqquest context:
   }
   ```
 ''',
-      );
-    }
-    return (value as T Function())();
+    );
   }
+  return (value as T Function())();
 }

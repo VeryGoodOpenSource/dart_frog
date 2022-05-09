@@ -20,9 +20,9 @@ void main() {
     }
 
     Response onRequest(Request request) {
-      final resolvedString = request.resolve<String>();
-      final resolvedInt = request.resolve<int>();
-      return Response.ok('$resolvedString $resolvedInt');
+      final stringValue = read<String>(request);
+      final intValue = read<int>(request);
+      return Response.ok('$stringValue $intValue');
     }
 
     final handler =

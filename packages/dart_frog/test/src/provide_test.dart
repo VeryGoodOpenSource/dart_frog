@@ -4,15 +4,15 @@ import 'package:dart_frog/dart_frog.dart';
 import 'package:test/test.dart';
 
 void main() {
-  test('values can be provided/resolved via middleware', () async {
+  test('values can be provided and read via middleware', () async {
     const value = '__test_value__';
     Handler middleware(Handler handler) {
       return handler.provide<String>(() => value);
     }
 
     Response onRequest(Request request) {
-      final resolved = request.resolve<String>();
-      return Response.ok(resolved);
+      final value = read<String>(request);
+      return Response.ok(value);
     }
 
     final handler =
@@ -25,10 +25,10 @@ void main() {
     await expectLater(await response.readAsString(), equals(value));
   });
 
-  test('A StateError is thrown when resolving an un-provided value', () async {
+  test('A StateError is thrown when reading an un-provided value', () async {
     Response onRequest(Request request) {
-      final resolved = request.resolve<String>();
-      return Response.ok(resolved);
+      final value = read<String>(request);
+      return Response.ok(value);
     }
 
     final request = Request('GET', Uri.parse('http://localhost:8080/'));
