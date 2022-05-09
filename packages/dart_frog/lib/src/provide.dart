@@ -38,7 +38,7 @@ This can happen if $T was not provided to the reqquest context:
   ```dart
   // _middleware.dart
   Handler middleware(Handler handler) {
-    return Pipeline().provide(() => $T()).addHandler(handler);
+    return handler.provide(() => $T());
   }
   ```
 ''',
