@@ -8,7 +8,6 @@ environment:
 
 dependencies:
   shelf: ^1.1.0
-  shelf_hotreload: ^1.1.0
   shelf_router: ^1.0.0
 
 dev_dependencies:
