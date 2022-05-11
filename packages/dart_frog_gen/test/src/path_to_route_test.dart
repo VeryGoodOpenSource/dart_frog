@@ -1,4 +1,4 @@
-import 'package:dart_frog_gen/dart_frog_gen.dart';
+import 'package:dart_frog_gen/src/path_to_route.dart';
 import 'package:test/test.dart';
 
 void main() {

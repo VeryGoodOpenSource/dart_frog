@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:dart_frog_gen/dart_frog_gen.dart';
+import 'package:dart_frog_gen/src/path_to_route.dart';
 import 'package:path/path.dart' as path;
 
 /// Build a [RouteConfiguration] based on the provided root project [directory].
@@ -96,7 +96,7 @@ List<RouteDirectory> _getRouteDirectories(
 
   directories.add(
     RouteDirectory(
-      name: 'd$depth',
+      name: 'd$_depth',
       path: directoryPath,
       middleware: middleware,
       files: files,
