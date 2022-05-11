@@ -48,7 +48,7 @@ packages:
     description:
       path: "packages/dart_frog_gen"
       ref: HEAD
-      resolved-ref: "5456bf9a6db76d617a0bb5f3dc7a30312a952a47"
+      resolved-ref: caee7bf8c6c433fd50df7cacf59defdfe1571c20
       url: "https://github.com/VeryGoodOpenSource/dart_frog"
     source: git
     version: "1.0.0+1"
@@ -79,7 +79,7 @@ packages:
       name: mason
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.0-dev.19"
+    version: "0.1.0-dev.21"
   mason_logger:
     dependency: transitive
     description:

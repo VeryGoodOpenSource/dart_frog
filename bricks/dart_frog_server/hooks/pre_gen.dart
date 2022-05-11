@@ -13,8 +13,23 @@ Future<void> run(HookContext context) async {
     exit(1);
   }
 
+  final globalMiddlewareFile = File(
+    path.join(routesDirectory.path, '_middleware.dart'),
+  );
+  final globalMiddleware = globalMiddlewareFile.existsSync()
+      ? MiddlewareFile(
+          name: 'm0',
+          path: path.join(
+            '..',
+            path.relative(globalMiddlewareFile.path).replaceAll(r'\', '/'),
+          ),
+        )
+      : null;
+
   final routes = <RouteFile>[];
-  final middleware = <MiddlewareFile>[];
+  final middleware = <MiddlewareFile>[
+    if (globalMiddleware != null) globalMiddleware
+  ];
   final directories = buildGraph(
     routesDirectory,
     onRoute: routes.add,
@@ -22,9 +37,12 @@ Future<void> run(HookContext context) async {
   );
 
   context.vars = {
-    'directories': directories.map((c) => c.toJson()).toList(),
+    'directories':
+        directories.map((c) => c.toJson()).toList().reversed.toList(),
     'routes': routes.map((r) => r.toJson()).toList(),
     'middleware': middleware.map((m) => m.toJson()).toList(),
+    'globalMiddleware':
+        globalMiddleware != null ? globalMiddleware.toJson() : false,
   };
 }
 
@@ -64,15 +82,18 @@ List<RouteDirectory> buildGraph(
     fileDepth++;
   });
 
+  // Only add nested middleware -- global middleware is added separately.
   MiddlewareFile? middleware;
-  final _middleware = File(path.join(directory.path, '_middleware.dart'));
-  if (_middleware.existsSync()) {
-    final middlewarePath = path.join(
-      '..',
-      path.relative(_middleware.path).replaceAll(r'\', '/'),
-    );
-    middleware = MiddlewareFile(name: 'm$depth', path: middlewarePath);
-    onMiddleware?.call(middleware);
+  if (depth > 1) {
+    final _middleware = File(path.join(directory.path, '_middleware.dart'));
+    if (_middleware.existsSync()) {
+      final middlewarePath = path.join(
+        '..',
+        path.relative(_middleware.path).replaceAll(r'\', '/'),
+      );
+      middleware = MiddlewareFile(name: 'm$depth', path: middlewarePath);
+      onMiddleware?.call(middleware);
+    }
   }
 
   directories.add(

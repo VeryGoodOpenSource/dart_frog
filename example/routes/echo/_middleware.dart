@@ -2,6 +2,10 @@ import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
 
+Handler middleware(Handler handler) {
+  return handler.use(verifyAuthorizationHeader);
+}
+
 Handler verifyAuthorizationHeader(Handler handler) {
   return (request) {
     final hasAuthorizationHeader = request.headers.containsKey('Authorization');

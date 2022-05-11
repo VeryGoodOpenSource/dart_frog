@@ -1,9 +1,6 @@
 import 'package:dart_frog/dart_frog.dart';
 
-import '../services/greeting_service.dart';
-
 Response onRequest(Request request) {
-  final service = read<GreetingService>(request);
-  final greeting = service.getGreeting();
+  final greeting = read<String>(request);
   return Response.ok(greeting);
 }

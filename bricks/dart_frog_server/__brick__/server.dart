@@ -19,12 +19,14 @@ Future<HttpServer> createServer() async {
 }
 
 Handler buildHandler() {
-  return Router(){{#directories}}
+  var pipeline = const Pipeline();{{#globalMiddleware}}pipeline = pipeline.addMiddleware({{#snakeCase}}{{{name}}}{{/snakeCase}}.middleware);{{/globalMiddleware}}
+  final router = Router(){{#directories}}
     ..mount('{{{path}}}', (r) => build{{#pascalCase}}{{{name}}}{{/pascalCase}}Router()(r)){{/directories}};
+  return pipeline.addHandler(router);
 }
 {{#directories}}
 Handler build{{#pascalCase}}{{{name}}}{{/pascalCase}}Router() {
-  var pipeline = Pipeline();{{#middleware}}pipeline = pipeline.addMiddleware({{#snakeCase}}{{{name}}}{{/snakeCase}}.middleware);{{/middleware}}
+  var pipeline = const Pipeline();{{#middleware}}pipeline = pipeline.addMiddleware({{#snakeCase}}{{{name}}}{{/snakeCase}}.middleware);{{/middleware}}
   final router = Router()
     {{#files}}..all('{{{route}}}', {{#snakeCase}}{{{name}}}{{/snakeCase}}.onRequest){{/files}};
   return pipeline.addHandler(router);
