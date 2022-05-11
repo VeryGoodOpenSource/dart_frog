@@ -1,4 +1,4 @@
-name: dart_frog_server_hooks
+name: dart_frog_dev_server_hooks
 publish_to: none
 
 environment:

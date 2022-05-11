@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dart_frog_cli/src/command.dart';
-import 'package:dart_frog_cli/src/commands/dev/templates/dart_frog_server_bundle.dart';
+import 'package:dart_frog_cli/src/commands/dev/templates/dart_frog_dev_server_bundle.dart';
 import 'package:mason/mason.dart';
 import 'package:path/path.dart' as path;
 import 'package:watcher/watcher.dart';
@@ -22,7 +22,7 @@ class DevCommand extends DartFrogCommand {
 
   @override
   Future<int> run() async {
-    final generator = await MasonGenerator.fromBundle(dartFrogServerBundle);
+    final generator = await MasonGenerator.fromBundle(dartFrogDevServerBundle);
 
     Future<void> codegen() async {
       var vars = <String, dynamic>{};
