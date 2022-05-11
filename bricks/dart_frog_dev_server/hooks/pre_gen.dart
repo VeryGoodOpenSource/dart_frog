@@ -24,6 +24,4 @@ Future<void> run(HookContext context) async {
         ? configuration.globalMiddleware!.toJson()
         : false,
   };
-
-  print(context.vars);
 }
