@@ -22,7 +22,7 @@ T read<T>(Request request) {
   if (value == null) {
     throw StateError(
       '''
-request.resolve<$T>() called with a request context that does not contain a $T.
+read<$T>() called with a request context that does not contain a $T.
 
 This can happen if $T was not provided to the reqquest context:
   ```dart
