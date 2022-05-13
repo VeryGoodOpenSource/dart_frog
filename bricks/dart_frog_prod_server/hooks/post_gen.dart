@@ -18,4 +18,15 @@ Future<void> run(HookContext context) async {
     context.logger.err('${result.stderr}');
     exit(result.exitCode);
   }
+
+  final relativeBuildPath = path.relative(buildDirectoryPath);
+  context.logger
+    ..info('')
+    ..success('Created a production build!')
+    ..info('')
+    ..info('Start the production server by running:')
+    ..info('')
+    ..info(
+      '${lightCyan.wrap('dart ${path.join(relativeBuildPath, 'bin', 'server.dart')}')}',
+    );
 }

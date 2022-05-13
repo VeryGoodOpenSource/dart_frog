@@ -34,9 +34,9 @@ dart_frog dev
 
 ✅ Dependency Injection 💉
 
-🚧 Production Builds 👷‍♂️
+✅ Production Builds 👷‍♂️
 
-🚧 Docker Container 🐳
+✅ Docker Container 🐳
 
 🚧 Generated Dart Client Package 📦
 
