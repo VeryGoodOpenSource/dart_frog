@@ -8,3 +8,6 @@ pubspec.lock
 # Files and directories created by dart_frog
 build/
 .dart_frog
+
+# Test related files
+coverage/
