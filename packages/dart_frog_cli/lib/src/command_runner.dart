@@ -24,6 +24,7 @@ class DartFrogCommandRunner extends CommandRunner<int> {
   })  : _logger = logger ?? Logger(),
         super(executableName, executableDescription) {
     argParser.addFlags();
+    addCommand(BuildCommand(logger: _logger));
     addCommand(CreateCommand(logger: _logger));
     addCommand(DevCommand(logger: _logger));
   }
