@@ -65,7 +65,7 @@ dart_frog build
 
 ✅ Production Builds 👷‍♂️
 
-✅ Docker Container 🐳
+✅ Docker 🐳
 
 🚧 Generated Dart Client Package 📦
 
