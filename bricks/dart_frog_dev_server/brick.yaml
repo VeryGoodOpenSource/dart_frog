@@ -1,5 +1,5 @@
 name: dart_frog_dev_server
-description: A dart_frog dev server entrypoint
+description: A dart_frog dev server
 version: 0.1.0+1
 
 environment:
