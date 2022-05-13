@@ -29,7 +29,10 @@ Future<void> run(HookContext context) async {
   );
   bundlingDone();
 
-  if (result.exitCode != 0) throw Exception('${result.stderr}');
+  if (result.exitCode != 0) {
+    context.logger.err('${result.stderr}');
+    exit(result.exitCode);
+  }
 
   await tempDirectory.rename(buildDirectoryPath);
 
