@@ -5,7 +5,7 @@
 [![style: very good analysis][very_good_analysis_badge]][very_good_analysis_link]
 [![License: MIT][license_badge]][license_link]
 
-A fast, minimalistic backend framework for Dart
+A fast, minimalistic backend framework for Dart.
 
 ## Quick Start 🚀
 
@@ -29,12 +29,12 @@ Use the `dart_frog create` command to create a new project.
 dart_frog create my_project
 ```
 
-### Start the Dev Server ☁️
+### Start the Dev Server 🏁
 
 Next, open the newly created project and start the dev server via:
 
 ```sh
-# ☁️ Start the dev server
+# 🏁 Start the dev server
 dart_frog dev
 ```
 
