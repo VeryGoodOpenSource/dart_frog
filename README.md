@@ -7,18 +7,20 @@
 
 A fast, minimalistic backend framework for Dart
 
-## Prerequisites 📝
+## Quick Start 🚀
+
+### Prerequisites 📝
 
 In order to use Dart Frog you must have the [Dart SDK][dart_installation_link] installed on your machine.
 
-## Installing 🧑‍💻
+### Installing 🧑‍💻
 
 ```sh
 # 📦 Install the dart_frog cli from source
 dart pub global activate --source path ./packages/dart_frog_cli
 ```
 
-## Creating a Project ✨
+### Creating a Project ✨
 
 Use the `dart_frog create` command to create a new project.
 
@@ -27,7 +29,7 @@ Use the `dart_frog create` command to create a new project.
 dart_frog create my_project
 ```
 
-## Start the Dev Server ☁️
+### Start the Dev Server ☁️
 
 Next, open the newly created project and start the dev server via:
 
@@ -36,7 +38,7 @@ Next, open the newly created project and start the dev server via:
 dart_frog dev
 ```
 
-## Create a Production Build 📦
+### Create a Production Build 📦
 
 Create a production build which includes a `DockerFile` so that you can deploy anywhere:
 
