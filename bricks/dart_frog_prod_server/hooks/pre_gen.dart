@@ -23,7 +23,7 @@ Future<void> run(HookContext context) async {
   final tempDirectory = await Directory.systemTemp.createTemp();
   final result = await Process.run(
     'cp',
-    ['-rf', '.', '${tempDirectory.path}/${path.separator}'],
+    ['-rf', '.', '${tempDirectory.path}${path.separator}'],
     workingDirectory: projectDirectory.path,
     runInShell: true,
   );
