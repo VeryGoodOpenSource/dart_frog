@@ -1,4 +1,4 @@
-import 'package:shelf/shelf.dart';
+import 'package:dart_frog/dart_frog.dart';
 
 /// Extension on [Handler] which adds support
 /// for providing values to the request context.
