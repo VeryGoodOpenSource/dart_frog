@@ -57,6 +57,7 @@ List<RouteDirectory> _getRouteDirectories(
   final directoryPath = directorySegment.startsWith('/')
       ? directorySegment
       : '/$directorySegment';
+  final directoryName = path.basename(directoryPath);
 
   final files = <RouteFile>[];
   var fileDepth = _depth;
@@ -67,7 +68,7 @@ List<RouteDirectory> _getRouteDirectories(
     );
     final fileRoute = pathToRoute(filePath).split(directoryPath).last;
     final route = RouteFile(
-      name: 'r$fileDepth',
+      name: '${directoryName}R$fileDepth',
       path: filePath,
       route: fileRoute.isEmpty
           ? '/'
@@ -89,15 +90,18 @@ List<RouteDirectory> _getRouteDirectories(
         '..',
         path.relative(_middleware.path).replaceAll(r'\', '/'),
       );
-      middleware = MiddlewareFile(name: 'm$_depth', path: middlewarePath);
+      middleware = MiddlewareFile(
+        name: '${directoryPath}M$_depth',
+        path: middlewarePath,
+      );
       onMiddleware?.call(middleware);
     }
   }
 
   directories.add(
     RouteDirectory(
-      name: 'd$_depth',
-      path: directoryPath,
+      name: '${directoryName}D$_depth',
+      route: directoryPath,
       middleware: middleware,
       files: files,
     ),
@@ -160,7 +164,7 @@ class RouteDirectory {
   /// {@macro route_directory}
   const RouteDirectory({
     required this.name,
-    required this.path,
+    required this.route,
     required this.middleware,
     required this.files,
   });
@@ -168,8 +172,8 @@ class RouteDirectory {
   /// The alias for the current directory.
   final String name;
 
-  /// The path (route) which will be used to mount routers.
-  final String path;
+  /// The route which will be used to mount routers.
+  final String route;
 
   /// Optional middleware for the provided router.
   final MiddlewareFile? middleware;
@@ -180,13 +184,13 @@ class RouteDirectory {
   /// Create a copy of the current instance and override zero or more values.
   RouteDirectory copyWith({
     String? name,
-    String? path,
+    String? route,
     MiddlewareFile? middleware,
     List<RouteFile>? files,
   }) {
     return RouteDirectory(
       name: name ?? this.name,
-      path: path ?? this.path,
+      route: route ?? this.route,
       middleware: middleware ?? this.middleware,
       files: files ?? this.files,
     );
@@ -196,7 +200,7 @@ class RouteDirectory {
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'name': name,
-      'path': path,
+      'route': route,
       'middleware': middleware?.toJson(),
       'files': files.map((f) => f.toJson()).toList(),
     };
