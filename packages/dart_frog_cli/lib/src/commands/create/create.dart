@@ -16,7 +16,7 @@ final RegExp _identifierRegExp = RegExp('[a-z_][a-z0-9_]*');
 /// {@endtemplate}
 class CreateCommand extends DartFrogCommand {
   /// {@macro create_command}
-  CreateCommand({Logger? logger}) : super(logger: logger) {
+  CreateCommand({super.logger}) {
     argParser.addOption(
       'project-name',
       help: 'The project name for this new project. '

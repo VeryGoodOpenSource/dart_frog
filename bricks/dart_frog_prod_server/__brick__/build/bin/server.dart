@@ -21,7 +21,7 @@ Future<HttpServer> createServer() async {
 Handler buildHandler() {
   var pipeline = const Pipeline();{{#globalMiddleware}}pipeline = pipeline.addMiddleware({{#snakeCase}}{{{name}}}{{/snakeCase}}.middleware);{{/globalMiddleware}}
   final router = Router(){{#directories}}
-    ..mount('{{{path}}}', (r) => build{{#pascalCase}}{{{name}}}{{/pascalCase}}Router()(r)){{/directories}};
+    ..mount('{{{route}}}', (r) => build{{#pascalCase}}{{{name}}}{{/pascalCase}}Router()(r)){{/directories}};
   return pipeline.addHandler(router);
 }
 {{#directories}}

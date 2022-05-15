@@ -12,7 +12,7 @@ import 'package:watcher/watcher.dart';
 /// {@endtemplate}
 class DevCommand extends DartFrogCommand {
   /// {@macro dev_command}
-  DevCommand({Logger? logger}) : super(logger: logger);
+  DevCommand({super.logger});
 
   @override
   final String description = 'Run a local development server.';

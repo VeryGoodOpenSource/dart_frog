@@ -7,7 +7,7 @@ import 'package:mason/mason.dart';
 /// {@endtemplate}
 class BuildCommand extends DartFrogCommand {
   /// {@macro build_command}
-  BuildCommand({Logger? logger}) : super(logger: logger);
+  BuildCommand({super.logger});
 
   @override
   final String description = 'Create a production build.';
