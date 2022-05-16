@@ -8,8 +8,14 @@ environment:
 
 dependencies:
   dart_frog:
-    path: ../packages/dart_frog
+    git:
+      url: https://github.com/VeryGoodOpenSource/dart_frog
+      path: packages/dart_frog
 
 dev_dependencies:
   test: ^1.19.2
   very_good_analysis: ^3.0.0
+
+dependency_overrides:
+  dart_frog:
+    path: ../packages/dart_frog

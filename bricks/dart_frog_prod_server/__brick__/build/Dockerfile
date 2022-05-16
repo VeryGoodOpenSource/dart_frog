@@ -3,7 +3,10 @@
 FROM dart:stable AS build
 
 WORKDIR /app
-
+{{#pathDependencies}}
+COPY {{{.}}} ./{{{.}}}
+RUN dart pub get -C {{{.}}}
+{{/pathDependencies}}
 # Resolve app dependencies.
 COPY pubspec.* ./
 RUN dart pub get
