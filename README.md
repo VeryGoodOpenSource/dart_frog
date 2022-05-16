@@ -49,15 +49,17 @@ dart_frog build
 
 ## Feature Set ✨
 
-✅ File-System Routing 🚏
+✅ Hot Reload ⚡️
+
+✅ Dart Dev Tools ⚙️
+
+✅ File System Routing 🚏
 
 ✅ Index Routes 🗂
 
 ✅ Nested Routes 🪆
 
 ✅ Dynamic Routes 🌓
-
-✅ Hot Reload ⚡️
 
 ✅ Middleware 🍔
 
