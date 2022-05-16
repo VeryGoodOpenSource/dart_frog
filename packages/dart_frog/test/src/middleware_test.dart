@@ -7,16 +7,16 @@ void main() {
   test('multiple middleware can be used on a handler', () async {
     const stringValue = '__test_value__';
     const intValue = 42;
-    Handler provideString(Handler handler) {
-      return handler.provide<String>(() => stringValue);
+    Handler stringProvider(Handler handler) {
+      return handler.use(provider<String>(() => stringValue));
     }
 
-    Handler provideInt(Handler handler) {
-      return handler.provide<int>(() => intValue);
+    Handler intProvider(Handler handler) {
+      return handler.use(provider<int>(() => intValue));
     }
 
     Handler middleware(Handler handler) {
-      return handler.use(provideString).use(provideInt);
+      return handler.use(stringProvider).use(intProvider);
     }
 
     Response onRequest(Request request) {

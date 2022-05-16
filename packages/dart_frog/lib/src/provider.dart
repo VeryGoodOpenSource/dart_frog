@@ -1,16 +1,12 @@
 import 'package:dart_frog/dart_frog.dart';
 
-/// Extension on [Handler] which adds support
-/// for providing values to the request context.
-extension HandlerProvide on Handler {
-  /// Provide a value to the current handler by calling [create].
-  Handler provide<T extends Object>(T Function() create) {
+/// Provide a value to the current handler by calling [create].
+Middleware provider<T extends Object>(T Function() create) {
+  return (innerHandler) {
     return (request) {
-      return this(
-        request.change(context: {...request.context, '$T': create}),
-      );
+      return innerHandler(request.provide(create));
     };
-  }
+  };
 }
 
 /// Lookup an instance of [T] from context.
@@ -35,4 +31,14 @@ This can happen if $T was not provided to the reqquest context:
     );
   }
   return (value as T Function())();
+}
+
+/// Extension on [Request] which adds the ability to provide
+/// a value to the request context.
+extension ProvideRequest on Request {
+  /// Provide the value returned by [create] to the respective
+  /// request context.
+  Request provide<T extends Object>(T Function() create) {
+    return change(context: {...context, '$T': create});
+  }
 }

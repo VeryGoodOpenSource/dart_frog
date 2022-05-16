@@ -7,7 +7,7 @@ void main() {
   test('values can be provided and read via middleware', () async {
     const value = '__test_value__';
     Handler middleware(Handler handler) {
-      return handler.provide<String>(() => value);
+      return handler.use(provider<String>(() => value));
     }
 
     Response onRequest(Request request) {
