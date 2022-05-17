@@ -8,11 +8,11 @@ void main() {
     const stringValue = '__test_value__';
     const intValue = 42;
     Handler stringProvider(Handler handler) {
-      return handler.use(provider<String>(() => stringValue));
+      return handler.use(provider<String>((_) => stringValue));
     }
 
     Handler intProvider(Handler handler) {
-      return handler.use(provider<int>(() => intValue));
+      return handler.use(provider<int>((_) => intValue));
     }
 
     Handler middleware(Handler handler) {
