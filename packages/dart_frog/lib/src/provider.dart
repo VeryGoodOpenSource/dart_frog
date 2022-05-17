@@ -1,10 +1,10 @@
 import 'package:dart_frog/dart_frog.dart';
 
 /// Provide a value to the current handler by calling [create].
-Middleware provider<T extends Object>(T Function() create) {
+Middleware provider<T extends Object>(T Function(Request request) create) {
   return (innerHandler) {
     return (request) {
-      return innerHandler(request.provide(create));
+      return innerHandler(request.provide(() => create(request)));
     };
   };
 }
