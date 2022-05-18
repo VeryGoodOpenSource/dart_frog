@@ -57,7 +57,10 @@ List<RouteDirectory> _getRouteDirectories(
   final directoryPath = directorySegment.startsWith('/')
       ? directorySegment
       : '/$directorySegment';
-  final directoryName = path.basename(directoryPath);
+  final directoryName = path
+      .basename(directoryPath)
+      .replaceAll(RegExp('<'), r'$')
+      .replaceAll(RegExp('>'), '');
 
   final files = <RouteFile>[];
   var fileDepth = _depth;
@@ -91,7 +94,7 @@ List<RouteDirectory> _getRouteDirectories(
         path.relative(_middleware.path).replaceAll(r'\', '/'),
       );
       middleware = MiddlewareFile(
-        name: '${directoryPath}M$_depth',
+        name: '${directoryName}M$_depth',
         path: middlewarePath,
       );
       onMiddleware?.call(middleware);
