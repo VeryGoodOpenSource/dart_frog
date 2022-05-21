@@ -47,8 +47,8 @@ packages:
     dependency: "direct main"
     description:
       path: "packages/dart_frog_gen"
-      ref: a601d4fb20eb271569c56ff4f79e832d17b8bd5c
-      resolved-ref: a601d4fb20eb271569c56ff4f79e832d17b8bd5c
+      ref: b4425bf8abf1f5d4be05bb8448e03ec593c2fc95
+      resolved-ref: b4425bf8abf1f5d4be05bb8448e03ec593c2fc95
       url: "https://github.com/VeryGoodOpenSource/dart_frog"
     source: git
     version: "1.0.0+1"
