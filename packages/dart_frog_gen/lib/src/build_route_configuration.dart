@@ -18,7 +18,7 @@ RouteConfiguration buildRouteConfiguration(Directory directory) {
   );
   final globalMiddleware = globalMiddlewareFile.existsSync()
       ? MiddlewareFile(
-          name: 'm0',
+          name: 'routes_middleware',
           path: path.join(
             '..',
             path.relative(globalMiddlewareFile.path).replaceAll(r'\', '/'),
@@ -48,23 +48,16 @@ List<RouteDirectory> _getRouteDirectories(
   Directory directory, {
   void Function(RouteFile route)? onRoute,
   void Function(MiddlewareFile route)? onMiddleware,
-  int depth = 0,
 }) {
-  var _directoryDepth = depth + 1;
-  var fileDepth = _directoryDepth;
   final directories = <RouteDirectory>[];
   final entities = directory.listSync();
   final directorySegment = directory.path.split('routes').last;
   final directoryPath = directorySegment.startsWith('/')
       ? directorySegment
       : '/$directorySegment';
-  final directoryName = path.basename(directoryPath);
-  final files = _getRouteFiles(directory, onRoute: onRoute, depth: fileDepth);
-  fileDepth += files.length;
-
   // Only add nested middleware -- global middleware is added separately.
   MiddlewareFile? middleware;
-  if (_directoryDepth > 1) {
+  if (directory.path != path.join(Directory.current.path, 'routes')) {
     final _middleware = File(path.join(directory.path, '_middleware.dart'));
     if (_middleware.existsSync()) {
       final middlewarePath = path.join(
@@ -72,24 +65,21 @@ List<RouteDirectory> _getRouteDirectories(
         path.relative(_middleware.path).replaceAll(r'\', '/'),
       );
       middleware = MiddlewareFile(
-        name: '${directoryName}M$_directoryDepth',
+        name: middlewarePath.toAlias(),
         path: middlewarePath,
       );
       onMiddleware?.call(middleware);
     }
   }
 
-  final dynamicDirectoryFiles = _getRouteFilesForDynamicDirectories(
-    directory,
-    onRoute: onRoute,
-    depth: fileDepth,
-  );
-  files.addAll(dynamicDirectoryFiles);
-  fileDepth += dynamicDirectoryFiles.length;
+  final files = [
+    ..._getRouteFiles(directory, onRoute: onRoute),
+    ..._getRouteFilesForDynamicDirectories(directory, onRoute: onRoute),
+  ];
 
   directories.add(
     RouteDirectory(
-      name: '${directoryName}D$_directoryDepth',
+      name: directoryPath.toAlias(),
       route: directoryPath,
       middleware: middleware,
       files: files,
@@ -103,10 +93,8 @@ List<RouteDirectory> _getRouteDirectories(
           entity,
           onRoute: onRoute,
           onMiddleware: onMiddleware,
-          depth: _directoryDepth,
         ),
       );
-      _directoryDepth++;
     }
   });
 
@@ -116,7 +104,6 @@ List<RouteDirectory> _getRouteDirectories(
 List<RouteFile> _getRouteFilesForDynamicDirectories(
   Directory directory, {
   void Function(RouteFile route)? onRoute,
-  int depth = 0,
   String prefix = '',
 }) {
   final files = <RouteFile>[];
@@ -129,13 +116,11 @@ List<RouteFile> _getRouteFilesForDynamicDirectories(
     final subset = _getRouteFiles(
       dynamicDirectory,
       onRoute: onRoute,
-      depth: depth,
       prefix: newPrefix,
     );
     final dynamicSubset = _getRouteFilesForDynamicDirectories(
       dynamicDirectory,
       onRoute: onRoute,
-      depth: depth + subset.length,
       prefix: newPrefix,
     );
     files.addAll([...subset, ...dynamicSubset]);
@@ -146,17 +131,13 @@ List<RouteFile> _getRouteFilesForDynamicDirectories(
 List<RouteFile> _getRouteFiles(
   Directory directory, {
   void Function(RouteFile route)? onRoute,
-  int depth = 0,
   String prefix = '',
 }) {
   final files = <RouteFile>[];
-  var fileDepth = depth;
   final directorySegment = directory.path.split('routes').last;
   final directoryPath = directorySegment.startsWith('/')
       ? directorySegment
       : '/$directorySegment';
-  final directoryName =
-      path.basename(directoryPath).replaceAll('<', r'$').replaceAll('>', '');
   final entities = directory.listSync();
   entities.where((e) => e.isRoute).cast<File>().forEach((entity) {
     final filePath = path.join(
@@ -174,15 +155,26 @@ List<RouteFile> _getRouteFiles(
     }
 
     final route = RouteFile(
-      name: '${directoryName}R$fileDepth',
+      name: filePath.toAlias(),
       path: filePath,
       route: fileRoute,
     );
     onRoute?.call(route);
     files.add(route);
-    fileDepth++;
   });
   return files;
+}
+
+extension on String {
+  String toAlias() {
+    final alias = path
+        .withoutExtension(this)
+        .replaceAll('<', r'$')
+        .replaceAll('>', '')
+        .replaceAll('/', '_');
+    if (alias == '') return 'index';
+    return alias;
+  }
 }
 
 extension on Directory {
@@ -271,7 +263,7 @@ class RouteDirectory {
     return <String, dynamic>{
       'name': name,
       'route': route,
-      'middleware': middleware?.toJson(),
+      'middleware': middleware?.toJson() ?? false,
       'files': files.map((f) => f.toJson()).toList(),
     };
   }
