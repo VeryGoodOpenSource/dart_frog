@@ -29,7 +29,10 @@ class Request {
 
   Stream<List<int>>? _body;
 
-  /// The requested [Uri].
+  /// The requested url relative to the current handler path.
+  Uri get url => _request.url;
+
+  /// The original requested [Uri].
   Uri get uri => _request.requestedUri;
 
   /// The HTTP headers with case-insensitive keys.

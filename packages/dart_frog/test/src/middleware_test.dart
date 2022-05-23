@@ -25,7 +25,7 @@ void main() {
     Response onRequest(RequestContext context) {
       final stringValue = context.read<String>();
       final intValue = context.read<int>();
-      return Response.ok('$stringValue $intValue');
+      return Response(body: '$stringValue $intValue');
     }
 
     final handler =

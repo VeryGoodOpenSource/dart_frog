@@ -5,8 +5,8 @@ part of '_internal.dart';
 /// {@endtemplate}
 class Response {
   /// {@macro response}
-  Response(
-    int statusCode, {
+  Response({
+    int statusCode = 200,
     Object? body,
     Map<String, Object>? headers,
     Encoding? encoding,
@@ -17,25 +17,6 @@ class Response {
             headers: headers,
             encoding: encoding,
           ),
-        );
-
-  /// Constructs a 200 OK response.
-  Response.ok(
-    Object? body, {
-    Map<String, Object>? headers,
-    Encoding? encoding,
-  }) : this(HttpStatus.ok, body: body, headers: headers, encoding: encoding);
-
-  /// Constructs a 404 response.
-  Response.notFound(
-    Object? body, {
-    Map<String, Object>? headers,
-    Encoding? encoding,
-  }) : this(
-          HttpStatus.notFound,
-          body: body,
-          headers: headers,
-          encoding: encoding,
         );
 
   Response._(this._response);

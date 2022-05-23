@@ -13,7 +13,7 @@ void main() {
       final handler = middleware(
         (context) {
           value = context.read<String>();
-          return Response.ok('');
+          return Response(body: '');
         },
       );
       final request = Request('GET', Uri.parse('http://127.0.0.1/'));

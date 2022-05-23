@@ -19,7 +19,7 @@ void main() {
     }
 
     test('proxies to logRequests', () async {
-      Response handler(RequestContext context) => Response.ok('');
+      Response handler(RequestContext context) => Response();
       final _handler = const Pipeline()
           .addMiddleware(requestLogger(logger: logger))
           .addHandler(handler);

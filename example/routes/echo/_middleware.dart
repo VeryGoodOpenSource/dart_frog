@@ -10,6 +10,6 @@ Handler verifyAuthorizationHeader(Handler handler) {
         context.request.headers.containsKey('Authorization');
     return hasAuthorizationHeader
         ? handler(context)
-        : Response(HttpStatus.forbidden);
+        : Response(statusCode: HttpStatus.forbidden);
   };
 }

@@ -6,7 +6,7 @@ class Router {
   /// Creates a new [Router] routing requests to handlers.
   ///
   /// The [notFoundHandler] will be invoked for requests where no matching route
-  /// was found. By default, a simple [Response.notFound] will be used instead.
+  /// was found. By default, a simple 404 response will be used.
   Router({Handler notFoundHandler = _defaultNotFound})
       : _notFoundHandler = notFoundHandler;
 
@@ -80,7 +80,8 @@ class Router {
 /// Extends [Response] to allow it to be used multiple times in the
 /// actual content being served.
 class _RouteNotFoundResponse extends Response {
-  _RouteNotFoundResponse() : super.notFound(_message);
+  _RouteNotFoundResponse()
+      : super(statusCode: HttpStatus.notFound, body: _message);
   static const _message = 'Route not found';
   static final _messageBytes = utf8.encode(_message);
 
@@ -181,9 +182,7 @@ class _RouterEntry {
   Map<String, String>? match(String path) {
     // Check if path matches the route pattern
     final m = _routePattern.firstMatch(path);
-    if (m == null) {
-      return null;
-    }
+    if (m == null) return null;
     // Construct map from parameter name to matched value
     final params = <String, String>{};
     for (var i = 0; i < _params.length; i++) {
@@ -198,8 +197,9 @@ class _RouterEntry {
     RequestContext context,
     Map<String, String> params,
   ) async {
-    final request = context.request._request
-        .change(context: {'shelf_router/params': params});
+    final request = context.request._request.change(
+      context: {'shelf_router/params': params},
+    );
     final _context = RequestContext._(request);
 
     return await _middleware((request) async {

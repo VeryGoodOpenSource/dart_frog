@@ -15,7 +15,7 @@ void main() {
 
     Response onRequest(RequestContext context) {
       final value = context.read<String>();
-      return Response.ok(value);
+      return Response(body: value);
     }
 
     final handler =
@@ -40,7 +40,7 @@ void main() {
 
     Response onRequest(RequestContext context) {
       final value = context.read<Uri>();
-      return Response.ok(value.toString());
+      return Response(body: value.toString());
     }
 
     final handler =
@@ -58,7 +58,7 @@ void main() {
   test('A StateError is thrown when reading an un-provided value', () async {
     Response onRequest(RequestContext context) {
       final value = context.read<String>();
-      return Response.ok(value);
+      return Response(body: value);
     }
 
     final request = Request('GET', Uri.parse('http://localhost:8080/'));
