@@ -1,4 +1,4 @@
-import 'package:shelf/shelf.dart';
+part of '_internal.dart';
 
 /// Middleware which prints the time of the request, the elapsed time for the
 /// inner handlers, the response's status code and the request URI.
@@ -13,5 +13,19 @@ import 'package:shelf/shelf.dart';
 Middleware requestLogger({
   void Function(String message, bool isError)? logger,
 }) {
-  return logRequests(logger: logger);
+  return _fromShelfMiddleware(shelf.logRequests(logger: logger));
+}
+
+Middleware _fromShelfMiddleware(shelf.Middleware middleware) {
+  return (handler) {
+    return (context) async {
+      final response = await middleware(
+        (request) async {
+          final response = await handler(RequestContext._(request));
+          return response._response;
+        },
+      )(context.request._request);
+      return Response._(response);
+    };
+  };
 }

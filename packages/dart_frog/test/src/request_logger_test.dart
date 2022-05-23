@@ -1,7 +1,10 @@
 // ignore_for_file: avoid_positional_boolean_parameters
 
 import 'package:dart_frog/dart_frog.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
+
+class _MockRequestContext extends Mock implements RequestContext {}
 
 void main() {
   group('requestLogger', () {
@@ -16,12 +19,13 @@ void main() {
     }
 
     test('proxies to logRequests', () async {
-      Response handler(Request request) => Response.ok('');
       final _handler = const Pipeline()
           .addMiddleware(requestLogger(logger: logger))
-          .addHandler(handler);
-
-      await _handler(Request('GET', Uri.parse('http://127.0.0.1/')));
+          .addHandler((_) => Response());
+      final request = Request.get(Uri.parse('http://localhost/'));
+      final context = _MockRequestContext();
+      when(() => context.request).thenReturn(request);
+      await _handler(context);
 
       expect(gotLog, isTrue);
     });

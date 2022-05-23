@@ -5,10 +5,11 @@ import 'package:dart_frog/dart_frog.dart';
 Handler middleware(Handler handler) => handler.use(verifyAuthorizationHeader);
 
 Handler verifyAuthorizationHeader(Handler handler) {
-  return (request) {
-    final hasAuthorizationHeader = request.headers.containsKey('Authorization');
+  return (context) {
+    final hasAuthorizationHeader =
+        context.request.headers.containsKey('Authorization');
     return hasAuthorizationHeader
-        ? handler(request)
-        : Response(HttpStatus.forbidden);
+        ? handler(context)
+        : Response(statusCode: HttpStatus.forbidden);
   };
 }

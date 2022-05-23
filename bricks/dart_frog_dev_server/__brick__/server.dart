@@ -8,7 +8,7 @@ import 'package:dart_frog/dart_frog.dart';
 {{/routes}}
 {{#middleware}}import '{{{path}}}' as {{#snakeCase}}{{{name}}}{{/snakeCase}};
 {{/middleware}}
-void main() => withHotreload(createServer);
+void main() => hotReload(createServer);
 
 Future<HttpServer> createServer() async {
   final ip = InternetAddress.anyIPv4;
