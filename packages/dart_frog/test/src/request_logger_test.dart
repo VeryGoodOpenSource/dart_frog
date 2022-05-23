@@ -19,10 +19,9 @@ void main() {
     }
 
     test('proxies to logRequests', () async {
-      Response handler(RequestContext context) => Response();
       final _handler = const Pipeline()
           .addMiddleware(requestLogger(logger: logger))
-          .addHandler(handler);
+          .addHandler((_) => Response());
       final request = Request('GET', Uri.parse('http://127.0.0.1/'));
       final context = _MockRequestContext();
       when(() => context.request).thenReturn(request);
