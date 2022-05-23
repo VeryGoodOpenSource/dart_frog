@@ -57,15 +57,18 @@ void main() {
 
   test('A StateError is thrown when reading an un-provided value', () async {
     Response onRequest(RequestContext context) {
-      final value = context.read<String>();
-      return Response(body: value);
+      context.read<Uri>();
+      return Response();
     }
+
+    final handler = const Pipeline()
+        .addMiddleware((handler) => handler)
+        .addHandler(onRequest);
 
     final request = Request.get(Uri.parse('http://localhost/'));
     final context = _MockRequestContext();
     when(() => context.request).thenReturn(request);
-    when(() => context.read<String>()).thenThrow(StateError(''));
 
-    await expectLater(() => onRequest(context), throwsStateError);
+    await expectLater(() => handler(context), throwsStateError);
   });
 }
