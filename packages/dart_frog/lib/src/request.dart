@@ -27,14 +27,12 @@ class Request {
     Map<String, Object>? headers,
     Object? body,
     Encoding? encoding,
-  }) : this._(
-          shelf.Request(
-            HttpMethod.delete.value,
-            uri,
-            headers: headers,
-            body: body,
-            encoding: encoding,
-          ),
+  }) : this(
+          HttpMethod.delete.value,
+          uri,
+          headers: headers,
+          body: body,
+          encoding: encoding,
         );
 
   /// An HTTP GET request.
@@ -43,14 +41,12 @@ class Request {
     Map<String, Object>? headers,
     Object? body,
     Encoding? encoding,
-  }) : this._(
-          shelf.Request(
-            HttpMethod.get.value,
-            uri,
-            headers: headers,
-            body: body,
-            encoding: encoding,
-          ),
+  }) : this(
+          HttpMethod.get.value,
+          uri,
+          headers: headers,
+          body: body,
+          encoding: encoding,
         );
 
   /// An HTTP PATCH request.
@@ -59,14 +55,12 @@ class Request {
     Map<String, Object>? headers,
     Object? body,
     Encoding? encoding,
-  }) : this._(
-          shelf.Request(
-            HttpMethod.patch.value,
-            uri,
-            headers: headers,
-            body: body,
-            encoding: encoding,
-          ),
+  }) : this(
+          HttpMethod.patch.value,
+          uri,
+          headers: headers,
+          body: body,
+          encoding: encoding,
         );
 
   /// An HTTP POST request.
@@ -75,14 +69,12 @@ class Request {
     Map<String, Object>? headers,
     Object? body,
     Encoding? encoding,
-  }) : this._(
-          shelf.Request(
-            HttpMethod.post.value,
-            uri,
-            headers: headers,
-            body: body,
-            encoding: encoding,
-          ),
+  }) : this(
+          HttpMethod.post.value,
+          uri,
+          headers: headers,
+          body: body,
+          encoding: encoding,
         );
 
   /// An HTTP PUT request.
@@ -91,14 +83,12 @@ class Request {
     Map<String, Object>? headers,
     Object? body,
     Encoding? encoding,
-  }) : this._(
-          shelf.Request(
-            HttpMethod.put.value,
-            uri,
-            headers: headers,
-            body: body,
-            encoding: encoding,
-          ),
+  }) : this(
+          HttpMethod.put.value,
+          uri,
+          headers: headers,
+          body: body,
+          encoding: encoding,
         );
 
   Request._(this._request);
