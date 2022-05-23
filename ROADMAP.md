@@ -9,8 +9,8 @@ In the interest of transparency, we want to share high-level details of our road
 #### Bugs/Quality 🐛
 
 - [X] Resolve internal dynamic routing issue with `package:shelf_router`
-- [ ] Abstract `package:shelf` fully from the end-user so that `shelf` implementation details don't leak from the DartFrog public API
-  - [ ] Also, simplify interfaces whereever possible to avoid having multiple ways to achieve the same thing and to keep the API surface as small as possible
+- [X] Abstract `package:shelf` fully from the end-user so that `shelf` implementation details don't leak from the DartFrog public API
+  - [X] Also, simplify interfaces whereever possible to avoid having multiple ways to achieve the same thing and to keep the API surface as small as possible
 
 #### Testing 🧪
 
