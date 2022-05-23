@@ -13,6 +13,5 @@ export 'src/_internal.dart'
 export 'src/handler.dart' show Handler;
 export 'src/hot_reload.dart' show hotReload;
 export 'src/http_method.dart' show HttpMethod;
-export 'src/json_response.dart' show JsonResponse;
 export 'src/middleware.dart' show Middleware, HandlerUse;
 export 'src/provider.dart' show provider;

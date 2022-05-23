@@ -16,7 +16,7 @@ void main() {
           return Response(body: '');
         },
       );
-      final request = Request('GET', Uri.parse('http://127.0.0.1/'));
+      final request = Request.get(Uri.parse('http://localhost/'));
       final context = _MockRequestContext();
       when(() => context.request).thenReturn(request);
       await handler(context);

@@ -4,10 +4,10 @@ part of '_internal.dart';
 /// An HTTP response.
 /// {@endtemplate}
 class Response {
-  /// {@macro response}
+  /// Create a [Response] with a string body.
   Response({
     int statusCode = 200,
-    Object? body,
+    String? body,
     Map<String, Object>? headers,
     Encoding? encoding,
   }) : this._(
@@ -17,6 +17,33 @@ class Response {
             headers: headers,
             encoding: encoding,
           ),
+        );
+
+  /// Create a [Response] with a byte array body.
+  Response.bytes({
+    int statusCode = 200,
+    List<int>? body,
+    Map<String, Object>? headers,
+  }) : this._(
+          shelf.Response(
+            statusCode,
+            body: body,
+            headers: headers,
+          ),
+        );
+
+  /// Create a [Response] with a json body.
+  Response.json({
+    int statusCode = 200,
+    Map<String, dynamic>? body = const <String, dynamic>{},
+    Map<String, String> headers = const <String, String>{},
+  }) : this(
+          statusCode: statusCode,
+          body: body != null ? jsonEncode(body) : null,
+          headers: {
+            ...headers,
+            HttpHeaders.contentTypeHeader: ContentType.json.value,
+          },
         );
 
   Response._(this._response);

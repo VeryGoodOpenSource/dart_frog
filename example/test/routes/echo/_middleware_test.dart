@@ -12,7 +12,7 @@ void main() {
   group('middleware', () {
     test('returns 403 when authorization header is missing.', () async {
       final handler = middleware((request) => Response());
-      final request = Request('GET', Uri.parse('http://127.0.0.1/'));
+      final request = Request.get(Uri.parse('http://localhost/'));
       final context = _MockRequestContext();
       when(() => context.request).thenReturn(request);
       final response = await handler(context);
@@ -21,9 +21,8 @@ void main() {
 
     test('forwards request when authorization header is present.', () async {
       final handler = middleware((request) => Response());
-      final request = Request(
-        'GET',
-        Uri.parse('http://127.0.0.1/'),
+      final request = Request.get(
+        Uri.parse('http://localhost/'),
         headers: {'Authorization': '__token__'},
       );
       final context = _MockRequestContext();

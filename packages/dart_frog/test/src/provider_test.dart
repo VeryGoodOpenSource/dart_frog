@@ -21,7 +21,7 @@ void main() {
     final handler =
         const Pipeline().addMiddleware(middleware).addHandler(onRequest);
 
-    final request = Request('GET', Uri.parse('http://localhost:8080/'));
+    final request = Request.get(Uri.parse('http://localhost/'));
     final context = _MockRequestContext();
     when(() => context.request).thenReturn(request);
     final response = await handler(context);
@@ -46,7 +46,7 @@ void main() {
     final handler =
         const Pipeline().addMiddleware(middleware).addHandler(onRequest);
 
-    final request = Request('GET', Uri.parse('http://localhost:8080/'));
+    final request = Request.get(Uri.parse('http://localhost/'));
     final context = _MockRequestContext();
     when(() => context.request).thenReturn(request);
     final response = await handler(context);
@@ -61,7 +61,7 @@ void main() {
       return Response(body: value);
     }
 
-    final request = Request('GET', Uri.parse('http://localhost:8080/'));
+    final request = Request.get(Uri.parse('http://localhost/'));
     final context = _MockRequestContext();
     when(() => context.request).thenReturn(request);
     when(() => context.read<String>()).thenThrow(StateError(''));

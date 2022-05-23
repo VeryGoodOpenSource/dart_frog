@@ -22,7 +22,7 @@ void main() {
       final _handler = const Pipeline()
           .addMiddleware(requestLogger(logger: logger))
           .addHandler((_) => Response());
-      final request = Request('GET', Uri.parse('http://127.0.0.1/'));
+      final request = Request.get(Uri.parse('http://localhost/'));
       final context = _MockRequestContext();
       when(() => context.request).thenReturn(request);
       await _handler(context);
