@@ -1,4 +1,8 @@
-import 'package:shelf/shelf.dart';
+import 'package:dart_frog/dart_frog.dart';
+
+/// A function which creates a new [Handler]
+/// by wrapping a [Handler].
+typedef Middleware = Handler Function(Handler handler);
 
 /// Extension on [Handler] which adds support
 /// for applying middleware to the request pipeline.

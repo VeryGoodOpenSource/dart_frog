@@ -1,7 +1,10 @@
 import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
+
+class _MockRequestContext extends Mock implements RequestContext {}
 
 void main() {
   test('multiple middleware can be used on a handler', () async {
@@ -19,9 +22,9 @@ void main() {
       return handler.use(stringProvider).use(intProvider);
     }
 
-    Response onRequest(Request request) {
-      final stringValue = read<String>(request);
-      final intValue = read<int>(request);
+    Response onRequest(RequestContext context) {
+      final stringValue = context.read<String>();
+      final intValue = context.read<int>();
       return Response.ok('$stringValue $intValue');
     }
 
@@ -29,11 +32,13 @@ void main() {
         const Pipeline().addMiddleware(middleware).addHandler(onRequest);
 
     final request = Request('GET', Uri.parse('http://localhost:8080/'));
-    final response = await handler(request);
+    final context = _MockRequestContext();
+    when(() => context.request).thenReturn(request);
+    final response = await handler(context);
 
     await expectLater(response.statusCode, equals(HttpStatus.ok));
     await expectLater(
-      await response.readAsString(),
+      await response.body(),
       equals('$stringValue $intValue'),
     );
   });

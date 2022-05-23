@@ -1,3 +1,5 @@
 import 'package:dart_frog/dart_frog.dart';
 
-Response onRequest(Request request, String message) => Response.ok(message);
+Response onRequest(RequestContext context, String message) {
+  return Response.ok(message);
+}
