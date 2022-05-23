@@ -28,13 +28,13 @@ class RequestContext {
     if (value == null) {
       throw StateError(
         '''
-read<$T>() called with a request context that does not contain a $T.
+context.read<$T>() called with a request context that does not contain a $T.
 
 This can happen if $T was not provided to the reqquest context:
   ```dart
   // _middleware.dart
   Handler middleware(Handler handler) {
-    return handler.provide(() => $T());
+    return handler.use(provider<T>((context) => $T());
   }
   ```
 ''',

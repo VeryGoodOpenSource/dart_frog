@@ -22,7 +22,6 @@ class Response {
   Response._(this._response);
 
   final shelf.Response _response;
-  Stream<List<int>>? _bytes;
 
   /// The HTTP status code of the response.
   int get statusCode => _response.statusCode;
@@ -31,7 +30,7 @@ class Response {
   Map<String, dynamic> get headers => _response.headers;
 
   /// Returns a [Stream] representing the body.
-  Stream<List<int>> bytes() => _bytes ??= _response.read();
+  Stream<List<int>> bytes() => _response.read();
 
   /// Returns a Future containing the body as a string.
   Future<String> body() => _response.readAsString();

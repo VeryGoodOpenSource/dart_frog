@@ -3,13 +3,6 @@ part of '_internal.dart';
 /// {@template pipeline}
 /// A helper that makes it easy to compose a set of [Middleware] and a
 /// [Handler].
-///
-/// ```dart
-///  var handler = const Pipeline()
-///      .addMiddleware(loggingMiddleware)
-///      .addMiddleware(cachingMiddleware)
-///      .addHandler(application);
-/// ```
 /// {@endtemplate}
 class Pipeline {
   /// {@macro pipeline}

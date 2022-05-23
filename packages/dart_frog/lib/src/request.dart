@@ -27,8 +27,6 @@ class Request {
 
   final shelf.Request _request;
 
-  Stream<List<int>>? _body;
-
   /// The requested url relative to the current handler path.
   Uri get url => _request.url;
 
@@ -44,7 +42,7 @@ class Request {
   }
 
   /// Returns a [Stream] representing the body.
-  Stream<List<int>> get body => _body ??= _request.read();
+  Stream<List<int>> get body => _request.read();
 
   /// The body as json (`Map<String, dynamic>`).
   Future<Map<String, dynamic>> json() async {
