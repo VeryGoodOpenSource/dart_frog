@@ -5,12 +5,7 @@ import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
 void main() {
-  final cwd = Directory.current;
   group('buildRouteConfiguration', () {
-    setUp(() {
-      Directory.current = cwd;
-    });
-
     tearDown(() {
       try {
         Directory(
@@ -47,9 +42,9 @@ void main() {
           'middleware': false,
           'files': [
             {
-              'name': '.._routes_index',
-              'path': '../routes/index.dart',
-              'route': '/'
+              'name': '.._test_.fixtures_single_routes_index',
+              'path': '../test/.fixtures/single/routes/index.dart',
+              'route': 'routes'
             }
           ]
         }
@@ -59,7 +54,6 @@ void main() {
       )..createSync(recursive: true);
       final routes = Directory(path.join(directory.path, 'routes'))
         ..createSync();
-      Directory.current = directory;
       File(path.join(routes.path, 'index.dart')).createSync();
       final configuration = buildRouteConfiguration(directory);
       expect(
@@ -76,9 +70,9 @@ void main() {
           'middleware': false,
           'files': [
             {
-              'name': '.._routes_index',
-              'path': '../routes/index.dart',
-              'route': '/'
+              'name': '.._test_.fixtures_nested_routes_index',
+              'path': '../test/.fixtures/nested/routes/index.dart',
+              'route': 'routes'
             }
           ]
         },
@@ -88,8 +82,8 @@ void main() {
           'middleware': false,
           'files': [
             {
-              'name': '.._routes_echo_message',
-              'path': '../routes/echo/message.dart',
+              'name': '.._test_.fixtures_nested_routes_echo_message',
+              'path': '../test/.fixtures/nested/routes/echo/message.dart',
               'route': '/message'
             }
           ]
@@ -100,7 +94,6 @@ void main() {
       )..createSync(recursive: true);
       final routes = Directory(path.join(directory.path, 'routes'))
         ..createSync();
-      Directory.current = directory;
       File(path.join(routes.path, 'index.dart')).createSync();
       final echoDirectory = Directory(path.join(routes.path, 'echo'))
         ..createSync();
@@ -114,23 +107,12 @@ void main() {
 
     test('includes nested directories', () {
       const expected = [
-        {
-          'name': '_',
-          'route': '/',
-          'middleware': false,
-          'files': [
-            {
-              'name': '.._routes_index',
-              'path': '../routes/index.dart',
-              'route': '/'
-            }
-          ]
-        },
+        {'name': '_', 'route': '/', 'middleware': false, 'files': <dynamic>[]},
         {
           'name': '_echo',
           'route': '/echo',
           'middleware': false,
-          'files': <RouteFile>[]
+          'files': <dynamic>[]
         },
         {
           'name': '_echo_message',
@@ -138,8 +120,10 @@ void main() {
           'middleware': false,
           'files': [
             {
-              'name': '.._routes_echo_message_index',
-              'path': '../routes/echo/message/index.dart',
+              'name':
+                  '''.._test_.fixtures_nested_directories_routes_echo_message_index''',
+              'path':
+                  '../test/.fixtures/nested_directories/routes/echo/message/index.dart',
               'route': '/'
             }
           ]
@@ -155,8 +139,6 @@ void main() {
       )..createSync(recursive: true);
       final routes = Directory(path.join(directory.path, 'routes'))
         ..createSync();
-      Directory.current = directory;
-      File(path.join(routes.path, 'index.dart')).createSync();
       final echoDirectory = Directory(path.join(routes.path, 'echo'))
         ..createSync();
       final messageDirectory =
@@ -177,9 +159,9 @@ void main() {
           'middleware': false,
           'files': [
             {
-              'name': '.._routes_index',
-              'path': '../routes/index.dart',
-              'route': '/'
+              'name': '.._test_.fixtures_dynamic_routes_index',
+              'path': '../test/.fixtures/dynamic/routes/index.dart',
+              'route': 'routes'
             }
           ]
         },
@@ -189,8 +171,8 @@ void main() {
           'middleware': false,
           'files': [
             {
-              'name': r'.._routes_echo_$message',
-              'path': '../routes/echo/<message>.dart',
+              'name': r'.._test_.fixtures_dynamic_routes_echo_$message',
+              'path': '../test/.fixtures/dynamic/routes/echo/<message>.dart',
               'route': '/<message>'
             }
           ]
@@ -201,7 +183,6 @@ void main() {
       )..createSync(recursive: true);
       final routes = Directory(path.join(directory.path, 'routes'))
         ..createSync();
-      Directory.current = directory;
       File(path.join(routes.path, 'index.dart')).createSync();
       final echoDirectory = Directory(path.join(routes.path, 'echo'))
         ..createSync();
@@ -221,18 +202,21 @@ void main() {
           'middleware': false,
           'files': [
             {
-              'name': '.._routes_index',
-              'path': '../routes/index.dart',
-              'route': '/'
+              'name': '.._test_.fixtures_dynamic_nested_routes_index',
+              'path': '../test/.fixtures/dynamic_nested/routes/index.dart',
+              'route': 'routes'
             },
             {
-              'name': r'.._routes_$user_$name',
-              'path': '../routes/<user>/<name>.dart',
+              'name': r'.._test_.fixtures_dynamic_nested_routes_$user_$name',
+              'path':
+                  '../test/.fixtures/dynamic_nested/routes/<user>/<name>.dart',
               'route': '/<user>/<name>'
             },
             {
-              'name': r'.._routes_$user_$id_index',
-              'path': '../routes/<user>/<id>/index.dart',
+              'name':
+                  r'.._test_.fixtures_dynamic_nested_routes_$user_$id_index',
+              'path':
+                  '../test/.fixtures/dynamic_nested/routes/<user>/<id>/index.dart',
               'route': '/<id>/<user>'
             }
           ]
@@ -248,7 +232,6 @@ void main() {
       )..createSync(recursive: true);
       final routes = Directory(path.join(directory.path, 'routes'))
         ..createSync();
-      Directory.current = directory;
       File(path.join(routes.path, 'index.dart')).createSync();
       final userDirectory = Directory(path.join(routes.path, '<user>'))
         ..createSync();
