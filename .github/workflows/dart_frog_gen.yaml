@@ -20,7 +20,7 @@ jobs:
   build:
     defaults:
       run:
-        working-directory: packages/dart_frog-gen
+        working-directory: packages/dart_frog_gen
 
     runs-on: ubuntu-latest
 
