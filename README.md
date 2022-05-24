@@ -4,8 +4,9 @@
 [![ci][ci_badge]][ci_link]
 [![style: very good analysis][very_good_analysis_badge]][very_good_analysis_link]
 [![License: MIT][license_badge]][license_link]
+[![Powered by Mason](https://img.shields.io/endpoint?url=https%3A%2F%2Ftinyurl.com%2Fmason-badge)](https://github.com/felangel/mason)
 
-A fast, minimalistic web framework for Dart 🎯
+A fast, minimalistic backend framework for Dart 🎯
 
 Developed with 💙 by [Very Good Ventures][very_good_ventures_link] 🦄
 
@@ -52,6 +53,38 @@ Create a production build which includes a `DockerFile` so that you can deploy a
 # 📦 Create a production build
 dart_frog build
 ```
+
+## Goals 🎯
+
+Dart Frog is built on top of [shelf](https://pub.dev/packages/shelf) and [mason](https://pub.dev/packages/mason) and is inspired by many tools including [remix.run](https://remix.run), [next.js](https://nextjs.org), and [express.js](https://expressjs.com).
+
+The goal of Dart Frog is to help developers effectively build backends in Dart. Currently, Dart Frog is focused on optimizing the process of building backends which aggregate, compose, and normalize data from multiple sources. Dart Frog provides a simple core with a small API surface area in order to reduce the learning curve and ramp-up time for developers. In addition, Dart Frog is intended to help Flutter/Dart developers maximize their productivity by having a unified tech stack that enables sharing tooling, models, and more!
+
+## Feature Set ✨
+
+✅ Hot Reload ⚡️
+
+✅ Dart Dev Tools ⚙️
+
+✅ File System Routing 🚏
+
+✅ Index Routes 🗂
+
+✅ Nested Routes 🪆
+
+✅ Dynamic Routes 🌓
+
+✅ Middleware 🍔
+
+✅ Dependency Injection 💉
+
+✅ Production Builds 👷‍♂️
+
+✅ Docker 🐳
+
+🚧 Generated Dart Client Package 📦
+
+🚧 Generated API Documentation 📔
 
 ## Documentation 📝
 
@@ -205,32 +238,6 @@ void main() {
 In the above test, we're using `package:mocktail` to create a mock `RequestContext` and stub the return value when calling `context.read<String>()`. Then, all we need to do is call `onRequest` with the mocked context and we can assert that the response is what we expect. In this case, we're checking the statusCode and response body to ensure that the response is a 200 with the provided greeting.
 
 For more information, see the [example][example_link] and our [roadmap][roadmap_link].
-
-## Feature Set ✨
-
-✅ Hot Reload ⚡️
-
-✅ Dart Dev Tools ⚙️
-
-✅ File System Routing 🚏
-
-✅ Index Routes 🗂
-
-✅ Nested Routes 🪆
-
-✅ Dynamic Routes 🌓
-
-✅ Middleware 🍔
-
-✅ Dependency Injection 💉
-
-✅ Production Builds 👷‍♂️
-
-✅ Docker 🐳
-
-🚧 Generated Dart Client Package 📦
-
-🚧 Generated API Documentation 📔
 
 [dart_installation_link]: https://dart.dev/get-dart
 [ci_badge]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog.yaml/badge.svg
