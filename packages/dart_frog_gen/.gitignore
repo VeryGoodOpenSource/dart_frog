@@ -7,4 +7,5 @@ build/
 pubspec.lock
 
 # Test related files.
+coverage/
 test/.fixtures
