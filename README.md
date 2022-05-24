@@ -9,6 +9,10 @@ A fast, minimalistic web framework for Dart 🎯
 
 Developed with 💙 by [Very Good Ventures][very_good_ventures_link] 🦄
 
+## Experimental 🚧
+
+Dart Frog is an experimental project under development and should not be used in production at this time.
+
 ## Quick Start 🚀
 
 ### Prerequisites 📝

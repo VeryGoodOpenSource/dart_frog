@@ -9,6 +9,10 @@ Code generation tooling for [Dart Frog][dart_frog_link].
 
 Developed with 💙 by [Very Good Ventures][very_good_ventures_link] 🦄
 
+## Experimental 🚧
+
+`dart_frog_gen` is an experimental project under development and should not be used in production at this time.
+
 [ci_badge]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog.yaml/badge.svg
 [ci_link]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog.yaml
 [dart_frog_link]: https://github.com/verygoodopensource/dart_frog

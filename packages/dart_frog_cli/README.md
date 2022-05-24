@@ -9,6 +9,12 @@ The official command line interface for [Dart Frog][dart_frog_link].
 
 Developed with 💙 by [Very Good Ventures][very_good_ventures_link] 🦄
 
+## Experimental 🚧
+
+`dart_frog` is an experimental project under development and should not be used in production at this time.
+
+## Usage 💻
+
 ```
 A fast, minimalistic backend framework for Dart.
 
