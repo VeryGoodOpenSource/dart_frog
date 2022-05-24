@@ -1,5 +1,3 @@
-# Dart Frog
-
 [![Dart Frog Logo][logo_white]][dart_frog_link_dark]
 [![Dart Frog Logo][logo_black]][dart_frog_link_light]
 
