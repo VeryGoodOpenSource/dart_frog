@@ -1,6 +1,6 @@
 name: dart_frog
 description: A fast, minimalistic backend framework for Dart
-version: 0.0.1-dev.1
+version: 0.0.1-dev.2
 homepage: https://github.com/VeryGoodOpenSource/dart_frog
 
 environment:
