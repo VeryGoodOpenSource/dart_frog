@@ -1,13 +1,13 @@
 [![Dart Frog Logo][logo_white]][dart_frog_link_dark]
 [![Dart Frog Logo][logo_black]][dart_frog_link_light]
 
-Developed with 💙 by [Very Good Ventures][very_good_ventures_link] 🦄
-
 [![ci][ci_badge]][ci_link]
 [![style: very good analysis][very_good_analysis_badge]][very_good_analysis_link]
 [![License: MIT][license_badge]][license_link]
 
-A fast, minimalistic backend framework for Dart.
+A fast, minimalistic web framework for Dart 🎯
+
+Developed with 💙 by [Very Good Ventures][very_good_ventures_link] 🦄
 
 ## Quick Start 🚀
 
