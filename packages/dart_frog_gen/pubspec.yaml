@@ -1,7 +1,6 @@
 name: dart_frog_gen
 description: Code generation tooling for dart_frog
-version: 1.0.0+1
-publish_to: none
+version: 0.0.1-dev.1
 
 environment:
   sdk: ">=2.17.0 <3.0.0"
