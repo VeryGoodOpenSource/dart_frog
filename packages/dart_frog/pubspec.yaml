@@ -11,6 +11,7 @@ dependencies:
   shelf_hotreload: ^1.1.0
 
 dev_dependencies:
+  http: ^0.13.4
   mocktail: ^0.3.0
   test: ^1.19.2
   very_good_analysis: ^3.0.0

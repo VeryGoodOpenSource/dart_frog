@@ -1,3 +1,21 @@
+// Copyright 2019 Google LLC
+// Copyright 2022 Very Good Ventures
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// Original Source: https://github.com/dart-lang/shelf/blob/master/pkgs/shelf_router/lib/src/router.dart
+// Modified: For interoperability with package:dart_frog
+
 part of '_internal.dart';
 
 /// A class that routes requests to handlers based on HTTP verb and route
@@ -10,12 +28,12 @@ class Router {
   Router({Handler notFoundHandler = _defaultNotFound})
       : _notFoundHandler = notFoundHandler;
 
-  final List<_RouterEntry> _routes = [];
+  final List<RouterEntry> _routes = [];
   final Handler _notFoundHandler;
 
   /// Handle all request to [route] using [handler].
   void all(String route, Function handler) {
-    _routes.add(_RouterEntry('ALL', route, handler));
+    _routes.add(RouterEntry('ALL', route, handler));
   }
 
   /// Mount a handler below a prefix.
@@ -89,6 +107,9 @@ class _RouteNotFoundResponse extends Response {
   Stream<List<int>> bytes() => Stream<List<int>>.value(_messageBytes);
 
   @override
+  Future<String> body() async => _message;
+
+  @override
   Response copyWith({Map<String, Object?>? headers, dynamic body}) {
     return super.copyWith(headers: headers, body: body ?? _message);
   }
@@ -101,11 +122,14 @@ bool _isNoCapture(String regexp) {
   return RegExp('^(?:$regexp)|.*\$').firstMatch('')!.groupCount == 0;
 }
 
+/// {@template router_entry}
 /// Entry in the router.
 ///
 /// This class implements the logic for matching the path pattern.
-class _RouterEntry {
-  factory _RouterEntry(
+/// {@endtemplate}
+class RouterEntry {
+  /// {@macro router_entry}
+  factory RouterEntry(
     String verb,
     String route,
     Function handler, {
@@ -140,7 +164,7 @@ class _RouterEntry {
     }
     final routePattern = RegExp('^$pattern\$');
 
-    return _RouterEntry._(
+    return RouterEntry._(
       verb,
       route,
       handler,
@@ -150,7 +174,7 @@ class _RouterEntry {
     );
   }
 
-  _RouterEntry._(
+  RouterEntry._(
     this.verb,
     this.route,
     this._handler,
@@ -162,6 +186,7 @@ class _RouterEntry {
   /// Pattern for parsing the route pattern
   static final RegExp _parser = RegExp(r'([^<]*)(?:<([^>|]+)(?:\|([^>]*))?>)?');
 
+  /// The route entry verb and route.
   final String verb, route;
   final Function _handler;
   final Middleware _middleware;
@@ -173,9 +198,6 @@ class _RouterEntry {
 
   /// Names for the parameters in the route pattern.
   final List<String> _params;
-
-  /// List of parameter names in the route pattern.
-  List<String> get params => _params.toList(); // exposed for using generator.
 
   /// Returns a map from parameter name to value, if the path matches the
   /// route pattern. Otherwise returns null.

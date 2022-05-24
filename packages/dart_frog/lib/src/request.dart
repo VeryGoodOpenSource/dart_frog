@@ -109,8 +109,11 @@ class Request {
     return HttpMethod.values.firstWhere((m) => m.value == _request.method);
   }
 
-  /// Returns a [Stream] representing the body.
-  Stream<List<int>> get body => _request.read();
+  /// The body as a byte array stream.
+  Stream<List<int>> bytes() => _request.read();
+
+  /// The body as a string.
+  Future<String> body() => _request.readAsString();
 
   /// The body as json (`Map<String, dynamic>`).
   Future<Map<String, dynamic>> json() async {
