@@ -1,3 +1,11 @@
+# 0.0.1-dev.3
+
+- fix: version string
+- refactor: update prod_server brick to use hosted dart_frog_gen
+- refactor: update dev_server brick to use hosted dart_frog_gen
+- refactor: update create brick to use hosted dart_frog_gen
+- chore: add example
+
 # 0.0.1-dev.2
 
 - docs: fix README assets
