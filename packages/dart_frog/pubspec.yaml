@@ -1,7 +1,6 @@
 name: dart_frog
 description: A fast, minimalistic backend framework for Dart
-version: 1.0.0+1
-publish_to: none
+version: 0.0.1-dev.1
 
 environment:
   sdk: ">=2.17.0 <3.0.0"
