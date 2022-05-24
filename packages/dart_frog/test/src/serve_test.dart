@@ -13,5 +13,17 @@ void main() {
       expect(response.statusCode, equals(HttpStatus.ok));
       await server.close();
     });
+
+    test('can return multiple 404s', () async {
+      final server = await serve(Router(), 'localhost', 3001);
+      final client = HttpClient();
+      var request = await client.getUrl(Uri.parse('http://localhost:3001'));
+      var response = await request.close();
+      expect(response.statusCode, equals(HttpStatus.notFound));
+      request = await client.getUrl(Uri.parse('http://localhost:3001'));
+      response = await request.close();
+      expect(response.statusCode, equals(HttpStatus.notFound));
+      await server.close();
+    });
   });
 }
