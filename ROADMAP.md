@@ -14,7 +14,7 @@ In the interest of transparency, we want to share high-level details of our road
 
 #### Testing 🧪
 
-- [ ] 100% test coverage for all packages
+- [X] 100% test coverage for all packages
 
 #### Documentation 🗒️
 
