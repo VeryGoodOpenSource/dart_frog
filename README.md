@@ -1,6 +1,8 @@
 [![Dart Frog Logo][logo_white]][dart_frog_link_dark]
 [![Dart Frog Logo][logo_black]][dart_frog_link_light]
 
+Developed with 💙 by [Very Good Ventures][very_good_ventures_link] 🦄
+
 [![ci][ci_badge]][ci_link]
 [![style: very good analysis][very_good_analysis_badge]][very_good_analysis_link]
 [![License: MIT][license_badge]][license_link]
@@ -47,7 +49,9 @@ Create a production build which includes a `DockerFile` so that you can deploy a
 dart_frog build
 ```
 
-## Routes 🚏
+## Documentation 📝
+
+### Routes 🚏
 
 In Dart Frog, a route consists of an `onRequest` function (called a route handler) exported from a `.dart` file in the `routes` directory. Each endpoint is associated with a routes file based on its file name. Files named, `index.dart` will correspond to a `/` endpoint.
 
@@ -86,9 +90,11 @@ Future<Response> onRequest(RequestContext context) async {
 }
 ```
 
-### Dynamic Routes 🌓
+#### Dynamic Routes 🌓
 
 Dart Frog supports dynamic routes. For example, if you create a file called `routes/posts/<id>.dart`, then it will be accessible at `/posts/1`, `/posts/2`, etc.
+
+Routing parameters are forwarded to the `onRequest` method as seen below.
 
 ```dart
 import 'package:dart_frog/dart_frog.dart';
@@ -98,9 +104,9 @@ Response onRequest(RequestContext context, String id) {
 }
 ```
 
-## Middleware 🍔
+### Middleware 🍔
 
-Middleware in Dart Frog allows you to execute code before and after a request is processed. You can modify the inbound request and outbound responses by adding headers, provide dependencies, and more!
+Middleware in Dart Frog allows you to execute code before and after a request is processed. You can modify the inbound request and outbound responses, provide dependencies, and more!
 
 In Dart Frog, a piece of middleware consists of a `middleware` function exported from a `_middleware.dart` file within a subdirectory of the `routes` folder. There can only ever be once piece of middleware per route directory with `routes/_middleware.dart` being middleware that is executed for all inbound requests.
 
@@ -132,11 +138,11 @@ Handler middleware(Handler handler) {
 }
 ```
 
-### Dependency Injection 💉
+#### Dependency Injection 💉
 
 Middleware can also be used to provide dependencies to a `RequestContext` via a `provider`.
 
-`provider` is a type of middleware that can return an object of type `T` and has access to a `RequestContext`. The `create` callback is called lazily and the injected `RequestContext` can be used to perform additional lookups to access values provided upstream.
+`provider` is a type of middleware that can create and provide an instance of type `T` to the request context. The `create` callback is called lazily and the injected `RequestContext` can be used to perform additional lookups to access values provided upstream.
 
 In the following example, we'll use a `provider` to inject a `String` into our request context.
 
@@ -161,7 +167,7 @@ Response onRequest(RequestContext context) {
 }
 ```
 
-## Testing 🧪
+### Testing 🧪
 
 In Dart Frog, we can unit test our route handlers and middleware effectively because they are just pure functions.
 
@@ -194,6 +200,8 @@ void main() {
 
 In the above test, we're using `package:mocktail` to create a mock `RequestContext` and stub the return value when calling `context.read<String>()`. Then, all we need to do is call `onRequest` with the mocked context and we can assert that the response is what we expect. In this case, we're checking the statusCode and response body to ensure that the response is a 200 with the provided greeting.
 
+For more information, see the [example][example_link] and our [roadmap][roadmap_link].
+
 ## Feature Set ✨
 
 ✅ Hot Reload ⚡️
@@ -225,9 +233,12 @@ In the above test, we're using `package:mocktail` to create a mock `RequestConte
 [ci_link]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog.yaml
 [dart_frog_link_dark]: https://github.com/verygoodopensource/dart_frog#gh-dark-mode-only
 [dart_frog_link_light]: https://github.com/verygoodopensource/dart_frog#gh-light-mode-only
+[example_link]: https://github.com/VeryGoodOpenSource/dart_frog/tree/main/example
 [license_badge]: https://img.shields.io/badge/license-MIT-blue.svg
 [license_link]: https://opensource.org/licenses/MIT
 [logo_black]: ./assets/dart_frog_logo_black.png#gh-light-mode-only
 [logo_white]: ./assets/dart_frog_logo_white.png#gh-dark-mode-only
+[roadmap_link]: https://github.com/VeryGoodOpenSource/dart_frog/blob/main/ROADMAP.md
 [very_good_analysis_badge]: https://img.shields.io/badge/style-very_good_analysis-B22C89.svg
 [very_good_analysis_link]: https://pub.dev/packages/very_good_analysis
+[very_good_ventures_link]: https://verygood.ventures
