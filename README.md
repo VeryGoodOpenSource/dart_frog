@@ -206,7 +206,7 @@ Response onRequest(RequestContext context) {
 
 ### Testing 🧪
 
-In Dart Frog, we can unit test our route handlers and middleware effectively because they are just pure functions.
+In Dart Frog, we can unit test our route handlers and middleware effectively because they are plain functions.
 
 For example, we can test our route handler above using `package:test`:
 
