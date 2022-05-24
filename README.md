@@ -17,7 +17,7 @@ In order to use Dart Frog you must have the [Dart SDK][dart_installation_link] i
 
 ```sh
 # 📦 Install the dart_frog cli from source
-dart pub global activate --source path ./packages/dart_frog_cli
+dart pub global activate dart_frog_cli
 ```
 
 ### Creating a Project ✨
@@ -231,7 +231,3 @@ In the above test, we're using `package:mocktail` to create a mock `RequestConte
 [logo_white]: ./assets/dart_frog_logo_white.png#gh-dark-mode-only
 [very_good_analysis_badge]: https://img.shields.io/badge/style-very_good_analysis-B22C89.svg
 [very_good_analysis_link]: https://pub.dev/packages/very_good_analysis
-
-```
-
-```
