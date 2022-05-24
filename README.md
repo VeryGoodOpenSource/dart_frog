@@ -247,8 +247,8 @@ For more information, see the [example][example_link] and our [roadmap][roadmap_
 [example_link]: https://github.com/VeryGoodOpenSource/dart_frog/tree/main/example
 [license_badge]: https://img.shields.io/badge/license-MIT-blue.svg
 [license_link]: https://opensource.org/licenses/MIT
-[logo_black]: ./assets/dart_frog_logo_black.png#gh-light-mode-only
-[logo_white]: ./assets/dart_frog_logo_white.png#gh-dark-mode-only
+[logo_black]: https://raw.githubusercontent.com/VeryGoodOpenSource/dart_frog/main/assets/dart_frog_logo_black.png#gh-light-mode-only
+[logo_white]: https://raw.githubusercontent.com/VeryGoodOpenSource/dart_frog/main/assets/dart_frog_logo_white.png#gh-dark-mode-only
 [roadmap_link]: https://github.com/VeryGoodOpenSource/dart_frog/blob/main/ROADMAP.md
 [very_good_analysis_badge]: https://img.shields.io/badge/style-very_good_analysis-B22C89.svg
 [very_good_analysis_link]: https://pub.dev/packages/very_good_analysis
