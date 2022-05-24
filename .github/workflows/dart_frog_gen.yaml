@@ -21,4 +21,3 @@ jobs:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@v1
     with:
       working_directory: packages/dart_frog_gen
-      min_coverage: 0

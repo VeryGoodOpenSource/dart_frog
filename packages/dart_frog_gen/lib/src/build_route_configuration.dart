@@ -5,9 +5,7 @@ import 'package:path/path.dart' as path;
 
 /// Build a [RouteConfiguration] based on the provided root project [directory].
 RouteConfiguration buildRouteConfiguration(Directory directory) {
-  final routesDirectory = Directory(
-    path.join(Directory.current.path, 'routes'),
-  );
+  final routesDirectory = Directory(path.join(directory.path, 'routes'));
 
   if (!routesDirectory.existsSync()) {
     throw Exception('Could not find directory ${routesDirectory.path}');
@@ -147,9 +145,6 @@ List<RouteFile> _getRouteFiles(
     final fileRoutePath = pathToRoute(filePath).split(directoryPath).last;
     var fileRoute = fileRoutePath.isEmpty ? '/' : fileRoutePath;
     fileRoute = prefix + fileRoute;
-    if (!fileRoute.startsWith('/')) {
-      fileRoute = '/$fileRoute';
-    }
     if (fileRoute != '/' && fileRoute.endsWith('/')) {
       fileRoute = fileRoute.substring(0, fileRoute.length - 1);
     }
