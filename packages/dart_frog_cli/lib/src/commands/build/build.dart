@@ -1,5 +1,6 @@
 import 'package:dart_frog_cli/src/command.dart';
 import 'package:dart_frog_cli/src/commands/build/templates/dart_frog_prod_server_bundle.dart';
+import 'package:dart_frog_cli/src/commands/commands.dart';
 import 'package:mason/mason.dart';
 
 /// {@template build_command}
@@ -7,7 +8,10 @@ import 'package:mason/mason.dart';
 /// {@endtemplate}
 class BuildCommand extends DartFrogCommand {
   /// {@macro build_command}
-  BuildCommand({super.logger});
+  BuildCommand({super.logger, GeneratorBuilder? generator})
+      : _generator = generator ?? MasonGenerator.fromBundle;
+
+  final GeneratorBuilder _generator;
 
   @override
   final String description = 'Create a production build.';
@@ -17,7 +21,7 @@ class BuildCommand extends DartFrogCommand {
 
   @override
   Future<int> run() async {
-    final generator = await MasonGenerator.fromBundle(dartFrogProdServerBundle);
+    final generator = await _generator(dartFrogProdServerBundle);
     var vars = <String, dynamic>{};
 
     await generator.hooks.preGen(
