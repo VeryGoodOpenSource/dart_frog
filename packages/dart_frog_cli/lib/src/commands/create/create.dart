@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 import 'package:dart_frog_cli/src/command.dart';
+import 'package:dart_frog_cli/src/commands/commands.dart';
 import 'package:dart_frog_cli/src/commands/create/templates/create_dart_frog_bundle.dart';
 import 'package:mason/mason.dart';
 import 'package:path/path.dart' as path;
@@ -16,13 +17,18 @@ final RegExp _identifierRegExp = RegExp('[a-z_][a-z0-9_]*');
 /// {@endtemplate}
 class CreateCommand extends DartFrogCommand {
   /// {@macro create_command}
-  CreateCommand({super.logger}) {
+  CreateCommand({
+    super.logger,
+    GeneratorBuilder? generator,
+  }) : _generator = generator ?? MasonGenerator.fromBundle {
     argParser.addOption(
       'project-name',
       help: 'The project name for this new project. '
           'This must be a valid dart package name.',
     );
   }
+
+  final GeneratorBuilder _generator;
 
   @override
   final String description = 'Creates a new Dart Frog app.';
@@ -34,7 +40,7 @@ class CreateCommand extends DartFrogCommand {
   Future<int> run() async {
     final outputDirectory = _outputDirectory;
     final projectName = _projectName;
-    final generator = await MasonGenerator.fromBundle(createDartFrogBundle);
+    final generator = await _generator(createDartFrogBundle);
     final generateDone = logger.progress('Creating $projectName');
     final vars = <String, dynamic>{
       'name': projectName,
@@ -73,12 +79,15 @@ class CreateCommand extends DartFrogCommand {
     if (args.isEmpty) {
       throw UsageException(
         'No option specified for the output directory.',
-        usage,
+        usageString,
       );
     }
 
     if (args.length > 1) {
-      throw UsageException('Multiple output directories specified.', usage);
+      throw UsageException(
+        'Multiple output directories specified.',
+        usageString,
+      );
     }
   }
 
@@ -88,7 +97,7 @@ class CreateCommand extends DartFrogCommand {
       throw UsageException(
         '"$name" is not a valid package name.\n\n'
         'See https://dart.dev/tools/pub/pubspec#name for more information.',
-        usage,
+        usageString,
       );
     }
   }

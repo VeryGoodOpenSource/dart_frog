@@ -4,3 +4,6 @@
 .dart_tool/
 .packages
 pubspec.lock
+
+# Test related files
+coverage/

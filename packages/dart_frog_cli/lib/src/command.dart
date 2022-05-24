@@ -16,8 +16,15 @@ abstract class DartFrogCommand extends Command<int> {
   @visibleForTesting
   ArgResults? testArgResults;
 
+  /// Usage [String] used for testing purposes only.
+  @visibleForTesting
+  String? testUsage;
+
   /// [ArgResults] for the current command.
   ArgResults get results => testArgResults ?? argResults!;
+
+  /// Usage string.
+  String get usageString => testUsage ?? usage;
 
   /// [Logger] instance used to wrap stdout.
   Logger get logger => _logger ??= Logger();
