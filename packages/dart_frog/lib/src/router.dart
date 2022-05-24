@@ -104,6 +104,9 @@ class _RouteNotFoundResponse extends Response {
   static final _messageBytes = utf8.encode(_message);
 
   @override
+  shelf.Response get _response => super._response.change(body: _messageBytes);
+
+  @override
   Stream<List<int>> bytes() => Stream<List<int>>.value(_messageBytes);
 
   @override
