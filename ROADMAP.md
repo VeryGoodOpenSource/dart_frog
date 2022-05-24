@@ -18,18 +18,15 @@ In the interest of transparency, we want to share high-level details of our road
 
 #### Documentation 🗒️
 
-- [ ] Comprehensive Documentation for getting started with DartFrog
-  - [ ] Creating a project
-  - [ ] Project structure
-  - [ ] Development workflow
-    - [ ] Debugging
-    - [ ] Hot Reload
-  - [ ] Creating routes
-  - [ ] Creating middleware
-  - [ ] Providing a dependency
-  - [ ] Testing
-  - [ ] Production Builds
-  - [ ] Deployments
+- [X] Comprehensive Documentation for getting started with DartFrog
+  - [X] Creating a project
+  - [X] Project structure
+  - [X] Development workflow    
+  - [X] Creating routes
+  - [X] Creating middleware
+  - [X] Providing a dependency
+  - [X] Testing
+  - [X] Production Builds
 
 ### Features ✨
 
