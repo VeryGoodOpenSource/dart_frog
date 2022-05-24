@@ -4,7 +4,7 @@
 /// # activate dart_frog_cli
 /// dart pub global activate dart_frog_cli
 ///
-/// # see usage
+/// # 👀 See usage
 /// dart_frog --help
 /// ```
 library dart_frog_cli;
