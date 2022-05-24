@@ -46,12 +46,10 @@ packages:
   dart_frog_gen:
     dependency: "direct main"
     description:
-      path: "packages/dart_frog_gen"
-      ref: "457e1a4959320b3cc98769f4c165d1f4977fccac"
-      resolved-ref: "457e1a4959320b3cc98769f4c165d1f4977fccac"
-      url: "https://github.com/VeryGoodOpenSource/dart_frog"
-    source: git
-    version: "1.0.0+1"
+      name: dart_frog_gen
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.1-dev.2"
   http:
     dependency: transitive
     description:
