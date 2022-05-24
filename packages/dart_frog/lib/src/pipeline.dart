@@ -46,7 +46,4 @@ class Pipeline {
       return Response._(response);
     };
   }
-
-  /// Exposes this pipeline of [Middleware] as a single middleware instance.
-  Middleware get middleware => addHandler;
 }
