@@ -32,7 +32,7 @@ final createDartFrogBundle = MasonBundle.fromJson(<String, dynamic>{
     {
       "path": "routes/index.dart",
       "data":
-          "aW1wb3J0ICdwYWNrYWdlOmRhcnRfZnJvZy9kYXJ0X2Zyb2cuZGFydCc7CgpSZXNwb25zZSBvblJlcXVlc3QoUmVxdWVzdENvbnRleHQgY29udGV4dCkgewogIHJldHVybiBSZXNwb25zZSgnV2VsY29tZSB0byBEYXJ0IEZyb2chJyk7Cn0K",
+          "aW1wb3J0ICdwYWNrYWdlOmRhcnRfZnJvZy9kYXJ0X2Zyb2cuZGFydCc7CgpSZXNwb25zZSBvblJlcXVlc3QoUmVxdWVzdENvbnRleHQgY29udGV4dCkgewogIHJldHVybiBSZXNwb25zZShib2R5OiAnV2VsY29tZSB0byBEYXJ0IEZyb2chJyk7Cn0K",
       "type": "text"
     },
     {

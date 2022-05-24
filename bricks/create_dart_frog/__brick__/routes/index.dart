@@ -1,5 +1,5 @@
 import 'package:dart_frog/dart_frog.dart';
 
 Response onRequest(RequestContext context) {
-  return Response('Welcome to Dart Frog!');
+  return Response(body: 'Welcome to Dart Frog!');
 }
