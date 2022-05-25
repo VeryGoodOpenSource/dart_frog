@@ -1,3 +1,7 @@
+# 0.0.2-dev.1
+
+- **BREAKING**: fix: use `[...]` instead of `<...>` for dynamic routes
+
 # 0.0.1-dev.4
 
 - fix: append missing `/` route prefix
