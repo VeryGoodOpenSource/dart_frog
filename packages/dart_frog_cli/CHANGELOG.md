@@ -1,3 +1,8 @@
+# 0.0.2-dev.1
+
+- **BREAKING** fix: update dev and prod server bundles to `dart_frog_gen ^0.0.2-dev.1`
+  - use `[...]` instead of `<...>` for dynamic routes
+
 # 0.0.1-dev.4
 
 - chore(deps): upgrade to `dart_frog_gen ^0.0.1-dev.4`
