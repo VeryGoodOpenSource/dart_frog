@@ -1,3 +1,7 @@
+# 0.0.1-dev.4
+
+- fix: append missing `/` route prefix
+
 # 0.0.1-dev.3
 
 - docs: add example and improve documentation
