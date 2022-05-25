@@ -1,3 +1,7 @@
+# 0.0.1-dev.4
+
+- chore(deps): upgrade to `dart_frog_gen ^0.0.1-dev.4`
+
 # 0.0.1-dev.3
 
 - fix: version string
