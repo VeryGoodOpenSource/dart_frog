@@ -44,7 +44,7 @@ void main() {
             {
               'name': '.._test_.fixtures_single_routes_index',
               'path': '../test/.fixtures/single/routes/index.dart',
-              'route': 'routes'
+              'route': '/routes'
             }
           ]
         }
@@ -62,6 +62,45 @@ void main() {
       );
     });
 
+    test('includes multiple top-level routes', () {
+      const expected = [
+        {
+          'name': '_',
+          'route': '/',
+          'middleware': false,
+          'files': [
+            {
+              'name': '.._test_.fixtures_multiple_top_level_routes_index',
+              'path': '../test/.fixtures/multiple_top_level/routes/index.dart',
+              'route': '/routes'
+            },
+            {
+              'name': '.._test_.fixtures_multiple_top_level_routes_hello',
+              'path': '../test/.fixtures/multiple_top_level/routes/hello.dart',
+              'route': '/hello'
+            }
+          ]
+        }
+      ];
+      final directory = Directory(
+        path.join(
+          Directory.current.path,
+          'test',
+          '.fixtures',
+          'multiple_top_level',
+        ),
+      )..createSync(recursive: true);
+      final routes = Directory(path.join(directory.path, 'routes'))
+        ..createSync();
+      File(path.join(routes.path, 'index.dart')).createSync();
+      File(path.join(routes.path, 'hello.dart')).createSync();
+      final configuration = buildRouteConfiguration(directory);
+      expect(
+        configuration.directories.map((d) => d.toJson()).toList(),
+        equals(expected),
+      );
+    });
+
     test('includes nested routes', () {
       const expected = [
         {
@@ -72,7 +111,7 @@ void main() {
             {
               'name': '.._test_.fixtures_nested_routes_index',
               'path': '../test/.fixtures/nested/routes/index.dart',
-              'route': 'routes'
+              'route': '/routes'
             }
           ]
         },
@@ -161,7 +200,7 @@ void main() {
             {
               'name': '.._test_.fixtures_dynamic_routes_index',
               'path': '../test/.fixtures/dynamic/routes/index.dart',
-              'route': 'routes'
+              'route': '/routes'
             }
           ]
         },
@@ -204,7 +243,7 @@ void main() {
             {
               'name': '.._test_.fixtures_dynamic_nested_routes_index',
               'path': '../test/.fixtures/dynamic_nested/routes/index.dart',
-              'route': 'routes'
+              'route': '/routes'
             },
             {
               'name': r'.._test_.fixtures_dynamic_nested_routes_$user_$name',

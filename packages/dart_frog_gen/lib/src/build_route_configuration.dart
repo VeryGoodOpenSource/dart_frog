@@ -145,6 +145,9 @@ List<RouteFile> _getRouteFiles(
     final fileRoutePath = pathToRoute(filePath).split(directoryPath).last;
     var fileRoute = fileRoutePath.isEmpty ? '/' : fileRoutePath;
     fileRoute = prefix + fileRoute;
+    if (!fileRoute.startsWith('/')) {
+      fileRoute = '/$fileRoute';
+    }
     if (fileRoute != '/' && fileRoute.endsWith('/')) {
       fileRoute = fileRoute.substring(0, fileRoute.length - 1);
     }
