@@ -64,6 +64,7 @@ View the full documentation [here][documentation_link].
 [coverage_badge]: https://raw.githubusercontent.com/VeryGoodOpenSource/dart_frog/main/packages/dart_frog/coverage_badge.svg
 [dart_frog_link_dark]: https://github.com/verygoodopensource/dart_frog#gh-dark-mode-only
 [dart_frog_link_light]: https://github.com/verygoodopensource/dart_frog#gh-light-mode-only
+[dart_installation_link]: https://dart.dev/get-dart
 [documentation_link]: https://github.com/VeryGoodOpenSource/dart_frog/blob/main/README.md#documentation-
 [license_badge]: https://img.shields.io/badge/license-MIT-blue.svg
 [license_link]: https://opensource.org/licenses/MIT
