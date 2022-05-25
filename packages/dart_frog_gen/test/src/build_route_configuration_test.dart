@@ -211,7 +211,7 @@ void main() {
           'files': [
             {
               'name': r'.._test_.fixtures_dynamic_routes_echo_$message',
-              'path': '../test/.fixtures/dynamic/routes/echo/<message>.dart',
+              'path': '../test/.fixtures/dynamic/routes/echo/[message].dart',
               'route': '/<message>'
             }
           ]
@@ -225,7 +225,7 @@ void main() {
       File(path.join(routes.path, 'index.dart')).createSync();
       final echoDirectory = Directory(path.join(routes.path, 'echo'))
         ..createSync();
-      File(path.join(echoDirectory.path, '<message>.dart')).createSync();
+      File(path.join(echoDirectory.path, '[message].dart')).createSync();
       final configuration = buildRouteConfiguration(directory);
       expect(
         configuration.directories.map((d) => d.toJson()).toList(),
@@ -248,14 +248,14 @@ void main() {
             {
               'name': r'.._test_.fixtures_dynamic_nested_routes_$user_$name',
               'path':
-                  '../test/.fixtures/dynamic_nested/routes/<user>/<name>.dart',
+                  '../test/.fixtures/dynamic_nested/routes/[user]/[name].dart',
               'route': '/<user>/<name>'
             },
             {
               'name':
                   r'.._test_.fixtures_dynamic_nested_routes_$user_$id_index',
               'path':
-                  '../test/.fixtures/dynamic_nested/routes/<user>/<id>/index.dart',
+                  '../test/.fixtures/dynamic_nested/routes/[user]/[id]/index.dart',
               'route': '/<id>/<user>'
             }
           ]
@@ -272,10 +272,10 @@ void main() {
       final routes = Directory(path.join(directory.path, 'routes'))
         ..createSync();
       File(path.join(routes.path, 'index.dart')).createSync();
-      final userDirectory = Directory(path.join(routes.path, '<user>'))
+      final userDirectory = Directory(path.join(routes.path, '[user]'))
         ..createSync();
-      File(path.join(userDirectory.path, '<name>.dart')).createSync();
-      final idDirectory = Directory(path.join(userDirectory.path, '<id>'))
+      File(path.join(userDirectory.path, '[name].dart')).createSync();
+      final idDirectory = Directory(path.join(userDirectory.path, '[id]'))
         ..createSync();
       File(path.join(idDirectory.path, 'index.dart')).createSync();
       final configuration = buildRouteConfiguration(directory);
