@@ -78,7 +78,7 @@ List<RouteDirectory> _getRouteDirectories(
   directories.add(
     RouteDirectory(
       name: directoryPath.toAlias(),
-      route: directoryPath,
+      route: directoryPath.toRoute(),
       middleware: middleware,
       files: files,
     ),
@@ -155,7 +155,7 @@ List<RouteFile> _getRouteFiles(
     final route = RouteFile(
       name: filePath.toAlias(),
       path: filePath,
-      route: fileRoute,
+      route: fileRoute.toRoute(),
     );
     onRoute?.call(route);
     files.add(route);
@@ -167,17 +167,21 @@ extension on String {
   String toAlias() {
     final alias = path
         .withoutExtension(this)
-        .replaceAll('<', r'$')
-        .replaceAll('>', '')
+        .replaceAll('[', r'$')
+        .replaceAll(']', '')
         .replaceAll('/', '_');
     if (alias == '') return 'index';
     return alias;
+  }
+
+  String toRoute() {
+    return replaceAll('[', '<').replaceAll(']', '>');
   }
 }
 
 extension on Directory {
   bool get isDynamicRoute {
-    return RegExp('<(.*)>').hasMatch(path.basename(this.path));
+    return RegExp(r'\[(.*)\]').hasMatch(path.basename(this.path));
   }
 }
 
