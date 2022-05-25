@@ -44,7 +44,7 @@ void main() {
             {
               'name': '.._test_.fixtures_single_routes_index',
               'path': '../test/.fixtures/single/routes/index.dart',
-              'route': 'routes'
+              'route': '/routes'
             }
           ]
         }
@@ -111,7 +111,7 @@ void main() {
             {
               'name': '.._test_.fixtures_nested_routes_index',
               'path': '../test/.fixtures/nested/routes/index.dart',
-              'route': 'routes'
+              'route': '/routes'
             }
           ]
         },
@@ -200,7 +200,7 @@ void main() {
             {
               'name': '.._test_.fixtures_dynamic_routes_index',
               'path': '../test/.fixtures/dynamic/routes/index.dart',
-              'route': 'routes'
+              'route': '/routes'
             }
           ]
         },
@@ -243,7 +243,7 @@ void main() {
             {
               'name': '.._test_.fixtures_dynamic_nested_routes_index',
               'path': '../test/.fixtures/dynamic_nested/routes/index.dart',
-              'route': 'routes'
+              'route': '/routes'
             },
             {
               'name': r'.._test_.fixtures_dynamic_nested_routes_$user_$name',
