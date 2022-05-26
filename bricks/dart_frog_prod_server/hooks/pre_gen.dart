@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dart_frog_gen/dart_frog_gen.dart';
+import 'package:io/io.dart';
 import 'package:mason/mason.dart';
 import 'package:path/path.dart' as path;
 import 'package:pubspec_parse/pubspec_parse.dart';
@@ -36,17 +37,13 @@ Future<void> run(HookContext context) async {
   }
 
   final tempDirectory = await Directory.systemTemp.createTemp();
-  final result = await Process.run(
-    'cp',
-    ['-rf', '.', '${tempDirectory.path}${path.separator}'],
-    workingDirectory: projectDirectory.path,
-    runInShell: true,
-  );
-  bundlingDone();
-
-  if (result.exitCode != 0) {
-    context.logger.err('${result.stderr}');
-    exit(result.exitCode);
+  try {
+    await copyPath('.', '${tempDirectory.path}${path.separator}');
+    bundlingDone();
+  } catch (error) {
+    bundlingDone();
+    context.logger.err('$error');
+    exit(1);
   }
 
   await tempDirectory.rename(buildDirectoryPath);
