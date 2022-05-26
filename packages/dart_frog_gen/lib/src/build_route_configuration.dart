@@ -17,10 +17,9 @@ RouteConfiguration buildRouteConfiguration(Directory directory) {
   final globalMiddleware = globalMiddlewareFile.existsSync()
       ? MiddlewareFile(
           name: 'routes_middleware',
-          path: path.join(
-            '..',
-            path.relative(globalMiddlewareFile.path).replaceAll(r'\', '/'),
-          ),
+          path: path
+              .join('..', path.relative(globalMiddlewareFile.path))
+              .replaceAll(r'\', '/'),
         )
       : null;
 
@@ -49,7 +48,8 @@ List<RouteDirectory> _getRouteDirectories(
 }) {
   final directories = <RouteDirectory>[];
   final entities = directory.listSync();
-  final directorySegment = directory.path.split('routes').last;
+  final directorySegment =
+      directory.path.split('routes').last.replaceAll(r'\', '/');
   final directoryPath = directorySegment.startsWith('/')
       ? directorySegment
       : '/$directorySegment';
@@ -58,10 +58,9 @@ List<RouteDirectory> _getRouteDirectories(
   if (directory.path != path.join(Directory.current.path, 'routes')) {
     final _middleware = File(path.join(directory.path, '_middleware.dart'));
     if (_middleware.existsSync()) {
-      final middlewarePath = path.join(
-        '..',
-        path.relative(_middleware.path).replaceAll(r'\', '/'),
-      );
+      final middlewarePath = path
+          .join('..', path.relative(_middleware.path))
+          .replaceAll(r'\', '/');
       middleware = MiddlewareFile(
         name: middlewarePath.toAlias(),
         path: middlewarePath,
@@ -132,16 +131,15 @@ List<RouteFile> _getRouteFiles(
   String prefix = '',
 }) {
   final files = <RouteFile>[];
-  final directorySegment = directory.path.split('routes').last;
+  final directorySegment =
+      directory.path.split('routes').last.replaceAll(r'\', '/');
   final directoryPath = directorySegment.startsWith('/')
       ? directorySegment
       : '/$directorySegment';
   final entities = directory.listSync();
   entities.where((e) => e.isRoute).cast<File>().forEach((entity) {
-    final filePath = path.join(
-      '..',
-      path.relative(entity.path).replaceAll(r'\', '/'),
-    );
+    final filePath =
+        path.join('..', path.relative(entity.path)).replaceAll(r'\', '/');
     final fileRoutePath = pathToRoute(filePath).split(directoryPath).last;
     var fileRoute = fileRoutePath.isEmpty ? '/' : fileRoutePath;
     fileRoute = prefix + fileRoute;
@@ -175,7 +173,7 @@ extension on String {
   }
 
   String toRoute() {
-    return replaceAll('[', '<').replaceAll(']', '>');
+    return replaceAll('[', '<').replaceAll(']', '>').replaceAll(r'\', '/');
   }
 }
 

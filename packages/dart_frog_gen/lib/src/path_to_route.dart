@@ -9,7 +9,9 @@ import 'package:path/path.dart' as p;
 /// "../routes/hello/<name>.dart" -> "/hello/<name>"
 /// ```
 String pathToRoute(String path) {
-  final relativePath = p.relative(path, from: '../routes');
+  final normalizedPath = path.replaceAll(r'\', '/');
+  final relativePath =
+      p.relative(normalizedPath, from: '../routes').replaceAll(r'\', '/');
   final route = '/${relativePath.split('.dart').first.replaceAll('index', '')}';
 
   if (route.length > 1 && route.endsWith('/')) {
