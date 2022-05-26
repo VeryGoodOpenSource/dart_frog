@@ -32,7 +32,7 @@ In the interest of transparency, we want to share high-level details of our road
 
 - [ ] Improve HTTP method specification per handler 
 - [ ] Dart API Client Generation
-- [ ] Open API Documenation Generation
+- [ ] Open API Documentation Generation
 - [ ] DartFrog Testing Library (utilities for unit and e2e testing)
 - [ ] CLI `new` command to generate new `routes` and `middleware`
 - [ ] Health Check endpoint for monitoring
