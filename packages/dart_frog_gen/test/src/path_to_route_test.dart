@@ -7,8 +7,13 @@ void main() {
       '../routes/index.dart': '/',
       '../routes/hello.dart': '/hello',
       '../routes/hello/world.dart': '/hello/world',
-      '../routes/hello/<name>.dart': '/hello/<name>',
+      '../routes/hello/[name].dart': '/hello/[name]',
       '../routes/api/v1/index.dart': '/api/v1',
+      r'..\routes\index.dart': '/',
+      r'..\routes\hello.dart': '/hello',
+      r'..\routes\hello\world.dart': '/hello/world',
+      r'..\routes\hello\[name].dart': '/hello/[name]',
+      r'..\routes\api\v1\index.dart': '/api/v1',
     };
 
     for (final entry in expectedPathToRouteMappings.entries) {
