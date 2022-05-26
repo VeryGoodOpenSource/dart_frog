@@ -60,7 +60,9 @@ dart_frog build
 
 Dart Frog is built on top of [shelf](https://pub.dev/packages/shelf) and [mason](https://pub.dev/packages/mason) and is inspired by many tools including [remix.run](https://remix.run), [next.js](https://nextjs.org), and [express.js](https://expressjs.com).
 
-The goal of Dart Frog is to help developers effectively build backends in Dart. Currently, Dart Frog is focused on optimizing the process of building backends which aggregate, compose, and normalize data from multiple sources. Dart Frog provides a simple core with a small API surface area in order to reduce the learning curve and ramp-up time for developers. In addition, Dart Frog is intended to help Flutter/Dart developers maximize their productivity by having a unified tech stack that enables sharing tooling, models, and more!
+The goal of Dart Frog is to help developers effectively build backends in Dart. Currently, Dart Frog is focused on optimizing the process of building backends which aggregate, compose, and normalize data from multiple sources.
+
+Dart Frog provides a simple core with a small API surface area in order to reduce the learning curve and ramp-up time for developers. In addition, Dart Frog is intended to help Flutter/Dart developers maximize their productivity by having a unified tech stack that enables sharing tooling, models, and more!
 
 ## Feature Set ✨
 
@@ -115,6 +117,28 @@ Response onRequest(RequestContext context) {
 
   // Return a response.
   return Response(body: 'Hello World');
+}
+```
+
+We can customize the status code of the response via the `statusCode` parameter on the `Response` object:
+
+```dart
+import 'package:dart_frog/dart_frog.dart';
+
+Response onRequest(RequestContext context) {
+  return Response(statusCode: 204);
+}
+```
+
+In addition, we can return JSON via the `Response.json` constructor:
+
+```dart
+import 'package:dart_frog/dart_frog.dart';
+
+Response onRequest(RequestContext context) {
+  return Response.json(
+    body: <String, dynamic>{'hello': 'world!'},
+  );
 }
 ```
 
@@ -239,8 +263,14 @@ void main() {
 
 In the above test, we're using `package:mocktail` to create a mock `RequestContext` and stub the return value when calling `context.read<String>()`. Then, all we need to do is call `onRequest` with the mocked context and we can assert that the response is what we expect. In this case, we're checking the statusCode and response body to ensure that the response is a 200 with the provided greeting.
 
+### Additional Resources 📚
+
 For more information, see the [example][example_link] and our [roadmap][roadmap_link].
 
+*💡 Fun Fact: the [dart2js][dart2js_compiler_link] compiler [used to be called frog][dart2js_frog_pr_link].*
+
+[dart2js_compiler_link]: https://dart.dev/tools/dart2js
+[dart2js_frog_pr_link]: https://github.com/dart-lang/sdk/issues/2194
 [dart_installation_link]: https://dart.dev/get-dart
 [ci_badge]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog.yaml/badge.svg
 [ci_link]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog.yaml
