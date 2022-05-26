@@ -12,3 +12,4 @@ part 'request_logger.dart';
 part 'response.dart';
 part 'router.dart';
 part 'serve.dart';
+part 'shelf_adapters.dart';
