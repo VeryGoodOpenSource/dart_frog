@@ -1,3 +1,7 @@
+# 0.0.2-dev.2
+
+- fix: windows route generation
+
 # 0.0.2-dev.1
 
 - **BREAKING**: fix: use `[...]` instead of `<...>` for dynamic routes
