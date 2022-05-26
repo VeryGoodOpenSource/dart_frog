@@ -31,12 +31,15 @@ In the interest of transparency, we want to share high-level details of our road
 ### Features ✨
 
 - [ ] Improve HTTP method specification per handler 
+- [ ] Static Asset support
 - [ ] Dart API Client Generation
 - [ ] Open API Documentation Generation
 - [ ] DartFrog Testing Library (utilities for unit and e2e testing)
 - [ ] CLI `new` command to generate new `routes` and `middleware`
 - [ ] Health Check endpoint for monitoring
 - [ ] Logger which can be configured to adhere to standard log formats (https://cloud.google.com/run/docs/logging)
+- [ ] Websocket support
+- [ ] Configurable PORT
 - [ ] VSCode/IntelliJ support for DartFrog
   - [ ] Create a new project
   - [ ] New Routes
