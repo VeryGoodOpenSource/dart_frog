@@ -39,13 +39,12 @@ Future<void> run(HookContext context) async {
   final tempDirectory = await Directory.systemTemp.createTemp();
   try {
     await copyPath('.', '${tempDirectory.path}${path.separator}');
+    bundlingDone();
   } catch (error) {
     bundlingDone();
     context.logger.err('$error');
     exit(1);
   }
-
-  bundlingDone();
 
   await tempDirectory.rename(buildDirectoryPath);
 
