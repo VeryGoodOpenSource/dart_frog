@@ -13,19 +13,5 @@ part of '_internal.dart';
 Middleware requestLogger({
   void Function(String message, bool isError)? logger,
 }) {
-  return _fromShelfMiddleware(shelf.logRequests(logger: logger));
-}
-
-Middleware _fromShelfMiddleware(shelf.Middleware middleware) {
-  return (handler) {
-    return (context) async {
-      final response = await middleware(
-        (request) async {
-          final response = await handler(RequestContext._(request));
-          return response._response;
-        },
-      )(context.request._request);
-      return Response._(response);
-    };
-  };
+  return fromShelfMiddleware(shelf.logRequests(logger: logger));
 }
