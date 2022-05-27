@@ -25,7 +25,7 @@ In order to use Dart Frog you must have the [Dart SDK][dart_installation_link] i
 ### Installing 🧑‍💻
 
 ```sh
-# 📦 Install the dart_frog cli from source
+# 📦 Install the dart_frog cli pub.dev
 dart pub global activate dart_frog_cli
 ```
 
