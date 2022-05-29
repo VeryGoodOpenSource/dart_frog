@@ -35,7 +35,7 @@ class Response {
   /// Create a [Response] with a json body.
   Response.json({
     int statusCode = 200,
-    Map<String, dynamic>? body = const <String, dynamic>{},
+    Object? body = const <String, dynamic>{},
     Map<String, String> headers = const <String, String>{},
   }) : this(
           statusCode: statusCode,
