@@ -1,3 +1,7 @@
+# 0.0.1-dev.5
+
+- feat: change `Response.json` body to type `Object?`
+
 # 0.0.1-dev.4
 
 - fix: support multiple routeNotFound.read calls
