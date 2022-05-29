@@ -32,7 +32,7 @@ class Response {
           ),
         );
 
-  /// Create a [Response] with a json body.
+  /// Create a [Response] with a json encoded body.
   Response.json({
     int statusCode = 200,
     Object? body = const <String, dynamic>{},
