@@ -18,34 +18,10 @@ on:
 
 jobs:
   build:
-    defaults:
-      run:
-        working-directory: packages/dart_frog_gen
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2.3.4
-      - uses: dart-lang/setup-dart@v1
-
-      - name: Install Dependencies
-        run: dart pub get
-
-      - name: Format
-        run: dart format --set-exit-if-changed lib
-
-      - name: Analyze
-        run: dart analyze --fatal-infos --fatal-warnings .
-
-      - name: Run Tests
-        run: |
-          dart pub global activate coverage 1.2.0
-          dart test -j 1 -x pull-request-only --coverage=coverage && dart pub global run coverage:format_coverage --lcov --in=coverage --out=coverage/lcov.info --packages=.packages --report-on=lib
-
-      - name: Check Code Coverage
-        uses: VeryGoodOpenSource/very_good_coverage@v1
-        with:
-          path: packages/dart_frog_gen/coverage/lcov.info
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@5b27fe769681de79d641c0907f9a1ea2106c7416
+    with:
+      concurrency: 1
+      working_directory: packages/dart_frog_gen
 
   pana:
     defaults:
