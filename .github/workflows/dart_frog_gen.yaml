@@ -18,7 +18,7 @@ on:
 
 jobs:
   build:
-    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@5b27fe769681de79d641c0907f9a1ea2106c7416
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@v1
     with:
       concurrency: 1
       working_directory: packages/dart_frog_gen
