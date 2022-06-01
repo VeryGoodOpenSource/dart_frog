@@ -41,7 +41,7 @@ class CreateCommand extends DartFrogCommand {
     final outputDirectory = _outputDirectory;
     final projectName = _projectName;
     final generator = await _generator(createDartFrogBundle);
-    final generateDone = logger.progress('Creating $projectName');
+    final generateProgress = logger.progress('Creating $projectName');
     final vars = <String, dynamic>{
       'name': projectName,
       'output_directory': outputDirectory.absolute.path
@@ -51,7 +51,7 @@ class CreateCommand extends DartFrogCommand {
       DirectoryGeneratorTarget(outputDirectory),
       vars: vars,
     );
-    generateDone();
+    generateProgress.complete();
 
     await generator.hooks.postGen(vars: vars, workingDirectory: cwd.path);
 

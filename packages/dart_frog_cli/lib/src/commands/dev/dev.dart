@@ -106,10 +106,10 @@ class DevCommand extends DartFrogCommand {
       process.stderr.listen((_) => logger.err(utf8.decode(_)));
     }
 
-    final done = logger.progress('Serving');
+    final progress = logger.progress('Serving');
     await codegen();
     await serve();
-    done('Running on http://localhost:8080');
+    progress.complete('Running on http://localhost:8080');
 
     final watcher = _directoryWatcher(path.join(cwd.path, 'routes'));
     final subscription = watcher.events.listen((event) async {

@@ -21,6 +21,8 @@ class _MockProcessResult extends Mock implements ProcessResult {}
 
 class _MockProcessSignal extends Mock implements ProcessSignal {}
 
+class _MockProgress extends Mock implements Progress {}
+
 class _FakeDirectoryGeneratorTarget extends Fake
     implements DirectoryGeneratorTarget {}
 
@@ -32,6 +34,7 @@ void main() {
 
     late DirectoryWatcher directoryWatcher;
     late bool isWindows;
+    late Progress progress;
     late Logger logger;
     late Process process;
     late ProcessResult processResult;
@@ -43,7 +46,8 @@ void main() {
       directoryWatcher = _MockDirectoryWatcher();
       isWindows = false;
       logger = _MockLogger();
-      when(() => logger.progress(any())).thenReturn(([_]) {});
+      progress = _MockProgress();
+      when(() => logger.progress(any())).thenReturn(progress);
       process = _MockProcess();
       processResult = _MockProcessResult();
       sigint = _MockProcessSignal();

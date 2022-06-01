@@ -9,6 +9,8 @@ class _MockMasonGenerator extends Mock implements MasonGenerator {}
 
 class _MockGeneratorHooks extends Mock implements GeneratorHooks {}
 
+class _MockProgress extends Mock implements Progress {}
+
 class _FakeDirectoryGeneratorTarget extends Fake
     implements DirectoryGeneratorTarget {}
 
@@ -19,12 +21,14 @@ void main() {
     });
 
     late Logger logger;
+    late Progress progress;
     late MasonGenerator generator;
     late BuildCommand command;
 
     setUp(() {
       logger = _MockLogger();
-      when(() => logger.progress(any())).thenReturn(([_]) {});
+      progress = _MockProgress();
+      when(() => logger.progress(any())).thenReturn(progress);
       generator = _MockMasonGenerator();
       command = BuildCommand(
         logger: logger,
