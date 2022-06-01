@@ -33,17 +33,18 @@ void main() {
     });
 
     late DirectoryWatcher directoryWatcher;
+    late MasonGenerator generator;
     late bool isWindows;
     late Progress progress;
     late Logger logger;
     late Process process;
     late ProcessResult processResult;
     late ProcessSignal sigint;
-    late MasonGenerator generator;
     late DevCommand command;
 
     setUp(() {
       directoryWatcher = _MockDirectoryWatcher();
+      generator = _MockMasonGenerator();
       isWindows = false;
       logger = _MockLogger();
       progress = _MockProgress();
@@ -51,7 +52,6 @@ void main() {
       process = _MockProcess();
       processResult = _MockProcessResult();
       sigint = _MockProcessSignal();
-      generator = _MockMasonGenerator();
       command = DevCommand(
         logger: logger,
         directoryWatcher: (_) => directoryWatcher,

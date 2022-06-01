@@ -41,23 +41,23 @@ class DevCommand extends DartFrogCommand {
     Exit? exit,
     bool? isWindows,
     ProcessRun? runProcess,
-    ProcessStart? startProcess,
     io.ProcessSignal? sigint,
+    ProcessStart? startProcess,
   })  : _directoryWatcher = directoryWatcher ?? DirectoryWatcher.new,
         _generator = generator ?? MasonGenerator.fromBundle,
         _exit = exit ?? io.exit,
         _isWindows = isWindows ?? io.Platform.isWindows,
         _runProcess = runProcess ?? io.Process.run,
-        _startProcess = startProcess ?? io.Process.start,
-        _sigint = sigint ?? io.ProcessSignal.sigint;
+        _sigint = sigint ?? io.ProcessSignal.sigint,
+        _startProcess = startProcess ?? io.Process.start;
 
   final DirectoryWatcherBuilder _directoryWatcher;
   final GeneratorBuilder _generator;
   final Exit _exit;
   final bool _isWindows;
   final ProcessRun _runProcess;
-  final ProcessStart _startProcess;
   final io.ProcessSignal _sigint;
+  final ProcessStart _startProcess;
 
   @override
   final String description = 'Run a local development server.';
