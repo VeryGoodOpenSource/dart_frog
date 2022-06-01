@@ -92,6 +92,9 @@ class DevCommand extends DartFrogCommand {
         runInShell: true,
       );
 
+      // On Windows listen for CTRL-C and use taskkill to kill
+      // the spawned process along with any child processes.
+      // https://github.com/dart-lang/sdk/issues/22470
       if (_isWindows) {
         _sigint.watch().listen((_) async {
           final result = await _runProcess(
