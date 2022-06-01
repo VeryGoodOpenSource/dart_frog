@@ -1,3 +1,7 @@
+# 0.0.2-dev.3
+
+- fix: kill dev server child process on windows
+
 # 0.0.2-dev.2
 
 - fix: use upgraded dev and prod server bundles
