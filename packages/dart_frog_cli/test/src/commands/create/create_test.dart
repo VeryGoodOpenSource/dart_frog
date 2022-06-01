@@ -11,6 +11,8 @@ class _MockArgResults extends Mock implements ArgResults {}
 
 class _MockLogger extends Mock implements Logger {}
 
+class _MockProgress extends Mock implements Progress {}
+
 class _MockMasonGenerator extends Mock implements MasonGenerator {}
 
 class _MockGeneratorHooks extends Mock implements GeneratorHooks {}
@@ -26,13 +28,15 @@ void main() {
 
     late ArgResults argResults;
     late Logger logger;
+    late Progress progress;
     late MasonGenerator generator;
     late CreateCommand command;
 
     setUp(() {
       argResults = _MockArgResults();
       logger = _MockLogger();
-      when(() => logger.progress(any())).thenReturn(([_]) {});
+      progress = _MockProgress();
+      when(() => logger.progress(any())).thenReturn(progress);
       generator = _MockMasonGenerator();
       command = CreateCommand(
         logger: logger,
