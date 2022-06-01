@@ -8,7 +8,7 @@ environment:
 
 dependencies:
   args: ^2.1.0
-  mason: ^0.1.0-dev.19
+  mason: ^0.1.0-dev.24
   meta: ^1.7.0
   path: ^1.8.1
   watcher: ^1.0.1
