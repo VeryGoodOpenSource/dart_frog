@@ -29,7 +29,12 @@ jobs:
       run:
         working-directory: packages/dart_frog_cli/e2e
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
 
     steps:
       - name: 📚 Git Checkout

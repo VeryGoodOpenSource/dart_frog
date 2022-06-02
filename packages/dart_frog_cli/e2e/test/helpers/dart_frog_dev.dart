@@ -2,13 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-Future<void> dartFrogDev({required Directory directory}) async {
-  final completer = Completer<void>();
+Future<Process> dartFrogDev({required Directory directory}) async {
+  final completer = Completer<Process>();
 
   final process = await Process.start(
     'dart_frog',
     ['dev'],
     workingDirectory: directory.path,
+    runInShell: true,
   );
 
   late StreamSubscription stdoutSubscription;
@@ -19,7 +20,7 @@ Future<void> dartFrogDev({required Directory directory}) async {
     if (message.contains('Hot reload is enabled.')) {
       stdoutSubscription.cancel();
       stderrSubscription.cancel();
-      completer.complete();
+      completer.complete(process);
     }
   });
 
@@ -31,5 +32,5 @@ Future<void> dartFrogDev({required Directory directory}) async {
     exit(1);
   });
 
-  await completer.future;
+  return completer.future;
 }
