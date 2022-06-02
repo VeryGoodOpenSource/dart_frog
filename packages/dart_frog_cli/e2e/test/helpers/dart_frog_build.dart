@@ -1,16 +1,15 @@
 import 'dart:io';
 
-Future<void> dartFrogCreate({
-  required String projectName,
+Future<void> dartFrogBuild({
   required Directory directory,
 }) async {
   final result = await Process.run(
     'dart_frog',
-    ['create', projectName],
+    ['build'],
     workingDirectory: directory.path,
     runInShell: true,
   );
   if (result.exitCode != 0) {
-    throw Exception('dart_frog create exited with code ${result.exitCode}');
+    throw Exception('dart_frog build exited with code ${result.exitCode}');
   }
 }
