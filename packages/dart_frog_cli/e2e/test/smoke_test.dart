@@ -24,7 +24,7 @@ void main() {
     });
 
     tearDownAll(() async {
-      await Process.run('pkill', ['-f', 'dart_frog']);
+      await killDartFrogServer();
       await tempDirectory.delete(recursive: true);
     });
 
