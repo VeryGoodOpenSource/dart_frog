@@ -49,10 +49,7 @@ jobs:
           dart pub get
 
       - name: 🧪 Run E2E Tests
-        run: |
-          dart test -j 1 test/dart_frog_build_test.dart
-          dart test -j 1 test/dart_frog_create_test.dart
-          dart test -j 1 test/dart_frog_dev_test.dart
+        run: dart test -j 1
 
   pana:
     defaults:

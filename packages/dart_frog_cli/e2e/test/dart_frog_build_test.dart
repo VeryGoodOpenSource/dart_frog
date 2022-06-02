@@ -19,12 +19,10 @@ void main() {
       path.join(tempDirectory.path, projectName),
     );
 
-    late Process process;
-
     setUpAll(() async {
       await dartFrogCreate(projectName: projectName, directory: tempDirectory);
       await dartFrogBuild(directory: projectDirectory);
-      process = await Process.start(
+      await Process.start(
         'dart',
         ['bin/server.dart'],
         workingDirectory: path.join(projectDirectory.path, 'build'),
@@ -35,7 +33,6 @@ void main() {
     });
 
     tearDownAll(() async {
-      await killDartFrogServer(process.pid);
       await tempDirectory.delete(recursive: true);
     });
 
