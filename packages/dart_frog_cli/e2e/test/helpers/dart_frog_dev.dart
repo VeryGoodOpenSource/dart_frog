@@ -13,6 +13,7 @@ Future<void> dartFrogDev({required Directory directory}) async {
 
   late StreamSubscription stdoutSubscription;
   late StreamSubscription stderrSubscription;
+
   stdoutSubscription = process.stdout.listen((event) {
     final message = utf8.decode(event);
     if (message.contains('Hot reload is enabled.')) {
@@ -21,6 +22,7 @@ Future<void> dartFrogDev({required Directory directory}) async {
       completer.complete();
     }
   });
+
   stderrSubscription = process.stderr.listen((event) {
     final message = utf8.decode(event);
     stdoutSubscription.cancel();
@@ -28,5 +30,6 @@ Future<void> dartFrogDev({required Directory directory}) async {
     completer.completeError(message);
     exit(1);
   });
+
   await completer.future;
 }
