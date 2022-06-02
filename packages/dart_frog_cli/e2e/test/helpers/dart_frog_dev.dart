@@ -9,6 +9,7 @@ Future<Process> dartFrogDev({required Directory directory}) async {
     'dart_frog',
     ['dev'],
     workingDirectory: directory.path,
+    runInShell: true,
   );
 
   late StreamSubscription stdoutSubscription;

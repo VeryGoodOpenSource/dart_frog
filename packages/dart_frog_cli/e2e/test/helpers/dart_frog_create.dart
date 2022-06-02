@@ -8,6 +8,7 @@ Future<void> dartFrogCreate({
     'dart_frog',
     ['create', projectName],
     workingDirectory: directory.path,
+    runInShell: true,
   );
   if (result.exitCode != 0) {
     throw Exception('dart_frog create exited with code $exitCode');
