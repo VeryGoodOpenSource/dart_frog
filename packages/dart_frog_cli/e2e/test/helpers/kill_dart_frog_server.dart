@@ -10,6 +10,7 @@ Future<void> killDartFrogServer(int pid) async {
     if (result.exitCode != 0) {
       throw Exception('taskkill /F /T /PID $pid exited with code $exitCode');
     }
+    return;
   }
 
   if (Platform.isLinux || Platform.isMacOS) {
@@ -17,5 +18,6 @@ Future<void> killDartFrogServer(int pid) async {
     if (result.exitCode != 0) {
       throw Exception('pkill -f dart_frog exited with code $exitCode');
     }
+    return;
   }
 }
