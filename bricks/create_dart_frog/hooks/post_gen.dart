@@ -6,14 +6,14 @@ Future<void> run(HookContext context) async {
   final projectDirectory = path.canonicalize(
     context.vars['output_directory'] ?? Directory.current.path,
   );
-  final done = context.logger.progress('Installing dependencies');
+  final progress = context.logger.progress('Installing dependencies');
   await Process.run(
     'dart',
     ['pub', 'get'],
     runInShell: true,
     workingDirectory: projectDirectory,
   );
-  done();
+  progress.complete();
 
   context.logger
     ..info('')
