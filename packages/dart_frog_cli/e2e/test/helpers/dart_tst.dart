@@ -16,9 +16,4 @@ Future<void> dartTest(Directory directory) async {
   if (errors.isNotEmpty) {
     throw Exception('dart test reported test errors:\n$errors');
   }
-
-  final output = result.stdout as String;
-  if (!output.contains('All tests passed!')) {
-    throw Exception('dart test reported test failures:\n$output');
-  }
 }
