@@ -9,6 +9,7 @@ Future<void> dartFrogBuild({
     workingDirectory: directory.path,
     runInShell: true,
   );
+
   if (result.exitCode != 0) {
     throw Exception('dart_frog build exited with code ${result.exitCode}');
   }
