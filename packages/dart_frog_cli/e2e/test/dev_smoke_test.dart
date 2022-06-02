@@ -16,15 +16,17 @@ void main() {
     const projectName = 'example';
     final tempDirectory = Directory.systemTemp.createTempSync();
 
+    late Process process;
+
     setUpAll(() async {
       await dartFrogCreate(projectName: projectName, directory: tempDirectory);
-      await dartFrogDev(
+      process = await dartFrogDev(
         directory: Directory(path.join(tempDirectory.path, projectName)),
       );
     });
 
     tearDownAll(() async {
-      await killDartFrogServer();
+      await killDartFrogServer(process.pid);
       await tempDirectory.delete(recursive: true);
     });
 
