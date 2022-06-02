@@ -6,4 +6,4 @@ environment:
 
 dependencies:
   dart_frog_gen: ^0.0.2-dev.2
-  mason: ">=0.1.0-dev <0.1.0"
+  mason: ^0.1.0-dev.24
