@@ -27,7 +27,7 @@ Future<void> run(HookContext context) async {
       .map((entry) => (entry.value as PathDependency).path)
       .toList();
 
-  final bundlingDone = context.logger.progress('Bundling sources');
+  final bundlingProgress = context.logger.progress('Bundling sources');
   if (await buildDirectory.exists()) {
     await buildDirectory.delete(recursive: true);
   }
@@ -39,9 +39,9 @@ Future<void> run(HookContext context) async {
   final tempDirectory = await Directory.systemTemp.createTemp();
   try {
     await copyPath('.', '${tempDirectory.path}${path.separator}');
-    bundlingDone();
+    bundlingProgress.complete();
   } catch (error) {
-    bundlingDone();
+    bundlingProgress.fail();
     context.logger.err('$error');
     exit(1);
   }
