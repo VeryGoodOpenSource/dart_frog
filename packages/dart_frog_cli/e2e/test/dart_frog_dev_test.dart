@@ -12,7 +12,7 @@ import 'helpers/helpers.dart';
 /// * Run the dev server via `dart_frog dev`
 /// * Ensure the server responds accordingly for built-in endpoints
 void main() {
-  group('Dev Server Smoke Test', () {
+  group('dart_frog dev', () {
     const projectName = 'example';
     final tempDirectory = Directory.systemTemp.createTempSync();
 

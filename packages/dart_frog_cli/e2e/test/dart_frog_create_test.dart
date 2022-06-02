@@ -12,7 +12,7 @@ import 'helpers/helpers.dart';
 /// * Ensure the code has no warnings/errors (`dart analyze .`)
 /// * Ensure the tests pass (`dart test`)
 void main() {
-  group('Create Smoke Test', () {
+  group('dart_frog create', () {
     const projectName = 'example';
     final tempDirectory = Directory.systemTemp.createTempSync();
     final projectDirectory = Directory(
@@ -27,15 +27,15 @@ void main() {
       await tempDirectory.delete(recursive: true);
     });
 
-    test('project is formatted', () {
+    test('generates a well-formatted project', () {
       expect(dartFormat(projectDirectory), completes);
     });
 
-    test('project has no analysis errors/warnings', () {
+    test('generates a project that has no analysis errors/warnings', () {
       expect(dartAnalyze(projectDirectory), completes);
     });
 
-    test('all tests pass', () {
+    test('generates a project in which all tests pass', () {
       expect(dartTest(projectDirectory), completes);
     });
   });
