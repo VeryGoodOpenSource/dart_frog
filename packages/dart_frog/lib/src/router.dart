@@ -18,6 +18,17 @@
 
 part of '_internal.dart';
 
+/// Middleware to remove body from request.
+Handler _removeBody(Handler handler) {
+  return (context) async {
+    var response = await handler(context);
+    if (response.headers.containsKey('content-length')) {
+      response = response.copyWith(headers: {'content-length': '0'});
+    }
+    return response.copyWith(body: <int>[]);
+  };
+}
+
 /// A class that routes requests to handlers based on HTTP verb and route
 /// pattern.
 class Router {
@@ -30,6 +41,27 @@ class Router {
 
   final List<RouterEntry> _routes = [];
   final Handler _notFoundHandler;
+
+  /// Add [handler] for [verb] requests to [route].
+  ///
+  /// If [verb] is `GET` the [handler] will also be called for `HEAD` requests
+  /// matching [route]. This is because handling `GET` requests without handling
+  /// `HEAD` is always wrong. To explicitely implement a `HEAD` handler it must
+  /// be registered before the `GET` handler.
+  void add(String verb, String route, Function handler) {
+    if (!isHttpMethod(verb)) {
+      throw ArgumentError.value(verb, 'verb', 'expected a valid HTTP method');
+    }
+
+    final _verb = verb.toUpperCase();
+
+    if (_verb == 'GET') {
+      // Handling in a 'GET' request without handling a 'HEAD' request is always
+      // wrong, thus, we add a default implementation that discards the body.
+      _routes.add(RouterEntry('HEAD', route, handler, middleware: _removeBody));
+    }
+    _routes.add(RouterEntry(_verb, route, handler));
+  }
 
   /// Handle all request to [route] using [handler].
   void all(String route, Function handler) {
@@ -85,6 +117,33 @@ class Router {
     }
     return _notFoundHandler(context);
   }
+
+  // Handlers for all methods
+
+  /// Handle `GET` request to [route] using [handler].
+  ///
+  /// If no matching handler for `HEAD` requests is registered, such requests
+  /// will also be routed to the [handler] registered here.
+  void get(String route, Function handler) => add('GET', route, handler);
+
+  /// Handle `HEAD` request to [route] using [handler].
+  void head(String route, Function handler) => add('HEAD', route, handler);
+
+  /// Handle `POST` request to [route] using [handler].
+  void post(String route, Function handler) => add('POST', route, handler);
+
+  /// Handle `PUT` request to [route] using [handler].
+  void put(String route, Function handler) => add('PUT', route, handler);
+
+  /// Handle `DELETE` request to [route] using [handler].
+  void delete(String route, Function handler) => add('DELETE', route, handler);
+
+  /// Handle `OPTIONS` request to [route] using [handler].
+  void options(String route, Function handler) =>
+      add('OPTIONS', route, handler);
+
+  /// Handle `PATCH` request to [route] using [handler].
+  void patch(String route, Function handler) => add('PATCH', route, handler);
 
   static Response _defaultNotFound(RequestContext context) => routeNotFound;
 
