@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
@@ -19,20 +20,22 @@ void main() {
       path.join(tempDirectory.path, projectName),
     );
 
+    late Isolate isolate;
+
     setUpAll(() async {
       await dartFrogCreate(projectName: projectName, directory: tempDirectory);
       await dartFrogBuild(directory: projectDirectory);
-      await Process.start(
-        'dart',
-        ['bin/server.dart'],
-        workingDirectory: path.join(projectDirectory.path, 'build'),
-        runInShell: true,
+      isolate = await Isolate.spawnUri(
+        Uri.file(
+          path.join(projectDirectory.path, 'build', 'bin', 'server.dart'),
+        ),
+        [],
+        null,
       );
-      // Wait for server to start listening...
-      await Future<void>.delayed(const Duration(seconds: 3));
     });
 
     tearDownAll(() async {
+      isolate.kill();
       await tempDirectory.delete(recursive: true);
     });
 
