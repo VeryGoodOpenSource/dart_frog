@@ -7,19 +7,23 @@ Future<void> killDartFrogServer(int pid) async {
       ['/F', '/T', '/PID', '$pid'],
       runInShell: true,
     );
+
     if (result.exitCode != 0) {
       throw Exception(
         'taskkill /F /T /PID $pid exited with code ${result.exitCode}',
       );
     }
+
     return;
   }
 
   if (Platform.isLinux || Platform.isMacOS) {
     final result = await Process.run('pkill', ['-f', 'dart_frog']);
+
     if (result.exitCode != 0) {
       throw Exception('pkill -f dart_frog exited with code ${result.exitCode}');
     }
+
     return;
   }
 }
