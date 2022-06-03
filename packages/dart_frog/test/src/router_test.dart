@@ -14,7 +14,6 @@
 // limitations under the License.
 
 @TestOn('vm')
-import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -42,22 +41,17 @@ void main() {
 
   tearDown(() => server.close());
 
-  Future<int> getStatusCode(String path) {
-    return http
-        .get(Uri.parse(server.url.toString() + path))
-        .then((r) => r.statusCode);
-  }
-
-  Future<String> getBody(String path) {
-    return http.get(Uri.parse(server.url.toString() + path)).then((r) {
-      return r.body;
-    });
-  }
-
   test('throws ArgumentError when route does not start with a slash', () {
     expect(
+      () => Router()..all('hello', (RequestContext context) => Response()),
+      throwsArgumentError,
+    );
+  });
+
+  test('add throws ArgumentError when verb is not valid', () {
+    expect(
       () => Router()
-        ..all('hello', (RequestContext context) => Response(body: 'not-found')),
+        ..add('hello', '/route', (RequestContext context) => Response()),
       throwsArgumentError,
     );
   });
@@ -73,11 +67,11 @@ void main() {
     );
   });
 
-  test('get handler', () async {
+  test('all handler', () async {
     final context = _MockRequestContext();
     final app = Router()
       ..all('/hello/world', (RequestContext context) {
-        return Response(body: 'not-found');
+        return Response(body: 'hello');
       });
 
     server.mount((request) async {
@@ -89,10 +83,201 @@ void main() {
       return shelf.Response(response.statusCode, body: body);
     });
 
-    expect(await getStatusCode('/wrong-path'), equals(HttpStatus.notFound));
-    expect(await getBody('/wrong-path'), 'Route not found');
-    expect(await getStatusCode('/hello/world'), equals(HttpStatus.ok));
-    expect(await getBody('/hello/world'), equals('not-found'));
+    var response = await http.get(Uri.parse('${server.url}/wrong-path'));
+    expect(response.statusCode, equals(HttpStatus.notFound));
+    expect(response.body, equals('Route not found'));
+
+    response = await http.get(Uri.parse('${server.url}/hello/world'));
+    expect(response.statusCode, equals(HttpStatus.ok));
+    expect(response.body, equals('hello'));
+  });
+
+  test('delete handler', () async {
+    final context = _MockRequestContext();
+    final app = Router()
+      ..delete('/hello/world', (RequestContext context) {
+        return Response(body: 'hello');
+      });
+
+    server.mount((request) async {
+      when(() => context.request).thenReturn(
+        Request(request.method, request.requestedUri),
+      );
+      final response = await app(context);
+      final body = await response.body();
+      return shelf.Response(response.statusCode, body: body);
+    });
+
+    var response = await http.get(Uri.parse('${server.url}/hello/world'));
+    expect(response.statusCode, equals(HttpStatus.notFound));
+    expect(response.body, equals('Route not found'));
+
+    response = await http.delete(Uri.parse('${server.url}/hello/world'));
+    expect(response.statusCode, equals(HttpStatus.ok));
+    expect(response.body, equals('hello'));
+  });
+
+  test('get handler', () async {
+    final context = _MockRequestContext();
+    final app = Router()
+      ..get('/hello/world', (RequestContext context) {
+        return Response(body: 'hello');
+      });
+
+    server.mount((request) async {
+      when(() => context.request).thenReturn(
+        Request(request.method, request.requestedUri),
+      );
+      final response = await app(context);
+      final body = await response.body();
+      return shelf.Response(response.statusCode, body: body);
+    });
+
+    var response = await http.get(Uri.parse('${server.url}/wrong-path'));
+    expect(response.statusCode, equals(HttpStatus.notFound));
+    expect(response.body, equals('Route not found'));
+
+    response = await http.head(Uri.parse('${server.url}/hello/world'));
+    expect(response.statusCode, equals(HttpStatus.ok));
+    expect(response.body, isEmpty);
+
+    response = await http.get(Uri.parse('${server.url}/hello/world'));
+    expect(response.statusCode, equals(HttpStatus.ok));
+    expect(response.body, equals('hello'));
+  });
+
+  test('head handler', () async {
+    final context = _MockRequestContext();
+    final app = Router()
+      ..head('/hello/world', (RequestContext context) {
+        return Response();
+      });
+
+    server.mount((request) async {
+      when(() => context.request).thenReturn(
+        Request(request.method, request.requestedUri),
+      );
+      final response = await app(context);
+      final body = await response.body();
+      return shelf.Response(response.statusCode, body: body);
+    });
+
+    var response = await http.head(Uri.parse('${server.url}/wrong-path'));
+    expect(response.statusCode, equals(HttpStatus.notFound));
+    expect(response.body, isEmpty);
+
+    response = await http.head(Uri.parse('${server.url}/hello/world'));
+    expect(response.statusCode, equals(HttpStatus.ok));
+    expect(response.body, isEmpty);
+  });
+
+  test('options handler', () async {
+    final context = _MockRequestContext();
+    final app = Router()
+      ..options('/hello/world', (RequestContext context) {
+        return Response(body: 'hello');
+      });
+
+    server.mount((request) async {
+      when(() => context.request).thenReturn(
+        Request(request.method, request.requestedUri),
+      );
+      final response = await app(context);
+      final body = await response.body();
+      return shelf.Response(response.statusCode, body: body);
+    });
+
+    final client = http.Client();
+    var streamedResponse = await client.send(
+      http.Request('OPTIONS', Uri.parse('${server.url}/wrong-path')),
+    );
+    var response = await http.Response.fromStream(streamedResponse);
+    expect(response.statusCode, equals(HttpStatus.notFound));
+    expect(response.body, equals('Route not found'));
+
+    streamedResponse = await client.send(
+      http.Request('OPTIONS', Uri.parse('${server.url}/hello/world')),
+    );
+    response = await http.Response.fromStream(streamedResponse);
+    expect(response.statusCode, equals(HttpStatus.ok));
+    expect(response.body, equals('hello'));
+
+    client.close();
+  });
+
+  test('patch handler', () async {
+    final context = _MockRequestContext();
+    final app = Router()
+      ..patch('/hello/world', (RequestContext context) {
+        return Response(body: 'hello');
+      });
+
+    server.mount((request) async {
+      when(() => context.request).thenReturn(
+        Request(request.method, request.requestedUri),
+      );
+      final response = await app(context);
+      final body = await response.body();
+      return shelf.Response(response.statusCode, body: body);
+    });
+
+    var response = await http.get(Uri.parse('${server.url}/hello/world'));
+    expect(response.statusCode, equals(HttpStatus.notFound));
+    expect(response.body, equals('Route not found'));
+
+    response = await http.patch(Uri.parse('${server.url}/hello/world'));
+    expect(response.statusCode, equals(HttpStatus.ok));
+    expect(response.body, equals('hello'));
+  });
+
+  test('post handler', () async {
+    final context = _MockRequestContext();
+    final app = Router()
+      ..post('/hello/world', (RequestContext context) {
+        return Response(body: 'hello');
+      });
+
+    server.mount((request) async {
+      when(() => context.request).thenReturn(
+        Request(request.method, request.requestedUri),
+      );
+      final response = await app(context);
+      final body = await response.body();
+      return shelf.Response(response.statusCode, body: body);
+    });
+
+    var response = await http.get(Uri.parse('${server.url}/hello/world'));
+    expect(response.statusCode, equals(HttpStatus.notFound));
+    expect(response.body, equals('Route not found'));
+
+    response = await http.post(Uri.parse('${server.url}/hello/world'));
+    expect(response.statusCode, equals(HttpStatus.ok));
+    expect(response.body, equals('hello'));
+  });
+
+  test('put handler', () async {
+    final context = _MockRequestContext();
+    final app = Router()
+      ..put('/hello/world', (RequestContext context) {
+        return Response(body: 'hello');
+      });
+
+    server.mount((request) async {
+      when(() => context.request).thenReturn(
+        Request(request.method, request.requestedUri),
+      );
+      final response = await app(context);
+      final body = await response.body();
+      return shelf.Response(response.statusCode, body: body);
+    });
+
+    var response = await http.get(Uri.parse('${server.url}/hello/world'));
+    expect(response.statusCode, equals(HttpStatus.notFound));
+    expect(response.body, equals('Route not found'));
+
+    response = await http.put(Uri.parse('${server.url}/hello/world'));
+    expect(response.statusCode, equals(HttpStatus.ok));
+    expect(response.body, equals('hello'));
   });
 
   test('mount(Router)', () async {
@@ -119,9 +304,18 @@ void main() {
       return shelf.Response(response.statusCode, body: body);
     });
 
-    expect(await getBody('/hello'), 'hello-world');
-    expect(await getBody('/api/user/felangel/info'), 'Hello felangel');
-    expect(await getBody('/api/user/felangel/info-wrong'), 'catch-all-handler');
+    var response = await http.get(Uri.parse('${server.url}/hello'));
+    expect(response.body, equals('hello-world'));
+
+    response = await http.get(
+      Uri.parse('${server.url}/api/user/felangel/info'),
+    );
+    expect(response.body, equals('Hello felangel'));
+
+    response = await http.get(
+      Uri.parse('${server.url}/api/user/felangel/info-wrong'),
+    );
+    expect(response.body, equals('catch-all-handler'));
   });
 
   test('mount(Handler) with middleware', () async {
@@ -155,8 +349,11 @@ void main() {
       return shelf.Response(response.statusCode, body: body);
     });
 
-    expect(await getBody('/api/hello'), 'Hello');
-    expect(await getBody('/api/hello?ok'), 'middleware');
+    var response = await http.get(Uri.parse('${server.url}/api/hello'));
+    expect(response.body, equals('Hello'));
+
+    response = await http.get(Uri.parse('${server.url}/api/hello?ok'));
+    expect(response.body, equals('middleware'));
   });
 
   test('mount(Router) does not require a trailing slash', () async {
@@ -185,14 +382,27 @@ void main() {
       return shelf.Response(response.statusCode, body: body);
     });
 
-    expect(await getBody('/hello'), 'hello-world');
-    expect(await getBody('/api'), 'Hello World!');
-    expect(await getBody('/api/'), 'Hello World!');
-    expect(await getBody('/api/user/felangel/info'), 'Hello felangel');
-    expect(await getBody('/api/user/felangel/info-wrong'), 'catch-all-handler');
+    var response = await http.get(Uri.parse('${server.url}/hello'));
+    expect(response.body, equals('hello-world'));
+
+    response = await http.get(Uri.parse('${server.url}/api'));
+    expect(response.body, equals('Hello World!'));
+
+    response = await http.get(Uri.parse('${server.url}/api/'));
+    expect(response.body, equals('Hello World!'));
+
+    response = await http.get(
+      Uri.parse('${server.url}/api/user/felangel/info'),
+    );
+    expect(response.body, equals('Hello felangel'));
+
+    response = await http.get(
+      Uri.parse('${server.url}/api/user/felangel/info-wrong'),
+    );
+    expect(response.body, equals('catch-all-handler'));
   });
 
-  test('can invoke custom handler if no route matches', () {
+  test('can invoke custom handler if no route matches', () async {
     final context = _MockRequestContext();
     final app =
         Router(notFoundHandler: (req) => Response(body: 'Not found, but ok'))
@@ -207,7 +417,8 @@ void main() {
       return shelf.Response(response.statusCode, body: body);
     });
 
-    expect(getBody('/hi'), completion('Not found, but ok'));
+    final response = await http.get(Uri.parse('${server.url}/hi'));
+    expect(response.body, equals('Not found, but ok'));
   });
 
   test('can call Router.routeNotFound.body() multiple times', () async {

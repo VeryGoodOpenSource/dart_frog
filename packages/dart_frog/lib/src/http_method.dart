@@ -8,6 +8,12 @@ enum HttpMethod {
   /// GET HTTP Method
   get('GET'),
 
+  /// HEAD HTTP Method
+  head('HEAD'),
+
+  /// OPTIONS HTTP Method
+  options('OPTIONS'),
+
   /// PATCH HTTP Method
   patch('PATCH'),
 
