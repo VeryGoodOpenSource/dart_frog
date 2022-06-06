@@ -1,3 +1,7 @@
+# 0.0.2-dev.4
+
+- feat: upgrade brick hook dependencies
+
 # 0.0.2-dev.3
 
 - fix: kill dev server child process on windows
