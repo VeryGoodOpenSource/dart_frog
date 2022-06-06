@@ -57,7 +57,6 @@ Future<void> run(HookContext context) async {
   }
 
   context.vars = {
-    'port': context.vars['port'] ?? '8080',
     'directories': configuration.directories
         .map((c) => c.toJson())
         .toList()

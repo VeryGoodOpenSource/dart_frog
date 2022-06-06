@@ -24,5 +24,4 @@ COPY --from=build /runtime/ /
 COPY --from=build /app/bin/server /app/bin/
 
 # Start server.
-EXPOSE {{port}}
 CMD ["/app/bin/server"]

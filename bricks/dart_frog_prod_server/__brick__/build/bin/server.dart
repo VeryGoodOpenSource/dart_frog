@@ -12,7 +12,7 @@ void main() => createServer();
 
 Future<HttpServer> createServer() async {
   final ip = InternetAddress.anyIPv4;
-  final port = int.parse(Platform.environment['PORT'] ?? '{{port}}');
+  final port = int.parse(Platform.environment['PORT'] ?? '8080');
   final handler = buildRootHandler();
   return serve(handler, ip, port);
 }
