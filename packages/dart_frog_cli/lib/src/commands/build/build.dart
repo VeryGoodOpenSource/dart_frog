@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dart_frog_cli/src/command.dart';
 import 'package:dart_frog_cli/src/commands/build/templates/dart_frog_prod_server_bundle.dart';
 import 'package:dart_frog_cli/src/commands/commands.dart';
@@ -9,7 +11,14 @@ import 'package:mason/mason.dart';
 class BuildCommand extends DartFrogCommand {
   /// {@macro build_command}
   BuildCommand({super.logger, GeneratorBuilder? generator})
-      : _generator = generator ?? MasonGenerator.fromBundle;
+      : _generator = generator ?? MasonGenerator.fromBundle {
+    argParser.addOption(
+      'port',
+      abbr: 'p',
+      defaultsTo: '8080',
+      help: 'Which port number the server should start on.',
+    );
+  }
 
   final GeneratorBuilder _generator;
 
@@ -21,10 +30,12 @@ class BuildCommand extends DartFrogCommand {
 
   @override
   Future<int> run() async {
+    final port = Platform.environment['PORT'] ?? results['port'] as String;
     final generator = await _generator(dartFrogProdServerBundle);
-    var vars = <String, dynamic>{};
+    var vars = <String, dynamic>{'port': port};
 
     await generator.hooks.preGen(
+      vars: vars,
       workingDirectory: cwd.path,
       onVarsChanged: (v) => vars = v,
     );
