@@ -1,3 +1,7 @@
+# 0.0.1-dev.6
+
+- expand router http method support
+
 # 0.0.1-dev.5
 
 - feat: change `Response.json` body to type `Object?`
