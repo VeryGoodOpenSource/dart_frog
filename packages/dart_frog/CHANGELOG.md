@@ -1,6 +1,6 @@
 # 0.0.1-dev.6
 
-- expand router http method support
+- feat: expand router http method support
 
 # 0.0.1-dev.5
 
