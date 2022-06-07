@@ -47,6 +47,8 @@ Next, open the newly created project and start the dev server via:
 dart_frog dev
 ```
 
+💡 **Tip**: By default port `8080` is used. A custom port can be used via the `--port` option.
+
 ### Create a Production Build 📦
 
 Create a production build which includes a `DockerFile` so that you can deploy anywhere:
@@ -267,7 +269,7 @@ In the above test, we're using `package:mocktail` to create a mock `RequestConte
 
 For more information, see the [example][example_link] and our [roadmap][roadmap_link].
 
-*💡 Fun Fact: the [dart2js][dart2js_compiler_link] compiler [used to be called frog][dart2js_frog_pr_link].*
+_💡 Fun Fact: the [dart2js][dart2js_compiler_link] compiler [used to be called frog][dart2js_frog_pr_link]._
 
 [dart2js_compiler_link]: https://dart.dev/tools/dart2js
 [dart2js_frog_pr_link]: https://github.com/dart-lang/sdk/issues/2194
