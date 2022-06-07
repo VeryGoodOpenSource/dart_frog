@@ -30,6 +30,7 @@ In the interest of transparency, we want to share high-level details of our road
 
 ### Features ✨
 
+- [X] Configurable Port
 - [ ] Improve HTTP method specification per handler 
 - [ ] Static Asset support
 - [ ] Dart API Client Generation
@@ -39,7 +40,6 @@ In the interest of transparency, we want to share high-level details of our road
 - [ ] Health Check endpoint for monitoring
 - [ ] Logger which can be configured to adhere to standard log formats (https://cloud.google.com/run/docs/logging)
 - [ ] Websocket support
-- [ ] Configurable PORT
 - [ ] VSCode/IntelliJ support for DartFrog
   - [ ] Create a new project
   - [ ] New Routes
