@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io' as io;
+import 'dart:io';
 
 import 'package:dart_frog_cli/src/command.dart';
 import 'package:dart_frog_cli/src/commands/commands.dart';
@@ -49,7 +50,14 @@ class DevCommand extends DartFrogCommand {
         _isWindows = isWindows ?? io.Platform.isWindows,
         _runProcess = runProcess ?? io.Process.run,
         _sigint = sigint ?? io.ProcessSignal.sigint,
-        _startProcess = startProcess ?? io.Process.start;
+        _startProcess = startProcess ?? io.Process.start {
+    argParser.addOption(
+      'port',
+      abbr: 'p',
+      defaultsTo: '8080',
+      help: 'Which port number the server should start on.',
+    );
+  }
 
   final DirectoryWatcherBuilder _directoryWatcher;
   final GeneratorBuilder _generator;
@@ -67,11 +75,13 @@ class DevCommand extends DartFrogCommand {
 
   @override
   Future<int> run() async {
+    final port = Platform.environment['PORT'] ?? results['port'] as String;
     final generator = await _generator(dartFrogDevServerBundle);
 
     Future<void> codegen() async {
-      var vars = <String, dynamic>{};
+      var vars = <String, dynamic>{'port': port};
       await generator.hooks.preGen(
+        vars: vars,
         workingDirectory: cwd.path,
         onVarsChanged: (v) => vars = v,
       );
@@ -112,7 +122,7 @@ class DevCommand extends DartFrogCommand {
     final progress = logger.progress('Serving');
     await codegen();
     await serve();
-    progress.complete('Running on http://localhost:8080');
+    progress.complete('Running on http://localhost:$port');
 
     final watcher = _directoryWatcher(path.join(cwd.path, 'routes'));
     final subscription = watcher.events.listen((event) async {

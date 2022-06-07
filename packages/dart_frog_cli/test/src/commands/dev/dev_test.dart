@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:args/args.dart';
 import 'package:dart_frog_cli/src/commands/commands.dart';
 import 'package:mason/mason.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 import 'package:watcher/watcher.dart';
+
+class _MockArgResults extends Mock implements ArgResults {}
 
 class _MockDirectoryWatcher extends Mock implements DirectoryWatcher {}
 
@@ -32,6 +35,7 @@ void main() {
       registerFallbackValue(_FakeDirectoryGeneratorTarget());
     });
 
+    late ArgResults argResults;
     late DirectoryWatcher directoryWatcher;
     late MasonGenerator generator;
     late bool isWindows;
@@ -43,6 +47,8 @@ void main() {
     late DevCommand command;
 
     setUp(() {
+      argResults = _MockArgResults();
+      when<dynamic>(() => argResults['port']).thenReturn('8080');
       directoryWatcher = _MockDirectoryWatcher();
       generator = _MockMasonGenerator();
       isWindows = false;
@@ -68,7 +74,7 @@ void main() {
           return process;
         },
         sigint: sigint,
-      );
+      )..testArgResults = argResults;
     });
 
     test('runs a dev server successfully.', () async {
@@ -102,6 +108,54 @@ void main() {
       );
       final exitCode = await command.run();
       expect(exitCode, equals(ExitCode.success.code));
+      verify(
+        () => generatorHooks.preGen(
+          vars: <String, dynamic>{'port': '8080'},
+          workingDirectory: any(named: 'workingDirectory'),
+          onVarsChanged: any(named: 'onVarsChanged'),
+        ),
+      ).called(1);
+    });
+
+    test('port can be specified using --port', () async {
+      when<dynamic>(() => argResults['port']).thenReturn('4242');
+      final generatorHooks = _MockGeneratorHooks();
+      when(
+        () => generatorHooks.preGen(
+          vars: any(named: 'vars'),
+          workingDirectory: any(named: 'workingDirectory'),
+          onVarsChanged: any(named: 'onVarsChanged'),
+        ),
+      ).thenAnswer((invocation) async {
+        (invocation.namedArguments[const Symbol('onVarsChanged')] as Function(
+          Map<String, dynamic> vars,
+        ))
+            .call(<String, dynamic>{});
+      });
+      when(
+        () => generator.generate(
+          any(),
+          vars: any(named: 'vars'),
+          fileConflictResolution: FileConflictResolution.overwrite,
+        ),
+      ).thenAnswer((_) async => []);
+      when(() => generator.hooks).thenReturn(generatorHooks);
+      when(() => process.stdout).thenAnswer((_) => const Stream.empty());
+      when(() => process.stderr).thenAnswer((_) => const Stream.empty());
+      when(
+        () => directoryWatcher.events,
+      ).thenAnswer(
+        (_) => Stream.value(WatchEvent(ChangeType.MODIFY, 'README.md')),
+      );
+      final exitCode = await command.run();
+      expect(exitCode, equals(ExitCode.success.code));
+      verify(
+        () => generatorHooks.preGen(
+          vars: <String, dynamic>{'port': '4242'},
+          workingDirectory: any(named: 'workingDirectory'),
+          onVarsChanged: any(named: 'onVarsChanged'),
+        ),
+      ).called(1);
     });
 
     test('kills all child processes when sigint received on windows', () async {
@@ -155,7 +209,7 @@ void main() {
           return process;
         },
         sigint: sigint,
-      );
+      )..testArgResults = argResults;
       command.run().ignore();
       await untilCalled(() => process.pid);
       expect(exitCode, equals(ExitCode.success.code));
