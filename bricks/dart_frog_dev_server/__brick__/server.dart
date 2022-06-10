@@ -10,7 +10,7 @@ import 'package:dart_frog/dart_frog.dart';
 {{/middleware}}
 void main() => hotReload(createServer);
 
-Future<HttpServer> createServer() async {
+Future<HttpServer> createServer() {
   final ip = InternetAddress.anyIPv4;
   final port = int.parse(Platform.environment['PORT'] ?? '{{port}}');
   final handler = buildRootHandler();

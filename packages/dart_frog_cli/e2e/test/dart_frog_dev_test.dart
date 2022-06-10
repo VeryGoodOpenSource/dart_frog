@@ -27,7 +27,7 @@ void main() {
 
     tearDownAll(() async {
       await killDartFrogServer(process.pid);
-      await tempDirectory.delete(recursive: true);
+      tempDirectory.delete(recursive: true).ignore();
     });
 
     testServer('GET / returns 200 with greeting', (host) async {
