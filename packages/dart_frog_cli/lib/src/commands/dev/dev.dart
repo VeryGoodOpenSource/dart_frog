@@ -30,6 +30,14 @@ typedef DirectoryWatcherBuilder = DirectoryWatcher Function(
 /// Typedef for [io.exit].
 typedef Exit = dynamic Function(int exitCode);
 
+RestorableDirectoryGeneratorTarget get _defaultGeneratorTarget {
+  return RestorableDirectoryGeneratorTarget(
+    io.Directory(
+      path.join(Directory.current.path, '.dart_frog'),
+    ),
+  );
+}
+
 /// {@template dev_command}
 /// `dart_frog dev` command which starts the dev server`.
 /// {@endtemplate}
@@ -39,6 +47,7 @@ class DevCommand extends DartFrogCommand {
     super.logger,
     DirectoryWatcherBuilder? directoryWatcher,
     GeneratorBuilder? generator,
+    RestorableDirectoryGeneratorTarget? generatorTarget,
     Exit? exit,
     bool? isWindows,
     ProcessRun? runProcess,
@@ -50,7 +59,8 @@ class DevCommand extends DartFrogCommand {
         _isWindows = isWindows ?? io.Platform.isWindows,
         _runProcess = runProcess ?? io.Process.run,
         _sigint = sigint ?? io.ProcessSignal.sigint,
-        _startProcess = startProcess ?? io.Process.start {
+        _startProcess = startProcess ?? io.Process.start,
+        _generatorTarget = generatorTarget ?? _defaultGeneratorTarget {
     argParser.addOption(
       'port',
       abbr: 'p',
@@ -66,6 +76,7 @@ class DevCommand extends DartFrogCommand {
   final ProcessRun _runProcess;
   final io.ProcessSignal _sigint;
   final ProcessStart _startProcess;
+  final RestorableDirectoryGeneratorTarget _generatorTarget;
 
   @override
   final String description = 'Run a local development server.';
@@ -75,6 +86,7 @@ class DevCommand extends DartFrogCommand {
 
   @override
   Future<int> run() async {
+    var hotReloadEnabled = false;
     final port = Platform.environment['PORT'] ?? results['port'] as String;
     final generator = await _generator(dartFrogDevServerBundle);
 
@@ -87,9 +99,7 @@ class DevCommand extends DartFrogCommand {
       );
 
       final _ = await generator.generate(
-        DirectoryGeneratorTarget(
-          io.Directory(path.join(cwd.path, '.dart_frog')),
-        ),
+        _generatorTarget,
         vars: vars,
         fileConflictResolution: FileConflictResolution.overwrite,
       );
@@ -105,18 +115,28 @@ class DevCommand extends DartFrogCommand {
       // On Windows listen for CTRL-C and use taskkill to kill
       // the spawned process along with any child processes.
       // https://github.com/dart-lang/sdk/issues/22470
-      if (_isWindows) {
-        _sigint.watch().listen((_) async {
-          final result = await _runProcess(
-            'taskkill',
-            ['/F', '/T', '/PID', '${process.pid}'],
-          );
-          _exit(result.exitCode);
-        });
-      }
+      if (_isWindows) _sigint.watch().listen((_) => _killProcess(process));
 
-      process.stdout.listen((_) => logger.info(utf8.decode(_)));
-      process.stderr.listen((_) => logger.err(utf8.decode(_)));
+      var hasError = false;
+      process.stderr.listen((_) async {
+        hasError = true;
+        logger.err(utf8.decode(_));
+
+        if (!hotReloadEnabled) {
+          await _killProcess(process);
+          _exit(1);
+        }
+
+        await _generatorTarget.restore();
+      });
+
+      process.stdout.listen((_) {
+        final message = utf8.decode(_);
+        if (message.contains('[hotreload]')) hotReloadEnabled = true;
+        if (!hasError) _generatorTarget.cacheLatestSnapshot();
+        hasError = false;
+        logger.info(message);
+      });
     }
 
     final progress = logger.progress('Serving');
@@ -125,18 +145,87 @@ class DevCommand extends DartFrogCommand {
     progress.complete('Running on http://localhost:$port');
 
     final watcher = _directoryWatcher(path.join(cwd.path, 'routes'));
-    final subscription = watcher.events.listen((event) async {
-      final file = io.File(event.path);
-      if (file.existsSync()) {
-        final contents = await file.readAsString();
-        if (contents.isNotEmpty) {
-          await codegen();
-        }
-      }
-    });
+    final subscription = watcher.events.listen((_) => codegen());
 
     await subscription.asFuture<void>();
     await subscription.cancel();
     return ExitCode.success.code;
+  }
+
+  Future<void> _killProcess(Process process) async {
+    process.kill();
+    if (_isWindows) {
+      final result = await _runProcess(
+        'taskkill',
+        ['/F', '/T', '/PID', '${process.pid}'],
+      );
+      _exit(result.exitCode);
+    }
+  }
+}
+
+/// {@template cached_file}
+/// A cached file which consists of the file path and contents.
+/// {@endtemplate}
+class CachedFile {
+  /// {@macro cached_file}
+  const CachedFile({required this.path, required this.contents});
+
+  /// The generated file path.
+  final String path;
+
+  /// The contents of the generated file.s
+  final List<int> contents;
+}
+
+/// Signature for the `createFile` method on [DirectoryGeneratorTarget].
+typedef CreateFile = Future<GeneratedFile> Function(
+  String path,
+  List<int> contents, {
+  Logger? logger,
+  OverwriteRule? overwriteRule,
+});
+
+/// {@template restorable_directory_generator_target}
+/// A [DirectoryGeneratorTarget] that is capable of
+/// caching and restoring file snapshots.
+/// {@endtemplate}
+class RestorableDirectoryGeneratorTarget extends DirectoryGeneratorTarget {
+  /// {@macro restorable_directory_generator_target}
+  RestorableDirectoryGeneratorTarget(super.dir, {CreateFile? createFile})
+      : _createFile = createFile;
+
+  final CreateFile? _createFile;
+  CachedFile? _cachedSnapshot;
+  CachedFile? _latestSnapshot;
+
+  /// Restore the latest cached snapshot.
+  Future<void> restore() async {
+    final snapshot = _cachedSnapshot;
+    if (snapshot == null) return;
+    await createFile(snapshot.path, snapshot.contents);
+  }
+
+  /// Cache the latest recorded snapshot.
+  void cacheLatestSnapshot() {
+    final snapshot = _latestSnapshot;
+    if (snapshot == null) return;
+    _cachedSnapshot = snapshot;
+  }
+
+  @override
+  Future<GeneratedFile> createFile(
+    String path,
+    List<int> contents, {
+    Logger? logger,
+    OverwriteRule? overwriteRule,
+  }) {
+    _latestSnapshot = CachedFile(path: path, contents: contents);
+    return (_createFile ?? super.createFile)(
+      path,
+      contents,
+      logger: logger,
+      overwriteRule: overwriteRule,
+    );
   }
 }
