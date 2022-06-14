@@ -144,6 +144,36 @@ Response onRequest(RequestContext context) {
 }
 ```
 
+We can also return any Dart object in the `body` of the `Response.json` constructor and it will be serialized correctly as long as it has a `toJson` method that returns a `Map<String, dynamic>`.
+
+💡 _Tip: Check out [json_serializable](https://pub.dev/packages/json_serializable) to automate the `toJson` generation_.
+
+```dart
+import 'package:json_annotation/json_annotation.dart';
+
+part 'user.g.dart';
+
+@JsonSerializable()
+class User {
+  const User({required this.name, required this.age});
+
+  final String name;
+  final int age;
+
+  Map<String, dynamic> toJson() => _$UserToJson(this);
+}
+```
+
+```dart
+import 'package:dart_frog/dart_frog.dart';
+
+Response onRequest(RequestContext context) {
+  return Response.json(
+    body: User(name: 'Dash', age: 42),
+  );
+}
+```
+
 Route handlers can be synchronous or asynchronous. To convert the above route handlers to async, we just need to update the return type from `Response` to `Future<Response>`. We can add the `async` keyword in order to `await` futures within our handler before returning a `Response`.
 
 ```dart
