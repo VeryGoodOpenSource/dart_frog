@@ -1,3 +1,7 @@
+# 0.0.2-dev.6
+
+- fix: hot reload stability and error reporting
+
 # 0.0.2-dev.5
 
 - feat: support custom ports via `--port`
