@@ -47,6 +47,8 @@ Next, open the newly created project and start the dev server via:
 dart_frog dev
 ```
 
+💡 **Tip**: By default port `8080` is used. A custom port can be used via the `--port` option.
+
 ### Create a Production Build 📦
 
 Create a production build which includes a `DockerFile` so that you can deploy anywhere:
@@ -295,13 +297,17 @@ In the above test, we're using `package:mocktail` to create a mock `RequestConte
 
 ### Additional Resources 📚
 
-For more information, see the [example][example_link] and our [roadmap][roadmap_link].
+- [Example][example_link]
+- [Roadmap][roadmap_link]
+- [Blog post][blog_link]
+- [Livestream demo][livestream_link]
 
 _💡 Fun Fact: the [dart2js][dart2js_compiler_link] compiler [used to be called frog][dart2js_frog_pr_link]._
 
 [dart2js_compiler_link]: https://dart.dev/tools/dart2js
 [dart2js_frog_pr_link]: https://github.com/dart-lang/sdk/issues/2194
 [dart_installation_link]: https://dart.dev/get-dart
+[blog_link]: https://verygood.ventures/blog/dart-frog
 [ci_badge]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog.yaml/badge.svg
 [ci_link]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog.yaml
 [coverage_badge]: https://raw.githubusercontent.com/VeryGoodOpenSource/dart_frog/main/packages/dart_frog/coverage_badge.svg
@@ -310,6 +316,7 @@ _💡 Fun Fact: the [dart2js][dart2js_compiler_link] compiler [used to be called
 [example_link]: https://github.com/VeryGoodOpenSource/dart_frog/tree/main/example
 [license_badge]: https://img.shields.io/badge/license-MIT-blue.svg
 [license_link]: https://opensource.org/licenses/MIT
+[livestream_link]: https://youtu.be/N7l0b09c6DA
 [logo_black]: https://raw.githubusercontent.com/VeryGoodOpenSource/dart_frog/main/assets/dart_frog_logo_black.png#gh-light-mode-only
 [logo_white]: https://raw.githubusercontent.com/VeryGoodOpenSource/dart_frog/main/assets/dart_frog_logo_white.png#gh-dark-mode-only
 [pub_badge]: https://img.shields.io/pub/v/dart_frog.svg

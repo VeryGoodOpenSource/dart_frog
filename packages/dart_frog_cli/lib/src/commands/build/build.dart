@@ -25,6 +25,7 @@ class BuildCommand extends DartFrogCommand {
     var vars = <String, dynamic>{};
 
     await generator.hooks.preGen(
+      vars: vars,
       workingDirectory: cwd.path,
       onVarsChanged: (v) => vars = v,
     );

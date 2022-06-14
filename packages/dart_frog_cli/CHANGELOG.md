@@ -1,3 +1,19 @@
+# 0.0.2-dev.6
+
+- fix: hot reload stability and error reporting
+
+# 0.0.2-dev.5
+
+- feat: support custom ports via `--port`
+  ```sh
+  # start the dev server on port 3000
+  dart_frog dev --port 3000
+  ```
+
+# 0.0.2-dev.4
+
+- feat: upgrade brick hook dependencies
+
 # 0.0.2-dev.3
 
 - fix: kill dev server child process on windows
