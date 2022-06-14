@@ -153,10 +153,10 @@ part 'user.g.dart';
 
 @JsonSerializable()
 class User {
-  const User({required this.id, required this.verified});
+  const User({required this.name, required this.age});
 
-  final String id;
-  final bool verified;
+  final String name;
+  final int age;
 
   Map<String, dynamic> toJson() => _$UserToJson(this);
 }
