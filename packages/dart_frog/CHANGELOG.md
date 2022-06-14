@@ -1,3 +1,7 @@
+# 0.0.1-dev.7
+
+- fix: hot reload stability improvements and error reporting
+
 # 0.0.1-dev.6
 
 - feat: expand router http method support
