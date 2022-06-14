@@ -142,9 +142,25 @@ Response onRequest(RequestContext context) {
 }
 ```
 
-We can also return any Dart object in the `body` of the  `Response.json` constructor and it will be serialized correctly as long as it has a `toJson` method that returns a `Map<String, dynamic>`.
+We can also return any Dart object in the `body` of the `Response.json` constructor and it will be serialized correctly as long as it has a `toJson` method that returns a `Map<String, dynamic>`.
 
 💡 _Tip: Check out [json_serializable](https://pub.dev/packages/json_serializable) to automate the `toJson` generation_.
+
+```dart
+import 'package:json_annotation/json_annotation.dart';
+
+part 'user.g.dart';
+
+@JsonSerializable()
+class User {
+  const User({required this.id, required this.verified});
+
+  final String id;
+  final bool verified;
+
+  Map<String, dynamic> toJson() => _$UserToJson(this);
+}
+```
 
 ```dart
 import 'package:dart_frog/dart_frog.dart';
@@ -154,6 +170,7 @@ Response onRequest(RequestContext context) {
     body: User(name: 'Dash', age: 42),
   );
 }
+```
 
 Route handlers can be synchronous or asynchronous. To convert the above route handlers to async, we just need to update the return type from `Response` to `Future<Response>`. We can add the `async` keyword in order to `await` futures within our handler before returning a `Response`.
 
@@ -280,7 +297,7 @@ In the above test, we're using `package:mocktail` to create a mock `RequestConte
 
 For more information, see the [example][example_link] and our [roadmap][roadmap_link].
 
-*💡 Fun Fact: the [dart2js][dart2js_compiler_link] compiler [used to be called frog][dart2js_frog_pr_link].*
+_💡 Fun Fact: the [dart2js][dart2js_compiler_link] compiler [used to be called frog][dart2js_frog_pr_link]._
 
 [dart2js_compiler_link]: https://dart.dev/tools/dart2js
 [dart2js_frog_pr_link]: https://github.com/dart-lang/sdk/issues/2194
