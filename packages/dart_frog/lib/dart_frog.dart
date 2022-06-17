@@ -3,6 +3,7 @@ library dart_frog;
 
 export 'src/_internal.dart'
     show
+        Cascade,
         Pipeline,
         Request,
         RequestContext,
