@@ -22,30 +22,38 @@ void main() {
   group('Cascade', () {
     group('a cascade with several handlers', () {
       late Handler handler;
+
       setUp(() {
-        handler = Cascade().add((context) {
+        Response handler1(RequestContext context) {
           if (context.request.headers['one'] == 'false') {
             return Response(statusCode: HttpStatus.notFound, body: 'handler 1');
           } else {
             return Response(body: 'handler 1');
           }
-        }).add((context) {
+        }
+
+        Response handler2(RequestContext context) {
           if (context.request.headers['two'] == 'false') {
             return Response(statusCode: HttpStatus.notFound, body: 'handler 2');
           } else {
             return Response(body: 'handler 2');
           }
-        }).add((context) {
+        }
+
+        Response handler3(RequestContext context) {
           if (context.request.headers['three'] == 'false') {
             return Response(statusCode: HttpStatus.notFound, body: 'handler 3');
           } else {
             return Response(body: 'handler 3');
           }
-        }).handler;
+        }
+
+        handler = Cascade().add(handler1).add(handler2).add(handler3).handler;
       });
 
       test('the first response should be returned if it matches', () async {
         final response = await _makeSimpleRequest(handler);
+
         expect(response.statusCode, equals(200));
         expect(response.body(), completion(equals('handler 1')));
       });
@@ -54,10 +62,15 @@ void main() {
           'the second response should be returned if it matches and the first '
           "doesn't", () async {
         final context = _MockRequestContext();
-        final request =
-            Request('GET', _localhostUri, headers: {'one': 'false'});
+        final request = Request(
+          'GET',
+          _localhostUri,
+          headers: {'one': 'false'},
+        );
         when(() => context.request).thenReturn(request);
+
         final response = await handler(context);
+
         expect(response.statusCode, equals(200));
         expect(response.body(), completion(equals('handler 2')));
       });
@@ -72,6 +85,7 @@ void main() {
           headers: {'one': 'false', 'two': 'false'},
         );
         when(() => context.request).thenReturn(request);
+
         final response = await handler(context);
 
         expect(response.statusCode, equals(200));
@@ -87,6 +101,7 @@ void main() {
           headers: {'one': 'false', 'two': 'false', 'three': 'false'},
         );
         when(() => context.request).thenReturn(request);
+
         final response = await handler(context);
 
         expect(response.statusCode, equals(404));
@@ -103,6 +118,7 @@ void main() {
           .handler;
 
       final response = await _makeSimpleRequest(handler);
+
       expect(response.statusCode, equals(200));
       expect(response.body(), completion(equals('handler 2')));
     });
@@ -114,6 +130,7 @@ void main() {
           .handler;
 
       final response = await _makeSimpleRequest(handler);
+
       expect(response.statusCode, equals(200));
       expect(response.body(), completion(equals('handler 2')));
     });
@@ -132,14 +149,15 @@ void main() {
           .handler;
 
       final response = await _makeSimpleRequest(handler);
+
       expect(response.statusCode, equals(404));
       expect(response.body(), completion(equals('handler 3')));
     });
 
     test('[shouldCascade] controls which responses cause cascading', () async {
-      final handler = Cascade(
-        shouldCascade: (response) => response.statusCode.isOdd,
-      )
+      bool shouldCascade(Response response) => response.statusCode.isOdd;
+
+      final handler = Cascade(shouldCascade: shouldCascade)
           .add(
             (_) => Response(statusCode: HttpStatus.movedPermanently, body: '/'),
           )
@@ -154,6 +172,7 @@ void main() {
           .handler;
 
       final response = await _makeSimpleRequest(handler);
+
       expect(response.statusCode, equals(404));
       expect(response.body(), completion(equals('handler 3')));
     });
@@ -163,8 +182,9 @@ void main() {
         expect(() => Cascade().handler, throwsStateError);
       });
 
-      test('passing [statusCodes] and [shouldCascade] at the same time fails',
-          () {
+      test(
+          'passing [statusCodes] and [shouldCascade] '
+          'at the same time fails', () {
         expect(
           () => Cascade(statusCodes: [404, 405], shouldCascade: (_) => false),
           throwsArgumentError,
