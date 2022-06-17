@@ -85,12 +85,12 @@ void main() {
           .addMiddleware(toShelfMiddleware(middleware))
           .addHandler((_) => shelf.Response.ok('Hello World'));
 
-      final server = await shelf_io.serve(handler, 'localhost', 8002);
-      var response = await http.get(Uri.parse('http://localhost:8002'));
+      final server = await shelf_io.serve(handler, 'localhost', 8003);
+      var response = await http.get(Uri.parse('http://localhost:8003'));
       expect(response.statusCode, equals(HttpStatus.ok));
       expect(response.body, equals('Hello World'));
       response = await http.get(
-        Uri.parse('http://localhost:8002').replace(
+        Uri.parse('http://localhost:8003').replace(
           queryParameters: const <String, String>{'foo': 'bar'},
         ),
       );
