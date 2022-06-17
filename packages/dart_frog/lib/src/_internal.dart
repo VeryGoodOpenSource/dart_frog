@@ -6,6 +6,7 @@ import 'package:http_methods/http_methods.dart' show isHttpMethod;
 import 'package:shelf/shelf.dart' as shelf;
 import 'package:shelf/shelf_io.dart' as shelf_io;
 
+part 'cascade.dart';
 part 'pipeline.dart';
 part 'request.dart';
 part 'context.dart';
