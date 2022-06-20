@@ -32,12 +32,13 @@ RouteConfiguration buildRouteConfiguration(Directory directory) {
     onRoute: routes.add,
     onMiddleware: middleware.add,
   );
-
+  final publicDirectory = Directory(path.join(directory.path, 'public'));
   return RouteConfiguration(
     globalMiddleware: globalMiddleware,
     middleware: middleware,
     directories: directories,
     routes: routes,
+    serveStaticFiles: publicDirectory.existsSync(),
   );
 }
 
@@ -47,7 +48,7 @@ List<RouteDirectory> _getRouteDirectories(
   void Function(MiddlewareFile route)? onMiddleware,
 }) {
   final directories = <RouteDirectory>[];
-  final entities = directory.listSync();
+  final entities = directory.listSync().sorted();
   final directorySegment =
       directory.path.split('routes').last.replaceAll(r'\', '/');
   final directoryPath = directorySegment.startsWith('/')
@@ -106,6 +107,7 @@ List<RouteFile> _getRouteFilesForDynamicDirectories(
   final files = <RouteFile>[];
   directory
       .listSync()
+      .sorted()
       .whereType<Directory>()
       .where((d) => d.isDynamicRoute)
       .forEach((dynamicDirectory) {
@@ -136,7 +138,7 @@ List<RouteFile> _getRouteFiles(
   final directoryPath = directorySegment.startsWith('/')
       ? directorySegment
       : '/$directorySegment';
-  final entities = directory.listSync();
+  final entities = directory.listSync().sorted();
   entities.where((e) => e.isRoute).cast<File>().forEach((entity) {
     final filePath =
         path.join('..', path.relative(entity.path)).replaceAll(r'\', '/');
@@ -177,6 +179,12 @@ extension on String {
   }
 }
 
+extension on List<FileSystemEntity> {
+  List<FileSystemEntity> sorted() {
+    return this..sort((a, b) => b.path.compareTo(a.path));
+  }
+}
+
 extension on Directory {
   bool get isDynamicRoute {
     return RegExp(r'\[(.*)\]').hasMatch(path.basename(this.path));
@@ -202,7 +210,11 @@ class RouteConfiguration {
     required this.middleware,
     required this.directories,
     required this.routes,
+    this.serveStaticFiles = false,
   });
+
+  /// Whether to serve static files. Defaults to false.
+  final bool serveStaticFiles;
 
   /// Optional global middleware.
   final MiddlewareFile? globalMiddleware;
