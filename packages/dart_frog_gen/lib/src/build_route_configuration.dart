@@ -48,7 +48,7 @@ List<RouteDirectory> _getRouteDirectories(
   void Function(MiddlewareFile route)? onMiddleware,
 }) {
   final directories = <RouteDirectory>[];
-  final entities = directory.listSync();
+  final entities = directory.listSync().sorted();
   final directorySegment =
       directory.path.split('routes').last.replaceAll(r'\', '/');
   final directoryPath = directorySegment.startsWith('/')
@@ -107,6 +107,7 @@ List<RouteFile> _getRouteFilesForDynamicDirectories(
   final files = <RouteFile>[];
   directory
       .listSync()
+      .sorted()
       .whereType<Directory>()
       .where((d) => d.isDynamicRoute)
       .forEach((dynamicDirectory) {
@@ -137,7 +138,7 @@ List<RouteFile> _getRouteFiles(
   final directoryPath = directorySegment.startsWith('/')
       ? directorySegment
       : '/$directorySegment';
-  final entities = directory.listSync();
+  final entities = directory.listSync().sorted();
   entities.where((e) => e.isRoute).cast<File>().forEach((entity) {
     final filePath =
         path.join('..', path.relative(entity.path)).replaceAll(r'\', '/');
@@ -175,6 +176,12 @@ extension on String {
 
   String toRoute() {
     return replaceAll('[', '<').replaceAll(']', '>').replaceAll(r'\', '/');
+  }
+}
+
+extension on List<FileSystemEntity> {
+  List<FileSystemEntity> sorted() {
+    return this..sort((a, b) => b.path.compareTo(a.path));
   }
 }
 
