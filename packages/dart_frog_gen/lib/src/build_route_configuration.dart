@@ -32,12 +32,13 @@ RouteConfiguration buildRouteConfiguration(Directory directory) {
     onRoute: routes.add,
     onMiddleware: middleware.add,
   );
-
+  final publicDirectory = Directory(path.join(directory.path, 'public'));
   return RouteConfiguration(
     globalMiddleware: globalMiddleware,
     middleware: middleware,
     directories: directories,
     routes: routes,
+    serveStaticFiles: publicDirectory.existsSync(),
   );
 }
 
@@ -202,7 +203,12 @@ class RouteConfiguration {
     required this.middleware,
     required this.directories,
     required this.routes,
+    this.serveStaticFiles = false,
   });
+
+  /// Whether or not static file support is enabled.
+  /// Defaults to false.
+  final bool serveStaticFiles;
 
   /// Optional global middleware.
   final MiddlewareFile? globalMiddleware;

@@ -25,6 +25,21 @@ void main() {
       expect(configuration.globalMiddleware, isNull);
     });
 
+    test('serveStaticFiles is true when public directory exists', () {
+      final directory = Directory.systemTemp.createTempSync();
+      Directory(path.join(directory.path, 'routes')).createSync();
+      Directory(path.join(directory.path, 'public')).createSync();
+      final configuration = buildRouteConfiguration(directory);
+      expect(configuration.serveStaticFiles, isTrue);
+    });
+
+    test('serveStaticFiles is false when public directory does not exist', () {
+      final directory = Directory.systemTemp.createTempSync();
+      Directory(path.join(directory.path, 'routes')).createSync();
+      final configuration = buildRouteConfiguration(directory);
+      expect(configuration.serveStaticFiles, isFalse);
+    });
+
     test('includes global middleware when it exists', () {
       final directory = Directory.systemTemp.createTempSync();
       final routes = Directory(path.join(directory.path, 'routes'))
