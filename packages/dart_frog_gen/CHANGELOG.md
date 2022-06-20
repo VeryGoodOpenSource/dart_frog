@@ -1,3 +1,7 @@
+# 0.0.2-dev.3
+
+- feat: add `serveStaticFiles` to `RouteConfiguration`
+
 # 0.0.2-dev.2
 
 - fix: windows route generation
