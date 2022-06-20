@@ -206,7 +206,7 @@ class RouteConfiguration {
     this.serveStaticFiles = false,
   });
 
-  /// Whether to serve static file. Defaults to false.
+  /// Whether to serve static files. Defaults to false.
   final bool serveStaticFiles;
 
   /// Optional global middleware.
