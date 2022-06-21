@@ -4,9 +4,9 @@ sidebar_position: 6
 
 # Serving Static Files 📁
 
-Dart Frog supports serving static files including images, text, json, html, and more. To serve static files, place the files within a `public` directory at the root of the project.
+Dart Frog supports serving static files including images, text, json, html, and more. To serve static files, place the files within the `public` directory at the root of the project.
 
-For example, if you created a file in `public/hello.txt` which contained the following:
+For example, if you create a file in `public/hello.txt` which contains the following:
 
 ```
 Hello World!
