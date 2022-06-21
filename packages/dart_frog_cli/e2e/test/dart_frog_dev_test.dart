@@ -25,7 +25,7 @@ void main() {
       );
     });
 
-    tearDownAll(() {
+    tearDownAll(() async {
       killDartFrogServer(process.pid).ignore();
       tempDirectory.delete(recursive: true).ignore();
     });
