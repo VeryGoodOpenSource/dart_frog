@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
@@ -9,16 +8,12 @@ import '../../../routes/count/index.dart' as route;
 
 class _MockRequestContext extends Mock implements RequestContext {}
 
-class _MockCounter extends Mock implements Counter {}
-
 void main() {
   group('GET /', () {
     test('responds with a 200 and count.', () async {
       const count = 42;
-      final counter = _MockCounter();
-      when(() => counter.value).thenReturn(count.toDouble());
       final context = _MockRequestContext();
-      when(() => context.read<Counter>()).thenReturn(counter);
+      when(() => context.read<int>()).thenReturn(count);
       final response = route.onRequest(context);
       expect(response.statusCode, equals(HttpStatus.ok));
       expect(
