@@ -1,10 +1,8 @@
-import 'dart:developer';
-
 import 'package:dart_frog/dart_frog.dart';
 
 Response onRequest(RequestContext context) {
-  final counter = context.read<Counter>()..value += 1;
+  final count = context.read<int>();
   return Response(
-    body: 'You have requested this route ${counter.value.toInt()} time(s).',
+    body: 'You have requested this route $count time(s).',
   );
 }
