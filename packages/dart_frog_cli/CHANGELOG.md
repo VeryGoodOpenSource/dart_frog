@@ -1,3 +1,7 @@
+# 0.0.2-dev.7
+
+- feat: static file support
+
 # 0.0.2-dev.6
 
 - fix: hot reload stability and error reporting
