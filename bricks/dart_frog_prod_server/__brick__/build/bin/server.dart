@@ -13,7 +13,7 @@ void main() => createServer();
 Future<HttpServer> createServer() async {
   final ip = InternetAddress.anyIPv4;
   final port = int.parse(Platform.environment['PORT'] ?? '8080');
-  final handler = buildRootHandler();
+  final handler = Cascade(){{#serveStaticFiles}}.add(createStaticFileHandler()){{/serveStaticFiles}}.add(buildRootHandler()).handler;
   return serve(handler, ip, port);
 }
 
