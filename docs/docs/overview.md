@@ -80,6 +80,8 @@ dart_frog build
 
 ✅ Docker 🐳
 
+✅ Static File Support 📁
+
 🚧 Generated Dart Client Package 📦
 
 🚧 Generated API Documentation 📔

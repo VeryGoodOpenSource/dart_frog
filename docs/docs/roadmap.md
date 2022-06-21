@@ -33,8 +33,7 @@ In the interest of transparency, we want to share high-level details of our road
 ### Features ✨
 
 - [x] Configurable Port
-- [ ] Improve HTTP method specification per handler
-- [ ] Static Asset support
+- [x] Static Asset support
 - [ ] Dart API Client Generation
 - [ ] Open API Documentation Generation
 - [ ] DartFrog Testing Library (utilities for unit and e2e testing)
