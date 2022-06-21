@@ -14,7 +14,7 @@ Hello World!
 
 The contents of the file will be available at [http://localhost:8080/hello.txt](http://localhost:8080/hello.txt).
 
-The `public` directory can contain static files within subdirectories. For example, if you created an image in `public/images/unicorn.png`, the contents of the file will be available at [http://localhost:8080/images/unicorn.png](http://localhost:8080/images/unicorn.png)
+The `public` directory can also contain static files within subdirectories. For example, if you create an image in `public/images/unicorn.png`, the contents of the file will be available at [http://localhost:8080/images/unicorn.png](http://localhost:8080/images/unicorn.png).
 
 When running a development server, static files can be added, removed, and modified without needing to restart the server thanks to hot reload ⚡️.
 
