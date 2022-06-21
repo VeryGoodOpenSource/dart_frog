@@ -24,5 +24,6 @@ Future<void> run(HookContext context) async {
     'globalMiddleware': configuration.globalMiddleware != null
         ? configuration.globalMiddleware!.toJson()
         : false,
+    'serveStaticFiles': configuration.serveStaticFiles,
   };
 }
