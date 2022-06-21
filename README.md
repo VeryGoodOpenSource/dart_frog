@@ -20,6 +20,14 @@ Dart Frog is an experimental project under development and should not be used in
 
 For official documentation, please visit https://verygoodopensource.github.io/dart_frog.
 
+## Packages 📦
+
+| Package                                                                                           | Pub                                                                                                      |
+| ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| [dart_frog](https://github.com/verygoodopensource/dart_frog/tree/main/packages/dart_frog)         | [![pub package](https://img.shields.io/pub/v/dart_frog.svg)](https://pub.dev/packages/dart_frog)         |
+| [dart_frog_gen](https://github.com/verygoodopensource/dart_frog/tree/main/packages/dart_frog_gen) | [![pub package](https://img.shields.io/pub/v/dart_frog_gen.svg)](https://pub.dev/packages/dart_frog_gen) |
+| [dart_frog_cli](https://github.com/verygoodopensource/dart_frog/tree/main/packages/dart_frog_cli) | [![pub package](https://img.shields.io/pub/v/dart_frog_cli.svg)](https://pub.dev/packages/dart_frog_cli) |
+
 ## Quick Start 🚀
 
 ### Prerequisites 📝

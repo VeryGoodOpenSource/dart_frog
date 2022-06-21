@@ -22,4 +22,4 @@ Did you know the [dart2js][dart2js_compiler_link] compiler [used to be called fr
 [dart2js_frog_pr_link]: https://github.com/dart-lang/sdk/issues/2194
 [example_link]: https://github.com/VeryGoodOpenSource/dart_frog/tree/main/example
 [livestream_link]: https://youtu.be/N7l0b09c6DA
-[roadmap_link]: https://github.com/VeryGoodOpenSource/dart_frog/blob/main/ROADMAP.md
+[roadmap_link]: /docs/roadmap
