@@ -1,6 +1,10 @@
 name: docs
 
-on: pull_request
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/docs.yaml"
+      - "docs/**"
 
 jobs:
   build:
