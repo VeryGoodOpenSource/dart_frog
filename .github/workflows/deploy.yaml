@@ -2,6 +2,9 @@ name: deploy
 
 on:
   push:
+    paths:
+      - ".github/workflows/docs.yaml"
+      - "docs/**"
     branches:
       - main
 
