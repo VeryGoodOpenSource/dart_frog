@@ -1,3 +1,8 @@
+# 0.0.1-dev.8
+
+- feat: add `createStaticFileHandler`
+- feat: add `Cascade`
+
 # 0.0.1-dev.7
 
 - fix: hot reload stability improvements and error reporting
