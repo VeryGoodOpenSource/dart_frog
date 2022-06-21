@@ -144,8 +144,17 @@ class DevCommand extends DartFrogCommand {
     await serve();
     progress.complete('Running on http://localhost:$port');
 
-    final watcher = _directoryWatcher(path.join(cwd.path, 'routes'));
-    final subscription = watcher.events.listen((_) => codegen());
+    final public = path.join(cwd.path, 'public');
+    final routes = path.join(cwd.path, 'routes');
+
+    bool shouldRunCodegen(WatchEvent event) {
+      return path.isWithin(routes, event.path) ||
+          path.isWithin(public, event.path);
+    }
+
+    final watcher = _directoryWatcher(path.join(cwd.path));
+    final subscription =
+        watcher.events.where(shouldRunCodegen).listen((_) => codegen());
 
     await subscription.asFuture<void>();
     await subscription.cancel();

@@ -6,6 +6,7 @@ import 'package:args/args.dart';
 import 'package:dart_frog_cli/src/commands/commands.dart';
 import 'package:mason/mason.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 import 'package:watcher/watcher.dart';
 
@@ -123,7 +124,101 @@ void main() {
           workingDirectory: any(named: 'workingDirectory'),
           onVarsChanged: any(named: 'onVarsChanged'),
         ),
-      ).called(2);
+      ).called(1);
+    });
+
+    test('runs codegen when changes are made to the public/routes directory',
+        () async {
+      final controller = StreamController<WatchEvent>();
+      final generatorHooks = _MockGeneratorHooks();
+      when(
+        () => generatorHooks.preGen(
+          vars: any(named: 'vars'),
+          workingDirectory: any(named: 'workingDirectory'),
+          onVarsChanged: any(named: 'onVarsChanged'),
+        ),
+      ).thenAnswer((invocation) async {
+        (invocation.namedArguments[const Symbol('onVarsChanged')] as Function(
+          Map<String, dynamic> vars,
+        ))
+            .call(<String, dynamic>{});
+      });
+      when(
+        () => generator.generate(
+          any(),
+          vars: any(named: 'vars'),
+          fileConflictResolution: FileConflictResolution.overwrite,
+        ),
+      ).thenAnswer((_) async => []);
+      when(() => generator.hooks).thenReturn(generatorHooks);
+      when(() => process.stdout).thenAnswer(
+        (_) => Stream.value(utf8.encode('[hotreload] hot reload enabled.')),
+      );
+      when(() => process.stderr).thenAnswer((_) => const Stream.empty());
+      when(() => directoryWatcher.events).thenAnswer((_) => controller.stream);
+
+      command.run().ignore();
+
+      await Future<void>.delayed(Duration.zero);
+
+      verify(
+        () => generator.generate(
+          any(),
+          vars: any(named: 'vars'),
+          fileConflictResolution: FileConflictResolution.overwrite,
+        ),
+      ).called(1);
+
+      controller.add(
+        WatchEvent(
+          ChangeType.MODIFY,
+          path.join(Directory.current.path, 'routes', 'index.dart'),
+        ),
+      );
+
+      await Future<void>.delayed(Duration.zero);
+
+      verify(
+        () => generator.generate(
+          any(),
+          vars: any(named: 'vars'),
+          fileConflictResolution: FileConflictResolution.overwrite,
+        ),
+      ).called(1);
+
+      controller.add(
+        WatchEvent(
+          ChangeType.MODIFY,
+          path.join(Directory.current.path, 'public', 'hello.txt'),
+        ),
+      );
+
+      await Future<void>.delayed(Duration.zero);
+
+      verify(
+        () => generator.generate(
+          any(),
+          vars: any(named: 'vars'),
+          fileConflictResolution: FileConflictResolution.overwrite,
+        ),
+      ).called(1);
+
+      controller.add(
+        WatchEvent(
+          ChangeType.MODIFY,
+          path.join(Directory.current.path, 'tmp', 'message.txt'),
+        ),
+      );
+
+      await Future<void>.delayed(Duration.zero);
+
+      verifyNever(
+        () => generator.generate(
+          any(),
+          vars: any(named: 'vars'),
+          fileConflictResolution: FileConflictResolution.overwrite,
+        ),
+      );
     });
 
     test('caches snapshot when hotreload runs successfully', () async {
