@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dart_frog/dart_frog.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
@@ -10,12 +8,11 @@ class _MockRequestContext extends Mock implements RequestContext {}
 
 void main() {
   group('middleware', () {
-    test('provides count instance', () async {
-      double? count;
+    test('provides incremented count', () async {
+      int? count;
       final handler = middleware(
         (context) {
-          final counter = context.read<Counter>();
-          count = counter.value += 1;
+          count = context.read<int>();
           return Response(body: '');
         },
       );
