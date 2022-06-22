@@ -2,11 +2,7 @@
 sidebar_position: 7
 ---
 
-# Congratulations! 🎉
-
-You have just learned the **basics of Dart Frog**.
-
-## Additional Resources 📚
+# Additional Resources 📚
 
 - [Example][example_link]
 - [Roadmap][roadmap_link]
