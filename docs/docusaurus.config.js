@@ -117,7 +117,7 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} Very Good Ventures.<br/>Built with 💙 by Very Good Ventures.`,
+        copyright: `Copyright © ${new Date().getFullYear()} Very Good Ventures.<br/>Built with 💙 by <a target="_blank" rel="noopener noreferrer" aria-label="Very Good Ventures" href="https://verygood.ventures">Very Good Ventures</a>.`,
       },
       prism: {
         additionalLanguages: ['dart'],
