@@ -61,8 +61,9 @@ const config = {
           },
           {
             href: 'https://github.com/verygoodopensource/dart_frog',
-            label: 'GitHub',
             position: 'right',
+            className: 'navbar-github-icon',
+            'aria-label': 'GitHub repository',
           },
         ],
       },
@@ -74,6 +75,14 @@ const config = {
               {
                 label: 'Overview',
                 to: '/docs/overview',
+              },
+              {
+                label: 'Basics',
+                to: '/docs/category/basics-',
+              },
+              {
+                label: 'Roadmap',
+                to: '/docs/roadmap',
               },
             ],
           },
