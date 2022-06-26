@@ -80,10 +80,6 @@ const config = {
                 label: 'Basics',
                 to: '/docs/category/basics-',
               },
-              {
-                label: 'Roadmap',
-                to: '/docs/roadmap',
-              },
             ],
           },
           {
@@ -99,7 +95,7 @@ const config = {
               },
               {
                 label: 'Roadmap',
-                href: 'https://github.com/VeryGoodOpenSource/dart_frog/blob/main/ROADMAP.md',
+                href: '/docs/roadmap',
               },
             ],
           },
