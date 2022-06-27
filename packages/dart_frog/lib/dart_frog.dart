@@ -3,6 +3,8 @@ library dart_frog;
 
 export 'src/_internal.dart'
     show
+        fromShelfMiddleware,
+        fromShelfHandler,
         Cascade,
         Pipeline,
         Request,
