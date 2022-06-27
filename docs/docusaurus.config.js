@@ -98,8 +98,8 @@ const config = {
                 href: 'https://youtu.be/N7l0b09c6DA',
               },
               {
-                label: 'Roadmap',
-                href: 'https://github.com/VeryGoodOpenSource/dart_frog/blob/main/ROADMAP.md',
+                label: 'Package of the Week',
+                href: 'https://youtu.be/qjA0JFiPMnQ',
               },
             ],
           },
