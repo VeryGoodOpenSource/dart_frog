@@ -7,9 +7,11 @@ export 'src/_internal.dart'
         Pipeline,
         Request,
         RequestContext,
-        requestLogger,
         Response,
         Router,
+        fromShelfHandler,
+        fromShelfMiddleware,
+        requestLogger,
         serve;
 export 'src/create_static_file_handler.dart' show createStaticFileHandler;
 export 'src/handler.dart' show Handler;
