@@ -82,7 +82,7 @@ const config = {
               },
               {
                 label: 'Roadmap',
-                href: '/docs/roadmap',
+                to: '/docs/roadmap',
               },
             ],
           },
