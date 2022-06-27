@@ -80,6 +80,10 @@ const config = {
                 label: 'Basics',
                 to: '/docs/category/basics-',
               },
+              {
+                label: 'Roadmap',
+                href: '/docs/roadmap',
+              },
             ],
           },
           {
@@ -94,8 +98,8 @@ const config = {
                 href: 'https://youtu.be/N7l0b09c6DA',
               },
               {
-                label: 'Roadmap',
-                href: '/docs/roadmap',
+                label: 'Package of the Week',
+                href: 'https://youtu.be/qjA0JFiPMnQ',
               },
             ],
           },
