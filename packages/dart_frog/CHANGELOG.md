@@ -1,3 +1,7 @@
+# 0.0.1-dev.9
+
+- feat: expose `fromShelfHandler` and `fromShelfMiddleware` adapters
+
 # 0.0.1-dev.8
 
 - feat: add `createStaticFileHandler`
