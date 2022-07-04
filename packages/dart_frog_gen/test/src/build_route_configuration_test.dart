@@ -271,7 +271,7 @@ void main() {
                   r'.._test_.fixtures_dynamic_nested_routes_$user_$id_index',
               'path':
                   '../test/.fixtures/dynamic_nested/routes/[user]/[id]/index.dart',
-              'route': '/<id>/<user>'
+              'route': '/<user>/<id>'
             }
           ]
         }
@@ -293,6 +293,194 @@ void main() {
       final idDirectory = Directory(path.join(userDirectory.path, '[id]'))
         ..createSync();
       File(path.join(idDirectory.path, 'index.dart')).createSync();
+      final configuration = buildRouteConfiguration(directory);
+      expect(
+        configuration.directories.map((d) => d.toJson()).toList(),
+        equals(expected),
+      );
+    });
+
+    test('supports /[id]/api/index.dart', () {
+      const expected = [
+        {
+          'name': '_',
+          'route': '/',
+          'middleware': false,
+          'files': [
+            {
+              'name': '.._test_.fixtures_dynamic_static_nesting1_routes_index',
+              'path':
+                  '../test/.fixtures/dynamic_static_nesting1/routes/index.dart',
+              'route': '/routes'
+            },
+            {
+              'name':
+                  r'''.._test_.fixtures_dynamic_static_nesting1_routes_$id_api_index''',
+              'path':
+                  '../test/.fixtures/dynamic_static_nesting1/routes/[id]/api/index.dart',
+              'route': '/<id>/api'
+            }
+          ]
+        }
+      ];
+      final directory = Directory(
+        path.join(
+          Directory.current.path,
+          'test',
+          '.fixtures',
+          'dynamic_static_nesting1',
+        ),
+      )..createSync(recursive: true);
+      final routes = Directory(path.join(directory.path, 'routes'))
+        ..createSync();
+      File(path.join(routes.path, 'index.dart')).createSync();
+      final idDirectory = Directory(path.join(routes.path, '[id]'))
+        ..createSync();
+      final apiDirectory = Directory(path.join(idDirectory.path, 'api'))
+        ..createSync();
+      File(path.join(apiDirectory.path, 'index.dart')).createSync();
+      final configuration = buildRouteConfiguration(directory);
+      expect(
+        configuration.directories.map((d) => d.toJson()).toList(),
+        equals(expected),
+      );
+    });
+
+    test('supports /[id]/api/test.dart', () {
+      const expected = [
+        {
+          'name': '_',
+          'route': '/',
+          'middleware': false,
+          'files': [
+            {
+              'name': '.._test_.fixtures_dynamic_static_nesting_routes_index',
+              'path':
+                  '../test/.fixtures/dynamic_static_nesting/routes/index.dart',
+              'route': '/routes'
+            },
+            {
+              'name':
+                  r'''.._test_.fixtures_dynamic_static_nesting_routes_$id_api_test''',
+              'path':
+                  '../test/.fixtures/dynamic_static_nesting/routes/[id]/api/test.dart',
+              'route': '/<id>/api/test'
+            }
+          ]
+        }
+      ];
+      final directory = Directory(
+        path.join(
+          Directory.current.path,
+          'test',
+          '.fixtures',
+          'dynamic_static_nesting2',
+        ),
+      )..createSync(recursive: true);
+      final routes = Directory(path.join(directory.path, 'routes'))
+        ..createSync();
+      File(path.join(routes.path, 'index.dart')).createSync();
+      final idDirectory = Directory(path.join(routes.path, '[id]'))
+        ..createSync();
+      final apiDirectory = Directory(path.join(idDirectory.path, 'api'))
+        ..createSync();
+      File(path.join(apiDirectory.path, 'test.dart')).createSync();
+      final configuration = buildRouteConfiguration(directory);
+      expect(
+        configuration.directories.map((d) => d.toJson()).toList(),
+        equals(expected),
+      );
+    });
+
+    test('supports /[id]/api/[name]/index.dart', () {
+      const expected = [
+        {
+          'name': '_',
+          'route': '/',
+          'middleware': false,
+          'files': [
+            {
+              'name': '.._test_.fixtures_dynamic_static_nesting3_routes_index',
+              'path':
+                  '../test/.fixtures/dynamic_static_nesting3/routes/index.dart',
+              'route': '/routes'
+            },
+            {
+              'name':
+                  r'''.._test_.fixtures_dynamic_static_nesting3_routes_$id_api_$name_index''',
+              'path':
+                  '../test/.fixtures/dynamic_static_nesting3/routes/[id]/api/[name]/index.dart',
+              'route': '/<id>/api/<name>'
+            }
+          ]
+        },
+      ];
+      final directory = Directory(
+        path.join(
+          Directory.current.path,
+          'test',
+          '.fixtures',
+          'dynamic_static_nesting3',
+        ),
+      )..createSync(recursive: true);
+      final routes = Directory(path.join(directory.path, 'routes'))
+        ..createSync();
+      File(path.join(routes.path, 'index.dart')).createSync();
+      final idDirectory = Directory(path.join(routes.path, '[id]'))
+        ..createSync();
+      final apiDirectory = Directory(path.join(idDirectory.path, 'api'))
+        ..createSync();
+      final nameDirectory = Directory(path.join(apiDirectory.path, '[name]'))
+        ..createSync();
+      File(path.join(nameDirectory.path, 'index.dart')).createSync();
+      final configuration = buildRouteConfiguration(directory);
+      expect(
+        configuration.directories.map((d) => d.toJson()).toList(),
+        equals(expected),
+      );
+    });
+
+    test('supports /[id]/api/[name]/test.dart', () {
+      const expected = [
+        {
+          'name': '_',
+          'route': '/',
+          'middleware': false,
+          'files': [
+            {
+              'name': '.._test_.fixtures_dynamic_static_nesting4_routes_index',
+              'path':
+                  '../test/.fixtures/dynamic_static_nesting4/routes/index.dart',
+              'route': '/routes'
+            },
+            {
+              'name':
+                  r'''.._test_.fixtures_dynamic_static_nesting4_routes_$id_api_$name_test''',
+              'path':
+                  '../test/.fixtures/dynamic_static_nesting4/routes/[id]/api/[name]/test.dart',
+              'route': '/<id>/api/<name>/test'
+            }
+          ]
+        },
+      ];
+      final directory = Directory(
+        path.join(
+          Directory.current.path,
+          'test',
+          '.fixtures',
+          'dynamic_static_nesting4',
+        ),
+      )..createSync(recursive: true);
+      final routes = Directory(path.join(directory.path, 'routes'))
+        ..createSync();
+      File(path.join(routes.path, 'index.dart')).createSync();
+      final idDirectory = Directory(path.join(routes.path, '[id]'))
+        ..createSync();
+      final apiDirectory = Directory(path.join(idDirectory.path, 'api'))
+        ..createSync();
+      final nameDirectory = Directory(path.join(apiDirectory.path, '[name]'))
+        ..createSync();
+      File(path.join(nameDirectory.path, 'test.dart')).createSync();
       final configuration = buildRouteConfiguration(directory);
       expect(
         configuration.directories.map((d) => d.toJson()).toList(),
