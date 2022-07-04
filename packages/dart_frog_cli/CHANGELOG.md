@@ -1,3 +1,7 @@
+# 0.0.2-dev.8
+
+- fix: nested dynamic directory route generation
+
 # 0.0.2-dev.7
 
 - feat: static file support
