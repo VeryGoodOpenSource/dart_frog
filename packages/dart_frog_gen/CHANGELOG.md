@@ -1,3 +1,7 @@
+# 0.0.2-dev.4
+
+- fix: nested dynamic directory resolution
+
 # 0.0.2-dev.3
 
 - feat: add `serveStaticFiles` to `RouteConfiguration`
