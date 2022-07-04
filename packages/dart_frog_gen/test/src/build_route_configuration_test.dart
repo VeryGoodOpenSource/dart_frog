@@ -299,5 +299,99 @@ void main() {
         equals(expected),
       );
     });
+
+    test('includes static directory routes nested dynamic directory routes',
+        () {
+      const expected = [
+        {
+          'name': '_',
+          'route': '/',
+          'middleware': false,
+          'files': [
+            {
+              'name': '.._test_.fixtures_static_dynamic_nested_routes_index',
+              'path':
+                  '../test/.fixtures/static_dynamic_nested/routes/index.dart',
+              'route': '/routes'
+            },
+            {
+              'name': '.._test_.fixtures_static_dynamic_nested_routes'
+                  r'_$user_item_index',
+              'path': '../test/.fixtures/static_dynamic_nested/routes/'
+                  '[user]/item/index.dart',
+              'route': '/item/<user>'
+            }
+          ]
+        }
+      ];
+      final directory = Directory(
+        path.join(
+          Directory.current.path,
+          'test',
+          '.fixtures',
+          'static_dynamic_nested',
+        ),
+      )..createSync(recursive: true);
+      final routes = Directory(path.join(directory.path, 'routes'))
+        ..createSync();
+      File(path.join(routes.path, 'index.dart')).createSync();
+      final userDirectory = Directory(path.join(routes.path, '[user]'))
+        ..createSync();
+      final itemDirectory = Directory(path.join(userDirectory.path, 'item'))
+        ..createSync();
+      File(path.join(itemDirectory.path, 'index.dart')).createSync();
+      final configuration = buildRouteConfiguration(directory);
+      expect(
+        configuration.directories.map((d) => d.toJson()).toList(),
+        equals(expected),
+      );
+    });
+    test('includes dynamic static dynamic nested directory routes', () {
+      const expected = [
+        {
+          'name': '_',
+          'route': '/',
+          'middleware': false,
+          'files': [
+            {
+              'name': '.._test_.fixtures_dynamic_static_dynamic_routes_index',
+              'path':
+                  '../test/.fixtures/dynamic_static_dynamic/routes/index.dart',
+              'route': '/routes'
+            },
+            {
+              'name': '.._test_.fixtures_dynamic_static_dynamic_routes'
+                  r'_$user_item_$id_index',
+              'path': '../test/.fixtures/dynamic_static_dynamic/'
+                  'routes/[user]/item/[id]/index.dart',
+              'route': '/<id>/item/<user>'
+            }
+          ]
+        }
+      ];
+      final directory = Directory(
+        path.join(
+          Directory.current.path,
+          'test',
+          '.fixtures',
+          'dynamic_static_dynamic',
+        ),
+      )..createSync(recursive: true);
+      final routes = Directory(path.join(directory.path, 'routes'))
+        ..createSync();
+      File(path.join(routes.path, 'index.dart')).createSync();
+      final userDirectory = Directory(path.join(routes.path, '[user]'))
+        ..createSync();
+      final itemDirectory = Directory(path.join(userDirectory.path, 'item'))
+        ..createSync();
+      final idDirectory = Directory(path.join(itemDirectory.path, '[id]'))
+        ..createSync();
+      File(path.join(idDirectory.path, 'index.dart')).createSync();
+      final configuration = buildRouteConfiguration(directory);
+      expect(
+        configuration.directories.map((d) => d.toJson()).toList(),
+        equals(expected),
+      );
+    });
   });
 }
