@@ -105,12 +105,12 @@ List<RouteFile> _getRouteFilesForDynamicDirectories(
   String prefix = '',
 }) {
   final files = <RouteFile>[];
-  final thisIsDynamic = directory.isDynamicRoute;
+  final isDynamic = directory.isDynamicRoute;
   directory
       .listSync()
       .sorted()
       .whereType<Directory>()
-      .where((d) => thisIsDynamic || d.isDynamicRoute)
+      .where((d) => isDynamic || d.isDynamicRoute)
       .forEach((dynamicDirectory) {
     final newPrefix = '/${path.basename(dynamicDirectory.path)}$prefix';
     final subset = _getRouteFiles(
