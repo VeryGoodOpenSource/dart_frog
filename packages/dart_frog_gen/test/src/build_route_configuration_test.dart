@@ -346,7 +346,8 @@ void main() {
         equals(expected),
       );
     });
-    test('includes dynamic static dynamic nested directory routes', () {
+
+    test('includes dynamic/static/dynamic nested directory routes', () {
       const expected = [
         {
           'name': '_',
