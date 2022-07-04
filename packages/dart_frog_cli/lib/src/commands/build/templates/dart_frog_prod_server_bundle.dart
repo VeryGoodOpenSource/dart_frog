@@ -40,7 +40,7 @@ final dartFrogProdServerBundle = MasonBundle.fromJson(<String, dynamic>{
     {
       "path": "pubspec.yaml",
       "data":
-          "bmFtZTogZGFydF9mcm9nX3Byb2Rfc2VydmVyX2hvb2tzCnB1Ymxpc2hfdG86IG5vbmUKCmVudmlyb25tZW50OgogIHNkazogIj49Mi4xMi4wIDwzLjAuMCIKCmRlcGVuZGVuY2llczoKICBkYXJ0X2Zyb2dfZ2VuOiBeMC4wLjItZGV2LjMKICBpbzogXjEuMC4zCiAgbWFzb246IF4wLjEuMC1kZXYuMjQKICBwYXRoOiBeMS44LjEKICBwdWJzcGVjX3BhcnNlOiBeMS4yLjAK",
+          "bmFtZTogZGFydF9mcm9nX3Byb2Rfc2VydmVyX2hvb2tzCnB1Ymxpc2hfdG86IG5vbmUKCmVudmlyb25tZW50OgogIHNkazogIj49Mi4xMi4wIDwzLjAuMCIKCmRlcGVuZGVuY2llczoKICBkYXJ0X2Zyb2dfZ2VuOiBeMC4wLjItZGV2LjQKICBpbzogXjEuMC4zCiAgbWFzb246IF4wLjEuMC1kZXYuMjQKICBwYXRoOiBeMS44LjEKICBwdWJzcGVjX3BhcnNlOiBeMS4yLjAK",
       "type": "text"
     }
   ],
