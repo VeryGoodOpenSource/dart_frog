@@ -354,16 +354,16 @@ void main() {
           'middleware': false,
           'files': [
             {
-              'name': '.._test_.fixtures_dynamic_static_nesting_routes_index',
+              'name': '.._test_.fixtures_dynamic_static_nesting2_routes_index',
               'path':
-                  '../test/.fixtures/dynamic_static_nesting/routes/index.dart',
+                  '../test/.fixtures/dynamic_static_nesting2/routes/index.dart',
               'route': '/routes'
             },
             {
               'name':
-                  r'''.._test_.fixtures_dynamic_static_nesting_routes_$id_api_test''',
+                  r'''.._test_.fixtures_dynamic_static_nesting2_routes_$id_api_test''',
               'path':
-                  '../test/.fixtures/dynamic_static_nesting/routes/[id]/api/test.dart',
+                  '../test/.fixtures/dynamic_static_nesting2/routes/[id]/api/test.dart',
               'route': '/<id>/api/test'
             }
           ]
