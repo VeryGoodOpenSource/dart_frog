@@ -109,7 +109,7 @@ List<RouteFile> _getRouteFilesForDynamicDirectories(
       .listSync()
       .sorted()
       .whereType<Directory>()
-      .where((d) => d.isDynamicRoute || prefix.isNotEmpty)
+      .where((d) => prefix.isNotEmpty || d.isDynamicRoute)
       .forEach((dynamicDirectory) {
     final newPrefix = '$prefix/${path.basename(dynamicDirectory.path)}';
     final subset = _getRouteFiles(
