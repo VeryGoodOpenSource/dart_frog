@@ -1,6 +1,6 @@
 # Roadmap 🗺️
 
-In the interest of transparency, we want to share high-level details of our roadmap, so that others can see our priorities and make plans based off the work we are doing.
+In the interest of transparency, we want to share high-level details of our roadmap, so that others can see our priorities and make plans based on the work we are doing.
 
 ## Areas of Focus 💡
 
@@ -10,7 +10,7 @@ In the interest of transparency, we want to share high-level details of our road
 
 - [x] Resolve internal dynamic routing issue with `package:shelf_router`
 - [x] Abstract `package:shelf` fully from the end-user so that `shelf` implementation details don't leak from the DartFrog public API
-  - [x] Also, simplify interfaces whereever possible to avoid having multiple ways to achieve the same thing and to keep the API surface as small as possible
+  - [x] Also, simplify interfaces wherever possible to avoid having multiple ways to achieve the same thing and to keep the API surface as small as possible
 - [x] Hot reload reliability and error reporting
 
 #### Testing 🧪
