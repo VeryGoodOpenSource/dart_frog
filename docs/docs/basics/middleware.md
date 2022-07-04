@@ -6,7 +6,7 @@ sidebar_position: 2
 
 Middleware in Dart Frog allows you to execute code before and after a request is processed. You can modify the inbound request and outbound responses, provide dependencies, and more!
 
-In Dart Frog, a piece of middleware consists of a `middleware` function exported from a `_middleware.dart` file within a subdirectory of the `routes` folder. There can only ever be once piece of middleware per route directory with `routes/_middleware.dart` being middleware that is executed for all inbound requests.
+In Dart Frog, a piece of middleware consists of a `middleware` function exported from a `_middleware.dart` file within a subdirectory of the `routes` folder. There can only ever be one piece of middleware per route directory with `routes/_middleware.dart` being middleware that is executed for all inbound requests.
 
 ```dart
 import 'package:dart_frog/dart_frog.dart';
