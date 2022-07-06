@@ -3,28 +3,30 @@ sidebar_position: 1
 ---
 
 # Google Cloud Run Quickstart
-[Cloud Run](https://cloud.google.com/run) is a service in the [Google Cloud Platform](https://cloud.google.com/) that allows you to "deploy highly scalable containerized applications using your favorite language on a fully managed serverless platform".
 
-You can use Cloud Run to serve requests to your `dart_frog` API quickly and without configuration. This will provide:
+[Cloud Run](https://cloud.google.com/run) is a service in the [Google Cloud Platform](https://cloud.google.com/) that allows you to deploy highly scalable containerized applications using your favorite language on a fully managed serverless platform.
+
+You can use Cloud Run to serve requests to your Dart Frog API quickly and without configuration. This will provide:
+
 - Fully managed autoscaling to handle any number of requests
 - Only pay for the computing resources you use, and pay nothing when your service isn't being used
 - Automatic logging in [Cloud Logging](https://cloud.google.com/logging)
 
-
 ## Prerequisites
 
 Before you get started, if you don't already have these, you'll need to create:
+
 - A [free Google Account](https://support.google.com/accounts/answer/27441?hl=en)
 - A [Google Cloud Platform (GCP) Project](https://cloud.google.com/resource-manager/docs/creating-managing-projects)
 - A [billing account](https://cloud.google.com/billing/docs/how-to/manage-billing-account#create_a_new_billing_account) connected to your GCP project
 
 :::caution
-While the Google Cloud Platform has a large free tier that should cover testing projects, you can incur costs when running this quickstart through Cloud Run, Cloud Build, or Artifact Registry. For more details, see the [Google Cloud Price List](https://cloud.google.com/pricing/list).
+While the Google Cloud Platform has a free tier that should cover testing projects, you can incur costs when running this quickstart through Cloud Run, Cloud Build, or Artifact Registry. For more details, see the [Google Cloud Price List](https://cloud.google.com/pricing/list).
 :::
 
-Additionally, you'll need to have the [`gcloud` command line interface (CLI)](https://cloud.google.com/sdk/docs/install) installed on your computer.
+Additionally, you'll need the [`gcloud` command line interface (CLI)](https://cloud.google.com/sdk/docs/install) installed on your computer.
 
-Finally, you'll want to log in to the `gcloud` CLI by running:
+Finally, you'll want to log in to `gcloud` by running:
 
 ```bash
 gcloud auth login
@@ -32,7 +34,7 @@ gcloud auth login
 
 ## Deploying
 
-1. Build your `dart_frog` API for production use by running:
+1. Build your API for production use by running:
 
 ```bash
 dart_frog build
@@ -48,32 +50,37 @@ gcloud run deploy [SERVICE_NAME] --source build \
   --region=[REGION]  \       # ex: us-central1
   --allow-unauthenticated  # for public access
 ```
+
 - `[SERVICE_NAME]`: The name of the Cloud Run service you want to create/update
 - `[PROJECT_ID]`: The ID of the Google Cloud project
 - `[REGION]`: The GCP region you wish to deploy to
 
-Congratulations! You have successfully built and deployed your API to Cloud Run. You can now access your API at the Service URL that is printed in the last line of output.
+Running this command will do three things:
 
-:::note
-If you have not already enabled the nessesary Google Cloud APIs to deploy, `gcloud` can enable them for you. Just select `Y` when prompted.
-:::
-:::tip
-You can save the project ID and region to gcloud so you don't have to specify they each time you deploy.
-```bash
-gcloud config set core/project [PROJECT_ID]
-gcloud config set run/region [REGION]
-```
-:::
-
-Using the `gcloud run deploy` command will do three things:
 - Upload the code in the `/build` directory
 - Build the Docker image in [Cloud Build](https://cloud.google.com/build) and upload it to [Artifact Registry](https://cloud.google.com/artifact-registry)
 - Deploy the image to the specified Cloud Run service
 
+3. Congratulations! 🎉 You have successfully built and deployed your API to Cloud Run. You can now access your API at the Service URL that is printed in the last line of output.
+
+:::note
+If you have not already enabled the nessesary Google Cloud APIs to deploy your API, `gcloud` can enable them for you. Just select `Y` when prompted.
+:::
+:::tip
+You can save the project ID and region to `gcloud` so you don't have to specify them each time you deploy.
+
+```bash
+gcloud config set core/project [PROJECT_ID]
+gcloud config set run/region [REGION]
+```
+
+:::
 
 Example:
+
 ```bash
-gcloud run deploy hello  --source build --allow-unauthenticated
+$ gcloud run deploy hello  --source build --allow-unauthenticated
+
 Building using Dockerfile and deploying container to Cloud Run service [hello] in project [dart-demo] region [us-central1]
 ✓ Building and deploying new service... Done.
   ✓ Uploading sources...
@@ -87,6 +94,7 @@ Service URL: https://hello-gpua4upw6q-uc.a.run.app
 ```
 
 ## Additional Resources
+
 - [What is Cloud Run](https://cloud.google.com/run/docs/overview/what-is-cloud-run)
 - [`gcloud run deploy` documentation](https://cloud.google.com/sdk/gcloud/reference/run/deploy)
 - [Cloud Run automatic logging](https://cloud.google.com/run/docs/logging)
