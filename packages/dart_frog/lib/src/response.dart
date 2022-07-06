@@ -64,7 +64,7 @@ class Response {
 
   /// The body as a json object.
   /// This object could be anything that can be represented by JSON
-  /// — an object, an array, a string, a number...
+  /// — a map, an array, a string, a number...
   Future<Object?> json() async {
     return jsonDecode(await _response.readAsString());
   }
