@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Google Cloud Run Quickstart
 
-[Cloud Run](https://cloud.google.com/run) is a service in the [Google Cloud Platform](https://cloud.google.com/) that allows you to deploy highly scalable containerized applications using your favorite language on a fully managed serverless platform. You can use Cloud Run to serve requests to your Dart Frog API to the internet. This will provide:
+[Cloud Run](https://cloud.google.com/run) is a service in the [Google Cloud Platform](https://cloud.google.com/) that allows you to deploy highly scalable containerized applications using your favorite language on a fully managed serverless platform. You can use Cloud Run to serve requests from your Dart Frog API to the internet. This will provide:
 
 - Fully managed autoscaling to handle any number of requests
 - Only pay for the computing resources you use, and pay nothing when your service isn't being used
