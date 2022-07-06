@@ -1,3 +1,8 @@
+# 0.0.1-dev.10
+
+- fix: Response `json()` returns `Object?`
+- fix: provider `StateError` message typo
+
 # 0.0.1-dev.9
 
 - feat: expose `fromShelfHandler` and `fromShelfMiddleware` adapters
