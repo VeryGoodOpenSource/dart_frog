@@ -81,8 +81,8 @@ const config = {
                 to: '/docs/category/basics-',
               },
               {
-                label: 'Deploying',
-                to: '/docs/category/deploying-',
+                label: 'Deploy',
+                to: '/docs/category/deploy-',
               },
               {
                 label: 'Roadmap',
