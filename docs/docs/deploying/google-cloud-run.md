@@ -65,6 +65,7 @@ Running this command will do three things:
 :::note
 If you have not already enabled the nessesary Google Cloud APIs to deploy your API, `gcloud` can enable them for you. Just select `Y` when prompted.
 :::
+
 :::tip
 You can save the project ID and region to `gcloud` so you don't have to specify them each time you deploy.
 
@@ -72,7 +73,6 @@ You can save the project ID and region to `gcloud` so you don't have to specify 
 gcloud config set core/project [PROJECT_ID]
 gcloud config set run/region [REGION]
 ```
-
 :::
 
 Example:
