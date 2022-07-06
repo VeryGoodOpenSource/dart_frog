@@ -54,8 +54,32 @@ void main() {
     });
 
     group('json', () {
-      test('has correct body', () {
+      test('has correct body (map)', () {
         final body = <String, dynamic>{'foo': 'bar'};
+        final response = Response.json(body: body);
+        expect(response.json(), completion(equals(body)));
+      });
+
+      test('has correct body (list)', () {
+        final body = <String>['foo', 'bar'];
+        final response = Response.json(body: body);
+        expect(response.json(), completion(equals(body)));
+      });
+
+      test('has correct body (string)', () {
+        const body = 'foo';
+        final response = Response.json(body: body);
+        expect(response.json(), completion(equals(body)));
+      });
+
+      test('has correct body (number)', () {
+        const body = 42.0;
+        final response = Response.json(body: body);
+        expect(response.json(), completion(equals(body)));
+      });
+
+      test('has correct body (bool)', () {
+        const body = false;
         final response = Response.json(body: body);
         expect(response.json(), completion(equals(body)));
       });
