@@ -44,7 +44,7 @@ export default function Home() {
   const { siteConfig } = useDocusaurusContext();
   return (
     <Layout
-      description={`The official documentation site for Dart Frog. ${siteConfig.tagline}`}
+      description={`The official documentation site for Dart Frog. ${siteConfig.tagline} Built by Very Good Ventures.`}
     >
       <HomepageHeader />
       <main>
