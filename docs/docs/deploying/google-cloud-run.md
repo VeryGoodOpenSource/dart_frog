@@ -4,9 +4,7 @@ sidebar_position: 1
 
 # Google Cloud Run Quickstart
 
-[Cloud Run](https://cloud.google.com/run) is a service in the [Google Cloud Platform](https://cloud.google.com/) that allows you to deploy highly scalable containerized applications using your favorite language on a fully managed serverless platform.
-
-You can use Cloud Run to serve requests to your Dart Frog API quickly and without configuration. This will provide:
+[Cloud Run](https://cloud.google.com/run) is a service in the [Google Cloud Platform](https://cloud.google.com/) that allows you to deploy highly scalable containerized applications using your favorite language on a fully managed serverless platform. You can use Cloud Run to serve requests to your Dart Frog API to the internet. This will provide:
 
 - Fully managed autoscaling to handle any number of requests
 - Only pay for the computing resources you use, and pay nothing when your service isn't being used
@@ -45,10 +43,11 @@ This will create a `/build` directory with all the files needed to deploy your A
 2. Deploy your API to Cloud Run by running:
 
 ```bash
-gcloud run deploy [SERVICE_NAME] --source build \
-  --project=[PROJECT_ID] \      # the Google Cloud project ID
+gcloud run deploy [SERVICE_NAME]
+  --source build \           # the output of dart_frog build
+  --project=[PROJECT_ID] \   # The Google Cloud project ID
   --region=[REGION]  \       # ex: us-central1
-  --allow-unauthenticated  # for public access
+  --allow-unauthenticated    # for public access
 ```
 
 - `[SERVICE_NAME]`: The name of the Cloud Run service you want to create/update
