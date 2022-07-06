@@ -30,7 +30,7 @@ class RequestContext {
         '''
 context.read<$T>() called with a request context that does not contain a $T.
 
-This can happen if $T was not provided to the reqquest context:
+This can happen if $T was not provided to the request context:
   ```dart
   // _middleware.dart
   Handler middleware(Handler handler) {
