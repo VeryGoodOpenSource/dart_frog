@@ -62,9 +62,11 @@ class Response {
   /// Returns a Future containing the body as a string.
   Future<String> body() => _response.readAsString();
 
-  /// The body as json (`Map<String, dynamic>`).
-  Future<Map<String, dynamic>> json() async {
-    return jsonDecode(await _response.readAsString()) as Map<String, dynamic>;
+  /// The body as a json object.
+  /// This object could be anything that can be represented by JSON
+  /// — an object, an array, a string, a number...
+  Future<Object?> json() async {
+    return jsonDecode(await _response.readAsString());
   }
 
   /// Creates a new [Response] by copying existing values and applying specified
