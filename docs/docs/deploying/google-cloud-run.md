@@ -73,6 +73,7 @@ You can save the project ID and region to `gcloud` so you don't have to specify 
 gcloud config set core/project [PROJECT_ID]
 gcloud config set run/region [REGION]
 ```
+
 :::
 
 Example:
