@@ -4,7 +4,10 @@
  */
 
 .heroBanner {
-  background-color: var(--ifm-background-color);
+  background-image: url(../../static/img/hero_mask.svg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-color: var(--colors-green);
   padding: 4rem 0;
   text-align: center;
   position: relative;
@@ -17,15 +20,24 @@
   }
 }
 
-.buttons {
+.cta {
+  background-color: var(--colors-dark-grey);
+  color: var(--colors-white);
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+  padding: 2rem 0;
+}
+
+.logo {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
-.experimentalWarning {
-  background-color: var(--warning-banner-color);
-  text-align: center;
-  padding: 0.5rem;
-  color: black;
+.heading {
+  margin: 0;
+  font-weight: 500;
 }

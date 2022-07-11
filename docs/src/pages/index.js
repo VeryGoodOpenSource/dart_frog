@@ -8,35 +8,35 @@ import HomepageFeatures from '@site/src/components/HomepageFeatures';
 import styles from './index.module.css';
 
 function HomepageHeader() {
-  const { siteConfig } = useDocusaurusContext();
   return (
     <Fragment>
-      <ExperimentalWarning />
-      <header className={clsx('hero hero--background', styles.heroBanner)}>
+      <header className={clsx('hero', styles.heroBanner)}>
         <div className="container">
-          <img src="img/logo.svg" alt="Dart Frog Logo" width="99" height="99" />
-          <h1 className="hero__title">{siteConfig.title}</h1>
-          <p className="hero__subtitle">{siteConfig.tagline}</p>
-          <div className={styles.buttons}>
-            <Link
-              className="button button--primary button--lg"
-              to="/docs/overview"
-            >
-              Get Started
-            </Link>
-          </div>
+          <img
+            src="img/hero_image_dark.svg"
+            alt="Dart Frog Hero"
+            width="656"
+            height="412"
+          />
         </div>
       </header>
     </Fragment>
   );
 }
 
-function ExperimentalWarning() {
+function HomepageCTA() {
   return (
-    <div className={clsx(styles.experimentalWarning)}>
-      🚧 This is an experimental framework. Do not use in production at this
-      time. 🚧
-    </div>
+    <Fragment>
+      <div className={styles.cta}>
+        <div className={styles.logo}>
+          <img src="img/logo.svg" alt="Dart Frog Logo" width="58" height="58" />
+          <h1 className={styles.heading}>Dart Frog</h1>
+        </div>
+        <Link className="button button--primary button--lg" to="/docs/overview">
+          Get Started
+        </Link>
+      </div>
+    </Fragment>
   );
 }
 
@@ -48,6 +48,7 @@ export default function Home() {
     >
       <HomepageHeader />
       <main>
+        <HomepageCTA />
         <HomepageFeatures />
       </main>
     </Layout>

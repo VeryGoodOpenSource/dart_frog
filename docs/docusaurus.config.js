@@ -44,6 +44,14 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      announcementBar: {
+        id: 'experimental',
+        content:
+          '🚧  This is an experimental framework. Do not use in production at this time. 🚧 ',
+        backgroundColor: '#f9f871',
+        textColor: '#000000',
+        isCloseable: false,
+      },
       image: 'img/meta/open-graph.png',
       navbar: {
         title: 'Dart Frog',

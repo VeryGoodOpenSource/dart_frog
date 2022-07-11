@@ -6,6 +6,15 @@
 
 /* You can override the default Infima variables here. */
 :root {
+  /* Color Palette */
+  --colors-dark-grey: #1d2939;
+  --colors-light-grey: #314155;
+  --colors-green: #00ffab;
+  --colors-blue: #3b44f6;
+  --colors-white: #ffffff;
+  --colors-off-white: #fbfcff;
+
+  /* Infirma Variables */
   --ifm-color-primary: #2a48df;
   --ifm-color-primary-dark: #1f3ccf;
   --ifm-color-primary-darker: #1d39c4;
@@ -15,7 +24,6 @@
   --ifm-color-primary-lightest: #6f83e9;
   --ifm-code-font-size: 95%;
   --ifm-background-color: #ffffff;
-  --warning-banner-color: #f9f871;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
 }
 
@@ -28,8 +36,9 @@
   --ifm-color-primary-light: #88fcdb;
   --ifm-color-primary-lighter: #9afce1;
   --ifm-color-primary-lightest: #cdfef0;
-  --ifm-background-color: #232326;
-  --ifm-footer-background-color: #232326;
+  --ifm-background-color: var(--colors-dark-grey) !important;
+  --ifm-navbar-background-color: var(--colors-dark-grey);
+  --ifm-footer-background-color: var(--colors-light-grey);
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
 

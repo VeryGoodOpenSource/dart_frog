@@ -4,8 +4,8 @@ import styles from './styles.module.css';
 
 const FeatureList = [
   {
-    title: 'Build Fast',
-    Svg: require('@site/static/img/bolt.svg').default,
+    title: 'Built for Speed',
+    Svg: require('@site/static/img/fast.svg').default,
     description: (
       <>
         Create new endpoints in just a few lines and iterate blazingly fast with
@@ -14,15 +14,15 @@ const FeatureList = [
     ),
   },
   {
-    title: 'Beginner Friendly',
-    Svg: require('@site/static/img/heart.svg').default,
+    title: 'Lightweight',
+    Svg: require('@site/static/img/lightweight.svg').default,
     description: (
       <>Minimize ramp-up time with our simple core and small API surface.</>
     ),
   },
   {
     title: 'Powered by Dart',
-    Svg: require('@site/static/img/target.svg').default,
+    Svg: require('@site/static/img/dart.svg').default,
     description: (
       <>
         Tap into the powerful Dart ecosystem with{' '}
