@@ -15,6 +15,10 @@
   --colors-off-white: #fbfcff;
 
   /* Infirma Variables */
+  --ifm-button-font-weight: 700;
+  --ifm-button-padding-vertical: 0.4rem;
+  --ifm-button-padding-horizontal: 1.15rem;
+
   --ifm-color-primary: #2a48df;
   --ifm-color-primary-dark: #1f3ccf;
   --ifm-color-primary-darker: #1d39c4;
@@ -25,6 +29,10 @@
   --ifm-code-font-size: 95%;
   --ifm-background-color: #ffffff;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+.button--lg {
+  --ifm-button-size-multiplier: 1.5;
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */

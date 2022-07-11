@@ -33,7 +33,7 @@ function HomepageCTA() {
           <h1 className={styles.heading}>Dart Frog</h1>
         </div>
         <Link className="button button--primary button--lg" to="/docs/overview">
-          Get Started
+          GET STARTED
         </Link>
       </div>
     </Fragment>
