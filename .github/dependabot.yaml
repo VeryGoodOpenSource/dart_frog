@@ -1,0 +1,35 @@
+version: 2
+enable-beta-ecosystems: true
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/example"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/dart_frog"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/dart_frog_cli"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/dart_frog_gen"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/bricks/create_dart_frog/hooks"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/bricks/dart_frog_dev_server/hooks"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/bricks/dart_frog_prod_server/hooks"
+    schedule:
+      interval: "daily"
