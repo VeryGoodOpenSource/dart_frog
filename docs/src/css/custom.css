@@ -18,7 +18,7 @@
   --colors-off-white-dark: #f3f6ff;
 
   /* Custom Variables */
-  --hero-image-background: var(--colors-white);
+  --hero-image-background-color: var(--colors-white);
 
   /* Infirma Variables */
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
@@ -42,7 +42,7 @@
 /* For readability concerns, you should choose a lighter palette in dark mode. */
 [data-theme='dark'] {
   /* Custom Variables */
-  --hero-image-background: var(--colors-darker-grey);
+  --hero-image-background-color: var(--colors-darker-grey);
 
   /* Infirma Variables */
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);

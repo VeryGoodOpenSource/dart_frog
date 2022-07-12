@@ -8,7 +8,7 @@ html[data-theme='light'] .main {
 }
 
 .heroBanner {
-  background-color: var(--colors-hero-background);
+  background-color: var(--hero-image-background-color);
   padding: 4rem 0;
   text-align: center;
   position: relative;
@@ -22,6 +22,24 @@ html[data-theme='light'] .main {
   .heroBanner {
     padding: 2rem 0;
   }
+}
+
+.features {
+  display: flex;
+  align-items: center;
+  padding: 2rem 0;
+  margin-bottom: 4rem;
+  width: 100%;
+  background-color: var(--colors-off-white);
+}
+
+html[data-theme='dark'] .features {
+  background-color: var(--colors-light-grey);
+}
+
+.featureSvg {
+  height: 100px;
+  width: 100px;
 }
 
 .section {

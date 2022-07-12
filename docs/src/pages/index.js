@@ -3,45 +3,7 @@ import clsx from 'clsx';
 import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
-import HomepageFeatures from '@site/src/components/HomepageFeatures';
-
 import styles from './index.module.css';
-
-function HomepageHeader() {
-  return (
-    <Fragment>
-      <header className={clsx('hero', styles.heroBanner)}>
-        <div className="container">
-          <picture>
-            <source
-              media="(max-width: 479px)"
-              srcSet="img/hero_image_dark_mobile.svg"
-            />
-            <source
-              media="(min-width: 480px)"
-              srcSet="img/hero_image_dark.svg"
-            />
-            <img src="img/hero_image_dark.svg" alt="Dart Frog Hero" />
-          </picture>
-        </div>
-        <div className={styles.width}>
-          <Link
-            className="button button--primary button--lg"
-            to="/docs/overview"
-          >
-            GET STARTED
-          </Link>
-          <Link
-            className="button button--secondary button--lg"
-            to="/docs/category/basics-"
-          >
-            LEARN MORE
-          </Link>
-        </div>
-      </header>
-    </Fragment>
-  );
-}
 
 export default function Home() {
   const { siteConfig } = useDocusaurusContext();
@@ -56,6 +18,108 @@ export default function Home() {
         <HomepageBlogs />
       </main>
     </Layout>
+  );
+}
+
+function HomepageHeader() {
+  return (
+    <Fragment>
+      <header className={clsx('hero', styles.heroBanner)}>
+        <HeroImage />
+        <CTAs />
+      </header>
+    </Fragment>
+  );
+}
+
+function HeroImage() {
+  return (
+    <div className="container">
+      <picture>
+        <source
+          media="(max-width: 479px)"
+          srcSet="img/hero_image_dark_mobile.svg"
+        />
+        <source media="(min-width: 480px)" srcSet="img/hero_image_dark.svg" />
+        <img src="img/hero_image_dark.svg" alt="Dart Frog Hero" />
+      </picture>
+    </div>
+  );
+}
+
+function CTAs() {
+  return (
+    <div className={styles.width}>
+      <Link className="button button--primary button--lg" to="/docs/overview">
+        GET STARTED
+      </Link>
+      <Link
+        className="button button--secondary button--lg"
+        to="/docs/category/basics-"
+      >
+        LEARN MORE
+      </Link>
+    </div>
+  );
+}
+
+function Feature({ Svg, title, description }) {
+  return (
+    <div className={clsx('col col--4')}>
+      <div className="text--center">
+        <Svg className={styles.featureSvg} role="img" />
+      </div>
+      <div className="text--center padding-horiz--md">
+        <h3>{title}</h3>
+        <p>{description}</p>
+      </div>
+    </div>
+  );
+}
+
+const FeatureList = [
+  {
+    title: 'Built for Speed',
+    Svg: require('@site/static/img/fast.svg').default,
+    description: (
+      <>
+        Create new endpoints in just a few lines and iterate blazingly fast with
+        hot reload.
+      </>
+    ),
+  },
+  {
+    title: 'Lightweight',
+    Svg: require('@site/static/img/lightweight.svg').default,
+    description: (
+      <>Minimize ramp-up time with our simple core and small API surface.</>
+    ),
+  },
+  {
+    title: 'Powered by Dart',
+    Svg: require('@site/static/img/dart.svg').default,
+    description: (
+      <>
+        Tap into the powerful Dart ecosystem with{' '}
+        <a href="https://pub.dev/packages/shelf">Shelf</a>,{' '}
+        <a href="https://dart.dev/tools/dart-devtools">DevTools</a>,{' '}
+        <a href="https://dart.dev/guides/testing">testing</a>, and more.
+      </>
+    ),
+  },
+];
+
+function HomepageFeatures() {
+  return (
+    <section className={styles.features}>
+      <div className="container">
+        <div className="row">
+          {FeatureList.map((props, idx) => (
+            <Feature key={idx} {...props} />
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 
