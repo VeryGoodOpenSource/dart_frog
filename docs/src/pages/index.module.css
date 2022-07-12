@@ -84,10 +84,6 @@ html[data-theme='dark'] .features {
     gap: 1em;
   }
 
-  .content {
-    align-items: center;
-  }
-
   .section {
     padding: 2rem 1rem;
   }

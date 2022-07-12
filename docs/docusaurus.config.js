@@ -63,13 +63,23 @@ const config = {
         },
         items: [
           {
-            type: 'doc',
-            docId: 'overview',
-            position: 'left',
-            label: 'Docs',
+            label: 'Overview',
+            to: '/docs/overview',
           },
           {
-            href: 'https://github.com/verygoodopensource/dart_frog',
+            label: 'Basics',
+            to: '/docs/category/basics-',
+          },
+          {
+            label: 'Deploy',
+            to: '/docs/category/deploy-',
+          },
+          {
+            label: 'Roadmap',
+            to: '/docs/roadmap',
+          },
+          {
+            to: 'https://github.com/verygoodopensource/dart_frog',
             position: 'right',
             className: 'navbar-github-icon',
             'aria-label': 'GitHub repository',

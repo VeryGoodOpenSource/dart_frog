@@ -156,7 +156,10 @@ function HomepageBlogs() {
               productivity by having a unified tech stack that enables sharing
               tooling, models, and more! Here's how to get started.
             </p>
-            <Link style={{ fontWeight: 'bold' }} to="/docs/overview">
+            <Link
+              style={{ fontWeight: 'bold' }}
+              to="https://verygood.ventures/blog/dart-frog"
+            >
               READ THE BLOG <ExternalLinkIcon />
             </Link>
           </div>
