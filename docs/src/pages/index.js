@@ -51,13 +51,13 @@ function CTAs() {
   return (
     <div className={styles.width}>
       <Link className="button button--primary button--lg" to="/docs/overview">
-        GET STARTED
+        Get Started
       </Link>
       <Link
         className="button button--secondary button--lg"
         to="/docs/category/basics-"
       >
-        LEARN MORE
+        Learn More
       </Link>
     </div>
   );
@@ -160,7 +160,7 @@ function HomepageBlogs() {
               style={{ fontWeight: 'bold' }}
               to="https://verygood.ventures/blog/dart-frog"
             >
-              READ THE BLOG <ExternalLinkIcon />
+              Read the Blog <ExternalLinkIcon />
             </Link>
           </div>
         </div>
