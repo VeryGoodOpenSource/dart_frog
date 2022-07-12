@@ -47,7 +47,7 @@ const config = {
       announcementBar: {
         id: 'experimental',
         content:
-          '🚧  This is an experimental framework. Do not use in production at this time. 🚧 ',
+          '🚧  This is an experimental framework. Use at your own risk. 🚧 ',
         backgroundColor: '#f9f871',
         textColor: '#000000',
         isCloseable: false,
