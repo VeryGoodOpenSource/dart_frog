@@ -1,8 +1,8 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-const lightCodeTheme = require('prism-react-renderer/themes/github');
-const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+const lightCodeTheme = require('prism-react-renderer/themes/vsLight');
+const darkCodeTheme = require('prism-react-renderer/themes/vsDark');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -44,6 +44,14 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      announcementBar: {
+        id: 'experimental',
+        content:
+          '🚧  This is an experimental framework. Use at your own risk. 🚧 ',
+        backgroundColor: '#f9f871',
+        textColor: '#000000',
+        isCloseable: false,
+      },
       image: 'img/meta/open-graph.png',
       navbar: {
         title: 'Dart Frog',
@@ -55,13 +63,23 @@ const config = {
         },
         items: [
           {
-            type: 'doc',
-            docId: 'overview',
-            position: 'left',
-            label: 'Docs',
+            label: 'Overview',
+            to: '/docs/overview',
           },
           {
-            href: 'https://github.com/verygoodopensource/dart_frog',
+            label: 'Basics',
+            to: '/docs/category/basics-',
+          },
+          {
+            label: 'Deploy',
+            to: '/docs/category/deploy-',
+          },
+          {
+            label: 'Roadmap',
+            to: '/docs/roadmap',
+          },
+          {
+            to: 'https://github.com/verygoodopensource/dart_frog',
             position: 'right',
             className: 'navbar-github-icon',
             'aria-label': 'GitHub repository',
