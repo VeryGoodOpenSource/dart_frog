@@ -120,10 +120,6 @@ const config = {
                 label: 'Livestream Demo',
                 href: 'https://youtu.be/N7l0b09c6DA',
               },
-              {
-                label: 'Package of the Week',
-                href: 'https://youtu.be/qjA0JFiPMnQ',
-              },
             ],
           },
           {

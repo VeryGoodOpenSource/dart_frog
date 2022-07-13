@@ -41,7 +41,12 @@ function HeroImage() {
           srcSet="img/hero_image_dark_mobile.svg"
         />
         <source media="(min-width: 480px)" srcSet="img/hero_image_dark.svg" />
-        <img src="img/hero_image_dark.svg" alt="Dart Frog Hero" />
+        <img
+          src="img/hero_image_dark.svg"
+          alt="Dart Frog Hero"
+          width="688"
+          height="428"
+        />
       </picture>
     </div>
   );
@@ -146,6 +151,8 @@ function HomepageBlogs() {
           <img
             src="https://uploads-ssl.webflow.com/5ee12d8e99cde2e20255c16c/628d211e83529f3a59ce7854_Dart%20Frog%200.5.jpg"
             alt="Dart on the server with Dart Frog"
+            width="452"
+            height="254"
           />
         </div>
         <div className={styles.column}>
