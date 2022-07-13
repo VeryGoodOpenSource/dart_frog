@@ -38,7 +38,7 @@ jobs:
 
     steps:
       - name: 📚 Git Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3.0.2
 
       - name: 🎯 Setup Dart
         uses: dart-lang/setup-dart@v1
@@ -60,7 +60,7 @@ jobs:
 
     steps:
       - name: 📚 Git Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3.0.2
 
       - name: 🎯 Setup Dart
         uses: dart-lang/setup-dart@v1
