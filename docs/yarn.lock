@@ -1444,12 +1444,12 @@
     postcss-sort-media-queries "^4.2.1"
     tslib "^2.4.0"
 
-"@docusaurus/eslint-plugin@^2.0.0-beta.22":
-  version "2.0.0-beta.22"
-  resolved "https://registry.yarnpkg.com/@docusaurus/eslint-plugin/-/eslint-plugin-2.0.0-beta.22.tgz#dc1745700e28df4e6fa64f9792e9337f0f77d3b0"
-  integrity sha512-UyapH228O4yKO8kOJldTcIo7FoGZ7HmEuCEb1MlwF2LEwMOea4/yekBIotXf26u6mqMMGQYdw57lg/fcXysjHQ==
+"@docusaurus/eslint-plugin@^2.0.0-rc.1":
+  version "2.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/@docusaurus/eslint-plugin/-/eslint-plugin-2.0.0-rc.1.tgz#77e4dc21c133d1b640448cff2ad74a2e48376cb5"
+  integrity sha512-wTx/aZ5R0tJ6MYjSP31sYG8xUM1iwZsBCW512MYdYyI35sHzcfVCqG87bIcIjWaJkMtd3dMg2OJN/ZyvXSj+jg==
   dependencies:
-    "@typescript-eslint/utils" "^5.30.4"
+    "@typescript-eslint/utils" "^5.30.5"
     tslib "^2.4.0"
 
 "@docusaurus/logger@2.0.0-rc.1":
@@ -2336,7 +2336,7 @@
     semver "^7.3.7"
     tsutils "^3.21.0"
 
-"@typescript-eslint/utils@^5.30.4":
+"@typescript-eslint/utils@^5.30.5":
   version "5.30.6"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/utils/-/utils-5.30.6.tgz#1de2da14f678e7d187daa6f2e4cdb558ed0609dc"
   integrity sha512-xFBLc/esUbLOJLk9jKv0E9gD/OH966M40aY9jJ8GiqpSkP2xOV908cokJqqhVd85WoIvHVHYXxSFE4cCSDzVvA==
