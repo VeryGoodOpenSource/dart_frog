@@ -54,10 +54,7 @@ RouteConfiguration buildRouteConfiguration(Directory directory) {
         path.join('routes', conflict.value.first.path),
       );
       final conflictingFilePath = path.normalize(
-        path.join(
-          'routes',
-          conflict.value.last.path,
-        ),
+        path.join('routes', conflict.value.last.path),
       );
 
       buffer.writeln(
