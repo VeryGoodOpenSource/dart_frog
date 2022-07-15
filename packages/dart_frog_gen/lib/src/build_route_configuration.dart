@@ -50,10 +50,14 @@ RouteConfiguration buildRouteConfiguration(Directory directory) {
     final buffer = StringBuffer()..writeln('Conflicting paths detected.');
 
     for (final conflict in conflictingEndpoints) {
-      final originalFilePath = path.join('routes', conflict.value.first.path);
-      final conflictingFilePath = path.join(
-        'routes',
-        conflict.value.last.path,
+      final originalFilePath = path.normalize(
+        path.join('routes', conflict.value.first.path),
+      );
+      final conflictingFilePath = path.normalize(
+        path.join(
+          'routes',
+          conflict.value.last.path,
+        ),
       );
 
       buffer.writeln(

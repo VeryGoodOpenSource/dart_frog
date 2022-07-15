@@ -49,9 +49,14 @@ void main() {
       expect(configuration.globalMiddleware, isNotNull);
     });
 
-    test('throws exception when route conflicts exist', () {
+    test('throws exception when single route conflicts exist', () {
       final directory = Directory(
-        path.join(Directory.current.path, 'test', '.fixtures', 'single'),
+        path.join(
+          Directory.current.path,
+          'test',
+          '.fixtures',
+          'single_conflict',
+        ),
       )..createSync(recursive: true);
       final routes = Directory(path.join(directory.path, 'routes'))
         ..createSync();
@@ -59,7 +64,54 @@ void main() {
       final usersDirectory = Directory(path.join(routes.path, 'users'))
         ..createSync();
       File(path.join(usersDirectory.path, 'index.dart')).createSync();
-      expect(() => buildRouteConfiguration(directory), throwsException);
+      expect(
+        () => buildRouteConfiguration(directory),
+        throwsA(
+          isA<Exception>().having(
+            (e) => e.toString(),
+            'exception',
+            '''
+Exception: Conflicting paths detected.
+path "/users" from route "routes/users.dart" conflicts with "routes/users/index.dart".
+''',
+          ),
+        ),
+      );
+    });
+
+    test('throws exception when multiple route conflicts exist', () {
+      final directory = Directory(
+        path.join(
+          Directory.current.path,
+          'test',
+          '.fixtures',
+          'multi_conflict',
+        ),
+      )..createSync(recursive: true);
+      final routes = Directory(path.join(directory.path, 'routes'))
+        ..createSync();
+      File(path.join(routes.path, 'docs.dart')).createSync();
+      File(path.join(routes.path, 'users.dart')).createSync();
+      final docsDirectory = Directory(path.join(routes.path, 'docs'))
+        ..createSync();
+      final usersDirectory = Directory(path.join(routes.path, 'users'))
+        ..createSync();
+      File(path.join(docsDirectory.path, 'index.dart')).createSync();
+      File(path.join(usersDirectory.path, 'index.dart')).createSync();
+      expect(
+        () => buildRouteConfiguration(directory),
+        throwsA(
+          isA<Exception>().having(
+            (e) => e.toString(),
+            'exception',
+            '''
+Exception: Conflicting paths detected.
+path "/users" from route "routes/users.dart" conflicts with "routes/users/index.dart".
+path "/docs" from route "routes/docs.dart" conflicts with "routes/docs/index.dart".
+''',
+          ),
+        ),
+      );
     });
 
     test('includes single index route', () {
