@@ -106,6 +106,24 @@ html[data-theme='dark'] .navbar-github-icon:before {
     no-repeat;
 }
 
+.navbar-vgv-icon:hover {
+  opacity: 0.6;
+}
+
+.navbar-vgv-icon:before {
+  content: '';
+  width: 24px;
+  height: 24px;
+  display: flex;
+  background: url('../../static/img/vgv_logo_black.svg') no-repeat;
+  background-size: 24px;
+}
+
+html[data-theme='dark'] .navbar-vgv-icon:before {
+  background: url('../../static/img/vgv_logo_fill.svg') no-repeat;
+  background-size: 24px;
+}
+
 .video {
   aspect-ratio: 16 / 9;
   width: 100%;
