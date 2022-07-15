@@ -8,7 +8,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/vsDark');
 const config = {
   title: 'Dart Frog',
   tagline: 'A fast, minimalistic backend framework for Dart 🎯',
-  url: 'https://VeryGoodOpenSource.github.io',
+  url: 'https://dartfrog.vgv.dev',
   baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
