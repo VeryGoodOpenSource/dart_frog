@@ -105,7 +105,7 @@ List<RouteDirectory> _getRouteDirectories({
 
   final files = [
     ..._getRouteFiles(
-      directory,
+      directory: directory,
       routesDirectory: routesDirectory,
       onRoute: onRoute,
     ),
@@ -166,7 +166,7 @@ List<RouteFile> _getRouteFilesForDynamicDirectories({
       .forEach((dynamicDirectory) {
     final newPrefix = '$prefix/${path.basename(dynamicDirectory.path)}';
     final subset = _getRouteFiles(
-      dynamicDirectory,
+      directory: dynamicDirectory,
       routesDirectory: routesDirectory,
       onRoute: onRoute,
       prefix: newPrefix,
@@ -182,8 +182,8 @@ List<RouteFile> _getRouteFilesForDynamicDirectories({
   return files;
 }
 
-List<RouteFile> _getRouteFiles(
-  Directory directory, {
+List<RouteFile> _getRouteFiles({
+  required Directory directory,
   required Directory routesDirectory,
   required void Function(RouteFile route) onRoute,
   String prefix = '',
