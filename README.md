@@ -17,7 +17,7 @@ Dart Frog is an experimental project under development and should not be used in
 
 ## Documentation 📝
 
-For official documentation, please visit https://verygoodopensource.github.io/dart_frog.
+For official documentation, please visit https://dartfrog.vgv.dev.
 
 ## Packages 📦
 
