@@ -79,10 +79,16 @@ const config = {
             to: '/docs/roadmap',
           },
           {
-            to: 'https://github.com/verygoodopensource/dart_frog',
+            to: 'https://dartfrog.vgv.dev',
             position: 'right',
             className: 'navbar-github-icon',
             'aria-label': 'GitHub repository',
+          },
+          {
+            to: 'https://verygood.ventures',
+            position: 'right',
+            className: 'navbar-vgv-icon',
+            'aria-label': 'Very Good Ventures',
           },
         ],
       },
