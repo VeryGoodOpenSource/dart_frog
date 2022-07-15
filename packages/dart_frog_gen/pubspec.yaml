@@ -1,7 +1,8 @@
 name: dart_frog_gen
 description: Code generation tooling for Dart Frog. Built by Very Good Ventures.
 version: 0.0.2-dev.4
-homepage: https://github.com/VeryGoodOpenSource/dart_frog
+homepage: https://dartfrog.vgv.dev/
+repository: https://github.com/VeryGoodOpenSource/dart_frog
 
 environment:
   sdk: ">=2.17.0 <3.0.0"
