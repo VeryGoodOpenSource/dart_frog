@@ -9,7 +9,7 @@ const config = {
   title: 'Dart Frog',
   tagline: 'A fast, minimalistic backend framework for Dart 🎯',
   url: 'https://VeryGoodOpenSource.github.io',
-  baseUrl: '/dart_frog/',
+  baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
