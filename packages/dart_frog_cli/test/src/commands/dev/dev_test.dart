@@ -177,8 +177,9 @@ void main() {
       ]);
     });
 
-    test('runs codegen when changes are made to the public/routes directory',
-        () async {
+    test(
+        'runs codegen w/debounce '
+        'when changes are made to the public/routes directory', () async {
       final controller = StreamController<WatchEvent>();
       final generatorHooks = _MockGeneratorHooks();
       when(
@@ -219,13 +220,21 @@ void main() {
         ),
       ).called(1);
 
-      controller.add(
-        WatchEvent(
-          ChangeType.MODIFY,
-          path.join(Directory.current.path, 'routes', 'index.dart'),
-        ),
-      );
+      controller
+        ..add(
+          WatchEvent(
+            ChangeType.ADD,
+            path.join(Directory.current.path, 'routes', 'users.dart'),
+          ),
+        )
+        ..add(
+          WatchEvent(
+            ChangeType.REMOVE,
+            path.join(Directory.current.path, 'routes', 'user.dart'),
+          ),
+        );
 
+      await Future<void>.delayed(Duration.zero);
       await Future<void>.delayed(Duration.zero);
 
       verify(
@@ -244,6 +253,7 @@ void main() {
       );
 
       await Future<void>.delayed(Duration.zero);
+      await Future<void>.delayed(Duration.zero);
 
       verify(
         () => generator.generate(
@@ -260,6 +270,7 @@ void main() {
         ),
       );
 
+      await Future<void>.delayed(Duration.zero);
       await Future<void>.delayed(Duration.zero);
 
       verifyNever(
@@ -352,6 +363,56 @@ void main() {
       verify(() => generatorTarget.cacheLatestSnapshot()).called(1);
       verify(() => generatorTarget.restore()).called(1);
       verify(() => logger.err(error)).called(1);
+    });
+
+    test('ignores file not found errors due to file renames', () async {
+      final generatorHooks = _MockGeneratorHooks();
+      final stdoutController = StreamController<List<int>>();
+      final stderrController = StreamController<List<int>>();
+      when(
+        () => generatorHooks.preGen(
+          vars: any(named: 'vars'),
+          workingDirectory: any(named: 'workingDirectory'),
+          onVarsChanged: any(named: 'onVarsChanged'),
+        ),
+      ).thenAnswer((invocation) async {
+        (invocation.namedArguments[const Symbol('onVarsChanged')] as Function(
+          Map<String, dynamic> vars,
+        ))
+            .call(<String, dynamic>{});
+      });
+      when(
+        () => generator.generate(
+          any(),
+          vars: any(named: 'vars'),
+          fileConflictResolution: FileConflictResolution.overwrite,
+        ),
+      ).thenAnswer((_) async => []);
+      when(() => generator.hooks).thenReturn(generatorHooks);
+      when(() => generatorTarget.restore()).thenAnswer((_) async {});
+      when(() => process.stdout).thenAnswer((_) => stdoutController.stream);
+      when(() => process.stderr).thenAnswer((_) => stderrController.stream);
+      when(() => directoryWatcher.events).thenAnswer(
+        (_) => const Stream.empty(),
+      );
+
+      command.run().ignore();
+
+      stdoutController.add(utf8.encode('[hotreload] hot reload enabled'));
+      await untilCalled(() => generatorTarget.cacheLatestSnapshot());
+      verify(() => generatorTarget.cacheLatestSnapshot()).called(1);
+
+      const error =
+          "./dart_frog/server.dart:7:8: Error: Error when reading 'routes/example.dart': The system cannot find the file specified.";
+
+      stderrController.add(utf8.encode(error));
+
+      await stderrController.close();
+      await stdoutController.close();
+
+      verifyNever(() => generatorTarget.cacheLatestSnapshot());
+      verifyNever(() => generatorTarget.restore());
+      verifyNever(() => logger.err(error));
     });
 
     test('port can be specified using --port', () async {

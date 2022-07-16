@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'dart:io' as io;
 
+import 'package:collection/collection.dart';
 import 'package:dart_frog_cli/src/command.dart';
 import 'package:dart_frog_cli/src/commands/commands.dart';
 import 'package:dart_frog_cli/src/commands/dev/templates/dart_frog_dev_server_bundle.dart';
 import 'package:mason/mason.dart';
+import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
+import 'package:stream_transform/stream_transform.dart';
 import 'package:watcher/watcher.dart';
 
 /// Typedef for [io.Process.start].
@@ -85,6 +88,7 @@ class DevCommand extends DartFrogCommand {
 
   @override
   Future<int> run() async {
+    var reloading = false;
     var hotReloadEnabled = false;
     final port = io.Platform.environment['PORT'] ?? results['port'] as String;
     final generator = await _generator(dartFrogDevServerBundle);
@@ -104,6 +108,12 @@ class DevCommand extends DartFrogCommand {
       );
     }
 
+    Future<void> reload() async {
+      reloading = true;
+      await codegen();
+      reloading = false;
+    }
+
     Future<void> serve() async {
       final process = await _startProcess(
         'dart',
@@ -119,7 +129,12 @@ class DevCommand extends DartFrogCommand {
       var hasError = false;
       process.stderr.listen((_) async {
         hasError = true;
-        logger.err(utf8.decode(_));
+        if (reloading) return;
+
+        final message = utf8.decode(_).trim();
+        if (message.isEmpty) return;
+
+        logger.err(message);
 
         if (!hotReloadEnabled) {
           await _killProcess(process);
@@ -132,8 +147,10 @@ class DevCommand extends DartFrogCommand {
       process.stdout.listen((_) {
         final message = utf8.decode(_).trim();
         if (message.contains('[hotreload]')) hotReloadEnabled = true;
-        if (!hasError) _generatorTarget.cacheLatestSnapshot();
         if (message.isNotEmpty) logger.info(message);
+        final shouldCacheSnapshot =
+            hotReloadEnabled && !hasError && message.isNotEmpty;
+        if (shouldCacheSnapshot) _generatorTarget.cacheLatestSnapshot();
         hasError = false;
       });
     }
@@ -146,14 +163,16 @@ class DevCommand extends DartFrogCommand {
     final public = path.join(cwd.path, 'public');
     final routes = path.join(cwd.path, 'routes');
 
-    bool shouldRunCodegen(WatchEvent event) {
+    bool shouldReload(WatchEvent event) {
       return path.isWithin(routes, event.path) ||
           path.isWithin(public, event.path);
     }
 
     final watcher = _directoryWatcher(path.join(cwd.path));
-    final subscription =
-        watcher.events.where(shouldRunCodegen).listen((_) => codegen());
+    final subscription = watcher.events
+        .where(shouldReload)
+        .debounce(Duration.zero)
+        .listen((_) => reload());
 
     await subscription.asFuture<void>();
     await subscription.cancel();
@@ -175,6 +194,7 @@ class DevCommand extends DartFrogCommand {
 /// {@template cached_file}
 /// A cached file which consists of the file path and contents.
 /// {@endtemplate}
+@immutable
 class CachedFile {
   /// {@macro cached_file}
   const CachedFile({required this.path, required this.contents});
@@ -184,6 +204,19 @@ class CachedFile {
 
   /// The contents of the generated file.s
   final List<int> contents;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    final listEquals = const DeepCollectionEquality().equals;
+
+    return other is CachedFile &&
+        other.path == path &&
+        listEquals(other.contents, contents);
+  }
+
+  @override
+  int get hashCode => Object.hashAll([contents, path]);
 }
 
 /// Signature for the `createFile` method on [DirectoryGeneratorTarget].
@@ -217,7 +250,7 @@ class RestorableDirectoryGeneratorTarget extends DirectoryGeneratorTarget {
   /// Cache the latest recorded snapshot.
   void cacheLatestSnapshot() {
     final snapshot = _latestSnapshot;
-    if (snapshot == null) return;
+    if (snapshot == null || _cachedSnapshot == snapshot) return;
     _cachedSnapshot = snapshot;
   }
 
