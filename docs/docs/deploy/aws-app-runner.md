@@ -20,15 +20,15 @@ Before you get started, if you haven't already completed these steps, you'll hav
 While Amazon Web Services has a free tier that should cover testing projects, you can incur costs when running this quickstart through App Runner or Elastic Container Registry. For more details, see [AWS App Runner Pricing](https://aws.amazon.com/apprunner/pricing/) and [Amazon Elastic Container Registry Pricing](https://aws.amazon.com/ecr/pricing/).
 :::
 
-2. Install [Docker](https://docs.docker.com/get-docker/) on your computer, and you'll have to start app. You can verify it is set up correctly by running:
+2. Install [Docker](https://docs.docker.com/get-docker/) on your machine, and you'll have to start the app. You can verify it is set up correctly by running:
 
 ```bash
 docker images
 ```
 
-(If Docker is running, the command will print the images on your computer. If not, it will print something like `Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?`)
+(If Docker is running, the command will print the images on your machine. If not, it will print something like `Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?`)
 
-3. Install the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) installed on your computer.
+3. Install the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) on your machine.
 
 4. [Configure the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-quickstart.html) to give it permission to push images. Just make sure the user you configure has the `AmazonEC2ContainerRegistryFullAccess` policy applied.
 
