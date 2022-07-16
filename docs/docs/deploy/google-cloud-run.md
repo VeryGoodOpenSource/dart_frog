@@ -43,16 +43,16 @@ This will create a `/build` directory with all the files needed to deploy your A
 2. Deploy your API to Cloud Run by running:
 
 ```bash
-gcloud run deploy [SERVICE_NAME]
-  --source build \           # the output of dart_frog build
-  --project=[PROJECT_ID] \   # The Google Cloud project ID
-  --region=[REGION]  \       # ex: us-central1
-  --allow-unauthenticated    # for public access
+gcloud run deploy [SERVICE_NAME] \
+  --source build \
+  --project=[PROJECT_ID] \
+  --region=[REGION] \
+  --allow-unauthenticated
 ```
 
 - `[SERVICE_NAME]`: The name of the Cloud Run service you want to create/update
 - `[PROJECT_ID]`: The ID of the Google Cloud project
-- `[REGION]`: The GCP region you wish to deploy to
+- `[REGION]`: The GCP region you wish to deploy to (ex: us-central1)
 
 Running this command will do three things:
 
