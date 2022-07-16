@@ -6,6 +6,7 @@ import 'package:dart_frog_cli/src/commands/commands.dart';
 import 'package:dart_frog_cli/src/commands/dev/templates/dart_frog_dev_server_bundle.dart';
 import 'package:mason/mason.dart';
 import 'package:path/path.dart' as path;
+import 'package:stream_transform/stream_transform.dart';
 import 'package:watcher/watcher.dart';
 
 /// Typedef for [io.Process.start].
@@ -152,8 +153,10 @@ class DevCommand extends DartFrogCommand {
     }
 
     final watcher = _directoryWatcher(path.join(cwd.path));
-    final subscription =
-        watcher.events.where(shouldRunCodegen).listen((_) => codegen());
+    final subscription = watcher.events
+        .where(shouldRunCodegen)
+        .debounce(Duration.zero)
+        .listen((_) => codegen());
 
     await subscription.asFuture<void>();
     await subscription.cancel();

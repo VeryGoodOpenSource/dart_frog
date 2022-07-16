@@ -177,8 +177,9 @@ void main() {
       ]);
     });
 
-    test('runs codegen when changes are made to the public/routes directory',
-        () async {
+    test(
+        'runs codegen w/debounce '
+        'when changes are made to the public/routes directory', () async {
       final controller = StreamController<WatchEvent>();
       final generatorHooks = _MockGeneratorHooks();
       when(
@@ -219,13 +220,21 @@ void main() {
         ),
       ).called(1);
 
-      controller.add(
-        WatchEvent(
-          ChangeType.MODIFY,
-          path.join(Directory.current.path, 'routes', 'index.dart'),
-        ),
-      );
+      controller
+        ..add(
+          WatchEvent(
+            ChangeType.ADD,
+            path.join(Directory.current.path, 'routes', 'users.dart'),
+          ),
+        )
+        ..add(
+          WatchEvent(
+            ChangeType.REMOVE,
+            path.join(Directory.current.path, 'routes', 'user.dart'),
+          ),
+        );
 
+      await Future<void>.delayed(Duration.zero);
       await Future<void>.delayed(Duration.zero);
 
       verify(
@@ -244,6 +253,7 @@ void main() {
       );
 
       await Future<void>.delayed(Duration.zero);
+      await Future<void>.delayed(Duration.zero);
 
       verify(
         () => generator.generate(
@@ -260,6 +270,7 @@ void main() {
         ),
       );
 
+      await Future<void>.delayed(Duration.zero);
       await Future<void>.delayed(Duration.zero);
 
       verifyNever(
