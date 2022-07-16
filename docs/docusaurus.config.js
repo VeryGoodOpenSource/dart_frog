@@ -32,7 +32,7 @@ const config = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl:
-            'https://github.com/verygoodventures/dart_frog/tree/main/docs/',
+            'https://github.com/VeryGoodOpenSource/dart_frog/tree/main/docs/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
