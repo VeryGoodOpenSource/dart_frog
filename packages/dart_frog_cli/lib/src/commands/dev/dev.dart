@@ -130,11 +130,11 @@ class DevCommand extends DartFrogCommand {
       });
 
       process.stdout.listen((_) {
-        final message = utf8.decode(_);
+        final message = utf8.decode(_).trim();
         if (message.contains('[hotreload]')) hotReloadEnabled = true;
         if (!hasError) _generatorTarget.cacheLatestSnapshot();
+        if (message.isNotEmpty) logger.info(message);
         hasError = false;
-        logger.info(message);
       });
     }
 
