@@ -149,6 +149,7 @@ function HomepageBlogs() {
       <div className={styles.width}>
         <div className={styles.column}>
           <img
+            style={{ height: 'auto' }}
             src="https://uploads-ssl.webflow.com/5ee12d8e99cde2e20255c16c/628d211e83529f3a59ce7854_Dart%20Frog%200.5.jpg"
             alt="Dart on the server with Dart Frog"
             width="452"
