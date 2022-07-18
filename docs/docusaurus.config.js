@@ -32,7 +32,7 @@ const config = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl:
-            'https://github.com/verygoodventures/dart_frog/tree/main/docs/',
+            'https://github.com/VeryGoodOpenSource/dart_frog/tree/main/docs/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -79,7 +79,7 @@ const config = {
             to: '/docs/roadmap',
           },
           {
-            to: 'https://dartfrog.vgv.dev',
+            to: 'https://github.com/VeryGoodOpenSource/dart_frog',
             position: 'right',
             className: 'navbar-github-icon',
             'aria-label': 'GitHub repository',

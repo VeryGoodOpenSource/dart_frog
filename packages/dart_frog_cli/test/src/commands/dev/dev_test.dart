@@ -127,6 +127,56 @@ void main() {
       ).called(1);
     });
 
+    test('logs process.stdout', () async {
+      final generatorHooks = _MockGeneratorHooks();
+      when(
+        () => generatorHooks.preGen(
+          vars: any(named: 'vars'),
+          workingDirectory: any(named: 'workingDirectory'),
+          onVarsChanged: any(named: 'onVarsChanged'),
+        ),
+      ).thenAnswer((invocation) async {
+        (invocation.namedArguments[const Symbol('onVarsChanged')] as Function(
+          Map<String, dynamic> vars,
+        ))
+            .call(<String, dynamic>{});
+      });
+      when(
+        () => generator.generate(
+          any(),
+          vars: any(named: 'vars'),
+          fileConflictResolution: FileConflictResolution.overwrite,
+        ),
+      ).thenAnswer((_) async => []);
+      when(() => generator.hooks).thenReturn(generatorHooks);
+      when(() => process.stdout).thenAnswer(
+        (_) => Stream.fromIterable([
+          utf8.encode('  Message A  '),
+          utf8.encode(''),
+          utf8.encode(' Message B'),
+          utf8.encode(' '),
+          utf8.encode('Message C '),
+          utf8.encode('  '),
+          utf8.encode('Message D'),
+        ]),
+      );
+      when(() => process.stderr).thenAnswer((_) => const Stream.empty());
+      when(
+        () => directoryWatcher.events,
+      ).thenAnswer((_) => const Stream.empty());
+
+      command.run().ignore();
+
+      await Future<void>.delayed(Duration.zero);
+
+      verifyInOrder([
+        () => logger.info('Message A'),
+        () => logger.info('Message B'),
+        () => logger.info('Message C'),
+        () => logger.info('Message D'),
+      ]);
+    });
+
     test('runs codegen when changes are made to the public/routes directory',
         () async {
       final controller = StreamController<WatchEvent>();

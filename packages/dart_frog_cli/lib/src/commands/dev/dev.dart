@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io' as io;
-import 'dart:io';
 
 import 'package:dart_frog_cli/src/command.dart';
 import 'package:dart_frog_cli/src/commands/commands.dart';
@@ -33,7 +32,7 @@ typedef Exit = dynamic Function(int exitCode);
 RestorableDirectoryGeneratorTarget get _defaultGeneratorTarget {
   return RestorableDirectoryGeneratorTarget(
     io.Directory(
-      path.join(Directory.current.path, '.dart_frog'),
+      path.join(io.Directory.current.path, '.dart_frog'),
     ),
   );
 }
@@ -87,7 +86,7 @@ class DevCommand extends DartFrogCommand {
   @override
   Future<int> run() async {
     var hotReloadEnabled = false;
-    final port = Platform.environment['PORT'] ?? results['port'] as String;
+    final port = io.Platform.environment['PORT'] ?? results['port'] as String;
     final generator = await _generator(dartFrogDevServerBundle);
 
     Future<void> codegen() async {
@@ -131,11 +130,11 @@ class DevCommand extends DartFrogCommand {
       });
 
       process.stdout.listen((_) {
-        final message = utf8.decode(_);
+        final message = utf8.decode(_).trim();
         if (message.contains('[hotreload]')) hotReloadEnabled = true;
         if (!hasError) _generatorTarget.cacheLatestSnapshot();
+        if (message.isNotEmpty) logger.info(message);
         hasError = false;
-        logger.info(message);
       });
     }
 
@@ -161,7 +160,7 @@ class DevCommand extends DartFrogCommand {
     return ExitCode.success.code;
   }
 
-  Future<void> _killProcess(Process process) async {
+  Future<void> _killProcess(io.Process process) async {
     process.kill();
     if (_isWindows) {
       final result = await _runProcess(
