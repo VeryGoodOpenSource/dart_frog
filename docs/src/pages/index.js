@@ -166,7 +166,7 @@ function HomepageBlogs() {
             </p>
             <Link
               style={{ fontWeight: 'bold' }}
-              to="https://verygood.ventures/blog/dart-frog"
+              to="https://verygood.ventures/blog/dart-frog?utm_source=dartfrog&utm_medium=docs&utm_campaign=df_blog"
             >
               Read the Blog <ExternalLinkIcon />
             </Link>
