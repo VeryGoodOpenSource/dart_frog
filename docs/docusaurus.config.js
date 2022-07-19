@@ -85,7 +85,7 @@ const config = {
             'aria-label': 'GitHub repository',
           },
           {
-            to: 'https://verygood.ventures',
+            to: 'https://verygood.ventures?utm_source=dartfrog&utm_medium=docs&utm_campaign=df',
             position: 'right',
             className: 'navbar-vgv-icon',
             'aria-label': 'Very Good Ventures',
@@ -120,7 +120,7 @@ const config = {
             items: [
               {
                 label: 'Blog Post',
-                href: 'https://verygood.ventures/blog/dart-frog',
+                href: 'https://verygood.ventures/blog/dart-frog?utm_source=dartfrog&utm_medium=docs&utm_campaign=df_blog',
               },
               {
                 label: 'Livestream Demo',
