@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dart_frog_gen/dart_frog_gen.dart';
 import 'package:mason/mason.dart';
 import 'package:mocktail/mocktail.dart';
@@ -29,7 +31,7 @@ class _MockLogger extends Mock implements Logger {}
 class _MockRouteConfiguration extends Mock implements RouteConfiguration {}
 
 void main() {
-  group('run', () {
+  group('preGen', () {
     late HookContext context;
     late Logger logger;
 
@@ -38,10 +40,20 @@ void main() {
       context = _FakeHookContext(logger: logger);
     });
 
+    test('run completes', () {
+      expect(
+        ExitOverrides.runZoned(
+          () => run(_FakeHookContext()),
+          exit: (_) {},
+        ),
+        completes,
+      );
+    });
+
     test('exit(1) if buildRouteConfiguration throws', () async {
       final exitCalls = <int>[];
       final exception = Exception('oops');
-      await run(
+      await preGen(
         context,
         buildConfiguration: (_) => throw exception,
         exit: exitCalls.add,
@@ -60,7 +72,7 @@ void main() {
         endpoints: {},
       );
       final exitCalls = <int>[];
-      await run(
+      await preGen(
         context,
         buildConfiguration: (_) => configuration,
         exit: exitCalls.add,
@@ -119,7 +131,7 @@ void main() {
         serveStaticFiles: true,
       );
       final exitCalls = <int>[];
-      await run(
+      await preGen(
         context,
         buildConfiguration: (_) => configuration,
         exit: exitCalls.add,
@@ -233,6 +245,27 @@ void main() {
           '''Route conflict detected. ${lightCyan.wrap('routes/echo.dart')} and ${lightCyan.wrap('routes/echo/index.dart')} both resolve to ${lightCyan.wrap('/echo')}.''',
         ),
       );
+    });
+  });
+
+  group('ExitOverrides', () {
+    group('runZoned', () {
+      test('uses default exit when not specified', () {
+        ExitOverrides.runZoned(() {
+          final overrides = ExitOverrides.current;
+          expect(overrides!.exit, equals(exit));
+        });
+      });
+
+      test('uses custom exit when specified', () {
+        ExitOverrides.runZoned(
+          () {
+            final overrides = ExitOverrides.current;
+            expect(overrides!.exit, isNot(equals(exit)));
+          },
+          exit: (_) {},
+        );
+      });
     });
   });
 }

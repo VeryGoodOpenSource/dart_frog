@@ -1,24 +1,28 @@
-import 'dart:io';
+import 'dart:async';
+import 'dart:io' as io;
 
 import 'package:dart_frog_gen/dart_frog_gen.dart';
 import 'package:mason/mason.dart';
 import 'package:path/path.dart' as path;
 
 typedef RouteConfigurationBuilder = RouteConfiguration Function(
-  Directory directory,
+  io.Directory directory,
 );
 
-Future<void> run(
+Future<void> run(HookContext context) async => preGen(context);
+
+Future<void> preGen(
   HookContext context, {
   RouteConfigurationBuilder buildConfiguration = buildRouteConfiguration,
-  void Function(int exitCode) exit = exit,
+  void Function(int exitCode)? exit,
 }) async {
   final RouteConfiguration configuration;
   try {
-    configuration = buildConfiguration(Directory.current);
+    configuration = buildConfiguration(io.Directory.current);
   } catch (error) {
     context.logger.err('$error');
-    return exit(1);
+    final _exit = exit ?? ExitOverrides.current?.exit ?? io.exit;
+    return _exit(1);
   }
 
   reportRouteConflicts(context, configuration);
@@ -59,5 +63,34 @@ void reportRouteConflicts(
       );
     }
     context.logger.info('');
+  }
+}
+
+const _asyncRunZoned = runZoned;
+
+abstract class ExitOverrides {
+  static final _token = Object();
+
+  static ExitOverrides? get current {
+    return Zone.current[_token] as ExitOverrides?;
+  }
+
+  static R runZoned<R>(R Function() body, {void Function(int)? exit}) {
+    final overrides = _ExitOverridesScope(exit);
+    return _asyncRunZoned(body, zoneValues: {_token: overrides});
+  }
+
+  void Function(int exitCode) get exit => io.exit;
+}
+
+class _ExitOverridesScope extends ExitOverrides {
+  _ExitOverridesScope(this._exit);
+
+  final ExitOverrides? _previous = ExitOverrides.current;
+  final void Function(int exitCode)? _exit;
+
+  @override
+  void Function(int exitCode) get exit {
+    return _exit ?? _previous?.exit ?? super.exit;
   }
 }
