@@ -23,6 +23,7 @@ RouteConfiguration buildRouteConfiguration(Directory directory) {
         )
       : null;
 
+  final endpoints = <String, List<RouteFile>>{};
   final middleware = <MiddlewareFile>[
     if (globalMiddleware != null) globalMiddleware
   ];
@@ -32,6 +33,13 @@ RouteConfiguration buildRouteConfiguration(Directory directory) {
     routesDirectory: routesDirectory,
     onRoute: routes.add,
     onMiddleware: middleware.add,
+    onEndpoint: (endpoint, file) {
+      if (!endpoints.containsKey(endpoint)) {
+        endpoints[endpoint] = [file];
+      } else {
+        endpoints[endpoint]!.add(file);
+      }
+    },
   );
   final publicDirectory = Directory(path.join(directory.path, 'public'));
   return RouteConfiguration(
@@ -39,6 +47,7 @@ RouteConfiguration buildRouteConfiguration(Directory directory) {
     middleware: middleware,
     directories: directories,
     routes: routes,
+    endpoints: endpoints,
     serveStaticFiles: publicDirectory.existsSync(),
   );
 }
@@ -48,6 +57,7 @@ List<RouteDirectory> _getRouteDirectories({
   required Directory routesDirectory,
   required void Function(RouteFile route) onRoute,
   required void Function(MiddlewareFile route) onMiddleware,
+  required void Function(String endpoint, RouteFile file) onEndpoint,
 }) {
   final directories = <RouteDirectory>[];
   final entities = directory.listSync().sorted();
@@ -85,10 +95,20 @@ List<RouteDirectory> _getRouteDirectories({
     ),
   ];
 
+  final baseRoute = directoryPath.toRoute();
+  for (final file in files) {
+    var endpoint = (baseRoute + file.route.toRoute()).replaceAll('//', '/');
+    if (endpoint.endsWith('/')) {
+      endpoint = endpoint.substring(0, endpoint.length - 1);
+    }
+    if (endpoint.isEmpty) endpoint = '/';
+    onEndpoint(endpoint, file);
+  }
+
   directories.add(
     RouteDirectory(
       name: directoryPath.toAlias(),
-      route: directoryPath.toRoute(),
+      route: baseRoute,
       middleware: middleware,
       files: files,
     ),
@@ -102,6 +122,7 @@ List<RouteDirectory> _getRouteDirectories({
           routesDirectory: routesDirectory,
           onRoute: onRoute,
           onMiddleware: onMiddleware,
+          onEndpoint: onEndpoint,
         ),
       );
     }
@@ -229,6 +250,7 @@ class RouteConfiguration {
     required this.middleware,
     required this.directories,
     required this.routes,
+    required this.endpoints,
     this.serveStaticFiles = false,
   });
 
@@ -248,6 +270,9 @@ class RouteConfiguration {
 
   /// List of all route files.
   final List<RouteFile> routes;
+
+  /// A map of all endpoint paths to resolved route files.
+  final Map<String, List<RouteFile>> endpoints;
 }
 
 /// {@template route_directory}
