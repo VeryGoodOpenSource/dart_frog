@@ -52,7 +52,7 @@ void main() {
     test('retains custom port if specified', () async {
       const customPort = '8081';
       context.vars['port'] = customPort;
-      final configuration = RouteConfiguration(
+      const configuration = RouteConfiguration(
         middleware: [],
         directories: [],
         routes: [],
@@ -70,9 +70,9 @@ void main() {
         context.vars,
         equals({
           'port': customPort,
-          'directories': [],
-          'routes': [],
-          'middleware': [],
+          'directories': <RouteDirectory>[],
+          'routes': <RouteFile>[],
+          'middleware': <MiddlewareFile>[],
           'globalMiddleware': false,
           'serveStaticFiles': false,
         }),
@@ -81,7 +81,7 @@ void main() {
 
     test('updates context.vars when buildRouteConfiguration succeeds',
         () async {
-      final configuration = RouteConfiguration(
+      const configuration = RouteConfiguration(
         globalMiddleware: MiddlewareFile(
           name: 'middleware',
           path: 'middleware.dart',
@@ -175,10 +175,10 @@ void main() {
 
     test('reports nothing when there are endpoints and no conflicts', () {
       when(() => configuration.endpoints).thenReturn({
-        '/': [
+        '/': const [
           RouteFile(name: 'index', path: 'index.dart', route: '/'),
         ],
-        '/hello': [
+        '/hello': const [
           RouteFile(name: 'hello', path: 'hello.dart', route: '/hello')
         ]
       });
@@ -189,10 +189,10 @@ void main() {
     test('reports single conflict when there is one endpoint with conflicts',
         () {
       when(() => configuration.endpoints).thenReturn({
-        '/': [
+        '/': const [
           RouteFile(name: 'index', path: 'index.dart', route: '/'),
         ],
-        '/hello': [
+        '/hello': const [
           RouteFile(name: 'hello', path: 'hello.dart', route: '/hello'),
           RouteFile(name: 'hello_index', path: 'hello/index.dart', route: '/')
         ]
@@ -200,23 +200,23 @@ void main() {
       reportRouteConflicts(context, configuration);
       verify(
         () => logger.err(
-          'Route conflict detected. ${lightCyan.wrap('routes/hello.dart')} and ${lightCyan.wrap('routes/hello/index.dart')} both resolve to ${lightCyan.wrap('/hello')}.',
+          '''Route conflict detected. ${lightCyan.wrap('routes/hello.dart')} and ${lightCyan.wrap('routes/hello/index.dart')} both resolve to ${lightCyan.wrap('/hello')}.''',
         ),
       );
     });
 
     test(
-        'reports multiple conflicts when there are multiple endpoint with conflicts',
-        () {
+        'reports multiple conflicts '
+        'when there are multiple endpoint with conflicts', () {
       when(() => configuration.endpoints).thenReturn({
-        '/': [
+        '/': const [
           RouteFile(name: 'index', path: 'index.dart', route: '/'),
         ],
-        '/hello': [
+        '/hello': const [
           RouteFile(name: 'hello', path: 'hello.dart', route: '/hello'),
           RouteFile(name: 'hello_index', path: 'hello/index.dart', route: '/')
         ],
-        '/echo': [
+        '/echo': const [
           RouteFile(name: 'echo', path: 'echo.dart', route: '/echo'),
           RouteFile(name: 'echo_index', path: 'echo/index.dart', route: '/')
         ]
@@ -224,12 +224,12 @@ void main() {
       reportRouteConflicts(context, configuration);
       verify(
         () => logger.err(
-          'Route conflict detected. ${lightCyan.wrap('routes/hello.dart')} and ${lightCyan.wrap('routes/hello/index.dart')} both resolve to ${lightCyan.wrap('/hello')}.',
+          '''Route conflict detected. ${lightCyan.wrap('routes/hello.dart')} and ${lightCyan.wrap('routes/hello/index.dart')} both resolve to ${lightCyan.wrap('/hello')}.''',
         ),
       );
       verify(
         () => logger.err(
-          'Route conflict detected. ${lightCyan.wrap('routes/echo.dart')} and ${lightCyan.wrap('routes/echo/index.dart')} both resolve to ${lightCyan.wrap('/echo')}.',
+          '''Route conflict detected. ${lightCyan.wrap('routes/echo.dart')} and ${lightCyan.wrap('routes/echo/index.dart')} both resolve to ${lightCyan.wrap('/echo')}.''',
         ),
       );
     });

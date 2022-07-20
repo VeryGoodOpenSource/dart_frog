@@ -55,7 +55,7 @@ void reportRouteConflicts(
         path.join('routes', conflict.value.last.path),
       );
       context.logger.err(
-        'Route conflict detected. ${lightCyan.wrap(originalFilePath)} and ${lightCyan.wrap(conflictingFilePath)} both resolve to ${lightCyan.wrap(conflict.key)}.',
+        '''Route conflict detected. ${lightCyan.wrap(originalFilePath)} and ${lightCyan.wrap(conflictingFilePath)} both resolve to ${lightCyan.wrap(conflict.key)}.''',
       );
     }
     context.logger.info('');
