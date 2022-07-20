@@ -49,6 +49,41 @@ void main() {
       expect(configuration.globalMiddleware, isNotNull);
     });
 
+    test('endpoint includes multiple routes when conflicts exist', () {
+      final directory = Directory(
+        path.join(
+          Directory.current.path,
+          'test',
+          '.fixtures',
+          'single_conflict',
+        ),
+      )..createSync(recursive: true);
+      final routes = Directory(path.join(directory.path, 'routes'))
+        ..createSync();
+      File(path.join(routes.path, 'users.dart')).createSync();
+      final usersDirectory = Directory(path.join(routes.path, 'users'))
+        ..createSync();
+      File(path.join(usersDirectory.path, 'index.dart')).createSync();
+      final configuration = buildRouteConfiguration(directory);
+      expect(
+        configuration.endpoints,
+        equals({
+          '/users': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/users.dart',
+            ),
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/users/index.dart',
+            )
+          ]
+        }),
+      );
+    });
+
     test('includes single index route', () {
       const expected = [
         {
@@ -70,6 +105,18 @@ void main() {
       expect(
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
+      );
+      expect(
+        configuration.endpoints,
+        equals({
+          '/': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/index.dart',
+            )
+          ]
+        }),
       );
     });
 
@@ -101,6 +148,25 @@ void main() {
       expect(
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
+      );
+      expect(
+        configuration.endpoints,
+        equals({
+          '/': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/index.dart',
+            )
+          ],
+          '/hello': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/hello.dart',
+            )
+          ]
+        }),
       );
     });
 
@@ -140,6 +206,25 @@ void main() {
       expect(
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
+      );
+      expect(
+        configuration.endpoints,
+        equals({
+          '/': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/index.dart',
+            )
+          ],
+          '/echo/message': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/echo/message.dart',
+            )
+          ]
+        }),
       );
     });
 
@@ -185,6 +270,18 @@ void main() {
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
       );
+      expect(
+        configuration.endpoints,
+        equals({
+          '/echo/message': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/echo/message/index.dart',
+            )
+          ]
+        }),
+      );
     });
 
     test('includes dynamic route', () {
@@ -223,6 +320,25 @@ void main() {
       expect(
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
+      );
+      expect(
+        configuration.endpoints,
+        equals({
+          '/': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/index.dart',
+            )
+          ],
+          '/echo/<message>': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/echo/[message].dart',
+            )
+          ]
+        }),
       );
     });
 
@@ -269,6 +385,32 @@ void main() {
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
       );
+      expect(
+        configuration.endpoints,
+        equals({
+          '/': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/index.dart',
+            )
+          ],
+          '/<user>/<name>': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/[user]/[name].dart',
+            )
+          ],
+          '/<user>/<id>': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/[user]/[id]/index.dart',
+            )
+          ]
+        }),
+      );
     });
 
     test('supports /[id]/api/index.dart', () {
@@ -308,6 +450,25 @@ void main() {
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
       );
+      expect(
+        configuration.endpoints,
+        equals({
+          '/': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/index.dart',
+            )
+          ],
+          '/<id>/api': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/[id]/api/index.dart',
+            )
+          ],
+        }),
+      );
     });
 
     test('supports /[id]/api/test.dart', () {
@@ -346,6 +507,25 @@ void main() {
       expect(
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
+      );
+      expect(
+        configuration.endpoints,
+        equals({
+          '/': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/index.dart',
+            )
+          ],
+          '/<id>/api/test': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/[id]/api/test.dart',
+            )
+          ],
+        }),
       );
     });
 
@@ -388,6 +568,25 @@ void main() {
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
       );
+      expect(
+        configuration.endpoints,
+        equals({
+          '/': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/index.dart',
+            )
+          ],
+          '/<id>/api/<name>': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/[id]/api/[name]/index.dart',
+            )
+          ],
+        }),
+      );
     });
 
     test('supports /[id]/api/[name]/test.dart', () {
@@ -428,6 +627,25 @@ void main() {
       expect(
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
+      );
+      expect(
+        configuration.endpoints,
+        equals({
+          '/': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/index.dart',
+            )
+          ],
+          '/<id>/api/<name>/test': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/[id]/api/[name]/test.dart',
+            )
+          ],
+        }),
       );
     });
   });
