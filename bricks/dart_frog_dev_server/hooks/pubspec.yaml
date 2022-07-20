@@ -5,5 +5,10 @@ environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
-  dart_frog_gen: ^0.0.2-dev.4
+  dart_frog_gen: ^0.0.2-dev.5
   mason: ^0.1.0-dev.30
+
+dev_dependencies:
+  mocktail: ^0.3.0
+  test: ^1.19.2
+  very_good_analysis: ^3.0.1
