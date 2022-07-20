@@ -9,6 +9,7 @@ class _MockHookContext extends Mock implements HookContext {}
 
 class _FakeHookContext extends Fake implements HookContext {
   _FakeHookContext({Logger? logger}) : _logger = logger ?? _MockLogger();
+
   final Logger _logger;
 
   var _vars = <String, dynamic>{};
