@@ -18,4 +18,4 @@ jobs:
     with:
       working_directory: bricks/dart_frog_prod_server/hooks
       analyze_directories: .
-      report_on: pre_gen.dart
+      report_on: "pre_gen.dart,post_gen.dart"
