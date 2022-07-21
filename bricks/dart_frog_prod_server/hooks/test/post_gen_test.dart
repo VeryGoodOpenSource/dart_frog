@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:mason/mason.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
 import '../post_gen.dart';
@@ -52,6 +53,7 @@ void main() {
     });
 
     test('runs dart pub get and outputs next steps', () async {
+      var processRunnerCallCount = 0;
       final exitCalls = <int>[];
       final result = _MockProcessResult();
       when(() => result.exitCode).thenReturn(ExitCode.success.code);
@@ -63,10 +65,19 @@ void main() {
           String? workingDirectory,
           bool? runInShell,
         }) async {
+          processRunnerCallCount++;
+          expect(executable, equals('dart'));
+          expect(args, equals(['pub', 'get']));
+          expect(
+            workingDirectory,
+            equals(path.join(Directory.current.path, 'build')),
+          );
+          expect(runInShell, isTrue);
           return result;
         },
         exit: exitCalls.add,
       );
+      expect(processRunnerCallCount, equals(1));
       expect(exitCalls, isEmpty);
       verify(() => logger.success('Created a production build!')).called(1);
       verify(
