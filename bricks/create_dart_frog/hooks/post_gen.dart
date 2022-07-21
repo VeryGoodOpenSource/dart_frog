@@ -4,7 +4,7 @@ import 'package:path/path.dart' as path;
 
 Future<void> run(HookContext context) async {
   final projectDirectory = path.canonicalize(
-    context.vars['output_directory'] ?? Directory.current.path,
+    context.vars['output_directory'] as String? ?? Directory.current.path,
   );
   final progress = context.logger.progress('Installing dependencies');
   await Process.run(
