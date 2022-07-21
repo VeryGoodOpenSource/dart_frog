@@ -18,9 +18,13 @@ on:
 
 jobs:
   build:
-    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@v1
+    strategy:
+      matrix:
+        runs_on: ["ubuntu_latest", "windows_latest", "macos_latest"]
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@2fd9c40448692b2ed8a11ff2d274927e410d84e8
     with:
       concurrency: 1
+      runs_on: ${{ matrix.runs_on }}
       working_directory: packages/dart_frog_gen
 
   pana:
