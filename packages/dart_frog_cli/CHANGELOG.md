@@ -1,3 +1,12 @@
+# 0.0.2-dev.9
+
+- feat: report route conflicts during `dart_frog dev`
+- feat: report route conflicts during `dart_frog build`
+- feat: avoid logging empty newlines during `dart_frog dev`
+- chore: upgrade to `mason ^0.1.0-dev.31`
+- chore: upgrade to `dart_frog_gen ^0.0.2-dev.6`
+- docs: pubspec `homepage`, `repository`, `issue_tracker`, and `documentation` links
+
 # 0.0.2-dev.8
 
 - fix: nested dynamic directory route generation
