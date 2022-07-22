@@ -76,7 +76,7 @@ List<RouteDirectory> _getRouteDirectories({
           .replaceAll(r'\', '/');
       middleware = MiddlewareFile(
         name: middlewarePath.toAlias(),
-        path: path.join('..', 'routes', middlewarePath),
+        path: path.join('..', 'routes', middlewarePath).replaceAll(r'\', '/'),
       );
       onMiddleware(middleware);
     }
@@ -194,7 +194,7 @@ List<RouteFile> _getRouteFiles({
     final relativeFilePath = path.join('..', 'routes', filePath);
     final route = RouteFile(
       name: filePath.toAlias(),
-      path: relativeFilePath,
+      path: relativeFilePath.replaceAll(r'\', '/'),
       route: fileRoute.toRoute(),
     );
     onRoute(route);
