@@ -1,3 +1,7 @@
+# 0.0.2-dev.6
+
+- fix: windows relative import syntax
+
 # 0.0.2-dev.5
 
 - feat: include `endpoints` in `RouteConfiguration`
