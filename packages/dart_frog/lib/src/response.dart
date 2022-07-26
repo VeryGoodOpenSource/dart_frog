@@ -54,7 +54,8 @@ class Response {
   int get statusCode => _response.statusCode;
 
   /// The HTTP headers with case-insensitive keys.
-  Map<String, dynamic> get headers => _response.headers;
+  /// The returned map is unmodifiable.
+  Map<String, String> get headers => _response.headers;
 
   /// Returns a [Stream] representing the body.
   Stream<List<int>> bytes() => _response.read();
