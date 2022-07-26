@@ -16,21 +16,30 @@ RouteConfiguration buildRouteConfiguration(Directory directory) {
   );
   final globalMiddleware = globalMiddlewareFile.existsSync()
       ? MiddlewareFile(
-          name: 'routes_middleware',
+          name: 'middleware',
           path: path
               .join('..', path.relative(globalMiddlewareFile.path))
               .replaceAll(r'\', '/'),
         )
       : null;
 
+  final endpoints = <String, List<RouteFile>>{};
   final middleware = <MiddlewareFile>[
     if (globalMiddleware != null) globalMiddleware
   ];
   final routes = <RouteFile>[];
   final directories = _getRouteDirectories(
-    routesDirectory,
+    directory: routesDirectory,
+    routesDirectory: routesDirectory,
     onRoute: routes.add,
     onMiddleware: middleware.add,
+    onEndpoint: (endpoint, file) {
+      if (!endpoints.containsKey(endpoint)) {
+        endpoints[endpoint] = [file];
+      } else {
+        endpoints[endpoint]!.add(file);
+      }
+    },
   );
   final publicDirectory = Directory(path.join(directory.path, 'public'));
   return RouteConfiguration(
@@ -38,14 +47,17 @@ RouteConfiguration buildRouteConfiguration(Directory directory) {
     middleware: middleware,
     directories: directories,
     routes: routes,
+    endpoints: endpoints,
     serveStaticFiles: publicDirectory.existsSync(),
   );
 }
 
-List<RouteDirectory> _getRouteDirectories(
-  Directory directory, {
-  void Function(RouteFile route)? onRoute,
-  void Function(MiddlewareFile route)? onMiddleware,
+List<RouteDirectory> _getRouteDirectories({
+  required Directory directory,
+  required Directory routesDirectory,
+  required void Function(RouteFile route) onRoute,
+  required void Function(MiddlewareFile route) onMiddleware,
+  required void Function(String endpoint, RouteFile file) onEndpoint,
 }) {
   final directories = <RouteDirectory>[];
   final entities = directory.listSync().sorted();
@@ -60,37 +72,57 @@ List<RouteDirectory> _getRouteDirectories(
     final _middleware = File(path.join(directory.path, '_middleware.dart'));
     if (_middleware.existsSync()) {
       final middlewarePath = path
-          .join('..', path.relative(_middleware.path))
+          .relative(_middleware.path, from: routesDirectory.path)
           .replaceAll(r'\', '/');
       middleware = MiddlewareFile(
         name: middlewarePath.toAlias(),
-        path: middlewarePath,
+        path: path.join('..', 'routes', middlewarePath).replaceAll(r'\', '/'),
       );
-      onMiddleware?.call(middleware);
+      onMiddleware(middleware);
     }
   }
 
   final files = [
-    ..._getRouteFiles(directory, onRoute: onRoute),
-    ..._getRouteFilesForDynamicDirectories(directory, onRoute: onRoute),
+    ..._getRouteFiles(
+      directory: directory,
+      routesDirectory: routesDirectory,
+      onRoute: onRoute,
+    ),
+    ..._getRouteFilesForDynamicDirectories(
+      directory: directory,
+      routesDirectory: routesDirectory,
+      onRoute: onRoute,
+    ),
   ];
+
+  final baseRoute = directoryPath.toRoute();
+  for (final file in files) {
+    var endpoint = (baseRoute + file.route.toRoute()).replaceAll('//', '/');
+    if (endpoint.endsWith('/')) {
+      endpoint = endpoint.substring(0, endpoint.length - 1);
+    }
+    if (endpoint.isEmpty) endpoint = '/';
+    onEndpoint(endpoint, file);
+  }
 
   directories.add(
     RouteDirectory(
       name: directoryPath.toAlias(),
-      route: directoryPath.toRoute(),
+      route: baseRoute,
       middleware: middleware,
       files: files,
     ),
   );
 
-  entities.whereType<Directory>().forEach((entity) {
-    if (!entity.isDynamicRoute) {
+  entities.whereType<Directory>().forEach((directory) {
+    if (!directory.isDynamicRoute) {
       directories.addAll(
         _getRouteDirectories(
-          entity,
+          directory: directory,
+          routesDirectory: routesDirectory,
           onRoute: onRoute,
           onMiddleware: onMiddleware,
+          onEndpoint: onEndpoint,
         ),
       );
     }
@@ -99,9 +131,10 @@ List<RouteDirectory> _getRouteDirectories(
   return directories;
 }
 
-List<RouteFile> _getRouteFilesForDynamicDirectories(
-  Directory directory, {
-  void Function(RouteFile route)? onRoute,
+List<RouteFile> _getRouteFilesForDynamicDirectories({
+  required Directory directory,
+  required Directory routesDirectory,
+  required void Function(RouteFile route) onRoute,
   String prefix = '',
 }) {
   final files = <RouteFile>[];
@@ -113,12 +146,14 @@ List<RouteFile> _getRouteFilesForDynamicDirectories(
       .forEach((dynamicDirectory) {
     final newPrefix = '$prefix/${path.basename(dynamicDirectory.path)}';
     final subset = _getRouteFiles(
-      dynamicDirectory,
+      directory: dynamicDirectory,
+      routesDirectory: routesDirectory,
       onRoute: onRoute,
       prefix: newPrefix,
     );
     final dynamicSubset = _getRouteFilesForDynamicDirectories(
-      dynamicDirectory,
+      directory: dynamicDirectory,
+      routesDirectory: routesDirectory,
       onRoute: onRoute,
       prefix: newPrefix,
     );
@@ -127,9 +162,10 @@ List<RouteFile> _getRouteFilesForDynamicDirectories(
   return files;
 }
 
-List<RouteFile> _getRouteFiles(
-  Directory directory, {
-  void Function(RouteFile route)? onRoute,
+List<RouteFile> _getRouteFiles({
+  required Directory directory,
+  required Directory routesDirectory,
+  required void Function(RouteFile route) onRoute,
   String prefix = '',
 }) {
   final files = <RouteFile>[];
@@ -140,9 +176,12 @@ List<RouteFile> _getRouteFiles(
       : '/$directorySegment';
   final entities = directory.listSync().sorted();
   entities.where((e) => e.isRoute).cast<File>().forEach((entity) {
-    final filePath =
-        path.join('..', path.relative(entity.path)).replaceAll(r'\', '/');
-    final fileRoutePath = pathToRoute(filePath).split(directoryPath).last;
+    final filePath = path
+        .relative(entity.path, from: routesDirectory.path)
+        .replaceAll(r'\', '/');
+    final fileRoutePath = pathToRoute(path.join('..', 'routes', filePath))
+        .split(directoryPath)
+        .last;
     var fileRoute = fileRoutePath.isEmpty ? '/' : fileRoutePath;
     fileRoute = prefix + fileRoute;
     if (!fileRoute.startsWith('/')) {
@@ -152,12 +191,13 @@ List<RouteFile> _getRouteFiles(
       fileRoute = fileRoute.substring(0, fileRoute.length - 1);
     }
 
+    final relativeFilePath = path.join('..', 'routes', filePath);
     final route = RouteFile(
       name: filePath.toAlias(),
-      path: filePath,
+      path: relativeFilePath.replaceAll(r'\', '/'),
       route: fileRoute.toRoute(),
     );
-    onRoute?.call(route);
+    onRoute(route);
     files.add(route);
   });
   return files;
@@ -210,6 +250,7 @@ class RouteConfiguration {
     required this.middleware,
     required this.directories,
     required this.routes,
+    required this.endpoints,
     this.serveStaticFiles = false,
   });
 
@@ -229,6 +270,9 @@ class RouteConfiguration {
 
   /// List of all route files.
   final List<RouteFile> routes;
+
+  /// A map of all endpoint paths to resolved route files.
+  final Map<String, List<RouteFile>> endpoints;
 }
 
 /// {@template route_directory}

@@ -1,3 +1,8 @@
+# 0.0.1-dev.11
+
+- fix: Request/Response `headers` is of type `Map<String, String>`
+- docs: pubspec `homepage`, `repository`, `issue_tracker`, and `documentation` links
+
 # 0.0.1-dev.10
 
 - fix: Response `json()` returns `Object?`

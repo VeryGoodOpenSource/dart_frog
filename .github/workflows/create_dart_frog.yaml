@@ -1,0 +1,21 @@
+name: create_dart_frog
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/create_dart_frog.yaml"
+      - "bricks/create_dart_frog/hooks/**"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/create_dart_frog.yaml"
+      - "bricks/create_dart_frog/hooks/**"
+
+jobs:
+  build:
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@v1
+    with:
+      working_directory: bricks/create_dart_frog/hooks
+      analyze_directories: .
+      report_on: post_gen.dart

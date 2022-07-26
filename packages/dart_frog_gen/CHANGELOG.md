@@ -1,3 +1,13 @@
+# 0.0.2-dev.6
+
+- fix: windows relative import syntax
+
+# 0.0.2-dev.5
+
+- feat: include `endpoints` in `RouteConfiguration`
+- refactor: make `buildRouteConfiguration` relative to `routes`
+- docs: pubspec `homepage`, `repository`, `issue_tracker`, and `documentation` links
+
 # 0.0.2-dev.4
 
 - fix: nested dynamic directory resolution

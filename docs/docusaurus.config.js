@@ -79,13 +79,13 @@ const config = {
             to: '/docs/roadmap',
           },
           {
-            to: 'https://dartfrog.vgv.dev',
+            to: 'https://github.com/VeryGoodOpenSource/dart_frog',
             position: 'right',
             className: 'navbar-github-icon',
             'aria-label': 'GitHub repository',
           },
           {
-            to: 'https://verygood.ventures',
+            to: 'https://verygood.ventures?utm_source=dartfrog&utm_medium=docs&utm_campaign=df',
             position: 'right',
             className: 'navbar-vgv-icon',
             'aria-label': 'Very Good Ventures',
@@ -120,7 +120,7 @@ const config = {
             items: [
               {
                 label: 'Blog Post',
-                href: 'https://verygood.ventures/blog/dart-frog',
+                href: 'https://verygood.ventures/blog/dart-frog?utm_source=dartfrog&utm_medium=docs&utm_campaign=df_blog',
               },
               {
                 label: 'Livestream Demo',
@@ -142,7 +142,7 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} Very Good Ventures.<br/>Built with 💙 by <a target="_blank" rel="noopener noreferrer" aria-label="Very Good Ventures" href="https://verygood.ventures">Very Good Ventures</a>.`,
+        copyright: `Copyright © ${new Date().getFullYear()} Very Good Ventures.<br/>Built with 💙 by <a target="_blank" rel="noopener" aria-label="Very Good Ventures" href="https://verygood.ventures">Very Good Ventures</a>.`,
       },
       prism: {
         additionalLanguages: ['dart'],

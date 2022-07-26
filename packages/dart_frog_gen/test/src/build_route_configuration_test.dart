@@ -49,6 +49,41 @@ void main() {
       expect(configuration.globalMiddleware, isNotNull);
     });
 
+    test('endpoint includes multiple routes when conflicts exist', () {
+      final directory = Directory(
+        path.join(
+          Directory.current.path,
+          'test',
+          '.fixtures',
+          'single_conflict',
+        ),
+      )..createSync(recursive: true);
+      final routes = Directory(path.join(directory.path, 'routes'))
+        ..createSync();
+      File(path.join(routes.path, 'users.dart')).createSync();
+      final usersDirectory = Directory(path.join(routes.path, 'users'))
+        ..createSync();
+      File(path.join(usersDirectory.path, 'index.dart')).createSync();
+      final configuration = buildRouteConfiguration(directory);
+      expect(
+        configuration.endpoints,
+        equals({
+          '/users': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/users.dart',
+            ),
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/users/index.dart',
+            )
+          ]
+        }),
+      );
+    });
+
     test('includes single index route', () {
       const expected = [
         {
@@ -56,11 +91,7 @@ void main() {
           'route': '/',
           'middleware': false,
           'files': [
-            {
-              'name': '.._test_.fixtures_single_routes_index',
-              'path': '../test/.fixtures/single/routes/index.dart',
-              'route': '/routes'
-            }
+            {'name': 'index', 'path': '../routes/index.dart', 'route': '/'}
           ]
         }
       ];
@@ -75,6 +106,18 @@ void main() {
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
       );
+      expect(
+        configuration.endpoints,
+        equals({
+          '/': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/index.dart',
+            )
+          ]
+        }),
+      );
     });
 
     test('includes multiple top-level routes', () {
@@ -84,16 +127,8 @@ void main() {
           'route': '/',
           'middleware': false,
           'files': [
-            {
-              'name': '.._test_.fixtures_multiple_top_level_routes_index',
-              'path': '../test/.fixtures/multiple_top_level/routes/index.dart',
-              'route': '/routes'
-            },
-            {
-              'name': '.._test_.fixtures_multiple_top_level_routes_hello',
-              'path': '../test/.fixtures/multiple_top_level/routes/hello.dart',
-              'route': '/hello'
-            }
+            {'name': 'index', 'path': '../routes/index.dart', 'route': '/'},
+            {'name': 'hello', 'path': '../routes/hello.dart', 'route': '/hello'}
           ]
         }
       ];
@@ -114,6 +149,25 @@ void main() {
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
       );
+      expect(
+        configuration.endpoints,
+        equals({
+          '/': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/index.dart',
+            )
+          ],
+          '/hello': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/hello.dart',
+            )
+          ]
+        }),
+      );
     });
 
     test('includes nested routes', () {
@@ -123,11 +177,7 @@ void main() {
           'route': '/',
           'middleware': false,
           'files': [
-            {
-              'name': '.._test_.fixtures_nested_routes_index',
-              'path': '../test/.fixtures/nested/routes/index.dart',
-              'route': '/routes'
-            }
+            {'name': 'index', 'path': '../routes/index.dart', 'route': '/'}
           ]
         },
         {
@@ -136,8 +186,8 @@ void main() {
           'middleware': false,
           'files': [
             {
-              'name': '.._test_.fixtures_nested_routes_echo_message',
-              'path': '../test/.fixtures/nested/routes/echo/message.dart',
+              'name': 'echo_message',
+              'path': '../routes/echo/message.dart',
               'route': '/message'
             }
           ]
@@ -157,6 +207,25 @@ void main() {
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
       );
+      expect(
+        configuration.endpoints,
+        equals({
+          '/': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/index.dart',
+            )
+          ],
+          '/echo/message': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/echo/message.dart',
+            )
+          ]
+        }),
+      );
     });
 
     test('includes nested directories', () {
@@ -174,10 +243,8 @@ void main() {
           'middleware': false,
           'files': [
             {
-              'name':
-                  '''.._test_.fixtures_nested_directories_routes_echo_message_index''',
-              'path':
-                  '../test/.fixtures/nested_directories/routes/echo/message/index.dart',
+              'name': 'echo_message_index',
+              'path': '../routes/echo/message/index.dart',
               'route': '/'
             }
           ]
@@ -203,6 +270,18 @@ void main() {
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
       );
+      expect(
+        configuration.endpoints,
+        equals({
+          '/echo/message': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/echo/message/index.dart',
+            )
+          ]
+        }),
+      );
     });
 
     test('includes dynamic route', () {
@@ -212,11 +291,7 @@ void main() {
           'route': '/',
           'middleware': false,
           'files': [
-            {
-              'name': '.._test_.fixtures_dynamic_routes_index',
-              'path': '../test/.fixtures/dynamic/routes/index.dart',
-              'route': '/routes'
-            }
+            {'name': 'index', 'path': '../routes/index.dart', 'route': '/'}
           ]
         },
         {
@@ -225,8 +300,8 @@ void main() {
           'middleware': false,
           'files': [
             {
-              'name': r'.._test_.fixtures_dynamic_routes_echo_$message',
-              'path': '../test/.fixtures/dynamic/routes/echo/[message].dart',
+              'name': r'echo_$message',
+              'path': '../routes/echo/[message].dart',
               'route': '/<message>'
             }
           ]
@@ -246,6 +321,25 @@ void main() {
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
       );
+      expect(
+        configuration.endpoints,
+        equals({
+          '/': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/index.dart',
+            )
+          ],
+          '/echo/<message>': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/echo/[message].dart',
+            )
+          ]
+        }),
+      );
     });
 
     test('includes dynamic nested directory routes', () {
@@ -255,22 +349,15 @@ void main() {
           'route': '/',
           'middleware': false,
           'files': [
+            {'name': 'index', 'path': '../routes/index.dart', 'route': '/'},
             {
-              'name': '.._test_.fixtures_dynamic_nested_routes_index',
-              'path': '../test/.fixtures/dynamic_nested/routes/index.dart',
-              'route': '/routes'
-            },
-            {
-              'name': r'.._test_.fixtures_dynamic_nested_routes_$user_$name',
-              'path':
-                  '../test/.fixtures/dynamic_nested/routes/[user]/[name].dart',
+              'name': r'$user_$name',
+              'path': '../routes/[user]/[name].dart',
               'route': '/<user>/<name>'
             },
             {
-              'name':
-                  r'.._test_.fixtures_dynamic_nested_routes_$user_$id_index',
-              'path':
-                  '../test/.fixtures/dynamic_nested/routes/[user]/[id]/index.dart',
+              'name': r'$user_$id_index',
+              'path': '../routes/[user]/[id]/index.dart',
               'route': '/<user>/<id>'
             }
           ]
@@ -298,6 +385,32 @@ void main() {
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
       );
+      expect(
+        configuration.endpoints,
+        equals({
+          '/': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/index.dart',
+            )
+          ],
+          '/<user>/<name>': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/[user]/[name].dart',
+            )
+          ],
+          '/<user>/<id>': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/[user]/[id]/index.dart',
+            )
+          ]
+        }),
+      );
     });
 
     test('supports /[id]/api/index.dart', () {
@@ -307,17 +420,10 @@ void main() {
           'route': '/',
           'middleware': false,
           'files': [
+            {'name': 'index', 'path': '../routes/index.dart', 'route': '/'},
             {
-              'name': '.._test_.fixtures_dynamic_static_nesting1_routes_index',
-              'path':
-                  '../test/.fixtures/dynamic_static_nesting1/routes/index.dart',
-              'route': '/routes'
-            },
-            {
-              'name':
-                  r'''.._test_.fixtures_dynamic_static_nesting1_routes_$id_api_index''',
-              'path':
-                  '../test/.fixtures/dynamic_static_nesting1/routes/[id]/api/index.dart',
+              'name': r'$id_api_index',
+              'path': '../routes/[id]/api/index.dart',
               'route': '/<id>/api'
             }
           ]
@@ -344,6 +450,25 @@ void main() {
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
       );
+      expect(
+        configuration.endpoints,
+        equals({
+          '/': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/index.dart',
+            )
+          ],
+          '/<id>/api': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/[id]/api/index.dart',
+            )
+          ],
+        }),
+      );
     });
 
     test('supports /[id]/api/test.dart', () {
@@ -353,17 +478,10 @@ void main() {
           'route': '/',
           'middleware': false,
           'files': [
+            {'name': 'index', 'path': '../routes/index.dart', 'route': '/'},
             {
-              'name': '.._test_.fixtures_dynamic_static_nesting2_routes_index',
-              'path':
-                  '../test/.fixtures/dynamic_static_nesting2/routes/index.dart',
-              'route': '/routes'
-            },
-            {
-              'name':
-                  r'''.._test_.fixtures_dynamic_static_nesting2_routes_$id_api_test''',
-              'path':
-                  '../test/.fixtures/dynamic_static_nesting2/routes/[id]/api/test.dart',
+              'name': r'$id_api_test',
+              'path': '../routes/[id]/api/test.dart',
               'route': '/<id>/api/test'
             }
           ]
@@ -390,6 +508,25 @@ void main() {
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
       );
+      expect(
+        configuration.endpoints,
+        equals({
+          '/': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/index.dart',
+            )
+          ],
+          '/<id>/api/test': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/[id]/api/test.dart',
+            )
+          ],
+        }),
+      );
     });
 
     test('supports /[id]/api/[name]/index.dart', () {
@@ -399,21 +536,14 @@ void main() {
           'route': '/',
           'middleware': false,
           'files': [
+            {'name': 'index', 'path': '../routes/index.dart', 'route': '/'},
             {
-              'name': '.._test_.fixtures_dynamic_static_nesting3_routes_index',
-              'path':
-                  '../test/.fixtures/dynamic_static_nesting3/routes/index.dart',
-              'route': '/routes'
-            },
-            {
-              'name':
-                  r'''.._test_.fixtures_dynamic_static_nesting3_routes_$id_api_$name_index''',
-              'path':
-                  '../test/.fixtures/dynamic_static_nesting3/routes/[id]/api/[name]/index.dart',
+              'name': r'$id_api_$name_index',
+              'path': '../routes/[id]/api/[name]/index.dart',
               'route': '/<id>/api/<name>'
             }
           ]
-        },
+        }
       ];
       final directory = Directory(
         path.join(
@@ -438,6 +568,25 @@ void main() {
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
       );
+      expect(
+        configuration.endpoints,
+        equals({
+          '/': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/index.dart',
+            )
+          ],
+          '/<id>/api/<name>': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/[id]/api/[name]/index.dart',
+            )
+          ],
+        }),
+      );
     });
 
     test('supports /[id]/api/[name]/test.dart', () {
@@ -447,21 +596,14 @@ void main() {
           'route': '/',
           'middleware': false,
           'files': [
+            {'name': 'index', 'path': '../routes/index.dart', 'route': '/'},
             {
-              'name': '.._test_.fixtures_dynamic_static_nesting4_routes_index',
-              'path':
-                  '../test/.fixtures/dynamic_static_nesting4/routes/index.dart',
-              'route': '/routes'
-            },
-            {
-              'name':
-                  r'''.._test_.fixtures_dynamic_static_nesting4_routes_$id_api_$name_test''',
-              'path':
-                  '../test/.fixtures/dynamic_static_nesting4/routes/[id]/api/[name]/test.dart',
+              'name': r'$id_api_$name_test',
+              'path': '../routes/[id]/api/[name]/test.dart',
               'route': '/<id>/api/<name>/test'
             }
           ]
-        },
+        }
       ];
       final directory = Directory(
         path.join(
@@ -485,6 +627,25 @@ void main() {
       expect(
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
+      );
+      expect(
+        configuration.endpoints,
+        equals({
+          '/': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/index.dart',
+            )
+          ],
+          '/<id>/api/<name>/test': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/[id]/api/[name]/test.dart',
+            )
+          ],
+        }),
       );
     });
   });

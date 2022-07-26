@@ -1,0 +1,21 @@
+name: dart_frog_prod_server
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/dart_frog_prod_server.yaml"
+      - "bricks/dart_frog_prod_server/hooks/**"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/dart_frog_prod_server.yaml"
+      - "bricks/dart_frog_prod_server/hooks/**"
+
+jobs:
+  build:
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@v1
+    with:
+      working_directory: bricks/dart_frog_prod_server/hooks
+      analyze_directories: .
+      report_on: "pre_gen.dart,post_gen.dart"
