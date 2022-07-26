@@ -102,7 +102,8 @@ class Request {
   Uri get uri => _request.requestedUri;
 
   /// The HTTP headers with case-insensitive keys.
-  Map<String, dynamic> get headers => _request.headers;
+  /// The returned map is unmodifiable.
+  Map<String, String> get headers => _request.headers;
 
   /// The [HttpMethod] associated with the request.
   HttpMethod get method {
