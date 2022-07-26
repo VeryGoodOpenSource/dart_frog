@@ -4,7 +4,7 @@ sidebar_position: 3
 
 # Digital Ocean App Platform 🌊
 
-[App Platform](https://www.digitalocean.com/products/app-platform) is a service from [Digital Ocean](https://www.digitalocean.com/) that helps you launch apps quickly while they manage the underlying infrastructure.
+[App Platform](https://www.digitalocean.com/products/app-platform) is a service from [Digital Ocean](https://www.digitalocean.com) that helps you launch apps quickly while they manage the underlying infrastructure.
 
 ## Prerequisites
 
@@ -24,9 +24,9 @@ docker images
 
 (If Docker is running, the command will print the images on your machine. If not, it will print something like `Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?`)
 
-3. Install the [Digital Ocean CLI (doctl)](https://docs.digitalocean.com/reference/doctl/how-to/install/) on your machine.
+3. Install the [Digital Ocean CLI (doctl)](https://docs.digitalocean.com/reference/doctl/how-to/install) on your machine.
 
-4. [Create a Digital Ocean API Token](https://docs.digitalocean.com/reference/api/create-personal-access-token/) for your account with read and write access, then use it to give `doctl` access to your account by running (it will prompt you for the access token):
+4. [Create a Digital Ocean API Token](https://docs.digitalocean.com/reference/api/create-personal-access-token) for your account with read and write access, then use it to give `doctl` access to your account by running (it will prompt you for the access token):
 
 ```bash
 doctl auth init --context [NAME]
@@ -49,7 +49,7 @@ doctl auth switch --context [NAME]
 doctl registry login
 ```
 
-6. Create a Container Registry. This can be done [in the Digital Ocean console](https://docs.digitalocean.com/products/container-registry/quickstart/#create-a-registry), or by running:
+6. Create a Container Registry. This can be done in the [Digital Ocean console](https://docs.digitalocean.com/products/container-registry/quickstart/#create-a-registry), or by running:
 
 ```bash
 doctl registry create [REGISTRY_NAME] --region [REGION]
@@ -59,7 +59,7 @@ doctl registry create [REGISTRY_NAME] --region [REGION]
 - `[REGION]`: The Digital Ocean region the registry should reside in (ex: sfo1)
 
 :::note
-Be creative - registry names must be unique across all DigitalOcean container registries.
+Be creative - registry names must be unique across all Digital Ocean container registries.
 :::
 
 ## Deploying
@@ -82,7 +82,7 @@ docker build build \
 - `[REGISTRY]`: The name of the registry you created eariler
 - `[IMAGE_NAME]`: A name given to this image to identify it in the registry
 
-This command will build the Docker image on your machine and can take a few seconds to a few minutes.
+This command will build the Docker image on your machine and can take up to a few minutes.
 
 3. Push the image to Container Registry by running:
 
@@ -96,9 +96,9 @@ You should now see your repository in the [Container Registry page](https://clou
 
 5. Congratulations! 🎉 You have successfully built and deployed your API to App Platform. You can now access your API at the URL at the top of the app’s overview page.
 
-## Aditional Resources
+## Additional Resources
 
-- [App Platform docs](https://docs.digitalocean.com/products/app-platform/)
-- [`doctl` CLI reference](https://docs.digitalocean.com/reference/doctl/)
-- [Adding a custom domain in App Platform](https://docs.digitalocean.com/products/app-platform/how-to/manage-domains/)
-- [View logs in App Platform](https://docs.digitalocean.com/products/app-platform/how-to/view-logs/)
+- [App Platform docs](https://docs.digitalocean.com/products/app-platform)
+- [`doctl` CLI reference](https://docs.digitalocean.com/reference/doctl)
+- [Adding a custom domain in App Platform](https://docs.digitalocean.com/products/app-platform/how-to/manage-domains)
+- [View logs in App Platform](https://docs.digitalocean.com/products/app-platform/how-to/view-logs)
