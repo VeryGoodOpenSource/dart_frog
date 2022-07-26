@@ -15,7 +15,7 @@ void main() {
       }
 
       expect(() => hotReload(initializer), returnsNormally);
-      await Future<void>.delayed(const Duration(seconds: 1));
+      await Future<void>.delayed(const Duration(seconds: 2));
 
       expect(invoked, isTrue);
       expect(server, isNotNull);
