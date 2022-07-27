@@ -16,7 +16,7 @@ Before you get started, if you haven't already completed these steps, you'll hav
 You can incur costs when running this quickstart! For more details, see [App Platform Pricing](https://www.digitalocean.com/pricing/app-platform) and [Container Registry Pricing](https://www.digitalocean.com/pricing/container-registry).
 :::
 
-2. Install [Docker](https://docs.docker.com/get-docker/) on your machine, and you'll have to start the app. You can verify it is set up correctly by running:
+2. Install [Docker](https://docs.docker.com/get-docker/) on your machine and run it. You can verify it is set up correctly by running:
 
 ```bash
 docker images
@@ -94,7 +94,7 @@ You should now see your repository in the [Container Registry page](https://clou
 
 4. Create your App by following [these instructions](https://docs.digitalocean.com/products/app-platform/how-to/deploy-from-container-images/#deploy-resource-using-a-container-image-as-the-source).
 
-5. Congratulations! 🎉 You have successfully built and deployed your API to App Platform. You can now access your API at the URL at the top of the app’s overview page.
+5. Congratulations! You have successfully built and deployed your API to App Platform. You can now access your API via the URL at the top of the app’s overview page 🎉
 
 ## Additional Resources
 
