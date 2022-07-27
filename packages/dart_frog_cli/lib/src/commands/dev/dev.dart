@@ -108,7 +108,11 @@ class DevCommand extends DartFrogCommand {
     Future<void> serve() async {
       final process = await _startProcess(
         'dart',
-        ['--enable-vm-service', path.join('.dart_frog', 'server.dart')],
+        [
+          '--enable-vm-service',
+          '--write-service-info=file:///tmp/dart_proc_info',
+          path.join('.dart_frog', 'server.dart')
+        ],
         runInShell: true,
       );
 
