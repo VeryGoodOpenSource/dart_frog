@@ -10,7 +10,7 @@ sidebar_position: 3
 
 Before you get started, if you haven't already completed these steps, you'll have to:
 
-1. Create a free [Digital Ocean account](https://cloud.digitalocean.com/registrations/new) (or sign in with Google or Github).
+1. Create a free [Digital Ocean account](https://cloud.digitalocean.com/registrations/new) (or sign in with Google or GitHub).
 
 :::caution
 You can incur costs when running this quickstart! For more details, see [App Platform Pricing](https://www.digitalocean.com/pricing/app-platform) and [Container Registry Pricing](https://www.digitalocean.com/pricing/container-registry).
