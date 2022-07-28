@@ -161,14 +161,14 @@ class DevCommand extends DartFrogCommand {
   }
 
   Future<void> _killProcess(io.Process process) async {
-    process.kill();
     if (_isWindows) {
       final result = await _runProcess(
         'taskkill',
         ['/F', '/T', '/PID', '${process.pid}'],
       );
-      _exit(result.exitCode);
+      return _exit(result.exitCode);
     }
+    process.kill();
   }
 }
 

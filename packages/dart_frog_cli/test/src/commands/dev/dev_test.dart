@@ -420,7 +420,6 @@ void main() {
       when(() => process.stdout).thenAnswer((_) => const Stream.empty());
       when(() => process.stderr).thenAnswer((_) => const Stream.empty());
       when(() => process.pid).thenReturn(processId);
-      when(() => process.kill()).thenReturn(true);
       when(() => processResult.exitCode).thenReturn(ExitCode.success.code);
       when(
         () => directoryWatcher.events,
@@ -454,7 +453,7 @@ void main() {
           ['taskkill', '/F', '/T', '/PID', '$processId']
         ]),
       );
-      verify(() => process.kill()).called(1);
+      verifyNever(() => process.kill());
     });
 
     test('kills process if error occurs before hotreload is enabled', () async {
