@@ -86,6 +86,7 @@ class DevCommand extends DartFrogCommand {
 
   @override
   Future<int> run() async {
+    var reloading = false;
     var hotReloadEnabled = false;
     final port = io.Platform.environment['PORT'] ?? results['port'] as String;
     final generator = await _generator(dartFrogDevServerBundle);
@@ -105,6 +106,11 @@ class DevCommand extends DartFrogCommand {
       );
     }
 
+    void reload() {
+      reloading = true;
+      codegen();
+    }
+
     Future<void> serve() async {
       final process = await _startProcess(
         'dart',
@@ -121,7 +127,8 @@ class DevCommand extends DartFrogCommand {
       process.stderr.listen((_) async {
         hasError = true;
         final message = utf8.decode(_).trim();
-        if (message.isNotEmpty) logger.err(message);
+        if (reloading || message.isEmpty) return;
+        logger.err(message);
 
         if (!hotReloadEnabled) {
           await _killProcess(process);
@@ -134,6 +141,7 @@ class DevCommand extends DartFrogCommand {
       process.stdout.listen((_) {
         final message = utf8.decode(_).trim();
         if (message.contains('[hotreload]')) hotReloadEnabled = true;
+        if (message.contains('Application reloaded.')) reloading = false;
         if (!hasError) _generatorTarget.cacheLatestSnapshot();
         if (message.isNotEmpty) logger.info(message);
         hasError = false;
@@ -148,16 +156,16 @@ class DevCommand extends DartFrogCommand {
     final public = path.join(cwd.path, 'public');
     final routes = path.join(cwd.path, 'routes');
 
-    bool shouldRunCodegen(WatchEvent event) {
+    bool shouldReload(WatchEvent event) {
       return path.isWithin(routes, event.path) ||
           path.isWithin(public, event.path);
     }
 
     final watcher = _directoryWatcher(path.join(cwd.path));
     final subscription = watcher.events
-        .where(shouldRunCodegen)
+        .where(shouldReload)
         .debounce(Duration.zero)
-        .listen((_) => codegen());
+        .listen((_) => reload());
 
     await subscription.asFuture<void>();
     await subscription.cancel();
@@ -165,14 +173,14 @@ class DevCommand extends DartFrogCommand {
   }
 
   Future<void> _killProcess(io.Process process) async {
-    process.kill();
     if (_isWindows) {
       final result = await _runProcess(
         'taskkill',
         ['/F', '/T', '/PID', '${process.pid}'],
       );
-      _exit(result.exitCode);
+      return _exit(result.exitCode);
     }
+    process.kill();
   }
 }
 
