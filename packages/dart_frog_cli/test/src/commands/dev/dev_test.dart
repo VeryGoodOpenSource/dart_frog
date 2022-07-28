@@ -456,7 +456,9 @@ void main() {
       verifyNever(() => process.kill());
     });
 
-    test('kills process if error occurs before hotreload is enabled', () async {
+    test(
+        'kills process if error occurs before '
+        'hotreload is enabled on windows', () async {
       const processId = 42;
       final generatorHooks = _MockGeneratorHooks();
       final processRunCalls = <List<String>>[];
@@ -486,7 +488,6 @@ void main() {
         (_) => Stream.value(utf8.encode('oops')),
       );
       when(() => process.pid).thenReturn(processId);
-      when(() => process.kill()).thenReturn(true);
       when(() => processResult.exitCode).thenReturn(ExitCode.success.code);
       when(
         () => directoryWatcher.events,
@@ -521,6 +522,66 @@ void main() {
         ]),
       );
       verifyNever(() => process.kill());
+    });
+
+    test(
+        'kills process if error occurs before '
+        'hotreload is enabled on non-windows', () async {
+      final generatorHooks = _MockGeneratorHooks();
+      final processRunCalls = <List<String>>[];
+      int? exitCode;
+      when(
+        () => generatorHooks.preGen(
+          vars: any(named: 'vars'),
+          workingDirectory: any(named: 'workingDirectory'),
+          onVarsChanged: any(named: 'onVarsChanged'),
+        ),
+      ).thenAnswer((invocation) async {
+        (invocation.namedArguments[const Symbol('onVarsChanged')] as Function(
+          Map<String, dynamic> vars,
+        ))
+            .call(<String, dynamic>{});
+      });
+      when(
+        () => generator.generate(
+          any(),
+          vars: any(named: 'vars'),
+          fileConflictResolution: FileConflictResolution.overwrite,
+        ),
+      ).thenAnswer((_) async => []);
+      when(() => generator.hooks).thenReturn(generatorHooks);
+      when(() => process.stdout).thenAnswer((_) => const Stream.empty());
+      when(() => process.stderr).thenAnswer(
+        (_) => Stream.value(utf8.encode('oops')),
+      );
+      when(() => process.kill()).thenReturn(true);
+      when(
+        () => directoryWatcher.events,
+      ).thenAnswer((_) => StreamController<WatchEvent>().stream);
+      when(() => sigint.watch()).thenAnswer((_) => const Stream.empty());
+      command = DevCommand(
+        logger: logger,
+        directoryWatcher: (_) => directoryWatcher,
+        generator: (_) async => generator,
+        exit: (code) => exitCode = code,
+        runProcess: (String executable, List<String> arguments) async {
+          processRunCalls.add([executable, ...arguments]);
+          return processResult;
+        },
+        startProcess: (
+          String executable,
+          List<String> arguments, {
+          bool runInShell = false,
+        }) async {
+          return process;
+        },
+        sigint: sigint,
+      )..testArgResults = argResults;
+      command.run().ignore();
+      await untilCalled(() => process.kill());
+      expect(exitCode, equals(1));
+      expect(processRunCalls, isEmpty);
+      verify(() => process.kill()).called(1);
     });
   });
 
