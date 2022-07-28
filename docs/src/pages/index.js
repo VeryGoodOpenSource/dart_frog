@@ -133,8 +133,8 @@ function HomepageVideos() {
     <div className={`${styles.section}`}>
       <iframe
         className="video"
-        src="https://www.youtube.com/embed/N7l0b09c6DA"
-        title="Very Good Livestream: Dart Frog Demo"
+        src="https://www.youtube.com/embed/videoseries?list=PLprI2satkVdGzVfC3WGCTJYFZVO95sql3"
+        title="Dart Frog: Dart on the Server"
         frameBorder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
