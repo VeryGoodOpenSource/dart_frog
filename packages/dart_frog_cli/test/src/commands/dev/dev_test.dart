@@ -520,7 +520,7 @@ void main() {
           ['taskkill', '/F', '/T', '/PID', '$processId']
         ]),
       );
-      verify(() => process.kill()).called(1);
+      verifyNever(() => process.kill());
     });
   });
 
