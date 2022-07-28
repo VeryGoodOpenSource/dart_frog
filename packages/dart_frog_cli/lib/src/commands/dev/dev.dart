@@ -156,14 +156,14 @@ class DevCommand extends DartFrogCommand {
     final public = path.join(cwd.path, 'public');
     final routes = path.join(cwd.path, 'routes');
 
-    bool shouldReload(WatchEvent event) {
+    bool shouldRunCodegen(WatchEvent event) {
       return path.isWithin(routes, event.path) ||
           path.isWithin(public, event.path);
     }
 
     final watcher = _directoryWatcher(path.join(cwd.path));
     final subscription = watcher.events
-        .where(shouldReload)
+        .where(shouldRunCodegen)
         .debounce(Duration.zero)
         .listen((_) => codegen());
 
