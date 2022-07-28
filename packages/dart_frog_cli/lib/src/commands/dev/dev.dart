@@ -86,7 +86,6 @@ class DevCommand extends DartFrogCommand {
 
   @override
   Future<int> run() async {
-    var reloading = false;
     var hotReloadEnabled = false;
     final port = io.Platform.environment['PORT'] ?? results['port'] as String;
     final generator = await _generator(dartFrogDevServerBundle);
@@ -106,11 +105,6 @@ class DevCommand extends DartFrogCommand {
       );
     }
 
-    void reload() {
-      reloading = true;
-      codegen();
-    }
-
     Future<void> serve() async {
       final process = await _startProcess(
         'dart',
@@ -126,10 +120,12 @@ class DevCommand extends DartFrogCommand {
       var hasError = false;
       process.stderr.listen((_) async {
         hasError = true;
-        if (reloading) return;
 
         final message = utf8.decode(_).trim();
         if (message.isEmpty) return;
+        if (message.contains('The system cannot find the file specified.')) {
+          return;
+        }
 
         logger.err(message);
 
@@ -144,7 +140,6 @@ class DevCommand extends DartFrogCommand {
       process.stdout.listen((_) {
         final message = utf8.decode(_).trim();
         if (message.contains('[hotreload]')) hotReloadEnabled = true;
-        if (message.contains('Application reloaded.')) reloading = false;
         if (!hasError) _generatorTarget.cacheLatestSnapshot();
         if (message.isNotEmpty) logger.info(message);
         hasError = false;
@@ -168,7 +163,7 @@ class DevCommand extends DartFrogCommand {
     final subscription = watcher.events
         .where(shouldReload)
         .debounce(Duration.zero)
-        .listen((_) => reload());
+        .listen((_) => codegen());
 
     await subscription.asFuture<void>();
     await subscription.cancel();
