@@ -119,13 +119,15 @@ class DevCommand extends DartFrogCommand {
 
       var hasError = false;
       process.stderr.listen((_) async {
+        // When a file is renamed, a reload can occur prior to codegen
+        // which results in a file not found error.
+        // This error should be ignored because it'll be automatically resolved
+        // when codegen completes and triggers a subsequent reload.
+        const fileNotFoundError = 'The system cannot find the file specified.';
         hasError = true;
 
         final message = utf8.decode(_).trim();
-        if (message.isEmpty) return;
-        if (message.contains('The system cannot find the file specified.')) {
-          return;
-        }
+        if (message.isEmpty || message.contains(fileNotFoundError)) return;
 
         logger.err(message);
 
