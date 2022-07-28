@@ -126,8 +126,11 @@ class DevCommand extends DartFrogCommand {
       var hasError = false;
       process.stderr.listen((_) async {
         hasError = true;
+        if (reloading) return;
+
         final message = utf8.decode(_).trim();
-        if (reloading || message.isEmpty) return;
+        if (message.isEmpty) return;
+
         logger.err(message);
 
         if (!hotReloadEnabled) {
