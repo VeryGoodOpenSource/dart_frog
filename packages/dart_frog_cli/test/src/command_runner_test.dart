@@ -17,6 +17,7 @@ const expectedUsage = [
       'Global options:\n'
       '-h, --help       Print this usage information.\n'
       '    --version    Print the current version.\n'
+      '    --verbose    Output additional logs.\n'
       '\n'
       'Available commands:\n'
       '  build    Create a production build.\n'
@@ -81,6 +82,17 @@ void main() {
             final resultAbbr = await commandRunner.run(['-h']);
             expect(printLogs, equals(expectedUsage));
             expect(resultAbbr, equals(ExitCode.success.code));
+          }),
+        );
+      });
+
+      group('--verbose', () {
+        test(
+          'sets correct log level',
+          overridePrint(() async {
+            final logger = Logger();
+            await DartFrogCommandRunner(logger: logger).run(['--verbose']);
+            expect(logger.level, equals(Level.verbose));
           }),
         );
       });
