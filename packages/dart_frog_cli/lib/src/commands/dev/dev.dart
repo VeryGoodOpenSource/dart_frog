@@ -1,12 +1,10 @@
 import 'dart:convert';
 import 'dart:io' as io;
 
-import 'package:collection/collection.dart';
 import 'package:dart_frog_cli/src/command.dart';
 import 'package:dart_frog_cli/src/commands/commands.dart';
 import 'package:dart_frog_cli/src/commands/dev/templates/dart_frog_dev_server_bundle.dart';
 import 'package:mason/mason.dart';
-import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
 import 'package:stream_transform/stream_transform.dart';
 import 'package:watcher/watcher.dart';
@@ -209,7 +207,6 @@ class DevCommand extends DartFrogCommand {
 /// {@template cached_file}
 /// A cached file which consists of the file path and contents.
 /// {@endtemplate}
-@immutable
 class CachedFile {
   /// {@macro cached_file}
   const CachedFile({required this.path, required this.contents});
@@ -219,19 +216,6 @@ class CachedFile {
 
   /// The contents of the generated file.s
   final List<int> contents;
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    final listEquals = const DeepCollectionEquality().equals;
-
-    return other is CachedFile &&
-        other.path == path &&
-        listEquals(other.contents, contents);
-  }
-
-  @override
-  int get hashCode => Object.hashAll([contents, path]);
 }
 
 /// Signature for the `createFile` method on [DirectoryGeneratorTarget].
@@ -272,7 +256,7 @@ class RestorableDirectoryGeneratorTarget extends DirectoryGeneratorTarget {
   /// Cache the latest recorded snapshot.
   void cacheLatestSnapshot() {
     final snapshot = _latestSnapshot;
-    if (snapshot == null || _cachedSnapshot == snapshot) return;
+    if (snapshot == null) return;
     _cachedSnapshot = snapshot;
     _logger?.detail('[codegen] cached latest snapshot.');
   }
