@@ -17,6 +17,7 @@ const expectedUsage = [
       'Global options:\n'
       '-h, --help       Print this usage information.\n'
       '    --version    Print the current version.\n'
+      '    --verbose    Output additional logs.\n'
       '\n'
       'Available commands:\n'
       '  build    Create a production build.\n'
