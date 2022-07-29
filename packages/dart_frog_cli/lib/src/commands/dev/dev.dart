@@ -32,11 +32,12 @@ typedef DirectoryWatcherBuilder = DirectoryWatcher Function(
 /// Typedef for [io.exit].
 typedef Exit = dynamic Function(int exitCode);
 
-RestorableDirectoryGeneratorTarget get _defaultGeneratorTarget {
+RestorableDirectoryGeneratorTarget _defaultGeneratorTarget(Logger? logger) {
   return RestorableDirectoryGeneratorTarget(
     io.Directory(
       path.join(io.Directory.current.path, '.dart_frog'),
     ),
+    logger: logger,
   );
 }
 
@@ -62,7 +63,7 @@ class DevCommand extends DartFrogCommand {
         _runProcess = runProcess ?? io.Process.run,
         _sigint = sigint ?? io.ProcessSignal.sigint,
         _startProcess = startProcess ?? io.Process.start,
-        _generatorTarget = generatorTarget ?? _defaultGeneratorTarget {
+        _generatorTarget = generatorTarget ?? _defaultGeneratorTarget(logger) {
     argParser.addOption(
       'port',
       abbr: 'p',
@@ -94,6 +95,7 @@ class DevCommand extends DartFrogCommand {
     final generator = await _generator(dartFrogDevServerBundle);
 
     Future<void> codegen() async {
+      logger.detail('[codegen] running pre-gen...');
       var vars = <String, dynamic>{'port': port};
       await generator.hooks.preGen(
         vars: vars,
@@ -101,20 +103,27 @@ class DevCommand extends DartFrogCommand {
         onVarsChanged: (v) => vars = v,
       );
 
+      logger.detail('[codegen] running generate...');
       final _ = await generator.generate(
         _generatorTarget,
         vars: vars,
         fileConflictResolution: FileConflictResolution.overwrite,
       );
+      logger.detail('[codegen] complete.');
     }
 
     Future<void> reload() async {
+      logger.detail('[codegen] reloading...');
       reloading = true;
       await codegen();
       reloading = false;
+      logger.detail('[codegen] reload complete.');
     }
 
     Future<void> serve() async {
+      logger.detail(
+        '''[process] dart --enable-vm-service ${path.join('.dart_frog', 'server.dart')}''',
+      );
       final process = await _startProcess(
         'dart',
         ['--enable-vm-service', path.join('.dart_frog', 'server.dart')],
@@ -129,6 +138,7 @@ class DevCommand extends DartFrogCommand {
       var hasError = false;
       process.stderr.listen((_) async {
         hasError = true;
+
         if (reloading) return;
 
         final message = utf8.decode(_).trim();
@@ -138,6 +148,7 @@ class DevCommand extends DartFrogCommand {
 
         if (!hotReloadEnabled) {
           await _killProcess(process);
+          logger.detail('[process] exit(1)');
           _exit(1);
         }
 
@@ -164,6 +175,7 @@ class DevCommand extends DartFrogCommand {
     final routes = path.join(cwd.path, 'routes');
 
     bool shouldReload(WatchEvent event) {
+      logger.detail('[watcher] $event');
       return path.isWithin(routes, event.path) ||
           path.isWithin(public, event.path);
     }
@@ -180,11 +192,14 @@ class DevCommand extends DartFrogCommand {
   }
 
   Future<void> _killProcess(io.Process process) async {
+    logger.detail('[process] killing process...');
     if (_isWindows) {
+      logger.detail('[process] taskkill /F /T /PID ${process.pid}');
       final result = await _runProcess(
         'taskkill',
         ['/F', '/T', '/PID', '${process.pid}'],
       );
+      logger.detail('[process] exit(${result.exitCode})');
       return _exit(result.exitCode);
     }
     process.kill();
@@ -233,10 +248,15 @@ typedef CreateFile = Future<GeneratedFile> Function(
 /// {@endtemplate}
 class RestorableDirectoryGeneratorTarget extends DirectoryGeneratorTarget {
   /// {@macro restorable_directory_generator_target}
-  RestorableDirectoryGeneratorTarget(super.dir, {CreateFile? createFile})
-      : _createFile = createFile;
+  RestorableDirectoryGeneratorTarget(
+    super.dir, {
+    CreateFile? createFile,
+    Logger? logger,
+  })  : _createFile = createFile,
+        _logger = logger;
 
   final CreateFile? _createFile;
+  final Logger? _logger;
   CachedFile? _cachedSnapshot;
   CachedFile? _latestSnapshot;
 
@@ -244,7 +264,9 @@ class RestorableDirectoryGeneratorTarget extends DirectoryGeneratorTarget {
   Future<void> restore() async {
     final snapshot = _cachedSnapshot;
     if (snapshot == null) return;
+    _logger?.detail('[codegen] restoring previous snapshot...');
     await createFile(snapshot.path, snapshot.contents);
+    _logger?.detail('[codegen] restored previous snapshot.');
   }
 
   /// Cache the latest recorded snapshot.
@@ -252,6 +274,7 @@ class RestorableDirectoryGeneratorTarget extends DirectoryGeneratorTarget {
     final snapshot = _latestSnapshot;
     if (snapshot == null || _cachedSnapshot == snapshot) return;
     _cachedSnapshot = snapshot;
+    _logger?.detail('[codegen] cached latest snapshot.');
   }
 
   @override

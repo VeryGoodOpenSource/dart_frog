@@ -47,6 +47,9 @@ class DartFrogCommandRunner extends CommandRunner<int> {
       _logger.info(packageVersion);
       return ExitCode.success.code;
     }
+    if (topLevelResults['verbose'] == true) {
+      _logger.level = Level.verbose;
+    }
     return super.runCommand(topLevelResults);
   }
 }
@@ -57,6 +60,11 @@ extension on ArgParser {
       'version',
       negatable: false,
       help: 'Print the current version.',
+    );
+    addFlag(
+      'verbose',
+      negatable: false,
+      help: 'Output additional logs.',
     );
   }
 }
