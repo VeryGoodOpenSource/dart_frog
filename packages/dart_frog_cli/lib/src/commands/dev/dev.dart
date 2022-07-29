@@ -1,12 +1,11 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:io' as io;
 
-import 'package:collection/collection.dart';
 import 'package:dart_frog_cli/src/command.dart';
 import 'package:dart_frog_cli/src/commands/commands.dart';
 import 'package:dart_frog_cli/src/commands/dev/templates/dart_frog_dev_server_bundle.dart';
 import 'package:mason/mason.dart';
-import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
 import 'package:stream_transform/stream_transform.dart';
 import 'package:watcher/watcher.dart';
@@ -32,11 +31,12 @@ typedef DirectoryWatcherBuilder = DirectoryWatcher Function(
 /// Typedef for [io.exit].
 typedef Exit = dynamic Function(int exitCode);
 
-RestorableDirectoryGeneratorTarget get _defaultGeneratorTarget {
+RestorableDirectoryGeneratorTarget _defaultGeneratorTarget(Logger? logger) {
   return RestorableDirectoryGeneratorTarget(
     io.Directory(
       path.join(io.Directory.current.path, '.dart_frog'),
     ),
+    logger: logger,
   );
 }
 
@@ -62,7 +62,7 @@ class DevCommand extends DartFrogCommand {
         _runProcess = runProcess ?? io.Process.run,
         _sigint = sigint ?? io.ProcessSignal.sigint,
         _startProcess = startProcess ?? io.Process.start,
-        _generatorTarget = generatorTarget ?? _defaultGeneratorTarget {
+        _generatorTarget = generatorTarget ?? _defaultGeneratorTarget(logger) {
     argParser.addOption(
       'port',
       abbr: 'p',
@@ -94,6 +94,7 @@ class DevCommand extends DartFrogCommand {
     final generator = await _generator(dartFrogDevServerBundle);
 
     Future<void> codegen() async {
+      logger.detail('[codegen] running pre-gen...');
       var vars = <String, dynamic>{'port': port};
       await generator.hooks.preGen(
         vars: vars,
@@ -101,20 +102,27 @@ class DevCommand extends DartFrogCommand {
         onVarsChanged: (v) => vars = v,
       );
 
+      logger.detail('[codegen] running generate...');
       final _ = await generator.generate(
         _generatorTarget,
         vars: vars,
         fileConflictResolution: FileConflictResolution.overwrite,
       );
+      logger.detail('[codegen] complete.');
     }
 
     Future<void> reload() async {
+      logger.detail('[codegen] reloading...');
       reloading = true;
       await codegen();
       reloading = false;
+      logger.detail('[codegen] reload complete.');
     }
 
     Future<void> serve() async {
+      logger.detail(
+        '''[process] dart --enable-vm-service ${path.join('.dart_frog', 'server.dart')}''',
+      );
       final process = await _startProcess(
         'dart',
         ['--enable-vm-service', path.join('.dart_frog', 'server.dart')],
@@ -129,6 +137,7 @@ class DevCommand extends DartFrogCommand {
       var hasError = false;
       process.stderr.listen((_) async {
         hasError = true;
+
         if (reloading) return;
 
         final message = utf8.decode(_).trim();
@@ -138,18 +147,19 @@ class DevCommand extends DartFrogCommand {
 
         if (!hotReloadEnabled) {
           await _killProcess(process);
+          logger.detail('[process] exit(1)');
           _exit(1);
         }
 
-        await _generatorTarget.restore();
+        await _generatorTarget.rollback();
       });
 
       process.stdout.listen((_) {
         final message = utf8.decode(_).trim();
-        if (message.contains('[hotreload]')) hotReloadEnabled = true;
+        final containsHotReload = message.contains('[hotreload]');
+        if (containsHotReload) hotReloadEnabled = true;
         if (message.isNotEmpty) logger.info(message);
-        final shouldCacheSnapshot =
-            hotReloadEnabled && !hasError && message.isNotEmpty;
+        final shouldCacheSnapshot = containsHotReload && !hasError;
         if (shouldCacheSnapshot) _generatorTarget.cacheLatestSnapshot();
         hasError = false;
       });
@@ -164,6 +174,7 @@ class DevCommand extends DartFrogCommand {
     final routes = path.join(cwd.path, 'routes');
 
     bool shouldReload(WatchEvent event) {
+      logger.detail('[watcher] $event');
       return path.isWithin(routes, event.path) ||
           path.isWithin(public, event.path);
     }
@@ -180,11 +191,14 @@ class DevCommand extends DartFrogCommand {
   }
 
   Future<void> _killProcess(io.Process process) async {
+    logger.detail('[process] killing process...');
     if (_isWindows) {
+      logger.detail('[process] taskkill /F /T /PID ${process.pid}');
       final result = await _runProcess(
         'taskkill',
         ['/F', '/T', '/PID', '${process.pid}'],
       );
+      logger.detail('[process] exit(${result.exitCode})');
       return _exit(result.exitCode);
     }
     process.kill();
@@ -194,7 +208,6 @@ class DevCommand extends DartFrogCommand {
 /// {@template cached_file}
 /// A cached file which consists of the file path and contents.
 /// {@endtemplate}
-@immutable
 class CachedFile {
   /// {@macro cached_file}
   const CachedFile({required this.path, required this.contents});
@@ -204,19 +217,6 @@ class CachedFile {
 
   /// The contents of the generated file.s
   final List<int> contents;
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    final listEquals = const DeepCollectionEquality().equals;
-
-    return other is CachedFile &&
-        other.path == path &&
-        listEquals(other.contents, contents);
-  }
-
-  @override
-  int get hashCode => Object.hashAll([contents, path]);
 }
 
 /// Signature for the `createFile` method on [DirectoryGeneratorTarget].
@@ -233,25 +233,58 @@ typedef CreateFile = Future<GeneratedFile> Function(
 /// {@endtemplate}
 class RestorableDirectoryGeneratorTarget extends DirectoryGeneratorTarget {
   /// {@macro restorable_directory_generator_target}
-  RestorableDirectoryGeneratorTarget(super.dir, {CreateFile? createFile})
-      : _createFile = createFile;
+  RestorableDirectoryGeneratorTarget(
+    super.dir, {
+    CreateFile? createFile,
+    Logger? logger,
+  })  : _cachedSnapshots = Queue<CachedFile>(),
+        _createFile = createFile,
+        _logger = logger;
 
   final CreateFile? _createFile;
-  CachedFile? _cachedSnapshot;
+  final Logger? _logger;
+  final Queue<CachedFile> _cachedSnapshots;
+  CachedFile? get _cachedSnapshot {
+    return _cachedSnapshots.isNotEmpty ? _cachedSnapshots.last : null;
+  }
+
   CachedFile? _latestSnapshot;
 
+  /// Removes the latest cached snapshot.
+  void _removeLatestSnapshot() {
+    _logger?.detail('[codegen] attempting to remove latest snapshot.');
+    if (_cachedSnapshots.length > 1) {
+      _cachedSnapshots.removeLast();
+      _logger?.detail('[codegen] removed latest snapshot.');
+    }
+  }
+
+  /// Remove the latest snapshot and restore the previously
+  /// cached snapshot.
+  Future<void> rollback() async {
+    _logger?.detail('[codegen] rolling back...');
+    _removeLatestSnapshot();
+    await _restoreLatestSnapshot();
+    _logger?.detail('[codegen] rollback complete.');
+  }
+
   /// Restore the latest cached snapshot.
-  Future<void> restore() async {
+  Future<void> _restoreLatestSnapshot() async {
     final snapshot = _cachedSnapshot;
     if (snapshot == null) return;
+    _logger?.detail('[codegen] restoring previous snapshot...');
     await createFile(snapshot.path, snapshot.contents);
+    _logger?.detail('[codegen] restored previous snapshot.');
   }
 
   /// Cache the latest recorded snapshot.
   void cacheLatestSnapshot() {
     final snapshot = _latestSnapshot;
-    if (snapshot == null || _cachedSnapshot == snapshot) return;
-    _cachedSnapshot = snapshot;
+    if (snapshot == null) return;
+    _cachedSnapshots.add(snapshot);
+    _logger?.detail('[codegen] cached latest snapshot.');
+    // Keep only the 2 most recent snapshots.
+    if (_cachedSnapshots.length > 2) _cachedSnapshots.removeFirst();
   }
 
   @override

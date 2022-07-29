@@ -340,7 +340,7 @@ void main() {
         ),
       ).thenAnswer((_) async => []);
       when(() => generator.hooks).thenReturn(generatorHooks);
-      when(() => generatorTarget.restore()).thenAnswer((_) async {});
+      when(() => generatorTarget.rollback()).thenAnswer((_) async {});
       when(() => process.stdout).thenAnswer((_) => stdoutController.stream);
       when(() => process.stderr).thenAnswer((_) => stderrController.stream);
       when(() => directoryWatcher.events).thenAnswer(
@@ -355,64 +355,14 @@ void main() {
       const error = 'something went wrong';
 
       stderrController.add(utf8.encode(error));
-      await untilCalled(() => generatorTarget.restore());
+      await untilCalled(() => generatorTarget.rollback());
 
       await stderrController.close();
       await stdoutController.close();
 
       verify(() => generatorTarget.cacheLatestSnapshot()).called(1);
-      verify(() => generatorTarget.restore()).called(1);
+      verify(() => generatorTarget.rollback()).called(1);
       verify(() => logger.err(error)).called(1);
-    });
-
-    test('ignores file not found errors due to file renames', () async {
-      final generatorHooks = _MockGeneratorHooks();
-      final stdoutController = StreamController<List<int>>();
-      final stderrController = StreamController<List<int>>();
-      when(
-        () => generatorHooks.preGen(
-          vars: any(named: 'vars'),
-          workingDirectory: any(named: 'workingDirectory'),
-          onVarsChanged: any(named: 'onVarsChanged'),
-        ),
-      ).thenAnswer((invocation) async {
-        (invocation.namedArguments[const Symbol('onVarsChanged')] as Function(
-          Map<String, dynamic> vars,
-        ))
-            .call(<String, dynamic>{});
-      });
-      when(
-        () => generator.generate(
-          any(),
-          vars: any(named: 'vars'),
-          fileConflictResolution: FileConflictResolution.overwrite,
-        ),
-      ).thenAnswer((_) async => []);
-      when(() => generator.hooks).thenReturn(generatorHooks);
-      when(() => generatorTarget.restore()).thenAnswer((_) async {});
-      when(() => process.stdout).thenAnswer((_) => stdoutController.stream);
-      when(() => process.stderr).thenAnswer((_) => stderrController.stream);
-      when(() => directoryWatcher.events).thenAnswer(
-        (_) => const Stream.empty(),
-      );
-
-      command.run().ignore();
-
-      stdoutController.add(utf8.encode('[hotreload] hot reload enabled'));
-      await untilCalled(() => generatorTarget.cacheLatestSnapshot());
-      verify(() => generatorTarget.cacheLatestSnapshot()).called(1);
-
-      const error =
-          "./dart_frog/server.dart:7:8: Error: Error when reading 'routes/example.dart': The system cannot find the file specified.";
-
-      stderrController.add(utf8.encode(error));
-
-      await stderrController.close();
-      await stdoutController.close();
-
-      verifyNever(() => generatorTarget.cacheLatestSnapshot());
-      verifyNever(() => generatorTarget.restore());
-      verifyNever(() => logger.err(error));
     });
 
     test('port can be specified using --port', () async {
@@ -694,11 +644,66 @@ void main() {
 
       createdFiles.clear();
 
-      await generatorTarget.restore();
+      await generatorTarget.rollback();
 
       expect(createdFiles.length, equals(1));
       expect(createdFiles.first.path, equals(path));
       expect(createdFiles.first.contents, equals(contents));
+    });
+
+    test('caches only previous 2 snapshots', () async {
+      const path = './path';
+      final contents = utf8.encode('contents');
+      final createdFiles = <CachedFile>[];
+
+      generatorTarget = RestorableDirectoryGeneratorTarget(
+        directory,
+        createFile: (path, contents, {logger, overwriteRule}) async {
+          createdFiles.add(CachedFile(path: path, contents: contents));
+          return _FakeGeneratedFile();
+        },
+      );
+
+      await generatorTarget.createFile(path, contents);
+      generatorTarget.cacheLatestSnapshot();
+
+      expect(createdFiles.length, equals(1));
+
+      const otherPath = './other/path';
+      await generatorTarget.createFile(otherPath, contents);
+      generatorTarget.cacheLatestSnapshot();
+
+      expect(createdFiles.length, equals(2));
+      expect(createdFiles.first.path, equals(path));
+      expect(createdFiles.first.contents, equals(contents));
+      expect(createdFiles.last.path, equals(otherPath));
+      expect(createdFiles.last.contents, equals(contents));
+
+      const anotherPath = './another/path';
+      await generatorTarget.createFile(anotherPath, contents);
+      generatorTarget.cacheLatestSnapshot();
+
+      expect(createdFiles.length, equals(3));
+      expect(createdFiles.first.path, equals(path));
+      expect(createdFiles.first.contents, equals(contents));
+      expect(createdFiles[1].path, equals(otherPath));
+      expect(createdFiles[1].contents, equals(contents));
+      expect(createdFiles.last.path, equals(anotherPath));
+      expect(createdFiles.last.contents, equals(contents));
+
+      createdFiles.clear();
+
+      for (var i = 0; i < 3; i++) {
+        await generatorTarget.rollback();
+      }
+
+      expect(createdFiles.length, equals(3));
+      expect(createdFiles.first.path, equals(otherPath));
+      expect(createdFiles.first.contents, equals(contents));
+      expect(createdFiles[1].path, equals(otherPath));
+      expect(createdFiles[1].contents, equals(contents));
+      expect(createdFiles.last.path, equals(otherPath));
+      expect(createdFiles.last.contents, equals(contents));
     });
 
     test('restore does nothing when snapshot not available', () async {
@@ -729,9 +734,94 @@ void main() {
 
       createdFiles.clear();
 
-      await generatorTarget.restore();
+      await generatorTarget.rollback();
 
       expect(createdFiles, isEmpty);
+    });
+
+    test(
+        'rollback does not remove snapshot '
+        'when there is only one snapshot', () async {
+      const path = './path';
+      final contents = utf8.encode('contents');
+      final createdFiles = <CachedFile>[];
+
+      generatorTarget = RestorableDirectoryGeneratorTarget(
+        directory,
+        createFile: (path, contents, {logger, overwriteRule}) async {
+          createdFiles.add(CachedFile(path: path, contents: contents));
+          return _FakeGeneratedFile();
+        },
+      );
+
+      await generatorTarget.createFile(path, contents);
+
+      expect(createdFiles.length, equals(1));
+
+      createdFiles.clear();
+
+      generatorTarget.cacheLatestSnapshot();
+      await generatorTarget.rollback();
+
+      createdFiles.clear();
+
+      const otherPath = './other/path';
+      await generatorTarget.createFile(otherPath, contents);
+
+      expect(createdFiles.length, equals(1));
+      expect(createdFiles.first.path, equals(otherPath));
+      expect(createdFiles.first.contents, equals(contents));
+
+      createdFiles.clear();
+
+      await generatorTarget.rollback();
+
+      expect(createdFiles.length, equals(1));
+      expect(createdFiles.first.path, equals(path));
+      expect(createdFiles.first.contents, equals(contents));
+    });
+
+    test(
+        'rollback removes latest snapshot '
+        'when there is more than one snapshot', () async {
+      const path = './path';
+      final contents = utf8.encode('contents');
+      final createdFiles = <CachedFile>[];
+
+      generatorTarget = RestorableDirectoryGeneratorTarget(
+        directory,
+        createFile: (path, contents, {logger, overwriteRule}) async {
+          createdFiles.add(CachedFile(path: path, contents: contents));
+          return _FakeGeneratedFile();
+        },
+      );
+
+      await generatorTarget.createFile(path, contents);
+
+      expect(createdFiles.length, equals(1));
+
+      generatorTarget.cacheLatestSnapshot();
+
+      const otherPath = './other/path';
+      await generatorTarget.createFile(otherPath, contents);
+
+      generatorTarget.cacheLatestSnapshot();
+
+      expect(createdFiles.length, equals(2));
+      expect(createdFiles.first.path, equals(path));
+      expect(createdFiles.first.contents, equals(contents));
+      expect(createdFiles.last.path, equals(otherPath));
+      expect(createdFiles.last.contents, equals(contents));
+
+      await generatorTarget.rollback();
+
+      createdFiles.clear();
+
+      await generatorTarget.rollback();
+
+      expect(createdFiles.length, equals(1));
+      expect(createdFiles.first.path, equals(path));
+      expect(createdFiles.first.contents, equals(contents));
     });
   });
 }
