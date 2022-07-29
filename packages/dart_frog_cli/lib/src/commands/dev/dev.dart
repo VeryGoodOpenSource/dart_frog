@@ -86,7 +86,9 @@ class DevCommand extends DartFrogCommand {
 
   @override
   Future<int> run() async {
+    var reloading = false;
     var hotReloadEnabled = false;
+    ChangeType? previousFileChange;
     final port = io.Platform.environment['PORT'] ?? results['port'] as String;
     final generator = await _generator(dartFrogDevServerBundle);
 
@@ -105,6 +107,12 @@ class DevCommand extends DartFrogCommand {
       );
     }
 
+    Future<void> reload() async {
+      reloading = true;
+      await codegen();
+      reloading = false;
+    }
+
     Future<void> serve() async {
       final process = await _startProcess(
         'dart',
@@ -119,15 +127,11 @@ class DevCommand extends DartFrogCommand {
 
       var hasError = false;
       process.stderr.listen((_) async {
-        // When a file is renamed, a reload can occur prior to codegen
-        // which results in a file not found error.
-        // This error should be ignored because it'll be automatically resolved
-        // when codegen completes and triggers a subsequent reload.
-        const fileNotFoundError = 'The system cannot find the file specified.';
         hasError = true;
+        if (reloading) return;
 
         final message = utf8.decode(_).trim();
-        if (message.isEmpty || message.contains(fileNotFoundError)) return;
+        if (message.isEmpty) return;
 
         logger.err(message);
 
@@ -139,10 +143,17 @@ class DevCommand extends DartFrogCommand {
         await _generatorTarget.restore();
       });
 
+      bool shouldCacheSnapshot() {
+        if (!hotReloadEnabled) return false;
+        if (hasError) return false;
+        if (previousFileChange == ChangeType.ADD) return false;
+        return true;
+      }
+
       process.stdout.listen((_) {
         final message = utf8.decode(_).trim();
         if (message.contains('[hotreload]')) hotReloadEnabled = true;
-        if (!hasError) _generatorTarget.cacheLatestSnapshot();
+        if (shouldCacheSnapshot()) _generatorTarget.cacheLatestSnapshot();
         if (message.isNotEmpty) logger.info(message);
         hasError = false;
       });
@@ -156,16 +167,17 @@ class DevCommand extends DartFrogCommand {
     final public = path.join(cwd.path, 'public');
     final routes = path.join(cwd.path, 'routes');
 
-    bool shouldRunCodegen(WatchEvent event) {
+    bool shouldReload(WatchEvent event) {
+      previousFileChange = event.type;
       return path.isWithin(routes, event.path) ||
           path.isWithin(public, event.path);
     }
 
     final watcher = _directoryWatcher(path.join(cwd.path));
     final subscription = watcher.events
-        .where(shouldRunCodegen)
+        .where(shouldReload)
         .debounce(Duration.zero)
-        .listen((_) => codegen());
+        .listen((_) => reload());
 
     await subscription.asFuture<void>();
     await subscription.cancel();
