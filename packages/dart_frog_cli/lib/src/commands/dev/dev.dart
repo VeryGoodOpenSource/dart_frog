@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:io' as io;
 
+import 'package:collection/collection.dart';
 import 'package:dart_frog_cli/src/command.dart';
 import 'package:dart_frog_cli/src/commands/commands.dart';
 import 'package:dart_frog_cli/src/commands/dev/templates/dart_frog_dev_server_bundle.dart';
 import 'package:mason/mason.dart';
+import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
 import 'package:stream_transform/stream_transform.dart';
 import 'package:watcher/watcher.dart';
@@ -88,7 +90,6 @@ class DevCommand extends DartFrogCommand {
   Future<int> run() async {
     var reloading = false;
     var hotReloadEnabled = false;
-    ChangeType? previousFileChange;
     final port = io.Platform.environment['PORT'] ?? results['port'] as String;
     final generator = await _generator(dartFrogDevServerBundle);
 
@@ -143,18 +144,13 @@ class DevCommand extends DartFrogCommand {
         await _generatorTarget.restore();
       });
 
-      bool shouldCacheSnapshot() {
-        if (!hotReloadEnabled) return false;
-        if (hasError) return false;
-        if (previousFileChange == ChangeType.ADD) return false;
-        return true;
-      }
-
       process.stdout.listen((_) {
         final message = utf8.decode(_).trim();
         if (message.contains('[hotreload]')) hotReloadEnabled = true;
-        if (shouldCacheSnapshot()) _generatorTarget.cacheLatestSnapshot();
         if (message.isNotEmpty) logger.info(message);
+        final shouldCacheSnapshot =
+            hotReloadEnabled && !hasError && message.isNotEmpty;
+        if (shouldCacheSnapshot) _generatorTarget.cacheLatestSnapshot();
         hasError = false;
       });
     }
@@ -168,7 +164,6 @@ class DevCommand extends DartFrogCommand {
     final routes = path.join(cwd.path, 'routes');
 
     bool shouldReload(WatchEvent event) {
-      previousFileChange = event.type;
       return path.isWithin(routes, event.path) ||
           path.isWithin(public, event.path);
     }
@@ -199,6 +194,7 @@ class DevCommand extends DartFrogCommand {
 /// {@template cached_file}
 /// A cached file which consists of the file path and contents.
 /// {@endtemplate}
+@immutable
 class CachedFile {
   /// {@macro cached_file}
   const CachedFile({required this.path, required this.contents});
@@ -208,6 +204,19 @@ class CachedFile {
 
   /// The contents of the generated file.s
   final List<int> contents;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    final listEquals = const DeepCollectionEquality().equals;
+
+    return other is CachedFile &&
+        other.path == path &&
+        listEquals(other.contents, contents);
+  }
+
+  @override
+  int get hashCode => Object.hashAll([contents, path]);
 }
 
 /// Signature for the `createFile` method on [DirectoryGeneratorTarget].
@@ -241,7 +250,7 @@ class RestorableDirectoryGeneratorTarget extends DirectoryGeneratorTarget {
   /// Cache the latest recorded snapshot.
   void cacheLatestSnapshot() {
     final snapshot = _latestSnapshot;
-    if (snapshot == null) return;
+    if (snapshot == null || _cachedSnapshot == snapshot) return;
     _cachedSnapshot = snapshot;
   }
 
