@@ -165,8 +165,7 @@ class DevCommand extends DartFrogCommand {
         final message = utf8.decode(_).trim();
         if (message.contains('[hotreload]')) hotReloadEnabled = true;
         if (message.isNotEmpty) logger.info(message);
-        final shouldCacheSnapshot =
-            hotReloadEnabled && !hasError && message.isNotEmpty;
+        final shouldCacheSnapshot = hotReloadEnabled && !hasError;
         shouldCacheSnapshot ? cacheLatestSnapshot() : justTookSnapshot = false;
         hasError = false;
       });
@@ -259,6 +258,7 @@ class RestorableDirectoryGeneratorTarget extends DirectoryGeneratorTarget {
 
   /// Removes the latest cached snapshot.
   void removeLatestSnapshot() {
+    _logger?.detail('[codegen] attempting to remove latest snapshot.');
     if (_cachedSnapshots.length > 1) {
       _cachedSnapshots.removeFirst();
       _logger?.detail('[codegen] removed latest snapshot.');
@@ -280,6 +280,8 @@ class RestorableDirectoryGeneratorTarget extends DirectoryGeneratorTarget {
     if (snapshot == null) return;
     _cachedSnapshots.add(snapshot);
     _logger?.detail('[codegen] cached latest snapshot.');
+    // Keep only the 2 most recent snapshots.
+    if (_cachedSnapshots.length > 2) _cachedSnapshots.removeFirst();
   }
 
   @override
