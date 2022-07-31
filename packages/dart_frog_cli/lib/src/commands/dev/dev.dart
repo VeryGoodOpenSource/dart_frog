@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:io' as io;
 
@@ -89,6 +90,7 @@ class DevCommand extends DartFrogCommand {
   Future<int> run() async {
     var reloading = false;
     var hotReloadEnabled = false;
+    var justTookSnapshot = false;
     final port = io.Platform.environment['PORT'] ?? results['port'] as String;
     final generator = await _generator(dartFrogDevServerBundle);
 
@@ -150,8 +152,14 @@ class DevCommand extends DartFrogCommand {
           _exit(1);
         }
 
+        if (justTookSnapshot) _generatorTarget.removeLatestSnapshot();
         await _generatorTarget.restore();
       });
+
+      void cacheLatestSnapshot() {
+        justTookSnapshot = true;
+        _generatorTarget.cacheLatestSnapshot();
+      }
 
       process.stdout.listen((_) {
         final message = utf8.decode(_).trim();
@@ -159,7 +167,7 @@ class DevCommand extends DartFrogCommand {
         if (message.isNotEmpty) logger.info(message);
         final shouldCacheSnapshot =
             hotReloadEnabled && !hasError && message.isNotEmpty;
-        if (shouldCacheSnapshot) _generatorTarget.cacheLatestSnapshot();
+        shouldCacheSnapshot ? cacheLatestSnapshot() : justTookSnapshot = false;
         hasError = false;
       });
     }
@@ -236,13 +244,26 @@ class RestorableDirectoryGeneratorTarget extends DirectoryGeneratorTarget {
     super.dir, {
     CreateFile? createFile,
     Logger? logger,
-  })  : _createFile = createFile,
+  })  : _cachedSnapshots = Queue<CachedFile>(),
+        _createFile = createFile,
         _logger = logger;
 
   final CreateFile? _createFile;
   final Logger? _logger;
-  CachedFile? _cachedSnapshot;
+  final Queue<CachedFile> _cachedSnapshots;
+  CachedFile? get _cachedSnapshot {
+    return _cachedSnapshots.isNotEmpty ? _cachedSnapshots.first : null;
+  }
+
   CachedFile? _latestSnapshot;
+
+  /// Removes the latest cached snapshot.
+  void removeLatestSnapshot() {
+    if (_cachedSnapshots.length > 1) {
+      _cachedSnapshots.removeFirst();
+      _logger?.detail('[codegen] removed latest snapshot.');
+    }
+  }
 
   /// Restore the latest cached snapshot.
   Future<void> restore() async {
@@ -257,7 +278,7 @@ class RestorableDirectoryGeneratorTarget extends DirectoryGeneratorTarget {
   void cacheLatestSnapshot() {
     final snapshot = _latestSnapshot;
     if (snapshot == null) return;
-    _cachedSnapshot = snapshot;
+    _cachedSnapshots.add(snapshot);
     _logger?.detail('[codegen] cached latest snapshot.');
   }
 
