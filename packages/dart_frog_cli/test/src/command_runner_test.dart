@@ -97,7 +97,7 @@ void main() {
         );
 
         test(
-          'outputs correct package info',
+          'outputs correct meta info',
           overridePrint(() async {
             await commandRunner.run(['--verbose']);
             verify(
