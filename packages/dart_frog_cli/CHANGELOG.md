@@ -1,3 +1,13 @@
+# 0.0.2-dev.10
+
+- feat: improve hot reload error reporting/recovery
+  - eliminate duplicate error logs
+  - improve error reporting
+  - hot reload reliability improvements on windows
+- feat: add `--verbose` flag
+- fix: kill process on windows on sigint
+  - `"port is already in use"` after terminating the process
+
 # 0.0.2-dev.9
 
 - feat: report route conflicts during `dart_frog dev`
