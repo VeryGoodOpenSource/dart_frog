@@ -96,9 +96,8 @@ void main() {
           onVarsChanged: any(named: 'onVarsChanged'),
         ),
       ).thenAnswer((invocation) async {
-        (invocation.namedArguments[const Symbol('onVarsChanged')] as Function(
-          Map<String, dynamic> vars,
-        ))
+        (invocation.namedArguments[const Symbol('onVarsChanged')] as void
+                Function(Map<String, dynamic> vars))
             .call(<String, dynamic>{});
       });
       when(
@@ -136,9 +135,8 @@ void main() {
           onVarsChanged: any(named: 'onVarsChanged'),
         ),
       ).thenAnswer((invocation) async {
-        (invocation.namedArguments[const Symbol('onVarsChanged')] as Function(
-          Map<String, dynamic> vars,
-        ))
+        (invocation.namedArguments[const Symbol('onVarsChanged')] as void
+                Function(Map<String, dynamic> vars))
             .call(<String, dynamic>{});
       });
       when(
@@ -189,9 +187,8 @@ void main() {
           onVarsChanged: any(named: 'onVarsChanged'),
         ),
       ).thenAnswer((invocation) async {
-        (invocation.namedArguments[const Symbol('onVarsChanged')] as Function(
-          Map<String, dynamic> vars,
-        ))
+        (invocation.namedArguments[const Symbol('onVarsChanged')] as void
+                Function(Map<String, dynamic> vars))
             .call(<String, dynamic>{});
       });
       when(
@@ -291,9 +288,8 @@ void main() {
           onVarsChanged: any(named: 'onVarsChanged'),
         ),
       ).thenAnswer((invocation) async {
-        (invocation.namedArguments[const Symbol('onVarsChanged')] as Function(
-          Map<String, dynamic> vars,
-        ))
+        (invocation.namedArguments[const Symbol('onVarsChanged')] as void
+                Function(Map<String, dynamic> vars))
             .call(<String, dynamic>{});
       });
       when(
@@ -327,9 +323,8 @@ void main() {
           onVarsChanged: any(named: 'onVarsChanged'),
         ),
       ).thenAnswer((invocation) async {
-        (invocation.namedArguments[const Symbol('onVarsChanged')] as Function(
-          Map<String, dynamic> vars,
-        ))
+        (invocation.namedArguments[const Symbol('onVarsChanged')] as void
+                Function(Map<String, dynamic> vars))
             .call(<String, dynamic>{});
       });
       when(
@@ -375,9 +370,8 @@ void main() {
           onVarsChanged: any(named: 'onVarsChanged'),
         ),
       ).thenAnswer((invocation) async {
-        (invocation.namedArguments[const Symbol('onVarsChanged')] as Function(
-          Map<String, dynamic> vars,
-        ))
+        (invocation.namedArguments[const Symbol('onVarsChanged')] as void
+                Function(Map<String, dynamic> vars))
             .call(<String, dynamic>{});
       });
       when(
@@ -415,9 +409,8 @@ void main() {
           onVarsChanged: any(named: 'onVarsChanged'),
         ),
       ).thenAnswer((invocation) async {
-        (invocation.namedArguments[const Symbol('onVarsChanged')] as Function(
-          Map<String, dynamic> vars,
-        ))
+        (invocation.namedArguments[const Symbol('onVarsChanged')] as void
+                Function(Map<String, dynamic> vars))
             .call(<String, dynamic>{});
       });
       when(
@@ -481,9 +474,8 @@ void main() {
           onVarsChanged: any(named: 'onVarsChanged'),
         ),
       ).thenAnswer((invocation) async {
-        (invocation.namedArguments[const Symbol('onVarsChanged')] as Function(
-          Map<String, dynamic> vars,
-        ))
+        (invocation.namedArguments[const Symbol('onVarsChanged')] as void
+                Function(Map<String, dynamic> vars))
             .call(<String, dynamic>{});
       });
       when(
@@ -548,9 +540,8 @@ void main() {
           onVarsChanged: any(named: 'onVarsChanged'),
         ),
       ).thenAnswer((invocation) async {
-        (invocation.namedArguments[const Symbol('onVarsChanged')] as Function(
-          Map<String, dynamic> vars,
-        ))
+        (invocation.namedArguments[const Symbol('onVarsChanged')] as void
+                Function(Map<String, dynamic> vars))
             .call(<String, dynamic>{});
       });
       when(
