@@ -24,20 +24,24 @@ class BuildCommand extends DartFrogCommand {
     final generator = await _generator(dartFrogProdServerBundle);
     var vars = <String, dynamic>{};
 
+    logger.detail('[codegen] running pre-gen...');
     await generator.hooks.preGen(
       vars: vars,
       workingDirectory: cwd.path,
       onVarsChanged: (v) => vars = v,
     );
 
+    logger.detail('[codegen] running generate...');
     final _ = await generator.generate(
       DirectoryGeneratorTarget(cwd),
       vars: vars,
       fileConflictResolution: FileConflictResolution.overwrite,
     );
 
+    logger.detail('[codegen] running post-gen...');
     await generator.hooks.postGen(workingDirectory: cwd.path);
 
+    logger.detail('[codegen] complete.');
     return ExitCode.success.code;
   }
 }

@@ -50,6 +50,8 @@ class DartFrogCommandRunner extends CommandRunner<int> {
     if (topLevelResults['verbose'] == true) {
       _logger.level = Level.verbose;
     }
+
+    _logger.detail('[meta] dart_frog_cli $packageVersion');
     return super.runCommand(topLevelResults);
   }
 }

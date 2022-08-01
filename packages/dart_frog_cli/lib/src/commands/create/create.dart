@@ -47,14 +47,17 @@ class CreateCommand extends DartFrogCommand {
       'output_directory': outputDirectory.absolute.path
     };
 
+    logger.detail('[codegen] running generate...');
     final _ = await generator.generate(
       DirectoryGeneratorTarget(outputDirectory),
       vars: vars,
     );
     generateProgress.complete();
 
+    logger.detail('[codegen] running post-gen...');
     await generator.hooks.postGen(vars: vars, workingDirectory: cwd.path);
 
+    logger.detail('[codegen] complete.');
     return ExitCode.success.code;
   }
 

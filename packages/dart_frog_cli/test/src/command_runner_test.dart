@@ -88,11 +88,21 @@ void main() {
 
       group('--verbose', () {
         test(
-          'sets correct log level',
+          'sets correct log level.',
           overridePrint(() async {
             final logger = Logger();
             await DartFrogCommandRunner(logger: logger).run(['--verbose']);
             expect(logger.level, equals(Level.verbose));
+          }),
+        );
+
+        test(
+          'outputs correct meta info',
+          overridePrint(() async {
+            await commandRunner.run(['--verbose']);
+            verify(
+              () => logger.detail('[meta] dart_frog_cli $packageVersion'),
+            ).called(1);
           }),
         );
       });
