@@ -10,7 +10,7 @@ on:
       - "examples/counter/routes/**"
       - "examples/counter/lib/**"
       - "examples/counter/test/**"
-      - ".github/workflows/examples_hello_world.yaml"
+      - ".github/workflows/examples_counter.yaml"
     branches:
       - main
 
