@@ -1,0 +1,23 @@
+name: examples/echo
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+    paths:
+      - "examples/echo/routes/**"
+      - "examples/echo/lib/**"
+      - "examples/echo/test/**"
+      - ".github/workflows/examples_echo.yaml"
+    branches:
+      - main
+
+jobs:
+  build:
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@v1
+    with:
+      working_directory: examples/echo
+      analyze_directories: "routes test"
+      report_on: "routes"
