@@ -1,5 +1,5 @@
 name: hello_world
-description: An new Dart Frog application
+description: A hello world example app built with Dart Frog.
 version: 1.0.0+1
 publish_to: none
 
