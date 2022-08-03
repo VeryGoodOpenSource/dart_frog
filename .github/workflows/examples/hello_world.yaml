@@ -1,0 +1,23 @@
+name: examples/hello_world
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+    paths:
+      - "examples/hello_world/routes/**"
+      - "examples/hello_world/lib/**"
+      - "examples/hello_world/test/**"
+      - ".github/workflows/examples/hello_world.yaml"
+    branches:
+      - main
+
+jobs:
+  build:
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@v1
+    with:
+      working_directory: examples/hello_world
+      analyze_directories: "routes lib test"
+      report_on: "routes,lib"
