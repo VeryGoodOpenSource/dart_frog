@@ -10,7 +10,7 @@ on:
       - "examples/hello_world/routes/**"
       - "examples/hello_world/lib/**"
       - "examples/hello_world/test/**"
-      - ".github/workflows/examples/hello_world.yaml"
+      - ".github/workflows/examples_hello_world.yaml"
     branches:
       - main
 
