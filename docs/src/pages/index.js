@@ -60,7 +60,7 @@ function CTAs() {
       </Link>
       <Link
         className="button button--secondary button--lg"
-        to="/docs/category/basics-"
+        to="/docs/category/basics"
       >
         Learn More
       </Link>

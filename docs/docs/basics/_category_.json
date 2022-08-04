@@ -1,8 +1,9 @@
 {
-  "label": "Basics 📚",
+  "label": "Basics",
   "position": 2,
   "link": {
+    "title": "Basics 📚",
     "type": "generated-index",
-    "description": "5 minutes to learn the most important Dart Frog concepts."
+    "description": "Learn the most important Dart Frog concepts in just a few minutes."
   }
 }
