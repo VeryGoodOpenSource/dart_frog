@@ -68,11 +68,15 @@ const config = {
           },
           {
             label: 'Basics',
-            to: '/docs/category/basics-',
+            to: '/docs/category/basics',
+          },
+          {
+            label: 'Tutorials',
+            to: '/docs/category/tutorials',
           },
           {
             label: 'Deploy',
-            to: '/docs/category/deploy-',
+            to: '/docs/category/deploy',
           },
           {
             label: 'Roadmap',
@@ -103,11 +107,15 @@ const config = {
               },
               {
                 label: 'Basics',
-                to: '/docs/category/basics-',
+                to: '/docs/category/basics',
+              },
+              {
+                label: 'Tutorials',
+                to: '/docs/category/tutorials',
               },
               {
                 label: 'Deploy',
-                to: '/docs/category/deploy-',
+                to: '/docs/category/deploy',
               },
               {
                 label: 'Roadmap',
@@ -145,7 +153,7 @@ const config = {
         copyright: `Copyright © ${new Date().getFullYear()} Very Good Ventures.<br/>Built with 💙 by <a target="_blank" rel="noopener" aria-label="Very Good Ventures" href="https://verygood.ventures">Very Good Ventures</a>.`,
       },
       prism: {
-        additionalLanguages: ['dart'],
+        additionalLanguages: ['bash', 'dart'],
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
       },
