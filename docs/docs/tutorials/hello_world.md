@@ -43,7 +43,7 @@ To create a new Dart Frog app, open your terminal, `cd` into the directory where
 dart_frog create hello_world
 ```
 
-You should see the following output:
+You should see an output similar to:
 
 ```
 ✓ Creating hello_world (0.1s)
