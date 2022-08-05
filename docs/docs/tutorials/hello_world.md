@@ -30,7 +30,6 @@ HTTP/1.1 200 OK
 Connection: close
 Content-Length: 21
 Content-Type: text/plain; charset=utf-8
-Date: Thu, 04 Aug 2022 19:50:12 GMT
 
 
 Welcome to Dart Frog!
