@@ -119,10 +119,10 @@ touch routes/[message].dart
 ```
 
 :::note
-The square brackets `[message]` indicates that the path segment is dynamic and will match anything.
+The square brackets `[...]` indicates that the path segment is dynamic and will match anything. Learn more about [dynamic routes](docs/basics/routes#dynamic-routes-).
 :::
 
-Finally, let's define a `onRequest` method in the newly created route:
+Finally, let's define an `onRequest` method in the newly created route:
 
 ```dart
 import 'package:dart_frog/dart_frog.dart';
@@ -160,4 +160,4 @@ curl --request GET \
 
 This time you should see `pong`.
 
-🎉 Congrats, you've created an `echo` application using Dart Frog. View the full source code [here](https://github.com/VeryGoodOpenSource/dart_frog/tree/main/examples/echo).
+🎉 Congrats, you've created an `echo` application using Dart Frog. View the [full source code](https://github.com/VeryGoodOpenSource/dart_frog/tree/main/examples/echo).

@@ -89,4 +89,4 @@ curl --request GET \
 
 If everything succeeded, you should see `Welcome to Dart Frog!`.
 
-🎉 Congrats, you've created a `hello_world` application using Dart Frog. View the full source code [here](https://github.com/VeryGoodOpenSource/dart_frog/tree/main/examples/hello_world).
+🎉 Congrats, you've created a `hello_world` application using Dart Frog. View the [full source code](https://github.com/VeryGoodOpenSource/dart_frog/tree/main/examples/hello_world).
