@@ -30,7 +30,6 @@ HTTP/1.1 200 OK
 Connection: close
 Content-Length: 21
 Content-Type: text/plain; charset=utf-8
-Date: Thu, 04 Aug 2022 19:50:12 GMT
 
 
 Welcome to Dart Frog!
@@ -90,4 +89,4 @@ curl --request GET \
 
 If everything succeeded, you should see `Welcome to Dart Frog!`.
 
-🎉 Congrats, you've created a `hello_world` application using Dart Frog. View the full source code [here](https://github.com/VeryGoodOpenSource/dart_frog/tree/main/examples/hello_world).
+🎉 Congrats, you've created a `hello_world` application using Dart Frog. View the [full source code](https://github.com/VeryGoodOpenSource/dart_frog/tree/main/examples/hello_world).
