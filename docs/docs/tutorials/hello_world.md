@@ -3,7 +3,7 @@ sidebar_position: 1
 description: Build a simple "Hello World" application.
 ---
 
-# Hello World 🌍
+# Hello World 👋
 
 :::info
 **Difficulty**: 🟢 Beginner<br/>
