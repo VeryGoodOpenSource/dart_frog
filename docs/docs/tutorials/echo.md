@@ -119,7 +119,7 @@ touch routes/[message].dart
 ```
 
 :::note
-The square brackets `[...]` indicates that the path segment is dynamic and will match anything. Learn more about [dynamic routes](docs/basics/routes#dynamic-routes-).
+The square brackets `[...]` indicates that the path segment is dynamic and will match anything. Learn more about [dynamic routes](/docs/basics/routes#dynamic-routes-).
 :::
 
 Finally, let's define an `onRequest` method in the newly created route:
