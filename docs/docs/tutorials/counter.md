@@ -219,7 +219,7 @@ We should see our response:
 You have requested this route 1 time(s).
 ```
 
-But now if we reload the page or make another request, the count should update:
+Now if we reload the page or make another request, the count should update:
 
 ```
 You have requested this route 2 time(s).
