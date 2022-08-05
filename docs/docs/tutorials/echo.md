@@ -58,7 +58,7 @@ To create a new Dart Frog app, open your terminal, `cd` into the directory where
 dart_frog create echo
 ```
 
-You should see the following output:
+You should see an output similar to:
 
 ```
 ✓ Creating echo (0.1s)
