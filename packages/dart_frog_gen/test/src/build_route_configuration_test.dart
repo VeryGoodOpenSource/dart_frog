@@ -648,5 +648,53 @@ void main() {
         }),
       );
     });
+
+    test('supports /api/api.dart', () {
+      const expected = [
+        {'name': '_', 'route': '/', 'middleware': false, 'files': <dynamic>[]},
+        {
+          'name': '_api',
+          'route': '/api',
+          'middleware': false,
+          'files': [
+            {
+              'name': 'api_api',
+              'path': '../routes/api/api.dart',
+              'route': '/api'
+            }
+          ]
+        }
+      ];
+      final directory = Directory(
+        path.join(
+          Directory.current.path,
+          'test',
+          '.fixtures',
+          'dynamic_static_nesting3',
+        ),
+      )..createSync(recursive: true);
+      final routes = Directory(path.join(directory.path, 'routes'))
+        ..createSync();
+      final apiDirectory = Directory(path.join(routes.path, 'api'))
+        ..createSync();
+      File(path.join(apiDirectory.path, 'api.dart')).createSync();
+      final configuration = buildRouteConfiguration(directory);
+      expect(
+        configuration.directories.map((d) => d.toJson()).toList(),
+        equals(expected),
+      );
+      expect(
+        configuration.endpoints,
+        equals({
+          '/api/api': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/api/api.dart',
+            )
+          ],
+        }),
+      );
+    });
   });
 }

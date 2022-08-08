@@ -179,18 +179,28 @@ List<RouteFile> _getRouteFiles({
     final filePath = path
         .relative(entity.path, from: routesDirectory.path)
         .replaceAll(r'\', '/');
-    final fileRoutePath = pathToRoute(path.join('..', 'routes', filePath))
-        .split(directoryPath)
-        .last;
-    var fileRoute = fileRoutePath.isEmpty ? '/' : fileRoutePath;
-    fileRoute = prefix + fileRoute;
-    if (!fileRoute.startsWith('/')) {
-      fileRoute = '/$fileRoute';
-    }
-    if (fileRoute != '/' && fileRoute.endsWith('/')) {
-      fileRoute = fileRoute.substring(0, fileRoute.length - 1);
+
+    String getFileRoute() {
+      final routePath = pathToRoute(path.join('..', 'routes', filePath));
+      final index = routePath.indexOf(directoryPath);
+      final fileRoutePath = index == -1
+          ? routePath
+          : routePath.substring(index + directoryPath.length);
+
+      var fileRoute = fileRoutePath.isEmpty ? '/' : fileRoutePath;
+      fileRoute = prefix + fileRoute;
+
+      if (!fileRoute.startsWith('/')) {
+        fileRoute = '/$fileRoute';
+      }
+      if (fileRoute != '/' && fileRoute.endsWith('/')) {
+        fileRoute = fileRoute.substring(0, fileRoute.length - 1);
+      }
+
+      return fileRoute;
     }
 
+    final fileRoute = getFileRoute();
     final relativeFilePath = path.join('..', 'routes', filePath);
     final route = RouteFile(
       name: filePath.toAlias(),
