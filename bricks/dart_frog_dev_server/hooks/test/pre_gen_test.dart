@@ -283,9 +283,7 @@ void main() {
       );
     });
 
-    test(
-        'reports multiple conflicts '
-        'when there are multiple endpoint with conflicts', () {
+    test('reports multiple rogue routes', () {
       when(() => configuration.rogueRoutes).thenReturn(
         const [
           RouteFile(name: 'hello', path: 'hello.dart', route: '/hello'),
