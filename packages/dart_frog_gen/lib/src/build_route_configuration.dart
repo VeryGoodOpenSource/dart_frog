@@ -28,6 +28,7 @@ RouteConfiguration buildRouteConfiguration(Directory directory) {
     if (globalMiddleware != null) globalMiddleware
   ];
   final routes = <RouteFile>[];
+  final rogueRoutes = <RouteFile>[];
   final directories = _getRouteDirectories(
     directory: routesDirectory,
     routesDirectory: routesDirectory,
@@ -40,6 +41,7 @@ RouteConfiguration buildRouteConfiguration(Directory directory) {
         endpoints[endpoint]!.add(file);
       }
     },
+    onRogueRoute: rogueRoutes.add,
   );
   final publicDirectory = Directory(path.join(directory.path, 'public'));
   return RouteConfiguration(
@@ -47,6 +49,7 @@ RouteConfiguration buildRouteConfiguration(Directory directory) {
     middleware: middleware,
     directories: directories,
     routes: routes,
+    rogueRoutes: rogueRoutes,
     endpoints: endpoints,
     serveStaticFiles: publicDirectory.existsSync(),
   );
@@ -58,6 +61,7 @@ List<RouteDirectory> _getRouteDirectories({
   required void Function(RouteFile route) onRoute,
   required void Function(MiddlewareFile route) onMiddleware,
   required void Function(String endpoint, RouteFile file) onEndpoint,
+  required void Function(RouteFile route) onRogueRoute,
 }) {
   final directories = <RouteDirectory>[];
   final entities = directory.listSync().sorted();
@@ -87,11 +91,13 @@ List<RouteDirectory> _getRouteDirectories({
       directory: directory,
       routesDirectory: routesDirectory,
       onRoute: onRoute,
+      onRogueRoute: onRogueRoute,
     ),
     ..._getRouteFilesForDynamicDirectories(
       directory: directory,
       routesDirectory: routesDirectory,
       onRoute: onRoute,
+      onRogueRoute: onRogueRoute,
     ),
   ];
 
@@ -123,6 +129,7 @@ List<RouteDirectory> _getRouteDirectories({
           onRoute: onRoute,
           onMiddleware: onMiddleware,
           onEndpoint: onEndpoint,
+          onRogueRoute: onRogueRoute,
         ),
       );
     }
@@ -135,6 +142,7 @@ List<RouteFile> _getRouteFilesForDynamicDirectories({
   required Directory directory,
   required Directory routesDirectory,
   required void Function(RouteFile route) onRoute,
+  required void Function(RouteFile route) onRogueRoute,
   String prefix = '',
 }) {
   final files = <RouteFile>[];
@@ -149,12 +157,14 @@ List<RouteFile> _getRouteFilesForDynamicDirectories({
       directory: dynamicDirectory,
       routesDirectory: routesDirectory,
       onRoute: onRoute,
+      onRogueRoute: onRogueRoute,
       prefix: newPrefix,
     );
     final dynamicSubset = _getRouteFilesForDynamicDirectories(
       directory: dynamicDirectory,
       routesDirectory: routesDirectory,
       onRoute: onRoute,
+      onRogueRoute: onRogueRoute,
       prefix: newPrefix,
     );
     files.addAll([...subset, ...dynamicSubset]);
@@ -166,6 +176,7 @@ List<RouteFile> _getRouteFiles({
   required Directory directory,
   required Directory routesDirectory,
   required void Function(RouteFile route) onRoute,
+  required void Function(RouteFile route) onRogueRoute,
   String prefix = '',
 }) {
   final files = <RouteFile>[];
@@ -175,6 +186,10 @@ List<RouteFile> _getRouteFiles({
       ? directorySegment
       : '/$directorySegment';
   final entities = directory.listSync().sorted();
+  final subDirectories = entities
+      .whereType<Directory>()
+      .map((directory) => path.basename(directory.path))
+      .toSet();
   entities.where((e) => e.isRoute).cast<File>().forEach((entity) {
     final filePath = path
         .relative(entity.path, from: routesDirectory.path)
@@ -209,6 +224,10 @@ List<RouteFile> _getRouteFiles({
     );
     onRoute(route);
     files.add(route);
+
+    if (subDirectories.contains(path.basenameWithoutExtension(filePath))) {
+      onRogueRoute(route);
+    }
   });
   return files;
 }
@@ -261,6 +280,7 @@ class RouteConfiguration {
     required this.directories,
     required this.routes,
     required this.endpoints,
+    required this.rogueRoutes,
     this.serveStaticFiles = false,
   });
 
@@ -283,6 +303,34 @@ class RouteConfiguration {
 
   /// A map of all endpoint paths to resolved route files.
   final Map<String, List<RouteFile>> endpoints;
+
+  /// List of all rogue routes.
+  ///
+  /// A route is considered rogue when it is defined outside
+  /// of an existing subdirectory with the same name.
+  ///
+  /// For example:
+  ///
+  /// ```
+  /// ├── routes
+  /// │   ├── foo
+  /// │   │   └── example.dart
+  /// │   ├── foo.dart
+  /// ```
+  ///
+  /// In the above scenario, `foo.dart` is a rogue because it is defined
+  /// outside of the existing `foo` directory.
+  ///
+  /// Instead, `foo.dart` should be renamed to `index.dart` and placed within
+  /// the `foo` directory like:
+  ///
+  /// ```
+  /// ├── routes
+  /// │   ├── foo
+  /// │   │   ├── example.dart
+  /// │   │   └── index.dart
+  /// ```
+  final List<RouteFile> rogueRoutes;
 }
 
 /// {@template route_directory}
