@@ -20,7 +20,7 @@ Response onRequest(RequestContext context) {
 
 ## Request Context 🔗
 
-All route handlers have access to a `RequestContext` which can be used to access the incoming request as well as dependencies provided to the request context (see middleware).
+All route handlers have access to a `RequestContext` which can be used to access the incoming request as well as dependencies provided to the request context ([see middleware](/docs/basics/middleware)).
 
 ```dart
 import 'package:dart_frog/dart_frog.dart';
