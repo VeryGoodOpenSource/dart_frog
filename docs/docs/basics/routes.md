@@ -4,6 +4,8 @@ sidebar_position: 1
 
 # Routes 🚏
 
+## Overview ✨
+
 In Dart Frog, a route consists of an `onRequest` function (called a route handler) exported from a `.dart` file in the `routes` directory. Each endpoint is associated with a routes file based on its file name. Files named, `index.dart` will correspond to a `/` endpoint.
 
 For example, if you create `routes/hello.dart` that exports an `onRequest` method like below, it will be accessible at `/hello`.
@@ -16,7 +18,9 @@ Response onRequest(RequestContext context) {
 }
 ```
 
-All route handlers have access to a `RequestContext` which can be used to access the incoming request as well as dependencies provided to the request context (see middleware).
+## Request Context 🔗
+
+All route handlers have access to a `RequestContext` which can be used to access the incoming request as well as dependencies provided to the request context ([see middleware](/docs/basics/middleware)).
 
 ```dart
 import 'package:dart_frog/dart_frog.dart';
@@ -30,6 +34,8 @@ Response onRequest(RequestContext context) {
 }
 ```
 
+## Custom Status Code 🆗
+
 We can customize the status code of the response via the `statusCode` parameter on the `Response` object:
 
 ```dart
@@ -39,6 +45,8 @@ Response onRequest(RequestContext context) {
   return Response(statusCode: 204);
 }
 ```
+
+## Returning JSON `{}`
 
 In addition, we can return JSON via the `Response.json` constructor:
 
@@ -108,3 +116,66 @@ Response onRequest(RequestContext context, String id) {
   return Response(body: 'post id: $id');
 }
 ```
+
+## Route Conflicts 💥
+
+When defining routes, it's possible to encounter route conflicts.
+
+A route conflict occurs when more than one route handler resolves to the same endpoint.
+
+For example, given the following file structure:
+
+```
+├── routes
+│   ├── api
+│   │   └── index.dart
+│   └── api.dart
+```
+
+Both `routes/api/index.dart` and `routes/api.dart` resolve the the `/api` endpoint.
+
+When running the development server via `dart_frog dev`, Dart Frog will report route conflicts while the development server is running. You can resolve the conflicts and hot reload will allow you to continue development without having to restart the server.
+
+```bash
+[hotreload] - Application reloaded.
+
+Route conflict detected. `routes/api.dart` and `routes/api/index.dart` both resolve to `/api`.
+```
+
+When generating a production build via `dart_frog build`, Dart Frog will report all detected route conflicts and fail the build if one or more route conflicts are detected.
+
+## Rogue Routes 🥷
+
+Similar to route conflicts, it's also possible to run into rogue routes when working with Dart Frog.
+
+A route is considered rogue when it is defined outside of an existing subdirectory with the same name.
+
+For example:
+
+```
+├── routes
+│   ├── api
+│   │   └── example.dart
+│   ├── api.dart
+```
+
+In the above scenario, `routes/api.dart` is rogue because it is defined outside of the existing `api` directory.
+
+To correct this, `api.dart` should be renamed to `index.dart` and placed within the `api` directory like:
+
+```
+├── routes
+│   ├── api
+│   │   ├── example.dart
+│   │   └── index.dart
+```
+
+When running the development server via `dart_frog dev`, Dart Frog will report rogue routes while the development server is running. You can resolve the issues and hot reload will allow you to continue development without having to restart the server.
+
+```bash
+[hotreload] - Application reloaded.
+
+Rogue route detected. `routes/api.dart` should be renamed to `routes/api/index.dart`.
+```
+
+When generating a production build via `dart_frog build`, Dart Frog will report all detected rogue routes and fail the build if one or more rogue routes are detected.
