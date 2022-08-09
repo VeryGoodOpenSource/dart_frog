@@ -1,3 +1,8 @@
+# 0.0.2-dev.7
+
+- fix: detect rogue routes
+- fix: support repeated nested routes
+
 # 0.0.2-dev.6
 
 - fix: windows relative import syntax
