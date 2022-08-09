@@ -318,7 +318,7 @@ class RouteConfiguration {
   /// │   ├── foo.dart
   /// ```
   ///
-  /// In the above scenario, `foo.dart` is a rogue because it is defined
+  /// In the above scenario, `foo.dart` is rogue because it is defined
   /// outside of the existing `foo` directory.
   ///
   /// Instead, `foo.dart` should be renamed to `index.dart` and placed within
@@ -384,7 +384,7 @@ class RouteDirectory {
 }
 
 /// {@template route_file}
-/// A class containing metadata regarding a route directory.
+/// A class containing metadata regarding a route file.
 /// {@endtemplate}
 class RouteFile {
   /// {@macro route_file}
@@ -394,7 +394,7 @@ class RouteFile {
     required this.route,
   });
 
-  /// The alias for the current directory.
+  /// The alias for the current file.
   final String name;
 
   /// The import path for the current instance.
