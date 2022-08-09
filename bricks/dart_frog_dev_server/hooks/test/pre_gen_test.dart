@@ -69,6 +69,7 @@ void main() {
         middleware: [],
         directories: [],
         routes: [],
+        rogueRoutes: [],
         endpoints: {},
       );
       final exitCalls = <int>[];
@@ -128,6 +129,7 @@ void main() {
             RouteFile(name: 'hello', path: 'hello.dart', route: '/hello'),
           ]
         },
+        rogueRoutes: [],
         serveStaticFiles: true,
       );
       final exitCalls = <int>[];
@@ -243,6 +245,62 @@ void main() {
       verify(
         () => logger.err(
           '''Route conflict detected. ${lightCyan.wrap('routes/echo.dart')} and ${lightCyan.wrap('routes/echo/index.dart')} both resolve to ${lightCyan.wrap('/echo')}.''',
+        ),
+      );
+    });
+  });
+
+  group('reportRogueRoutes', () {
+    late HookContext context;
+    late Logger logger;
+    late RouteConfiguration configuration;
+
+    setUp(() {
+      context = _MockHookContext();
+      logger = _MockLogger();
+      configuration = _MockRouteConfiguration();
+
+      when(() => context.logger).thenReturn(logger);
+    });
+
+    test('reports nothing when there are no rogue routes', () {
+      when(() => configuration.rogueRoutes).thenReturn([]);
+      reportRogueRoutes(context, configuration);
+      verifyNever(() => logger.err(any()));
+    });
+
+    test('reports single rogue route', () {
+      when(() => configuration.rogueRoutes).thenReturn(
+        const [
+          RouteFile(name: 'hello', path: 'hello.dart', route: '/hello'),
+        ],
+      );
+      reportRogueRoutes(context, configuration);
+      verify(
+        () => logger.err(
+          '''Rogue route detected. ${lightCyan.wrap('routes/hello.dart')} should be renamed to ${lightCyan.wrap('routes/hello/index.dart')}.''',
+        ),
+      );
+    });
+
+    test(
+        'reports multiple conflicts '
+        'when there are multiple endpoint with conflicts', () {
+      when(() => configuration.rogueRoutes).thenReturn(
+        const [
+          RouteFile(name: 'hello', path: 'hello.dart', route: '/hello'),
+          RouteFile(name: 'hi', path: 'hi.dart', route: '/hi'),
+        ],
+      );
+      reportRogueRoutes(context, configuration);
+      verify(
+        () => logger.err(
+          '''Rogue route detected. ${lightCyan.wrap('routes/hello.dart')} should be renamed to ${lightCyan.wrap('routes/hello/index.dart')}.''',
+        ),
+      );
+      verify(
+        () => logger.err(
+          '''Rogue route detected. ${lightCyan.wrap('routes/hi.dart')} should be renamed to ${lightCyan.wrap('routes/hi/index.dart')}.''',
         ),
       );
     });
