@@ -696,5 +696,114 @@ void main() {
         }),
       );
     });
+
+    test('detects rogue routes.', () {
+      const expected = [
+        {
+          'name': '_',
+          'route': '/',
+          'middleware': false,
+          'files': [
+            {'name': 'api', 'path': '../routes/api.dart', 'route': '/api'}
+          ]
+        },
+        {
+          'name': '_api',
+          'route': '/api',
+          'middleware': false,
+          'files': [
+            {'name': 'api_v1', 'path': '../routes/api/v1.dart', 'route': '/v1'},
+            {
+              'name': r'api_$id',
+              'path': '../routes/api/[id].dart',
+              'route': '/<id>'
+            }
+          ]
+        },
+        {
+          'name': '_api_v1',
+          'route': '/api/v1',
+          'middleware': false,
+          'files': [
+            {
+              'name': 'api_v1_hello',
+              'path': '../routes/api/v1/hello.dart',
+              'route': '/hello'
+            }
+          ]
+        }
+      ];
+      final directory = Directory(
+        path.join(
+          Directory.current.path,
+          'test',
+          '.fixtures',
+          'rogue_routes',
+        ),
+      )..createSync(recursive: true);
+      final routes = Directory(path.join(directory.path, 'routes'))
+        ..createSync();
+      File(path.join(routes.path, 'api.dart')).createSync();
+      final apiDirectory = Directory(path.join(routes.path, 'api'))
+        ..createSync();
+      File(path.join(apiDirectory.path, '[id].dart')).createSync();
+      File(path.join(apiDirectory.path, 'v1.dart')).createSync();
+      final v1Directory = Directory(path.join(apiDirectory.path, 'v1'))
+        ..createSync();
+      File(path.join(v1Directory.path, 'hello.dart')).createSync();
+      final configuration = buildRouteConfiguration(directory);
+      expect(
+        configuration.directories.map((d) => d.toJson()).toList(),
+        equals(expected),
+      );
+      expect(
+        configuration.endpoints,
+        equals({
+          '/api': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/api.dart',
+            )
+          ],
+          '/api/v1': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/api/v1.dart',
+            )
+          ],
+          '/api/<id>': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/api/[id].dart',
+            )
+          ],
+          '/api/v1/hello': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/api/v1/hello.dart',
+            )
+          ],
+        }),
+      );
+      expect(
+        configuration.rogueRoutes,
+        equals([
+          isA<RouteFile>().having(
+            (r) => r.path,
+            'path',
+            '../routes/api.dart',
+          ),
+          isA<RouteFile>().having(
+            (r) => r.path,
+            'path',
+            '../routes/api/v1.dart',
+          )
+        ]),
+      );
+    });
   });
 }
