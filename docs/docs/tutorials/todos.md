@@ -14,10 +14,10 @@ Before getting started, [read the prerequisites](/docs/overview#prerequisites) t
 
 ## Overview
 
-In this tutorial, we're going to build an app that exposes two endpoints which allow us to perform C.R.U.D operations on a list of todos.
+In this tutorial, we're going to build an app that exposes two endpoints which allow us to perform `CRUD` operations on a list of todos.
 
 :::note
-C.R.U.D stands for create, read, update, and delete.
+`CRUD` stands for `create`, `read`, `update`, and `delete`.
 :::
 
 When we're done, we should have an app that supports the following requests:
@@ -111,7 +111,7 @@ If everything succeeded, you should see `Welcome to Dart Frog!`.
 
 ### Creating `package:todos_data_source`
 
-Now that we have a running application, we need to define an interface for a todos data source which will be responsible for exposing APIs to perform C.R.U.D operations on a list of todos.
+Now that we have a running application, we need to define an abstraction for a todos data source which will be responsible for exposing APIs to perform C.R.U.D operations on a list of todos.
 
 Since the todos data source is not tightly coupled to our Dart Frog application, we can create it as a package.
 
