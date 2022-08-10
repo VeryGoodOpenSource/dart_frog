@@ -3,7 +3,7 @@ sidebar_position: 3
 description: Build a simple "Counter" application.
 ---
 
-# Counter ➕
+# Counter 🔢
 
 :::info
 **Difficulty**: 🟢 Beginner<br/>
