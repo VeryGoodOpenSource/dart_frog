@@ -647,6 +647,7 @@ You should see detailed request logs in the console due to the `requestLogger` m
 2022-08-09T17:43:35.816387  0:00:00.016484 GET     [200] /todos
 2022-08-09T17:44:05.561021  0:00:00.022465 POST    [201] /todos
 ```
+
 :::
 
 🎉 Congrats, you've created an `todos` application using Dart Frog. View the [full source code](https://github.com/VeryGoodOpenSource/dart_frog/tree/main/examples/todos).
