@@ -4,6 +4,9 @@ import 'package:dart_frog/dart_frog.dart';
 
 final _cache = <Type, Object>{};
 
+/// Clears the in-memory provider cache.
+void clearProviderCache() => _cache.clear();
+
 /// Provide an object to the current handler by calling [create].
 ///
 /// If [lazy] is `true`, [create] will be called only when performing
@@ -24,11 +27,11 @@ final _cache = <Type, Object>{};
 ///
 /// ```dart
 /// Handler middleware(Handler handler) {
-///  return handler.use(provider<String>(create: (_) => 'Hello World!'));
+///  return handler.use(provider<String>((_) => 'Hello World!'));
 /// }
 /// ```
-Middleware provider<T extends Object>({
-  required T Function(RequestContext context) create,
+Middleware provider<T extends Object>(
+  T Function(RequestContext context) create, {
   bool cache = true,
   bool lazy = true,
 }) {
@@ -52,12 +55,12 @@ Middleware provider<T extends Object>({
 /// ```dart
 /// Handler middleware(Handler handler) {
 ///  return handler.use(
-///    futureProvider<String>(create: (_) async => 'Hello World!'),
+///    futureProvider<String>((_) async => 'Hello World!'),
 ///  );
 /// }
 /// ```
-Middleware futureProvider<T extends Object>({
-  required Future<T> Function(RequestContext context) create,
+Middleware futureProvider<T extends Object>(
+  Future<T> Function(RequestContext context) create, {
   bool cache = true,
 }) {
   Future<T> _create(RequestContext context) async {
