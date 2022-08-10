@@ -229,4 +229,4 @@ You have requested this route 2 time(s).
 If you restart the server, the count will be reset to 0 because it is only maintained in memory.
 :::
 
-🎉 Congrats, you've created an `counter` application using Dart Frog. View the [full source code](https://github.com/VeryGoodOpenSource/dart_frog/tree/main/examples/counter).
+🎉 Congrats, you've created a `counter` application using Dart Frog. View the [full source code](https://github.com/VeryGoodOpenSource/dart_frog/tree/main/examples/counter).
