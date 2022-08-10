@@ -33,6 +33,7 @@ Future<void> preGen(
   }
 
   reportRouteConflicts(context, configuration, _exit);
+  reportRogueRoutes(context, configuration, _exit);
 
   context.vars = {
     'directories': configuration.directories
@@ -114,6 +115,28 @@ void reportRouteConflicts(
       );
       context.logger.err(
         '''Route conflict detected. ${lightCyan.wrap(originalFilePath)} and ${lightCyan.wrap(conflictingFilePath)} both resolve to ${lightCyan.wrap(conflict.key)}.''',
+      );
+    }
+    exit(1);
+  }
+}
+
+void reportRogueRoutes(
+  HookContext context,
+  RouteConfiguration configuration,
+  void Function(int exitCode) exit,
+) {
+  if (configuration.rogueRoutes.isNotEmpty) {
+    for (final route in configuration.rogueRoutes) {
+      final filePath = path.normalize(path.join('routes', route.path));
+      final fileDirectory = path.dirname(filePath);
+      final idealPath = path.join(
+        fileDirectory,
+        path.basenameWithoutExtension(filePath),
+        'index.dart',
+      );
+      context.logger.err(
+        '''Rogue route detected.${defaultForeground.wrap(' ')}Rename ${lightCyan.wrap(filePath)} to ${lightCyan.wrap(idealPath)}.''',
       );
     }
     exit(1);
