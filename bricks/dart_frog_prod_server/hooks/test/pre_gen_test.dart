@@ -1,7 +1,8 @@
 import 'dart:io';
 
 import 'package:dart_frog_gen/dart_frog_gen.dart';
-import 'package:mason/mason.dart' show HookContext, Logger, Progress, lightCyan;
+import 'package:mason/mason.dart'
+    show HookContext, Logger, Progress, defaultForeground, lightCyan;
 import 'package:mocktail/mocktail.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
@@ -95,6 +96,7 @@ void main() {
           RouteFile(name: 'index', path: 'index.dart', route: '/'),
           RouteFile(name: 'hello', path: 'hello.dart', route: '/hello'),
         ],
+        rogueRoutes: [],
         endpoints: {
           '/': [
             RouteFile(name: 'index', path: 'index.dart', route: '/'),
@@ -297,6 +299,66 @@ dev_dependencies:
         verify(
           () => logger.err(
             '''Route conflict detected. ${lightCyan.wrap('routes/echo.dart')} and ${lightCyan.wrap('routes/echo/index.dart')} both resolve to ${lightCyan.wrap('/echo')}.''',
+          ),
+        );
+        expect(exitCalls, equals([1]));
+      });
+    });
+
+    group('reportRogueRoutes', () {
+      late HookContext context;
+      late Logger logger;
+      late RouteConfiguration configuration;
+
+      setUp(() {
+        context = _MockHookContext();
+        logger = _MockLogger();
+        configuration = _MockRouteConfiguration();
+
+        when(() => context.logger).thenReturn(logger);
+      });
+
+      test('reports nothing when there are no rogue routes', () {
+        final exitCalls = <int>[];
+        when(() => configuration.rogueRoutes).thenReturn([]);
+        reportRogueRoutes(context, configuration, exitCalls.add);
+        verifyNever(() => logger.err(any()));
+        expect(exitCalls, isEmpty);
+      });
+
+      test('reports single rogue route', () {
+        final exitCalls = <int>[];
+        when(() => configuration.rogueRoutes).thenReturn(
+          const [
+            RouteFile(name: 'hello', path: 'hello.dart', route: '/hello'),
+          ],
+        );
+        reportRogueRoutes(context, configuration, exitCalls.add);
+        verify(
+          () => logger.err(
+            '''Rogue route detected.${defaultForeground.wrap(' ')}Rename ${lightCyan.wrap('routes/hello.dart')} to ${lightCyan.wrap('routes/hello/index.dart')}.''',
+          ),
+        );
+        expect(exitCalls, equals([1]));
+      });
+
+      test('reports multiple rogue routes', () {
+        final exitCalls = <int>[];
+        when(() => configuration.rogueRoutes).thenReturn(
+          const [
+            RouteFile(name: 'hello', path: 'hello.dart', route: '/hello'),
+            RouteFile(name: 'hi', path: 'hi.dart', route: '/hi'),
+          ],
+        );
+        reportRogueRoutes(context, configuration, exitCalls.add);
+        verify(
+          () => logger.err(
+            '''Rogue route detected.${defaultForeground.wrap(' ')}Rename ${lightCyan.wrap('routes/hello.dart')} to ${lightCyan.wrap('routes/hello/index.dart')}.''',
+          ),
+        );
+        verify(
+          () => logger.err(
+            '''Rogue route detected.${defaultForeground.wrap(' ')}Rename ${lightCyan.wrap('routes/hi.dart')} to ${lightCyan.wrap('routes/hi/index.dart')}.''',
           ),
         );
         expect(exitCalls, equals([1]));
