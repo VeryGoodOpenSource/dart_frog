@@ -63,7 +63,6 @@ void reportRouteConflicts(
         '''Route conflict detected. ${lightCyan.wrap(originalFilePath)} and ${lightCyan.wrap(conflictingFilePath)} both resolve to ${lightCyan.wrap(conflict.key)}.''',
       );
     }
-    context.logger.info('');
   }
 }
 
@@ -82,10 +81,9 @@ void reportRogueRoutes(
         'index.dart',
       );
       context.logger.err(
-        '''Rogue route detected. ${lightCyan.wrap(filePath)} should be renamed to ${lightCyan.wrap(idealPath)}.''',
+        '''Rogue route detected.${defaultForeground.wrap(' ')}Rename ${lightCyan.wrap(filePath)} to ${lightCyan.wrap(idealPath)}.''',
       );
     }
-    context.logger.info('');
   }
 }
 

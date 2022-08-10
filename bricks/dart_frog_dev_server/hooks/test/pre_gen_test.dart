@@ -278,7 +278,7 @@ void main() {
       reportRogueRoutes(context, configuration);
       verify(
         () => logger.err(
-          '''Rogue route detected. ${lightCyan.wrap('routes/hello.dart')} should be renamed to ${lightCyan.wrap('routes/hello/index.dart')}.''',
+          '''Rogue route detected.${defaultForeground.wrap(' ')}Rename ${lightCyan.wrap('routes/hello.dart')} to ${lightCyan.wrap('routes/hello/index.dart')}.''',
         ),
       );
     });
@@ -293,12 +293,12 @@ void main() {
       reportRogueRoutes(context, configuration);
       verify(
         () => logger.err(
-          '''Rogue route detected. ${lightCyan.wrap('routes/hello.dart')} should be renamed to ${lightCyan.wrap('routes/hello/index.dart')}.''',
+          '''Rogue route detected.${defaultForeground.wrap(' ')}Rename ${lightCyan.wrap('routes/hello.dart')} to ${lightCyan.wrap('routes/hello/index.dart')}.''',
         ),
       );
       verify(
         () => logger.err(
-          '''Rogue route detected. ${lightCyan.wrap('routes/hi.dart')} should be renamed to ${lightCyan.wrap('routes/hi/index.dart')}.''',
+          '''Rogue route detected.${defaultForeground.wrap(' ')}Rename ${lightCyan.wrap('routes/hi.dart')} to ${lightCyan.wrap('routes/hi/index.dart')}.''',
         ),
       );
     });
