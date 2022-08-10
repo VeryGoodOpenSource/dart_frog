@@ -14,7 +14,7 @@ Before getting started, [read the prerequisites](/docs/overview#prerequisites) t
 
 ## Overview
 
-In this tutorial, we're going to build an app that exposes a two endpoints which allow us to perform C.R.U.D operations on a list of todos.
+In this tutorial, we're going to build an app that exposes two endpoints which allow us to perform C.R.U.D operations on a list of todos.
 
 :::note
 C.R.U.D stands for create, read, update, and delete.
@@ -277,7 +277,7 @@ class Todo extends Equatable {
 ```
 
 :::info
-The `Todo` class uses [package:json_serializable](https://pub.dev/packages/json_serializable) to handle generating the code to (de)serialize to/from JSON.
+The `Todo` class uses [package:json_serializable](https://pub.dev/packages/json_serializable) to handle generating the code to (de)serialize to and from JSON.
 
 The `Todo` class extends uses [package:equatable](https://pub.dev/packages/equatable) to override `==` and `hashCode` so that we can compare `Todo` instances by value.
 :::
@@ -288,7 +288,7 @@ Next, we need to use [package:build_runner](https://pub.dev/packages/build_runne
 dart run build_runner build --delete-conflicting-outputs
 ```
 
-We should see that the `todos.g.dart` file was generated and our code should not have any errors/warnings at this point.
+We should see that the `todos.g.dart` file was generated and our code should not have any errors or warnings at this point.
 
 Let's add a barrel file to export our `models` by creating `lib/src/models/models.dart` and exporting `todos.dart`:
 
@@ -427,7 +427,7 @@ class InMemoryTodosDataSource implements TodosDataSource {
 }
 ```
 
-That's it! We're done with the data sources for our Dart Frog application and we're ready to start working on the Dart Frog app itself!
+That's it! We're done making the data sources for our Dart Frog application and we're ready to start working on the Dart Frog app itself!
 
 :::tip
 You can create your own `TodosDataSource` implementation that is backed by databases like [mysql](https://pub.dev/packages/mysql1), [postgres](https://pub.dev/packages/postgres), or [redis](https://pub.dev/packages/redis).
@@ -662,4 +662,4 @@ You should see detailed request logs in the console due to the `requestLogger` m
 
 :::
 
-🎉 Congrats, you've created an `todos` application using Dart Frog. View the [full source code](https://github.com/VeryGoodOpenSource/dart_frog/tree/main/examples/todos).
+🎉 Congrats, you've created a `todos` application using Dart Frog. View the [full source code](https://github.com/VeryGoodOpenSource/dart_frog/tree/main/examples/todos).
