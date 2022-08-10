@@ -384,6 +384,12 @@ dev_dependencies:
 The `in_memory_todos_data_source` depends on the `todos_data_source` via `path`.
 :::
 
+Install the newly added dependencies via:
+
+```bash
+dart pub get
+```
+
 ### Creating the `InMemoryTodosDataSource`
 
 Next, let's update `lib/src/in_memory_todos_data_source.dart` to implement the `TodosDataSource` interface:
@@ -451,6 +457,12 @@ dev_dependencies:
   mocktail: ^0.3.0
   test: ^1.19.2
   very_good_analysis: ^3.0.1
+```
+
+Install the newly added dependencies via:
+
+```bash
+dart pub get
 ```
 
 ## Creating middleware
