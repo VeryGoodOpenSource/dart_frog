@@ -26,6 +26,7 @@ Future<void> preGen(
   }
 
   reportRouteConflicts(context, configuration);
+  reportRogueRoutes(context, configuration);
 
   context.vars = {
     'port': context.vars['port'] ?? '8080',
@@ -62,7 +63,27 @@ void reportRouteConflicts(
         '''Route conflict detected. ${lightCyan.wrap(originalFilePath)} and ${lightCyan.wrap(conflictingFilePath)} both resolve to ${lightCyan.wrap(conflict.key)}.''',
       );
     }
+  }
+}
+
+void reportRogueRoutes(
+  HookContext context,
+  RouteConfiguration configuration,
+) {
+  if (configuration.rogueRoutes.isNotEmpty) {
     context.logger.info('');
+    for (final route in configuration.rogueRoutes) {
+      final filePath = path.normalize(path.join('routes', route.path));
+      final fileDirectory = path.dirname(filePath);
+      final idealPath = path.join(
+        fileDirectory,
+        path.basenameWithoutExtension(filePath),
+        'index.dart',
+      );
+      context.logger.err(
+        '''Rogue route detected.${defaultForeground.wrap(' ')}Rename ${lightCyan.wrap(filePath)} to ${lightCyan.wrap(idealPath)}.''',
+      );
+    }
   }
 }
 
