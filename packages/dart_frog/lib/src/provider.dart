@@ -4,7 +4,7 @@ import 'package:dart_frog/dart_frog.dart';
 
 final _cache = <Type, Object>{};
 
-/// Removes the cached value for all providers.
+/// Removes the cached values for all providers.
 void resetProviders() => _cache.clear();
 
 /// Removes the cached value for the provided value of type [T].
