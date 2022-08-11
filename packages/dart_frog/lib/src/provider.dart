@@ -51,7 +51,7 @@ Middleware provider<T extends Object>(
   };
 }
 
-/// Provide a `Future<T>` to the current handler by calling [create].
+/// Provides a `Future<T>` to the current handler by calling [create].
 /// [create] will be called when an incoming request is received.
 ///
 /// {@macro provider_cache}
