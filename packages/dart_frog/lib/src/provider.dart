@@ -10,7 +10,7 @@ void resetProviders() => _cache.clear();
 /// Removes the cached value for the provided value of type [T].
 void resetProvider<T>() => _cache.remove(T);
 
-/// Provide an object to the current handler by calling [create].
+/// Provides an object to the current handler by calling [create].
 ///
 /// If [lazy] is `true`, [create] will be called only when performing
 /// a lookup via `context.read`.
