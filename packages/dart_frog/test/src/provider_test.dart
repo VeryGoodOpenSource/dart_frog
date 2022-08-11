@@ -63,6 +63,36 @@ void main() {
     await expectLater(await response.body(), equals('$value'));
   });
 
+  test('provided Futures are cached by default', () async {
+    var value = 0;
+
+    Middleware valueProvider() => provider<Future<int>>((_) async => ++value);
+
+    Handler middleware(Handler handler) => handler.use(valueProvider());
+
+    Future<Response> onRequest(RequestContext context) async {
+      final value = await context.read<Future<int>>();
+      return Response(body: '$value');
+    }
+
+    final handler =
+        const Pipeline().addMiddleware(middleware).addHandler(onRequest);
+
+    final request = Request.get(Uri.parse('http://localhost/'));
+    final context = _MockRequestContext();
+    when(() => context.request).thenReturn(request);
+
+    var response = await handler(context);
+
+    await expectLater(response.statusCode, equals(HttpStatus.ok));
+    await expectLater(await response.body(), equals('$value'));
+
+    response = await handler(context);
+
+    await expectLater(response.statusCode, equals(HttpStatus.ok));
+    await expectLater(await response.body(), equals('$value'));
+  });
+
   test('provided values are lazy by default', () async {
     const value = '__test_value__';
     var createCallCount = 0;
@@ -242,95 +272,6 @@ void main() {
 
     await expectLater(response.statusCode, equals(HttpStatus.ok));
     await expectLater(await response.body(), equals(url));
-  });
-
-  test(
-      'futures can be provided, '
-      'read synchronously via middleware, '
-      'and are cached, lazy by default.', () async {
-    const value = '__test_value__';
-    var createCallCount = 0;
-
-    Handler middleware(Handler handler) {
-      return handler.use(
-        futureProvider<String>(
-          (_) async {
-            createCallCount++;
-            return value;
-          },
-        ),
-      );
-    }
-
-    Response onRequest(RequestContext context) {
-      final value = context.read<String>();
-      return Response(body: value);
-    }
-
-    final handler =
-        const Pipeline().addMiddleware(middleware).addHandler(onRequest);
-
-    final request = Request.get(Uri.parse('http://localhost/'));
-    final context = _MockRequestContext();
-    when(() => context.request).thenReturn(request);
-
-    expect(createCallCount, equals(0));
-
-    var response = await handler(context);
-
-    await expectLater(response.statusCode, equals(HttpStatus.ok));
-    await expectLater(await response.body(), equals(value));
-    expect(createCallCount, equals(1));
-
-    response = await handler(context);
-
-    await expectLater(response.statusCode, equals(HttpStatus.ok));
-    await expectLater(await response.body(), equals(value));
-    expect(createCallCount, equals(1));
-  });
-
-  test(
-      'futures can be provided, '
-      'read synchronously via middleware, '
-      'and recomputed when cache is false', () async {
-    const value = '__test_value__';
-    var createCallCount = 0;
-
-    Handler middleware(Handler handler) {
-      return handler.use(
-        futureProvider<String>(
-          (_) async {
-            createCallCount++;
-            return value;
-          },
-          cache: false,
-        ),
-      );
-    }
-
-    Response onRequest(RequestContext context) {
-      final value = context.read<String>();
-      return Response(body: value);
-    }
-
-    final handler =
-        const Pipeline().addMiddleware(middleware).addHandler(onRequest);
-
-    final request = Request.get(Uri.parse('http://localhost/'));
-    final context = _MockRequestContext();
-    when(() => context.request).thenReturn(request);
-
-    var response = await handler(context);
-
-    await expectLater(response.statusCode, equals(HttpStatus.ok));
-    await expectLater(await response.body(), equals(value));
-    expect(createCallCount, equals(1));
-
-    response = await handler(context);
-
-    await expectLater(response.statusCode, equals(HttpStatus.ok));
-    await expectLater(await response.body(), equals(value));
-    expect(createCallCount, equals(2));
   });
 
   test('A StateError is thrown when reading an un-provided value', () async {

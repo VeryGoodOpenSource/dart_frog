@@ -51,43 +51,9 @@ Middleware provider<T extends Object>(
   };
 }
 
-/// Provides a `Future<T>` to the current handler by calling [create].
-/// [create] will be called when an incoming request is received.
-///
-/// {@macro provider_cache}
-/// ```dart
-/// Handler middleware(Handler handler) {
-///  return handler.use(
-///    futureProvider<String>((_) async => 'Hello World!'),
-///  );
-/// }
-/// ```
-Middleware futureProvider<T extends Object>(
-  Future<T> Function(RequestContext context) create, {
-  bool cache = true,
-}) {
-  Future<T> _create(RequestContext context) async {
-    return cache ? _asyncMemo<T>(() => create(context)) : create(context);
-  }
-
-  return (handler) {
-    return (context) async {
-      final value = await _create(context);
-      return handler(context.provide<T>(() => value));
-    };
-  };
-}
-
 T _memo<T extends Object>(T Function() create) {
   final cachedValue = _cache[T] as T?;
   if (cachedValue != null) return cachedValue;
   final value = create();
-  return _cache[T] = value;
-}
-
-Future<T> _asyncMemo<T extends Object>(Future<T> Function() create) async {
-  final cachedValue = _cache[T] as T?;
-  if (cachedValue != null) return cachedValue;
-  final value = await create();
   return _cache[T] = value;
 }
