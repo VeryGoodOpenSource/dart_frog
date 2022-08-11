@@ -4,8 +4,11 @@ import 'package:dart_frog/dart_frog.dart';
 
 final _cache = <Type, Object>{};
 
-/// Clears the in-memory provider cache.
-void clearProviderCache() => _cache.clear();
+/// Removes the cached value for all providers.
+void resetProviders() => _cache.clear();
+
+/// Removes the cached value for the provided value of type [T].
+void resetProvider<T>() => _cache.remove(T);
 
 /// Provide an object to the current handler by calling [create].
 ///
