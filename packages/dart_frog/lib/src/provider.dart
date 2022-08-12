@@ -21,9 +21,9 @@ void resetProvider<T>() => _cache.remove(T);
 /// If [cache] is `true`, [create] will only be called once and the result
 /// will be cached for the lifetime of the application.
 /// If [cache] is `false`, [create] will be called multiple times and
-/// the provided object will be recomputed.
+/// the provided object will be recreated.
 ///
-/// By default providers cache, meaning the provided object won't be recomputed.
+/// By default providers cache, meaning the provided object won't be recreated.
 /// {@endtemplate}
 ///
 /// ```dart

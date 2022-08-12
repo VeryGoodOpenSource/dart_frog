@@ -33,7 +33,7 @@ void main() {
     await expectLater(await response.body(), equals(value));
   });
 
-  test('provided values are cached by default', () async {
+  test('provided sync values are cached by default', () async {
     const value = '__test_value__';
     var createCallCount = 0;
 
@@ -72,7 +72,7 @@ void main() {
     await expectLater(await response.body(), equals(value));
   });
 
-  test('provided Futures are cached by default', () async {
+  test('provided async values are cached by default', () async {
     const value = '__test_value__';
     var createCallCount = 0;
 
