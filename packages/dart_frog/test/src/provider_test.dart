@@ -34,15 +34,20 @@ void main() {
   });
 
   test('provided values are cached by default', () async {
-    var value = 0;
+    const value = '__test_value__';
+    var createCallCount = 0;
 
-    Middleware valueProvider() => provider<int>((_) => ++value);
+    Middleware valueProvider() {
+      return provider<String>((_) {
+        createCallCount++;
+        return value;
+      });
+    }
 
     Handler middleware(Handler handler) => handler.use(valueProvider());
 
     Response onRequest(RequestContext context) {
-      final value = context.read<int>();
-      return Response(body: '$value');
+      return Response(body: context.read<String>());
     }
 
     final handler =
@@ -52,27 +57,36 @@ void main() {
     final context = _MockRequestContext();
     when(() => context.request).thenReturn(request);
 
+    expect(createCallCount, equals(0));
+
     var response = await handler(context);
 
+    expect(createCallCount, equals(1));
     await expectLater(response.statusCode, equals(HttpStatus.ok));
-    await expectLater(await response.body(), equals('$value'));
+    await expectLater(await response.body(), equals(value));
 
     response = await handler(context);
 
+    expect(createCallCount, equals(1));
     await expectLater(response.statusCode, equals(HttpStatus.ok));
-    await expectLater(await response.body(), equals('$value'));
+    await expectLater(await response.body(), equals(value));
   });
 
   test('provided Futures are cached by default', () async {
-    var value = 0;
+    const value = '__test_value__';
+    var createCallCount = 0;
 
-    Middleware valueProvider() => provider<Future<int>>((_) async => ++value);
+    Middleware valueProvider() {
+      return provider<Future<String>>((_) async {
+        createCallCount++;
+        return value;
+      });
+    }
 
     Handler middleware(Handler handler) => handler.use(valueProvider());
 
     Future<Response> onRequest(RequestContext context) async {
-      final value = await context.read<Future<int>>();
-      return Response(body: '$value');
+      return Response(body: await context.read<Future<String>>());
     }
 
     final handler =
@@ -82,15 +96,19 @@ void main() {
     final context = _MockRequestContext();
     when(() => context.request).thenReturn(request);
 
+    expect(createCallCount, equals(0));
+
     var response = await handler(context);
 
+    expect(createCallCount, equals(1));
     await expectLater(response.statusCode, equals(HttpStatus.ok));
-    await expectLater(await response.body(), equals('$value'));
+    await expectLater(await response.body(), equals(value));
 
     response = await handler(context);
 
+    expect(createCallCount, equals(1));
     await expectLater(response.statusCode, equals(HttpStatus.ok));
-    await expectLater(await response.body(), equals('$value'));
+    await expectLater(await response.body(), equals(value));
   });
 
   test('provided values are lazy by default', () async {
