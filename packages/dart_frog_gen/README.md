@@ -11,9 +11,16 @@ Code generation tooling for [Dart Frog][dart_frog_link].
 
 Developed with 💙 by [Very Good Ventures][very_good_ventures_link] 🦄
 
-## Experimental 🚧
+```dart
+import 'dart:io';
 
-`dart_frog_gen` is an experimental project under development and should not be used in production at this time.
+import 'package:dart_frog_gen/dart_frog_gen.dart';
+
+void main() {
+  final routeConfiguration = buildRouteConfiguration(Directory.current);
+  // Use the route configuration...
+}
+```
 
 [ci_badge]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog.yaml/badge.svg
 [ci_link]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog.yaml
