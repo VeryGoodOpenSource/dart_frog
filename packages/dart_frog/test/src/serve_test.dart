@@ -26,7 +26,7 @@ void main() {
       await server.close();
     });
 
-    test('exposes connectionInfo on incoming request', () async {
+    test('exposes connectionInfo on the incoming request', () async {
       late HttpConnectionInfo connectionInfo;
       final server = await serve(
         (context) {
