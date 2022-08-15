@@ -11,10 +11,6 @@ A fast, minimalistic backend framework for Dart 🎯
 
 Developed with 💙 by [Very Good Ventures][very_good_ventures_link] 🦄
 
-## Experimental 🚧
-
-`dart_frog` is an experimental project under development and should not be used in production at this time.
-
 ## Quick Start 🚀
 
 ### Prerequisites 📝
