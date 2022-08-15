@@ -1,3 +1,8 @@
+# 0.0.2-dev.12
+
+- feat: custom entrypoint support
+- chore: fix analysis warning in e2e tests
+
 # 0.0.2-dev.11
 
 - fix: nested, repeated routes are supported
