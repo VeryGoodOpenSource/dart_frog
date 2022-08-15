@@ -41,6 +41,7 @@ Future<void> preGen(
         ? configuration.globalMiddleware!.toJson()
         : false,
     'serveStaticFiles': configuration.serveStaticFiles,
+    'invokeCustomEntrypoint': configuration.invokeCustomEntrypoint,
   };
 }
 
