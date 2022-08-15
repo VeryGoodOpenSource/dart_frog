@@ -44,6 +44,7 @@ RouteConfiguration buildRouteConfiguration(Directory directory) {
     onRogueRoute: rogueRoutes.add,
   );
   final publicDirectory = Directory(path.join(directory.path, 'public'));
+  final mainDartFile = File(path.join(directory.path, 'main.dart'));
   return RouteConfiguration(
     globalMiddleware: globalMiddleware,
     middleware: middleware,
@@ -52,6 +53,7 @@ RouteConfiguration buildRouteConfiguration(Directory directory) {
     rogueRoutes: rogueRoutes,
     endpoints: endpoints,
     serveStaticFiles: publicDirectory.existsSync(),
+    invokeCustomEntrypoint: mainDartFile.existsSync(),
   );
 }
 
@@ -285,7 +287,11 @@ class RouteConfiguration {
     required this.endpoints,
     required this.rogueRoutes,
     this.serveStaticFiles = false,
+    this.invokeCustomEntrypoint = false,
   });
+
+  /// Whether to invoke a custom entrypoint script (`main.dart`).
+  final bool invokeCustomEntrypoint;
 
   /// Whether to serve static files. Defaults to false.
   final bool serveStaticFiles;
