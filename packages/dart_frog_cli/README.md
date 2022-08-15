@@ -8,14 +8,9 @@
 [![License: MIT][license_badge]][license_link]
 [![Powered by Mason](https://img.shields.io/endpoint?url=https%3A%2F%2Ftinyurl.com%2Fmason-badge)](https://github.com/felangel/mason)
 
-
 The official command line interface for [Dart Frog][dart_frog_link].
 
 Developed with 💙 by [Very Good Ventures][very_good_ventures_link] 🦄
-
-## Experimental 🚧
-
-`dart_frog` is an experimental project under development and should not be used in production at this time.
 
 ## Usage 💻
 
