@@ -225,9 +225,12 @@ List<RouteFile> _getRouteFiles({
     onRoute(route);
     files.add(route);
 
-    if (subDirectories.contains(path.basenameWithoutExtension(filePath))) {
-      onRogueRoute(route);
-    }
+    final fileBasename = path.basenameWithoutExtension(filePath);
+    final isRogueRoute = subDirectories.contains(fileBasename) &&
+        !File(path.join(directory.path, fileBasename, 'index.dart'))
+            .existsSync();
+
+    if (isRogueRoute) onRogueRoute(route);
   });
   return files;
 }
