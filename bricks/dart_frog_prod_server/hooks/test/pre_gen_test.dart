@@ -69,8 +69,6 @@ void main() {
     });
 
     test('retains invokeCustomEntrypoint (true)', () async {
-      const customPort = '8081';
-      context.vars['port'] = customPort;
       const configuration = RouteConfiguration(
         middleware: [],
         directories: [],
