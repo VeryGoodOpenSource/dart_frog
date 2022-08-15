@@ -40,6 +40,21 @@ void main() {
       expect(configuration.serveStaticFiles, isFalse);
     });
 
+    test('invokeCustomEntrypoint is true when main.dart exists', () {
+      final directory = Directory.systemTemp.createTempSync();
+      Directory(path.join(directory.path, 'routes')).createSync();
+      File(path.join(directory.path, 'main.dart')).createSync();
+      final configuration = buildRouteConfiguration(directory);
+      expect(configuration.invokeCustomEntrypoint, isTrue);
+    });
+
+    test('invokeCustomEntrypoint is false when main.dart does not exist', () {
+      final directory = Directory.systemTemp.createTempSync();
+      Directory(path.join(directory.path, 'routes')).createSync();
+      final configuration = buildRouteConfiguration(directory);
+      expect(configuration.invokeCustomEntrypoint, isFalse);
+    });
+
     test('includes global middleware when it exists', () {
       final directory = Directory.systemTemp.createTempSync();
       final routes = Directory(path.join(directory.path, 'routes'))
