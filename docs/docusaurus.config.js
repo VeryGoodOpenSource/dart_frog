@@ -79,6 +79,10 @@ const config = {
             to: '/docs/category/deploy',
           },
           {
+            label: 'Advanced',
+            to: '/docs/category/advanced',
+          },
+          {
             label: 'Roadmap',
             to: '/docs/roadmap',
           },
@@ -116,6 +120,10 @@ const config = {
               {
                 label: 'Deploy',
                 to: '/docs/category/deploy',
+              },
+              {
+                label: 'Advanced',
+                to: '/docs/category/advanced',
               },
               {
                 label: 'Roadmap',
