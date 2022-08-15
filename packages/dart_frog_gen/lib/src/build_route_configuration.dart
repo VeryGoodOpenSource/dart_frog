@@ -228,9 +228,11 @@ List<RouteFile> _getRouteFiles({
     files.add(route);
 
     final fileBasename = path.basenameWithoutExtension(filePath);
+    final conflictingIndexFile = File(
+      path.join(directory.path, fileBasename, 'index.dart'),
+    );
     final isRogueRoute = subDirectories.contains(fileBasename) &&
-        !File(path.join(directory.path, fileBasename, 'index.dart'))
-            .existsSync();
+        !conflictingIndexFile.existsSync();
 
     if (isRogueRoute) onRogueRoute(route);
   });
