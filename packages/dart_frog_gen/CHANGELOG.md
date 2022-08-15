@@ -1,3 +1,8 @@
+# 0.0.2-dev.8
+
+- fix: do not report rogue route if index.dart exists
+- feat: add `invokeCustomEntrypoint` to `RouteConfiguration`
+
 # 0.0.2-dev.7
 
 - fix: detect rogue routes
