@@ -12,8 +12,8 @@ Future<Process> dartFrogDev({required Directory directory}) async {
     runInShell: true,
   );
 
-  late StreamSubscription stdoutSubscription;
-  late StreamSubscription stderrSubscription;
+  late StreamSubscription<List<int>> stdoutSubscription;
+  late StreamSubscription<List<int>> stderrSubscription;
 
   stdoutSubscription = process.stdout.listen((event) {
     final message = utf8.decode(event);
