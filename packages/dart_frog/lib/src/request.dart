@@ -97,8 +97,7 @@ class Request {
 
   /// Connection information for the associated HTTP request.
   HttpConnectionInfo get connectionInfo {
-    // ignore: cast_nullable_to_non_nullable
-    return _request.context['shelf.io.connection_info'] as HttpConnectionInfo;
+    return _request.context['shelf.io.connection_info']! as HttpConnectionInfo;
   }
 
   /// The requested url relative to the current handler path.

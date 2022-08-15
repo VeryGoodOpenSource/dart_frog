@@ -39,7 +39,7 @@ void main() {
       final client = HttpClient();
       final request = await client.getUrl(Uri.parse('http://localhost:3000'));
       await request.close();
-      expect(connectionInfo, isA<HttpConnectionInfo>());
+      expect(connectionInfo.remoteAddress.address, equals('::1'));
       await server.close();
     });
   });
