@@ -46,6 +46,7 @@ Future<void> preGen(
     'globalMiddleware': configuration.globalMiddleware != null
         ? configuration.globalMiddleware!.toJson()
         : false,
+    'invokeCustomEntrypoint': configuration.invokeCustomEntrypoint,
     'pathDependencies': await getPathDependencies(projectDirectory),
   };
 }

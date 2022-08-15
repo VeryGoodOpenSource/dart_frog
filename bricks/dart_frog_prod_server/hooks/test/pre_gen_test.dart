@@ -68,6 +68,38 @@ void main() {
       verify(() => logger.err(exception.toString())).called(1);
     });
 
+    test('retains invokeCustomEntrypoint (true)', () async {
+      const customPort = '8081';
+      context.vars['port'] = customPort;
+      const configuration = RouteConfiguration(
+        middleware: [],
+        directories: [],
+        routes: [],
+        rogueRoutes: [],
+        endpoints: {},
+        invokeCustomEntrypoint: true,
+      );
+      final exitCalls = <int>[];
+      await preGen(
+        context,
+        buildConfiguration: (_) => configuration,
+        exit: exitCalls.add,
+      );
+      expect(exitCalls, isEmpty);
+      verifyNever(() => logger.err(any()));
+      expect(
+        context.vars,
+        equals({
+          'directories': <RouteDirectory>[],
+          'routes': <RouteFile>[],
+          'middleware': <MiddlewareFile>[],
+          'globalMiddleware': false,
+          'invokeCustomEntrypoint': true,
+          'pathDependencies': <String>[]
+        }),
+      );
+    });
+
     test('updates context.vars when buildRouteConfiguration succeeds',
         () async {
       const configuration = RouteConfiguration(
@@ -137,6 +169,7 @@ void main() {
             {'name': 'hello_middleware', 'path': 'hello/middleware.dart'}
           ],
           'globalMiddleware': {'name': 'middleware', 'path': 'middleware.dart'},
+          'invokeCustomEntrypoint': false,
           'pathDependencies': <String>[],
         }),
       );
