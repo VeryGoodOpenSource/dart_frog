@@ -1,3 +1,8 @@
+# 0.0.1-dev.12
+
+- feat: expose `HttpConnectionInfo` on `Request`
+- chore: upgrade to very_good_analysis v3.0.1
+
 # 0.0.1-dev.11
 
 - fix: Request/Response `headers` is of type `Map<String, String>`
