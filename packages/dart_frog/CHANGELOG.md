@@ -1,3 +1,7 @@
+# 0.1.0
+
+- chore: stable 0.1.0 release
+
 # 0.0.1-dev.12
 
 - feat: expose `HttpConnectionInfo` on `Request`
