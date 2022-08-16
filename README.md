@@ -102,8 +102,8 @@ Dart Frog provides a simple core with a small API surface area in order to reduc
 🚧 Generated API Documentation 📔
 
 [dart_installation_link]: https://dart.dev/get-dart
-[ci_badge]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog.yaml/badge.svg
-[ci_link]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog.yaml
+[ci_badge]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/main.yaml/badge.svg
+[ci_link]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/main.yaml
 [coverage_badge]: https://raw.githubusercontent.com/VeryGoodOpenSource/dart_frog/main/packages/dart_frog/coverage_badge.svg
 [dart_frog_link_dark]: https://github.com/verygoodopensource/dart_frog#gh-dark-mode-only
 [dart_frog_link_light]: https://github.com/verygoodopensource/dart_frog#gh-light-mode-only
