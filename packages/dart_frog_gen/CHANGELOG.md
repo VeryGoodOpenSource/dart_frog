@@ -1,3 +1,17 @@
+# 0.1.0
+
+- chore: stable 0.1.0 release
+
+# 0.0.2-dev.8
+
+- fix: do not report rogue route if index.dart exists
+- feat: add `invokeCustomEntrypoint` to `RouteConfiguration`
+
+# 0.0.2-dev.7
+
+- fix: detect rogue routes
+- fix: support repeated nested routes
+
 # 0.0.2-dev.6
 
 - fix: windows relative import syntax

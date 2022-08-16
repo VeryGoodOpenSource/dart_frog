@@ -25,5 +25,22 @@ void main() {
       expect(response.statusCode, equals(HttpStatus.notFound));
       await server.close();
     });
+
+    test('exposes connectionInfo on the incoming request', () async {
+      late HttpConnectionInfo connectionInfo;
+      final server = await serve(
+        (context) {
+          connectionInfo = context.request.connectionInfo;
+          return Response();
+        },
+        'localhost',
+        3000,
+      );
+      final client = HttpClient();
+      final request = await client.getUrl(Uri.parse('http://localhost:3000'));
+      await request.close();
+      expect(connectionInfo.remoteAddress.address, equals('::1'));
+      await server.close();
+    });
   });
 }

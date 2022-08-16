@@ -69,6 +69,7 @@ void main() {
         middleware: [],
         directories: [],
         routes: [],
+        rogueRoutes: [],
         endpoints: {},
       );
       final exitCalls = <int>[];
@@ -88,6 +89,40 @@ void main() {
           'middleware': <MiddlewareFile>[],
           'globalMiddleware': false,
           'serveStaticFiles': false,
+          'invokeCustomEntrypoint': false
+        }),
+      );
+    });
+
+    test('retains invokeCustomEntrypoint (true)', () async {
+      const customPort = '8081';
+      context.vars['port'] = customPort;
+      const configuration = RouteConfiguration(
+        middleware: [],
+        directories: [],
+        routes: [],
+        rogueRoutes: [],
+        endpoints: {},
+        invokeCustomEntrypoint: true,
+      );
+      final exitCalls = <int>[];
+      await preGen(
+        context,
+        buildConfiguration: (_) => configuration,
+        exit: exitCalls.add,
+      );
+      expect(exitCalls, isEmpty);
+      verifyNever(() => logger.err(any()));
+      expect(
+        context.vars,
+        equals({
+          'port': customPort,
+          'directories': <RouteDirectory>[],
+          'routes': <RouteFile>[],
+          'middleware': <MiddlewareFile>[],
+          'globalMiddleware': false,
+          'serveStaticFiles': false,
+          'invokeCustomEntrypoint': true,
         }),
       );
     });
@@ -128,6 +163,7 @@ void main() {
             RouteFile(name: 'hello', path: 'hello.dart', route: '/hello'),
           ]
         },
+        rogueRoutes: [],
         serveStaticFiles: true,
       );
       final exitCalls = <int>[];
@@ -162,6 +198,7 @@ void main() {
           ],
           'globalMiddleware': {'name': 'middleware', 'path': 'middleware.dart'},
           'serveStaticFiles': true,
+          'invokeCustomEntrypoint': false,
         }),
       );
     });
@@ -243,6 +280,60 @@ void main() {
       verify(
         () => logger.err(
           '''Route conflict detected. ${lightCyan.wrap('routes/echo.dart')} and ${lightCyan.wrap('routes/echo/index.dart')} both resolve to ${lightCyan.wrap('/echo')}.''',
+        ),
+      );
+    });
+  });
+
+  group('reportRogueRoutes', () {
+    late HookContext context;
+    late Logger logger;
+    late RouteConfiguration configuration;
+
+    setUp(() {
+      context = _MockHookContext();
+      logger = _MockLogger();
+      configuration = _MockRouteConfiguration();
+
+      when(() => context.logger).thenReturn(logger);
+    });
+
+    test('reports nothing when there are no rogue routes', () {
+      when(() => configuration.rogueRoutes).thenReturn([]);
+      reportRogueRoutes(context, configuration);
+      verifyNever(() => logger.err(any()));
+    });
+
+    test('reports single rogue route', () {
+      when(() => configuration.rogueRoutes).thenReturn(
+        const [
+          RouteFile(name: 'hello', path: 'hello.dart', route: '/hello'),
+        ],
+      );
+      reportRogueRoutes(context, configuration);
+      verify(
+        () => logger.err(
+          '''Rogue route detected.${defaultForeground.wrap(' ')}Rename ${lightCyan.wrap('routes/hello.dart')} to ${lightCyan.wrap('routes/hello/index.dart')}.''',
+        ),
+      );
+    });
+
+    test('reports multiple rogue routes', () {
+      when(() => configuration.rogueRoutes).thenReturn(
+        const [
+          RouteFile(name: 'hello', path: 'hello.dart', route: '/hello'),
+          RouteFile(name: 'hi', path: 'hi.dart', route: '/hi'),
+        ],
+      );
+      reportRogueRoutes(context, configuration);
+      verify(
+        () => logger.err(
+          '''Rogue route detected.${defaultForeground.wrap(' ')}Rename ${lightCyan.wrap('routes/hello.dart')} to ${lightCyan.wrap('routes/hello/index.dart')}.''',
+        ),
+      );
+      verify(
+        () => logger.err(
+          '''Rogue route detected.${defaultForeground.wrap(' ')}Rename ${lightCyan.wrap('routes/hi.dart')} to ${lightCyan.wrap('routes/hi/index.dart')}.''',
         ),
       );
     });

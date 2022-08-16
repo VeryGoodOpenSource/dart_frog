@@ -1,3 +1,24 @@
+# 0.1.0
+
+- chore: stable 0.1.0 release
+
+# 0.0.2-dev.12
+
+- feat: custom entrypoint support
+- chore: fix analysis warning in e2e tests
+
+# 0.0.2-dev.11
+
+- fix: nested, repeated routes are supported
+  ```
+  ├── routes
+  │   ├── example
+  │   │   └── example.dart
+  ```
+- feat: `dart_frog create` adds "Powered by Dart Frog" badge to `README.md`
+- feat: `dart_frog dev` reports rogue routes
+- feat: `dart_frog build` reports rogue routes
+
 # 0.0.2-dev.10
 
 - feat: improve hot reload error reporting/recovery

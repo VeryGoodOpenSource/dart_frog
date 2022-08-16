@@ -40,6 +40,21 @@ void main() {
       expect(configuration.serveStaticFiles, isFalse);
     });
 
+    test('invokeCustomEntrypoint is true when main.dart exists', () {
+      final directory = Directory.systemTemp.createTempSync();
+      Directory(path.join(directory.path, 'routes')).createSync();
+      File(path.join(directory.path, 'main.dart')).createSync();
+      final configuration = buildRouteConfiguration(directory);
+      expect(configuration.invokeCustomEntrypoint, isTrue);
+    });
+
+    test('invokeCustomEntrypoint is false when main.dart does not exist', () {
+      final directory = Directory.systemTemp.createTempSync();
+      Directory(path.join(directory.path, 'routes')).createSync();
+      final configuration = buildRouteConfiguration(directory);
+      expect(configuration.invokeCustomEntrypoint, isFalse);
+    });
+
     test('includes global middleware when it exists', () {
       final directory = Directory.systemTemp.createTempSync();
       final routes = Directory(path.join(directory.path, 'routes'))
@@ -647,6 +662,225 @@ void main() {
           ],
         }),
       );
+    });
+
+    test('supports /api/api.dart', () {
+      const expected = [
+        {'name': '_', 'route': '/', 'middleware': false, 'files': <dynamic>[]},
+        {
+          'name': '_api',
+          'route': '/api',
+          'middleware': false,
+          'files': [
+            {
+              'name': 'api_api',
+              'path': '../routes/api/api.dart',
+              'route': '/api'
+            }
+          ]
+        }
+      ];
+      final directory = Directory(
+        path.join(
+          Directory.current.path,
+          'test',
+          '.fixtures',
+          'dynamic_static_nesting3',
+        ),
+      )..createSync(recursive: true);
+      final routes = Directory(path.join(directory.path, 'routes'))
+        ..createSync();
+      final apiDirectory = Directory(path.join(routes.path, 'api'))
+        ..createSync();
+      File(path.join(apiDirectory.path, 'api.dart')).createSync();
+      final configuration = buildRouteConfiguration(directory);
+      expect(
+        configuration.directories.map((d) => d.toJson()).toList(),
+        equals(expected),
+      );
+      expect(
+        configuration.endpoints,
+        equals({
+          '/api/api': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/api/api.dart',
+            )
+          ],
+        }),
+      );
+    });
+
+    test('detects rogue routes.', () {
+      const expected = [
+        {
+          'name': '_',
+          'route': '/',
+          'middleware': false,
+          'files': [
+            {'name': 'api', 'path': '../routes/api.dart', 'route': '/api'}
+          ]
+        },
+        {
+          'name': '_api',
+          'route': '/api',
+          'middleware': false,
+          'files': [
+            {'name': 'api_v1', 'path': '../routes/api/v1.dart', 'route': '/v1'},
+            {
+              'name': r'api_$id',
+              'path': '../routes/api/[id].dart',
+              'route': '/<id>'
+            }
+          ]
+        },
+        {
+          'name': '_api_v1',
+          'route': '/api/v1',
+          'middleware': false,
+          'files': [
+            {
+              'name': 'api_v1_hello',
+              'path': '../routes/api/v1/hello.dart',
+              'route': '/hello'
+            }
+          ]
+        }
+      ];
+      final directory = Directory(
+        path.join(
+          Directory.current.path,
+          'test',
+          '.fixtures',
+          'rogue_routes',
+        ),
+      )..createSync(recursive: true);
+      final routes = Directory(path.join(directory.path, 'routes'))
+        ..createSync();
+      File(path.join(routes.path, 'api.dart')).createSync();
+      final apiDirectory = Directory(path.join(routes.path, 'api'))
+        ..createSync();
+      File(path.join(apiDirectory.path, '[id].dart')).createSync();
+      File(path.join(apiDirectory.path, 'v1.dart')).createSync();
+      final v1Directory = Directory(path.join(apiDirectory.path, 'v1'))
+        ..createSync();
+      File(path.join(v1Directory.path, 'hello.dart')).createSync();
+      final configuration = buildRouteConfiguration(directory);
+      expect(
+        configuration.directories.map((d) => d.toJson()).toList(),
+        equals(expected),
+      );
+      expect(
+        configuration.endpoints,
+        equals({
+          '/api': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/api.dart',
+            )
+          ],
+          '/api/v1': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/api/v1.dart',
+            )
+          ],
+          '/api/<id>': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/api/[id].dart',
+            )
+          ],
+          '/api/v1/hello': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/api/v1/hello.dart',
+            )
+          ],
+        }),
+      );
+      expect(
+        configuration.rogueRoutes,
+        equals([
+          isA<RouteFile>().having(
+            (r) => r.path,
+            'path',
+            '../routes/api.dart',
+          ),
+          isA<RouteFile>().having(
+            (r) => r.path,
+            'path',
+            '../routes/api/v1.dart',
+          )
+        ]),
+      );
+    });
+
+    test('does not report rogue route when index.dart already exists', () {
+      const expected = [
+        {
+          'name': '_',
+          'route': '/',
+          'middleware': false,
+          'files': [
+            {'name': 'api', 'path': '../routes/api.dart', 'route': '/api'}
+          ]
+        },
+        {
+          'name': '_api',
+          'route': '/api',
+          'middleware': false,
+          'files': [
+            {
+              'name': 'api_index',
+              'path': '../routes/api/index.dart',
+              'route': '/'
+            }
+          ]
+        }
+      ];
+      final directory = Directory(
+        path.join(
+          Directory.current.path,
+          'test',
+          '.fixtures',
+          'rogue_routes_with_conflict',
+        ),
+      )..createSync(recursive: true);
+      final routes = Directory(path.join(directory.path, 'routes'))
+        ..createSync();
+      File(path.join(routes.path, 'api.dart')).createSync();
+      final apiDirectory = Directory(path.join(routes.path, 'api'))
+        ..createSync();
+      File(path.join(apiDirectory.path, 'index.dart')).createSync();
+      final configuration = buildRouteConfiguration(directory);
+      expect(
+        configuration.directories.map((d) => d.toJson()).toList(),
+        equals(expected),
+      );
+      expect(
+        configuration.endpoints,
+        equals({
+          '/api': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/api.dart',
+            ),
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/api/index.dart',
+            ),
+          ],
+        }),
+      );
+      expect(configuration.rogueRoutes, isEmpty);
     });
   });
 }

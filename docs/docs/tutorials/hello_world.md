@@ -3,7 +3,7 @@ sidebar_position: 1
 description: Build a simple "Hello World" application.
 ---
 
-# Hello World 🌍
+# Hello World 👋
 
 :::info
 **Difficulty**: 🟢 Beginner<br/>
@@ -30,7 +30,6 @@ HTTP/1.1 200 OK
 Connection: close
 Content-Length: 21
 Content-Type: text/plain; charset=utf-8
-Date: Thu, 04 Aug 2022 19:50:12 GMT
 
 
 Welcome to Dart Frog!
@@ -44,7 +43,7 @@ To create a new Dart Frog app, open your terminal, `cd` into the directory where
 dart_frog create hello_world
 ```
 
-You should see the following output:
+You should see an output similar to:
 
 ```
 ✓ Creating hello_world (0.1s)
@@ -90,4 +89,4 @@ curl --request GET \
 
 If everything succeeded, you should see `Welcome to Dart Frog!`.
 
-🎉 Congrats, you've created a `hello_world` application using Dart Frog. View the full source code [here](https://github.com/VeryGoodOpenSource/dart_frog/tree/main/examples/hello_world).
+🎉 Congrats, you've created a `hello_world` application using Dart Frog. View the [full source code](https://github.com/VeryGoodOpenSource/dart_frog/tree/main/examples/hello_world).

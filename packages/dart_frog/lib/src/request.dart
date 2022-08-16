@@ -95,6 +95,11 @@ class Request {
 
   final shelf.Request _request;
 
+  /// Connection information for the associated HTTP request.
+  HttpConnectionInfo get connectionInfo {
+    return _request.context['shelf.io.connection_info']! as HttpConnectionInfo;
+  }
+
   /// The requested url relative to the current handler path.
   Uri get url => _request.url;
 

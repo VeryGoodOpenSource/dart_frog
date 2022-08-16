@@ -44,14 +44,6 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      announcementBar: {
-        id: 'experimental',
-        content:
-          '🚧  This is an experimental framework. Use at your own risk. 🚧 ',
-        backgroundColor: '#f9f871',
-        textColor: '#000000',
-        isCloseable: false,
-      },
       image: 'img/meta/open-graph.png',
       navbar: {
         title: 'Dart Frog',
@@ -77,6 +69,10 @@ const config = {
           {
             label: 'Deploy',
             to: '/docs/category/deploy',
+          },
+          {
+            label: 'Advanced',
+            to: '/docs/category/advanced',
           },
           {
             label: 'Roadmap',
@@ -118,6 +114,10 @@ const config = {
                 to: '/docs/category/deploy',
               },
               {
+                label: 'Advanced',
+                to: '/docs/category/advanced',
+              },
+              {
                 label: 'Roadmap',
                 to: '/docs/roadmap',
               },
@@ -153,7 +153,7 @@ const config = {
         copyright: `Copyright © ${new Date().getFullYear()} Very Good Ventures.<br/>Built with 💙 by <a target="_blank" rel="noopener" aria-label="Very Good Ventures" href="https://verygood.ventures">Very Good Ventures</a>.`,
       },
       prism: {
-        additionalLanguages: ['bash', 'dart'],
+        additionalLanguages: ['bash', 'dart', 'yaml'],
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
       },
