@@ -173,6 +173,34 @@ function HomepageBlogs() {
           </div>
         </div>
       </div>
+      <div style={{ padding: '1rem' }}></div>
+      <div className={styles.width}>
+        <div className={styles.column}>
+          <img
+            style={{ height: 'auto' }}
+            src="https://uploads-ssl.webflow.com/5ee12d8e99cde2e20255c16c/62fa66a12a4c4e37c353db07_Dart%20Frog%20stable%20release%20announcement.png"
+            alt="Dart Frog is now stable"
+            width="452"
+            height="254"
+          />
+        </div>
+        <div className={styles.column}>
+          <div className={styles.content}>
+            <h2>Dart Frog is now stable 🎉</h2>
+            <p>
+              Announcing the stable v0.1.0 release, including hot reload
+              improvements, interoperability with the shelf package, a custom
+              entrypoint, and four new tutorials.
+            </p>
+            <Link
+              style={{ fontWeight: 'bold' }}
+              to="https://verygood.ventures/blog/dart-frog-stable?utm_source=dartfrog&utm_medium=docs&utm_campaign=df_stable"
+            >
+              Read the Blog <ExternalLinkIcon />
+            </Link>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
