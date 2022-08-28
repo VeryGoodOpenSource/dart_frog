@@ -92,6 +92,7 @@ void main() {
           'routes': <RouteFile>[],
           'middleware': <MiddlewareFile>[],
           'globalMiddleware': false,
+          'serveStaticFiles': false,
           'invokeCustomEntrypoint': true,
           'pathDependencies': <String>[]
         }),
@@ -167,6 +168,7 @@ void main() {
             {'name': 'hello_middleware', 'path': 'hello/middleware.dart'}
           ],
           'globalMiddleware': {'name': 'middleware', 'path': 'middleware.dart'},
+          'serveStaticFiles': true,
           'invokeCustomEntrypoint': false,
           'pathDependencies': <String>[],
         }),
