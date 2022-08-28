@@ -46,6 +46,7 @@ Future<void> preGen(
     'globalMiddleware': configuration.globalMiddleware != null
         ? configuration.globalMiddleware!.toJson()
         : false,
+    'serveStaticFiles': configuration.serveStaticFiles,
     'invokeCustomEntrypoint': configuration.invokeCustomEntrypoint,
     'pathDependencies': await getPathDependencies(projectDirectory),
   };
@@ -82,8 +83,7 @@ Future<void> createBundle(
     context.logger.err('$error');
     return exit(1);
   }
-
-  await tempDirectory.rename(buildDirectory.path);
+  await copyPath(tempDirectory.path, buildDirectory.path);
 }
 
 Future<List<String>> getPathDependencies(io.Directory directory) async {
