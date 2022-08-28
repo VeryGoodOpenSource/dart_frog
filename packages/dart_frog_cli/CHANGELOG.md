@@ -1,3 +1,7 @@
+# 0.1.2
+
+- fix: `dart_frog build` serve static assets
+
 # 0.1.1
 
 - fix: `dart_frog build` failures on windows
