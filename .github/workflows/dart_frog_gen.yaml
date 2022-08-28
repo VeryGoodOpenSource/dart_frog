@@ -39,19 +39,6 @@ jobs:
       working_directory: packages/dart_frog_gen
 
   pana:
-    defaults:
-      run:
-        working-directory: packages/dart_frog_gen
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-      - uses: dart-lang/setup-dart@v1
-
-      - name: Install Dependencies
-        run: |
-          dart pub get
-          dart pub global activate pana
-      - name: Verify Pub Score
-        run: ../../tool/verify_pub_score.sh
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/pana.yml@v1
+    with:
+      working_directory: packages/dart_frog_gen

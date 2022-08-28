@@ -52,23 +52,6 @@ jobs:
         run: dart test -j 1
 
   pana:
-    defaults:
-      run:
-        working-directory: packages/dart_frog_cli
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: 📚 Git Checkout
-        uses: actions/checkout@v3
-
-      - name: 🎯 Setup Dart
-        uses: dart-lang/setup-dart@v1
-
-      - name: 📦 Install Dependencies
-        run: |
-          dart pub get
-          dart pub global activate pana
-
-      - name: 📊 Verify Pub Score
-        run: ../../tool/verify_pub_score.sh
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/pana.yml@v1
+    with:
+      working_directory: packages/dart_frog_cli
