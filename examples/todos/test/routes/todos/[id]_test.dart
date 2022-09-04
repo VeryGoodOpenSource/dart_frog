@@ -129,7 +129,7 @@ void main() {
   });
 
   group('DELETE /todos/[id]', () {
-    test('responds with a 202 and deletes the todo', () async {
+    test('responds with a 204 and deletes the todo', () async {
       when(() => dataSource.read(any())).thenAnswer((_) async => todo);
       when(() => dataSource.delete(any())).thenAnswer((_) async => {});
       when(() => request.method).thenReturn(HttpMethod.delete);
