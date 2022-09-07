@@ -84,6 +84,16 @@ docker build build \
 
 This command will build the Docker image on your machine and can take up to a few minutes.
 
+:::caution
+Since this step requires building an image on your own hardware make sure the image is compatible with the hardware used by Digital Ocean before proceeding.
+
+For example, if you build on an M1 CPU, the generated image will not be able to run on an Intel CPU.
+:::
+
+:::info
+We recommend using an automated workflow via GitHub Actions to automate deployments and ensure a consistent environment when building your image.
+:::
+
 3. Push the image to Container Registry by running:
 
 ```bash
