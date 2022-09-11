@@ -88,20 +88,12 @@ List<RouteDirectory> _getRouteDirectories({
     }
   }
 
-  final files = [
-    ..._getRouteFiles(
-      directory: directory,
-      routesDirectory: routesDirectory,
-      onRoute: onRoute,
-      onRogueRoute: onRogueRoute,
-    ),
-    ..._getRouteFilesForDynamicDirectories(
-      directory: directory,
-      routesDirectory: routesDirectory,
-      onRoute: onRoute,
-      onRogueRoute: onRogueRoute,
-    ),
-  ];
+  final files = _getRouteFiles(
+    directory: directory,
+    routesDirectory: routesDirectory,
+    onRoute: onRoute,
+    onRogueRoute: onRogueRoute,
+  );
 
   final baseRoute = directoryPath.toRoute();
   for (final file in files) {
@@ -123,55 +115,19 @@ List<RouteDirectory> _getRouteDirectories({
   );
 
   entities.whereType<Directory>().forEach((directory) {
-    if (!directory.isDynamicRoute) {
-      directories.addAll(
-        _getRouteDirectories(
-          directory: directory,
-          routesDirectory: routesDirectory,
-          onRoute: onRoute,
-          onMiddleware: onMiddleware,
-          onEndpoint: onEndpoint,
-          onRogueRoute: onRogueRoute,
-        ),
-      );
-    }
+    directories.addAll(
+      _getRouteDirectories(
+        directory: directory,
+        routesDirectory: routesDirectory,
+        onRoute: onRoute,
+        onMiddleware: onMiddleware,
+        onEndpoint: onEndpoint,
+        onRogueRoute: onRogueRoute,
+      ),
+    );
   });
 
   return directories;
-}
-
-List<RouteFile> _getRouteFilesForDynamicDirectories({
-  required Directory directory,
-  required Directory routesDirectory,
-  required void Function(RouteFile route) onRoute,
-  required void Function(RouteFile route) onRogueRoute,
-  String prefix = '',
-}) {
-  final files = <RouteFile>[];
-  directory
-      .listSync()
-      .sorted()
-      .whereType<Directory>()
-      .where((d) => prefix.isNotEmpty || d.isDynamicRoute)
-      .forEach((dynamicDirectory) {
-    final newPrefix = '$prefix/${path.basename(dynamicDirectory.path)}';
-    final subset = _getRouteFiles(
-      directory: dynamicDirectory,
-      routesDirectory: routesDirectory,
-      onRoute: onRoute,
-      onRogueRoute: onRogueRoute,
-      prefix: newPrefix,
-    );
-    final dynamicSubset = _getRouteFilesForDynamicDirectories(
-      directory: dynamicDirectory,
-      routesDirectory: routesDirectory,
-      onRoute: onRoute,
-      onRogueRoute: onRogueRoute,
-      prefix: newPrefix,
-    );
-    files.addAll([...subset, ...dynamicSubset]);
-  });
-  return files;
 }
 
 List<RouteFile> _getRouteFiles({
@@ -258,12 +214,6 @@ extension on String {
 extension on List<FileSystemEntity> {
   List<FileSystemEntity> sorted() {
     return this..sort((a, b) => b.path.compareTo(a.path));
-  }
-}
-
-extension on Directory {
-  bool get isDynamicRoute {
-    return RegExp(r'\[(.*)\]').hasMatch(path.basename(this.path));
   }
 }
 

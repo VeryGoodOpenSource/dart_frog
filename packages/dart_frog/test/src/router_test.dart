@@ -27,6 +27,8 @@ import 'package:test/test.dart';
 
 class _MockRequestContext extends Mock implements RequestContext {}
 
+class _MockShelfRequest extends Mock implements shelf.Request {}
+
 void main() {
   // Create a server that listens on localhost for testing
   late io.IOServer server;
@@ -441,6 +443,166 @@ void main() {
     expect(response.body(), completion(equals('Route not found')));
   });
 
+  test('can mount route without params', () async {
+    final context = _MockRequestContext();
+    final app = Router()..mount('/', (RequestContext context) => Response());
+
+    server.mount((request) async {
+      when(() => context.request).thenReturn(
+        Request(request.method, request.requestedUri),
+      );
+      final response = await app.call(context);
+      final body = await response.body();
+      return shelf.Response(response.statusCode, body: body);
+    });
+
+    final response = await http.get(Uri.parse('${server.url}/'));
+    expect(response.body, isEmpty);
+    expect(response.statusCode, equals(HttpStatus.ok));
+  });
+
+  test('can mount dynamic routes', () async {
+    final context = _MockRequestContext();
+
+    // Routes for <user> to <other>.
+    // This gets nested parameters from previous mounts.
+    Handler createUserToOtherHandler(String user, String other) {
+      final router = Router()
+        ..get('/<action>', (RequestContext context, String action) {
+          return Response(body: '$user to $other: $action');
+        });
+
+      return router;
+    }
+
+    // Routes for a specific <user>.
+    // The user value is extracted from the mount.
+    Handler createUserHandler(String user) {
+      final router = Router()
+        ..mount('/to/<other>/', (RequestContext context, String other) {
+          final handler = createUserToOtherHandler(user, other);
+          return handler(context);
+        })
+        ..get('/self', (RequestContext context) {
+          return Response(body: "I'm $user");
+        })
+        ..get('/', (RequestContext context) {
+          return Response(body: '$user root');
+        });
+      return router;
+    }
+
+    final app = Router()
+      ..get('/hello', (RequestContext context) {
+        return Response(body: 'hello-world');
+      })
+      ..mount('/users/<user>', (RequestContext context, String user) {
+        final handler = createUserHandler(user);
+        return handler(context);
+      })
+      ..all('/<_|[^]*>', (RequestContext context) {
+        return Response(body: 'catch-all-handler');
+      });
+
+    server.mount((request) async {
+      when(() => context.request).thenReturn(
+        Request(request.method, request.requestedUri),
+      );
+      final response = await app.call(context);
+      final body = await response.body();
+      return shelf.Response(response.statusCode, body: body);
+    });
+
+    final helloResponse = await http.get(Uri.parse('${server.url}/hello'));
+    expect(helloResponse.body, equals('hello-world'));
+
+    final greetingResponse = await http.get(
+      Uri.parse('${server.url}/users/dartfrog/to/dash/hi'),
+    );
+    expect(greetingResponse.body, equals('dartfrog to dash: hi'));
+
+    final farewellResponse = await http.get(
+      Uri.parse('${server.url}/users/dash/to/dartfrog/bye'),
+    );
+    expect(farewellResponse.body, equals('dash to dartfrog: bye'));
+
+    final introResponse = await http.get(
+      Uri.parse('${server.url}/users/dash/self'),
+    );
+    expect(introResponse.body, equals("I'm dash"));
+
+    final rootResponse = await http.get(
+      Uri.parse('${server.url}/users/dartfrog'),
+    );
+    expect(rootResponse.body, equals('dartfrog root'));
+
+    final catchAllResponse = await http.get(
+      Uri.parse('${server.url}/users/dartfrog/no-route'),
+    );
+    expect(catchAllResponse.body, equals('catch-all-handler'));
+  });
+
+  test('can mount dynamic routes with multiple parameters', () async {
+    final context = _MockRequestContext();
+    final app = Router()
+      ..mount(r'/first/<second>/third/<fourth|\d+>/last', (
+        RequestContext context,
+        String second,
+        String fourthNum,
+      ) {
+        final router = Router()
+          ..get('/', (r) => Response(body: '$second ${int.parse(fourthNum)}'));
+        return router(context);
+      });
+
+    server.mount((request) async {
+      when(() => context.request).thenReturn(
+        Request(request.method, request.requestedUri),
+      );
+      final response = await app.call(context);
+      final body = await response.body();
+      return shelf.Response(response.statusCode, body: body);
+    });
+
+    final response = await http.get(
+      Uri.parse('${server.url}/first/hello/third/42/last'),
+    );
+    expect(response.body, equals('hello 42'));
+  });
+
+  test('can mount dynamic routes with regexp', () async {
+    final context = _MockRequestContext();
+    final app = Router()
+      ..mount(r'/before/<bookId|\d+>/after',
+          (RequestContext context, String bookId) {
+        final router = Router()
+          ..get('/', (r) => Response(body: 'book ${int.parse(bookId)}'));
+        return router(context);
+      })
+      ..all('/<_|[^]*>', (RequestContext context) {
+        return Response(body: 'catch-all-handler');
+      });
+
+    server.mount((request) async {
+      when(() => context.request).thenReturn(
+        Request(request.method, request.requestedUri),
+      );
+      final response = await app.call(context);
+      final body = await response.body();
+      return shelf.Response(response.statusCode, body: body);
+    });
+
+    final bookResponse = await http.get(
+      Uri.parse('${server.url}/before/42/after'),
+    );
+    expect(bookResponse.body, equals('book 42'));
+
+    final catchAllResponse = await http.get(
+      Uri.parse('${server.url}/before/abc/after'),
+    );
+    expect(catchAllResponse.body, equals('catch-all-handler'));
+  });
+
   group('RouterEntry', () {
     void testPattern(
       String pattern, {
@@ -464,13 +626,8 @@ void main() {
 
     testPattern(
       '/hello',
-      match: {
-        '/hello': {},
-      },
-      notMatch: [
-        '/not-hello',
-        '/',
-      ],
+      match: {'/hello': {}},
+      notMatch: ['/not-hello', '/'],
     );
 
     testPattern(
@@ -505,6 +662,23 @@ void main() {
         () => RouterEntry('GET', '/users/<user|([^]*)>/info', () {}),
         throwsA(anything),
       );
+    });
+  });
+
+  group('RouterParams', () {
+    test('returns empty params when none are found', () async {
+      final request = _MockShelfRequest();
+      when(() => request.context).thenReturn({});
+
+      expect(request.params, isEmpty);
+    });
+
+    test('returns params when they are found', () async {
+      const params = {'foo': 'bar'};
+      final request = _MockShelfRequest();
+      when(() => request.context).thenReturn({'shelf_router/params': params});
+
+      expect(request.params, equals(params));
     });
   });
 }
