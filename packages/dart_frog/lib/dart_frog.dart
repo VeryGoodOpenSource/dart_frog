@@ -9,8 +9,10 @@ export 'src/_internal.dart'
         RequestContext,
         Response,
         Router,
+        Socket,
         fromShelfHandler,
         fromShelfMiddleware,
+        upgradeToWebSocket,
         requestLogger,
         serve;
 export 'src/create_static_file_handler.dart' show createStaticFileHandler;
