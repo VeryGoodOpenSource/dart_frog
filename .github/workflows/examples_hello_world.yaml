@@ -11,6 +11,8 @@ on:
       - "examples/hello_world/lib/**"
       - "examples/hello_world/test/**"
       - ".github/workflows/examples_hello_world.yaml"
+      - "packages/dart_frog/lib/**"
+      - "packages/dart_frog/pubspec.yaml"
     branches:
       - main
 
