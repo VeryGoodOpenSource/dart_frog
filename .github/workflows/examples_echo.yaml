@@ -11,6 +11,8 @@ on:
       - "examples/echo/lib/**"
       - "examples/echo/test/**"
       - ".github/workflows/examples_echo.yaml"
+      - "packages/dart_frog/lib/**"
+      - "packages/dart_frog/pubspec.yaml"
     branches:
       - main
 
