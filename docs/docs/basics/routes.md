@@ -63,7 +63,21 @@ Response onRequest(RequestContext context) {
 We can also return any Dart object in the `body` of the `Response.json` constructor and it will be serialized correctly as long as it has a `toJson` method that returns a `Map<String, dynamic>`.
 
 :::tip
-Check out [json_serializable](https://pub.dev/packages/json_serializable) to automate the `toJson` generation.
+Check out [`json_serializable`](https://pub.dev/packages/json_serializable) to automate the `toJson` generation.
+:::
+
+:::caution
+`json_serializable` uses [`build_runner`](https://pub.dev/packages/build_runner) which expects code to be within the `lib` directory. In order for the code generation step to work, make sure the `User` model below is located somewhere within the top level `lib` directory.
+
+For example:
+
+```
+├── lib
+│   └── models
+│       └── user.dart
+└── routes
+```
+
 :::
 
 ```dart
