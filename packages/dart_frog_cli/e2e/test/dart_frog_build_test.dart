@@ -39,6 +39,12 @@ void main() {
       await tempDirectory.delete(recursive: true);
     });
 
+    test('creates the project directory', () {
+      final entities = tempDirectory.listSync();
+      expect(entities.length, equals(1));
+      expect(path.basename(entities.first.path), equals(projectName));
+    });
+
     testServer('GET / returns 200 with greeting', (host) async {
       final response = await http.get(Uri.parse(host));
       expect(response.statusCode, equals(HttpStatus.ok));

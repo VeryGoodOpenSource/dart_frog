@@ -71,7 +71,7 @@ void main() {
         logger: logger,
         directoryWatcher: (_) => directoryWatcher,
         generator: (_) async => generator,
-        generatorTarget: generatorTarget,
+        generatorTarget: (_) => generatorTarget,
         isWindows: isWindows,
         runProcess: (String executable, List<String> arguments) async {
           return processResult;
