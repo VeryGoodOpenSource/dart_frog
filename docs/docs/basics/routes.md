@@ -58,7 +58,7 @@ Response onRequest(RequestContext context) {
 }
 ```
 
-We can make a GET request to the above handler and we should see:
+We can make a `GET` request to the above handler and we should see:
 
 ```
 curl --request GET --url http://localhost:8080
@@ -66,7 +66,7 @@ curl --request GET --url http://localhost:8080
 This is a GET request.
 ```
 
-We can make a POST request to the above handler and we should see:
+We can make a `POST` request to the above handler and we should see:
 
 ```
 curl --request POST --url http://localhost:8080
@@ -76,7 +76,7 @@ This is a POST request.
 
 ### Headers
 
-Similar to query parameters, we can also access request headers via `context.request.headers`.
+We can access request headers via `context.request.headers`.
 
 ```dart
 import 'package:dart_frog/dart_frog.dart';
