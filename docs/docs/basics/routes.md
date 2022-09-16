@@ -18,7 +18,11 @@ Response onRequest(RequestContext context) {
 }
 ```
 
-## Request Context 🔗
+## Requests 📥
+
+All route handlers have access to information regarding the inbound request. In this section, we'll take a look at various ways in which we can interact with the inbound request.
+
+### Request Context
 
 All route handlers have access to a `RequestContext` which can be used to access the incoming request as well as dependencies provided to the request context ([see middleware](/docs/basics/middleware)).
 
@@ -29,12 +33,147 @@ Response onRequest(RequestContext context) {
   // Access the incoming request.
   final request = context.request;
 
+  // Do stuff with the incoming request...
+
   // Return a response.
   return Response(body: 'Hello World');
 }
 ```
 
-## Custom Status Code 🆗
+### HTTP Method
+
+A single route handler is responsible for handling inbound requests with any HTTP method. The HTTP method of the inbound request can be accessed via `context.request.method`.
+
+```dart
+import 'package:dart_frog/dart_frog.dart';
+
+Response onRequest(RequestContext context) {
+  // Access the incoming request.
+  final request = context.request;
+
+  // Access the HTTP method.
+  final method = request.method.value;
+
+  return Response(body: 'This is a $method request.');
+}
+```
+
+We can make a GET request to the above handler and we should see:
+
+```
+curl --request GET --url http://localhost:8080
+
+This is a GET request.
+```
+
+We can make a POST request to the above handler and we should see:
+
+```
+curl --request POST --url http://localhost:8080
+
+This is a POST request.
+```
+
+### Headers
+
+Similar to query parameters, we can also access request headers via `context.request.headers`.
+
+```dart
+import 'package:dart_frog/dart_frog.dart';
+
+Response onRequest(RequestContext context) {
+  // Access the incoming request.
+  final request = context.request;
+
+  // Access the headers as a `Map<String, String`.
+  final headers = request.headers;
+
+  // Do something with the headers...
+
+  return Response(body: 'Hello World');
+}
+```
+
+### Query Parameters
+
+We can access query parameters via `context.request.uri.queryParameters`.
+
+```dart
+import 'package:dart_frog/dart_frog.dart';
+
+Response onRequest(RequestContext context) {
+  // Access the incoming request.
+  final request = context.request;
+
+  // Access the query parameters as a `Map<String, String`.
+  final params = request.uri.queryParameters;
+
+  // Get the value for the key `name`.
+  // Default to `there` if there is no query parameter.
+  final name = params['name'] ?? 'there';
+
+  return Response(body: 'Hi $name');
+}
+```
+
+We can make a request to the above handler with no query parameters and we should see:
+
+```
+curl --request GET --url http://localhost:8080
+
+Hi there
+```
+
+We can make a another request to the above handler with `?name=Dash` and we should see:
+
+```
+curl --request GET --url http://localhost:8080?name=Dash
+
+Hi Dash
+```
+
+### Body
+
+We can access the body of the incoming request via `context.request.body`.
+
+```dart
+import 'package:dart_frog/dart_frog.dart';
+
+Future<Response> onRequest(RequestContext context) async {
+  // Access the incoming request.
+  final request = context.request;
+
+  // Access the request body as a `String`.
+  final body = await request.body();
+
+  return Response(body: 'The body is "$body".');
+}
+```
+
+:::caution
+The request body can only be read once.
+:::
+
+We can make a request to the above handler with some data and we should see:
+
+```
+curl --request POST \
+  --url http://localhost:8080 \
+  --header 'Content-Type: text/plain' \
+  --data 'Hello!'
+
+The body is "Hello!".
+```
+
+:::tip
+When the `Content-Type` is `application/json`, you can use `context.request.json()` to read the contents of the request body as a `Map<String, dynamic>`.
+:::
+
+## Responses 📤
+
+All route handlers must return an outbound response. In this section, we'll take a look at various ways in which we can create a custom response.
+
+### Status Code
 
 We can customize the status code of the response via the `statusCode` parameter on the `Response` object:
 
@@ -46,7 +185,29 @@ Response onRequest(RequestContext context) {
 }
 ```
 
-## Returning JSON `{}`
+### Headers
+
+We can customize the headers of the response via the `headers` parameter on the `Response` object:
+
+```dart
+import 'package:dart_frog/dart_frog.dart';
+
+Response onRequest(RequestContext context) {
+  return Response(headers: {'hello': 'world'});
+}
+```
+
+### Body
+
+We've seen examples of returning a custom body via the default `Response` constructor:
+
+```dart
+import 'package:dart_frog/dart_frog.dart';
+
+Response onRequest(RequestContext context) {
+  return Response(body: 'Hello World');
+}
+```
 
 In addition, we can return JSON via the `Response.json` constructor:
 
