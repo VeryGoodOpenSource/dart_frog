@@ -1,3 +1,8 @@
+# 0.1.3
+
+- fix: avoid generating an empty `.dart_frog` directory
+- refactor: use `packageName` internally for consistency
+
 # 0.1.2
 
 - fix: `dart_frog build` serve static assets
