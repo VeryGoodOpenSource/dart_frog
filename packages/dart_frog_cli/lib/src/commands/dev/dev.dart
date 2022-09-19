@@ -28,6 +28,10 @@ typedef DirectoryWatcherBuilder = DirectoryWatcher Function(
   String directory,
 );
 
+/// Typedef for [RestorableDirectoryGeneratorTarget.new]
+typedef RestorableDirectoryGeneratorTargetBuilder
+    = RestorableDirectoryGeneratorTarget Function(Logger? logger);
+
 /// Typedef for [io.exit].
 typedef Exit = dynamic Function(int exitCode);
 
@@ -49,7 +53,7 @@ class DevCommand extends DartFrogCommand {
     super.logger,
     DirectoryWatcherBuilder? directoryWatcher,
     GeneratorBuilder? generator,
-    RestorableDirectoryGeneratorTarget? generatorTarget,
+    RestorableDirectoryGeneratorTargetBuilder? generatorTarget,
     Exit? exit,
     bool? isWindows,
     ProcessRun? runProcess,
@@ -62,7 +66,7 @@ class DevCommand extends DartFrogCommand {
         _runProcess = runProcess ?? io.Process.run,
         _sigint = sigint ?? io.ProcessSignal.sigint,
         _startProcess = startProcess ?? io.Process.start,
-        _generatorTarget = generatorTarget ?? _defaultGeneratorTarget(logger) {
+        _generatorTarget = generatorTarget ?? _defaultGeneratorTarget {
     argParser.addOption(
       'port',
       abbr: 'p',
@@ -78,7 +82,7 @@ class DevCommand extends DartFrogCommand {
   final ProcessRun _runProcess;
   final io.ProcessSignal _sigint;
   final ProcessStart _startProcess;
-  final RestorableDirectoryGeneratorTarget _generatorTarget;
+  final RestorableDirectoryGeneratorTargetBuilder _generatorTarget;
 
   @override
   final String description = 'Run a local development server.';
@@ -91,6 +95,7 @@ class DevCommand extends DartFrogCommand {
     var reloading = false;
     var hotReloadEnabled = false;
     final port = io.Platform.environment['PORT'] ?? results['port'] as String;
+    final target = _generatorTarget(logger);
     final generator = await _generator(dartFrogDevServerBundle);
 
     Future<void> codegen() async {
@@ -104,7 +109,7 @@ class DevCommand extends DartFrogCommand {
 
       logger.detail('[codegen] running generate...');
       final _ = await generator.generate(
-        _generatorTarget,
+        target,
         vars: vars,
         fileConflictResolution: FileConflictResolution.overwrite,
       );
@@ -151,7 +156,7 @@ class DevCommand extends DartFrogCommand {
           _exit(1);
         }
 
-        await _generatorTarget.rollback();
+        await target.rollback();
       });
 
       process.stdout.listen((_) {
@@ -160,7 +165,7 @@ class DevCommand extends DartFrogCommand {
         if (containsHotReload) hotReloadEnabled = true;
         if (message.isNotEmpty) logger.info(message);
         final shouldCacheSnapshot = containsHotReload && !hasError;
-        if (shouldCacheSnapshot) _generatorTarget.cacheLatestSnapshot();
+        if (shouldCacheSnapshot) target.cacheLatestSnapshot();
         hasError = false;
       });
     }
