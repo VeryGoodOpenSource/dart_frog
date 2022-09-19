@@ -173,7 +173,8 @@ class DevCommand extends DartFrogCommand {
     final progress = logger.progress('Serving');
     await codegen();
     await serve();
-    progress.complete('Running on http://localhost:$port');
+    final localhost = link(uri: Uri.parse('http://localhost:$port'));
+    progress.complete('Running on $localhost');
 
     final entrypoint = path.join(cwd.path, 'main.dart');
     final public = path.join(cwd.path, 'public');
