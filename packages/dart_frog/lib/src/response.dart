@@ -36,7 +36,7 @@ class Response {
   Response.json({
     int statusCode = 200,
     Object? body = const <String, dynamic>{},
-    Map<String, String> headers = const <String, String>{},
+    Map<String, Object> headers = const <String, Object>{},
   }) : this(
           statusCode: statusCode,
           body: body != null ? jsonEncode(body) : null,
