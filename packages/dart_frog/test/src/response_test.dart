@@ -28,7 +28,15 @@ void main() {
     test('has correct headers', () {
       const headers = <String, String>{'foo': 'bar'};
       final response = Response(headers: headers);
-      expect(response.headers['foo'], equals(headers['foo']));
+      expect(response.headers['foo'], equals('bar'));
+    });
+
+    test('has correct headers when a key has multiple values', () {
+      const headers = <String, Object>{
+        'foo': ['bar', 'baz'],
+      };
+      final response = Response(headers: headers);
+      expect(response.headers['foo'], equals('bar,baz'));
     });
 
     group('copyWith', () {
