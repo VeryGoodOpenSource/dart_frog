@@ -1,3 +1,7 @@
+# 0.1.1
+
+- fix: update `Response.json` headers to `<String, Object>`
+
 # 0.1.0
 
 - chore: stable 0.1.0 release
