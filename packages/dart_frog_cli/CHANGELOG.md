@@ -1,3 +1,9 @@
+# 0.1.4
+
+- feat: `dart_frog create`
+  - upgrade to `dart 2.18.0`
+  - upgrade to `very_good_analysis 3.1.0 `
+
 # 0.1.3
 
 - fix: avoid generating an empty `.dart_frog` directory
