@@ -40,7 +40,7 @@ Be sure not to have a static file with the same name as a file in the `/routes` 
 
 ## Using a Custom Directory ✨
 
-Even though Dart Frog uses the `public` directory for serving static files by default, you can also specify a custom directory creating a [custom entrypoint](/docs/advanced/custom_entrypoint).
+Even though Dart Frog uses the `public` directory for serving static files by default, you can also specify a custom directory by creating a [custom entrypoint](/docs/advanced/custom_entrypoint).
 
 Create a `main.dart` at the root of your project with the following contents:
 
