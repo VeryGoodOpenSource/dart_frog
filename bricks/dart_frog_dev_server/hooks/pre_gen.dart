@@ -14,7 +14,6 @@ Future<void> run(HookContext context) async => preGen(context);
 
 Future<void> preGen(
   HookContext context, {
-  io.Directory? directory,
   RouteConfigurationBuilder buildConfiguration = buildRouteConfiguration,
   void Function(int exitCode)? exit,
 }) async {
@@ -27,11 +26,9 @@ Future<void> preGen(
     return _exit(1);
   }
 
-  final projectDirectory = directory ?? io.Directory.current;
-
   reportRouteConflicts(context, configuration);
   reportRogueRoutes(context, configuration);
-  await reportExternalPathDependencies(context, projectDirectory);
+  await reportExternalPathDependencies(context, io.Directory.current);
 
   context.vars = {
     'port': context.vars['port'] ?? '8080',
