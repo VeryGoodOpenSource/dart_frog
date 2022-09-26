@@ -1,3 +1,7 @@
+# 0.1.2
+
+- feat: add x-powered-by-header to `serve`
+
 # 0.1.1
 
 - fix: update `Response.json` headers to `<String, Object>`
