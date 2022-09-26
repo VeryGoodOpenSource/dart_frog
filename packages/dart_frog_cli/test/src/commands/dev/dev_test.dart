@@ -279,6 +279,124 @@ void main() {
       );
     });
 
+    test('runs codegen when changes are made to main.dart', () async {
+      final controller = StreamController<WatchEvent>();
+      final generatorHooks = _MockGeneratorHooks();
+      when(
+        () => generatorHooks.preGen(
+          vars: any(named: 'vars'),
+          workingDirectory: any(named: 'workingDirectory'),
+          onVarsChanged: any(named: 'onVarsChanged'),
+        ),
+      ).thenAnswer((invocation) async {
+        (invocation.namedArguments[const Symbol('onVarsChanged')] as void
+                Function(Map<String, dynamic> vars))
+            .call(<String, dynamic>{});
+      });
+      when(
+        () => generator.generate(
+          any(),
+          vars: any(named: 'vars'),
+          fileConflictResolution: FileConflictResolution.overwrite,
+        ),
+      ).thenAnswer((_) async => []);
+      when(() => generator.hooks).thenReturn(generatorHooks);
+      when(() => process.stdout).thenAnswer(
+        (_) => Stream.value(utf8.encode('[hotreload] hot reload enabled.')),
+      );
+      when(() => process.stderr).thenAnswer((_) => const Stream.empty());
+      when(() => directoryWatcher.events).thenAnswer((_) => controller.stream);
+
+      command.run().ignore();
+
+      await Future<void>.delayed(Duration.zero);
+
+      verify(
+        () => generator.generate(
+          any(),
+          vars: any(named: 'vars'),
+          fileConflictResolution: FileConflictResolution.overwrite,
+        ),
+      ).called(1);
+
+      controller.add(
+        WatchEvent(
+          ChangeType.ADD,
+          path.join(Directory.current.path, 'main.dart'),
+        ),
+      );
+
+      await Future<void>.delayed(Duration.zero);
+      await Future<void>.delayed(Duration.zero);
+
+      verify(
+        () => generator.generate(
+          any(),
+          vars: any(named: 'vars'),
+          fileConflictResolution: FileConflictResolution.overwrite,
+        ),
+      ).called(1);
+    });
+
+    test('runs codegen when changes are made to pubspec.yaml', () async {
+      final controller = StreamController<WatchEvent>();
+      final generatorHooks = _MockGeneratorHooks();
+      when(
+        () => generatorHooks.preGen(
+          vars: any(named: 'vars'),
+          workingDirectory: any(named: 'workingDirectory'),
+          onVarsChanged: any(named: 'onVarsChanged'),
+        ),
+      ).thenAnswer((invocation) async {
+        (invocation.namedArguments[const Symbol('onVarsChanged')] as void
+                Function(Map<String, dynamic> vars))
+            .call(<String, dynamic>{});
+      });
+      when(
+        () => generator.generate(
+          any(),
+          vars: any(named: 'vars'),
+          fileConflictResolution: FileConflictResolution.overwrite,
+        ),
+      ).thenAnswer((_) async => []);
+      when(() => generator.hooks).thenReturn(generatorHooks);
+      when(() => process.stdout).thenAnswer(
+        (_) => Stream.value(utf8.encode('[hotreload] hot reload enabled.')),
+      );
+      when(() => process.stderr).thenAnswer((_) => const Stream.empty());
+      when(() => directoryWatcher.events).thenAnswer((_) => controller.stream);
+
+      command.run().ignore();
+
+      await Future<void>.delayed(Duration.zero);
+
+      verify(
+        () => generator.generate(
+          any(),
+          vars: any(named: 'vars'),
+          fileConflictResolution: FileConflictResolution.overwrite,
+        ),
+      ).called(1);
+
+      controller.add(
+        WatchEvent(
+          ChangeType.MODIFY,
+          path.join(Directory.current.path, 'pubspec.yaml'),
+        ),
+      );
+
+      await Future<void>.delayed(Duration.zero);
+      await Future<void>.delayed(Duration.zero);
+
+      verify(
+        () => generator.generate(
+          any(),
+          vars: any(named: 'vars'),
+          fileConflictResolution: FileConflictResolution.overwrite,
+        ),
+      ).called(1);
+    });
+
     test('caches snapshot when hotreload runs successfully', () async {
       final generatorHooks = _MockGeneratorHooks();
       when(

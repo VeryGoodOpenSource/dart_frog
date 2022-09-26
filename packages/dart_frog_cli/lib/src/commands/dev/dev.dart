@@ -177,12 +177,14 @@ class DevCommand extends DartFrogCommand {
     progress.complete('Running on $localhost');
 
     final entrypoint = path.join(cwd.path, 'main.dart');
+    final pubspec = path.join(cwd.path, 'pubspec.yaml');
     final public = path.join(cwd.path, 'public');
     final routes = path.join(cwd.path, 'routes');
 
     bool shouldReload(WatchEvent event) {
       logger.detail('[watcher] $event');
       return path.equals(entrypoint, event.path) ||
+          path.equals(pubspec, event.path) ||
           path.isWithin(routes, event.path) ||
           path.isWithin(public, event.path);
     }
