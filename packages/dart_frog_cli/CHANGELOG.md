@@ -1,3 +1,7 @@
+# 0.1.5
+
+- feat: report external path dependencies
+
 # 0.1.4
 
 - feat: `dart_frog create`

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dart_frog_gen/dart_frog_gen.dart';
 import 'package:mason/mason.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
 import '../pre_gen.dart';
@@ -336,6 +337,111 @@ void main() {
           '''Rogue route detected.${defaultForeground.wrap(' ')}Rename ${lightCyan.wrap('routes/hi.dart')} to ${lightCyan.wrap('routes/hi/index.dart')}.''',
         ),
       );
+    });
+  });
+
+  group('reportExternalPathDependencies', () {
+    late HookContext context;
+    late Logger logger;
+
+    setUp(() {
+      context = _MockHookContext();
+      logger = _MockLogger();
+
+      when(() => context.logger).thenReturn(logger);
+    });
+
+    test('reports nothing when there are no external path dependencies',
+        () async {
+      final directory = Directory.systemTemp.createTempSync();
+      File(path.join(directory.path, 'pubspec.yaml')).writeAsStringSync(
+        '''
+name: example
+version: 0.1.0
+environment:
+  sdk: ^2.17.0
+dependencies:
+  mason: any
+dev_dependencies:
+  test: any
+''',
+      );
+      await expectLater(
+        reportExternalPathDependencies(context, directory),
+        completes,
+      );
+      verifyNever(() => logger.err(any()));
+      directory.delete(recursive: true).ignore();
+    });
+
+    test('reports when there is a single external path dependency', () async {
+      final directory = Directory.systemTemp.createTempSync();
+      File(path.join(directory.path, 'pubspec.yaml')).writeAsStringSync(
+        '''
+name: example
+version: 0.1.0
+environment:
+  sdk: ^2.17.0
+dependencies:
+  mason: any
+  foo:
+    path: ../../foo
+dev_dependencies:
+  test: any
+''',
+      );
+      await expectLater(
+        reportExternalPathDependencies(context, directory),
+        completes,
+      );
+      verify(
+        () => logger.err('All path dependencies must be within the project.'),
+      ).called(1);
+      verify(
+        () => logger.err('External path dependencies detected:'),
+      ).called(1);
+      verify(
+        () => logger.err('  \u{2022} foo from ../../foo'),
+      ).called(1);
+      directory.delete(recursive: true).ignore();
+    });
+
+    test('reports when there are multiple external path dependencies',
+        () async {
+      final directory = Directory.systemTemp.createTempSync();
+      File(path.join(directory.path, 'pubspec.yaml')).writeAsStringSync(
+        '''
+name: example
+version: 0.1.0
+environment:
+  sdk: ^2.17.0
+dependencies:
+  mason: any
+  foo:
+    path: ../../foo
+dev_dependencies:
+  test: any
+  bar:
+    path: ../../bar
+''',
+      );
+      await expectLater(
+        reportExternalPathDependencies(context, directory),
+        completes,
+      );
+      verify(
+        () => logger.err('All path dependencies must be within the project.'),
+      ).called(1);
+      verify(
+        () => logger.err('External path dependencies detected:'),
+      ).called(1);
+      verify(
+        () => logger.err('  \u{2022} foo from ../../foo'),
+      ).called(1);
+      verify(
+        () => logger.err('  \u{2022} bar from ../../bar'),
+      ).called(1);
+      directory.delete(recursive: true).ignore();
     });
   });
 
