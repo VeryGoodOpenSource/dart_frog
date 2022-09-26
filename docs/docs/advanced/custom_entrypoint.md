@@ -20,7 +20,8 @@ Future<HttpServer> run(Handler handler, InternetAddress ip, int port) {
 
   // 2. Use the provided `handler`, `ip`, and `port` to create a custom `HttpServer`.
   // Or use the Dart Frog serve method to do that for you.
-  return serve(handler, ip, port);
+  // Set a custom `poweredByHeader` or set it null if you want to remove it.
+  return serve(handler, ip, port, poweredByHeader: null);
 }
 ```
 
