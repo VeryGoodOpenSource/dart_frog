@@ -14,6 +14,7 @@ dependencies:
   mason: ^0.1.0-dev.33
   meta: ^1.7.0
   path: ^1.8.1
+  pub_updater: ^0.2.2
   stream_transform: ^2.0.0
   watcher: ^1.0.1
 
