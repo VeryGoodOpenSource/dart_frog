@@ -27,6 +27,7 @@ Available commands:
   build    Create a production build.
   create   Creates a new Dart Frog app.
   dev      Run a local development server.
+  update   Update the Dart Frog CLI.
 
 Run "dart_frog help <command>" for more information about a command.
 ```

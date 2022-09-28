@@ -5,9 +5,12 @@ import 'package:dart_frog_cli/src/command_runner.dart';
 import 'package:dart_frog_cli/src/version.dart';
 import 'package:mason/mason.dart' hide packageVersion;
 import 'package:mocktail/mocktail.dart';
+import 'package:pub_updater/pub_updater.dart';
 import 'package:test/test.dart';
 
-class MockLogger extends Mock implements Logger {}
+class _MockLogger extends Mock implements Logger {}
+
+class _MockPubUpdater extends Mock implements PubUpdater {}
 
 const expectedUsage = [
   'A fast, minimalistic backend framework for Dart.\n'
@@ -23,29 +26,72 @@ const expectedUsage = [
       '  build    Create a production build.\n'
       '  create   Creates a new Dart Frog app.\n'
       '  dev      Run a local development server.\n'
+      '  update   Update the Dart Frog CLI.\n'
       '\n'
       'Run "dart_frog help <command>" for more information about a command.'
 ];
 
+const latestVersion = '0.0.0';
+final changelogLink = lightCyan.wrap(
+  styleUnderlined.wrap(
+    link(
+      uri: Uri.parse(
+        'https://github.com/verygoodopensource/dart_frog/releases/tag/dart_frog_cli-v$latestVersion',
+      ),
+    ),
+  ),
+);
+final updateMessage = '''
+${lightYellow.wrap('Update available!')} ${lightCyan.wrap(packageVersion)} \u2192 ${lightCyan.wrap(latestVersion)}
+${lightYellow.wrap('Changelog:')} $changelogLink
+Run ${lightCyan.wrap('$executableName update')} to update''';
+
 void main() {
   group('DartFrogCommandRunner', () {
     late Logger logger;
+    late PubUpdater pubUpdater;
     late DartFrogCommandRunner commandRunner;
 
     setUp(() {
       printLogs = [];
-      logger = MockLogger();
+      logger = _MockLogger();
+      pubUpdater = _MockPubUpdater();
+
+      when(
+        () => pubUpdater.getLatestVersion(any()),
+      ).thenAnswer((_) async => packageVersion);
+
       commandRunner = DartFrogCommandRunner(
         logger: logger,
+        pubUpdater: pubUpdater,
       );
     });
 
-    test('can be instantiated without an explicit logger instance', () {
+    test('can be instantiated without any explicit parameters', () {
       final commandRunner = DartFrogCommandRunner();
       expect(commandRunner, isNotNull);
     });
 
     group('run', () {
+      test('prompts for update when newer version exists', () async {
+        when(
+          () => pubUpdater.getLatestVersion(any()),
+        ).thenAnswer((_) async => latestVersion);
+        final result = await commandRunner.run(['--version']);
+        expect(result, equals(ExitCode.success.code));
+        verify(() => logger.info(updateMessage)).called(1);
+      });
+
+      test('handles pub update errors gracefully', () async {
+        when(
+          () => pubUpdater.getLatestVersion(any()),
+        ).thenThrow(Exception('oops'));
+
+        final result = await commandRunner.run(['--version']);
+        expect(result, equals(ExitCode.success.code));
+        verifyNever(() => logger.info(updateMessage));
+      });
+
       test('handles Exception', () async {
         final exception = Exception('oops!');
         var isFirstInvocation = true;
