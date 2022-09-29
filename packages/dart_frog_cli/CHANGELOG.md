@@ -1,3 +1,8 @@
+# 0.1.6
+
+- feat: `dart_frog update` command
+- feat: automatic updates prompt
+
 # 0.1.5
 
 - feat: report external path dependencies
