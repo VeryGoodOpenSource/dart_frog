@@ -1,3 +1,7 @@
+# 0.1.7
+
+- fix: copy static assets into docker image
+
 # 0.1.6
 
 - feat: `dart_frog update` command
