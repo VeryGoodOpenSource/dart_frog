@@ -163,12 +163,7 @@ List<RouteFile> _getRouteFiles({
       var fileRoute = fileRoutePath.isEmpty ? '/' : fileRoutePath;
       fileRoute = prefix + fileRoute;
 
-      if (!fileRoute.startsWith('/')) {
-        fileRoute = '/$fileRoute';
-      }
-      if (fileRoute != '/' && fileRoute.endsWith('/')) {
-        fileRoute = fileRoute.substring(0, fileRoute.length - 1);
-      }
+      if (!fileRoute.startsWith('/')) fileRoute = '/$fileRoute';
 
       return fileRoute;
     }
