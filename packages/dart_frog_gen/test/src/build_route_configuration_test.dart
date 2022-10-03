@@ -365,15 +365,29 @@ void main() {
           'middleware': false,
           'files': [
             {'name': 'index', 'path': '../routes/index.dart', 'route': '/'},
+          ]
+        },
+        {
+          'name': r'_$user',
+          'route': '/<user>',
+          'middleware': false,
+          'files': [
             {
               'name': r'$user_$name',
               'path': '../routes/[user]/[name].dart',
-              'route': '/<user>/<name>'
-            },
+              'route': '/<name>'
+            }
+          ]
+        },
+        {
+          'name': r'_$user_$id',
+          'route': '/<user>/<id>',
+          'middleware': false,
+          'files': [
             {
               'name': r'$user_$id_index',
               'path': '../routes/[user]/[id]/index.dart',
-              'route': '/<user>/<id>'
+              'route': '/'
             }
           ]
         }
@@ -436,10 +450,23 @@ void main() {
           'middleware': false,
           'files': [
             {'name': 'index', 'path': '../routes/index.dart', 'route': '/'},
+          ]
+        },
+        {
+          'name': r'_$id',
+          'route': '/<id>',
+          'middleware': false,
+          'files': <Map<String, dynamic>>[]
+        },
+        {
+          'name': r'_$id_api',
+          'route': '/<id>/api',
+          'middleware': false,
+          'files': [
             {
               'name': r'$id_api_index',
               'path': '../routes/[id]/api/index.dart',
-              'route': '/<id>/api'
+              'route': '/'
             }
           ]
         }
@@ -494,10 +521,23 @@ void main() {
           'middleware': false,
           'files': [
             {'name': 'index', 'path': '../routes/index.dart', 'route': '/'},
+          ]
+        },
+        {
+          'name': r'_$id',
+          'route': '/<id>',
+          'middleware': false,
+          'files': <Map<String, dynamic>>[]
+        },
+        {
+          'name': r'_$id_api',
+          'route': '/<id>/api',
+          'middleware': false,
+          'files': [
             {
               'name': r'$id_api_test',
               'path': '../routes/[id]/api/test.dart',
-              'route': '/<id>/api/test'
+              'route': '/test'
             }
           ]
         }
@@ -552,10 +592,29 @@ void main() {
           'middleware': false,
           'files': [
             {'name': 'index', 'path': '../routes/index.dart', 'route': '/'},
+          ]
+        },
+        {
+          'name': r'_$id',
+          'route': '/<id>',
+          'middleware': false,
+          'files': <Map<String, dynamic>>[]
+        },
+        {
+          'name': r'_$id_api',
+          'route': '/<id>/api',
+          'middleware': false,
+          'files': <Map<String, dynamic>>[]
+        },
+        {
+          'name': r'_$id_api_$name',
+          'route': '/<id>/api/<name>',
+          'middleware': false,
+          'files': [
             {
               'name': r'$id_api_$name_index',
               'path': '../routes/[id]/api/[name]/index.dart',
-              'route': '/<id>/api/<name>'
+              'route': '/'
             }
           ]
         }
@@ -612,10 +671,29 @@ void main() {
           'middleware': false,
           'files': [
             {'name': 'index', 'path': '../routes/index.dart', 'route': '/'},
+          ]
+        },
+        {
+          'name': r'_$id',
+          'route': '/<id>',
+          'middleware': false,
+          'files': <Map<String, dynamic>>[]
+        },
+        {
+          'name': r'_$id_api',
+          'route': '/<id>/api',
+          'middleware': false,
+          'files': <Map<String, dynamic>>[]
+        },
+        {
+          'name': r'_$id_api_$name',
+          'route': '/<id>/api/<name>',
+          'middleware': false,
+          'files': [
             {
               'name': r'$id_api_$name_test',
               'path': '../routes/[id]/api/[name]/test.dart',
-              'route': '/<id>/api/<name>/test'
+              'route': '/test'
             }
           ]
         }
