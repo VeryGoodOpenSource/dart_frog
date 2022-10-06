@@ -1,0 +1,56 @@
+name: Docker Tests
+
+on:
+  workflow_call:
+    inputs:
+      setup:
+        required: false
+        type: string
+        default: ""
+      test_directory:
+        required: false
+        type: string
+        default: "e2e"
+      working_directory:
+        required: false
+        type: string
+        default: "."
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{inputs.working_directory}}
+
+    steps:
+      - name: 📚 Git Checkout
+        uses: actions/checkout@v3
+
+      - name: 🎯 Setup Dart
+        uses: dart-lang/setup-dart@v1
+
+      - name: ⚙️ Run Setup
+        if: "${{inputs.setup != ''}}"
+        run: ${{inputs.setup}}
+
+      - name: 📦 Install Dependencies
+        run: dart pub get
+
+      - name: 🐸 Dart Frog Build
+        run: dart_frog build
+
+      - name: 🐳 Build Docker Image
+        run: docker build -q build -t e2e-image
+
+      - name: ⚡️ Run Docker Image
+        run: docker run -d -p 8080:8080 --name e2e --rm e2e-image
+
+      - name: 🧪 Run Docker Tests
+        run: dart test ${{inputs.test_directory}}
+
+      - name: 🧹 Docker Cleanup
+        if: success() || failure()
+        run: |
+          docker stop e2e
+          docker image rm e2e-image
