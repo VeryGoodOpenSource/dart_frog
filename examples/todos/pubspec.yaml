@@ -8,10 +8,10 @@ environment:
 
 dependencies:
   dart_frog: ^0.0.1-dev
-  todos_data_source:
-    path: packages/todos_data_source
   in_memory_todos_data_source:
     path: packages/in_memory_todos_data_source
+  todos_data_source:
+    path: packages/todos_data_source
 
 dev_dependencies:
   http: ^0.13.5
