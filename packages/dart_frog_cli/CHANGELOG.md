@@ -1,3 +1,7 @@
+# 0.1.8
+
+- fix: `dart_frog build` Dockerfile dependency resolution
+
 # 0.1.7
 
 - fix: copy static assets into docker image
