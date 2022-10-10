@@ -3,9 +3,12 @@
 FROM dart:stable AS build
 
 WORKDIR /app
-{{#pathDependencies}}
-COPY {{{.}}} ./{{{.}}}
-RUN dart pub get -C {{{.}}}
+
+# Copy Dependencies
+{{#pathDependencies}}COPY {{{.}}} ./{{{.}}}
+{{/pathDependencies}}
+# Install Dependencies
+{{#pathDependencies}}RUN dart pub get -C {{{.}}}
 {{/pathDependencies}}
 # Resolve app dependencies.
 COPY pubspec.* ./
