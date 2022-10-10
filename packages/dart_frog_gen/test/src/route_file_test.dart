@@ -52,7 +52,7 @@ void main() {
             'name': 'index',
             'path': '/path',
             'route': '/<id>',
-            'params': ['id']
+            'file_params': ['id']
           },
         ),
       );

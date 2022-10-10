@@ -69,10 +69,10 @@ void main() {
               'name': 'name',
               'path': '/path',
               'route': '/route/<name>',
-              'params': ['name'],
+              'file_params': ['name'],
             }
           ],
-          'params': <String>['id'],
+          'directory_params': <String>['id'],
         }),
       );
     });

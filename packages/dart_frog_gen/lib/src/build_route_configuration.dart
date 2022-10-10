@@ -349,7 +349,7 @@ class RouteDirectory {
       'route': route,
       'middleware': middleware?.toJson() ?? false,
       'files': files.map((f) => f.toJson()).toList(),
-      'params': params,
+      'directory_params': params,
     };
   }
 }
@@ -399,7 +399,7 @@ class RouteFile {
       'name': name,
       'path': path,
       'route': route,
-      'params': params,
+      'file_params': params,
     };
   }
 }

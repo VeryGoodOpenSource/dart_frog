@@ -461,6 +461,25 @@ void main() {
     expect(response.statusCode, equals(HttpStatus.ok));
   });
 
+  test('can mount dynamic route', () async {
+    final context = _MockRequestContext();
+    final app = Router()
+      ..mount('/api/v1/posts/<id>', (RequestContext context, String id) {
+        return Response(body: '/api/v1/posts/$id');
+      });
+    server.mount((request) async {
+      when(() => context.request).thenReturn(
+        Request(request.method, request.requestedUri),
+      );
+      final response = await app.call(context);
+      final body = await response.body();
+      return shelf.Response(response.statusCode, body: body);
+    });
+
+    final response = await http.get(Uri.parse('${server.url}/api/v1/posts/42'));
+    expect(response.body, equals('/api/v1/posts/42'));
+  });
+
   test('can mount dynamic routes', () async {
     final context = _MockRequestContext();
 

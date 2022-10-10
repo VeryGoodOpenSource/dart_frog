@@ -110,10 +110,10 @@ void main() {
               'name': 'index',
               'path': '../routes/index.dart',
               'route': '/',
-              'params': <String>[],
+              'file_params': <String>[],
             }
           ],
-          'params': <String>[],
+          'directory_params': <String>[],
         }
       ];
       final directory = Directory(
@@ -152,16 +152,16 @@ void main() {
               'name': 'index',
               'path': '../routes/index.dart',
               'route': '/',
-              'params': <String>[],
+              'file_params': <String>[],
             },
             {
               'name': 'hello',
               'path': '../routes/hello.dart',
               'route': '/hello',
-              'params': <String>[],
+              'file_params': <String>[],
             }
           ],
-          'params': <String>[],
+          'directory_params': <String>[],
         }
       ];
       final directory = Directory(
@@ -213,10 +213,10 @@ void main() {
               'name': 'index',
               'path': '../routes/index.dart',
               'route': '/',
-              'params': <String>[],
+              'file_params': <String>[],
             }
           ],
-          'params': <String>[],
+          'directory_params': <String>[],
         },
         {
           'name': '_echo',
@@ -227,10 +227,10 @@ void main() {
               'name': 'echo_message',
               'path': '../routes/echo/message.dart',
               'route': '/message',
-              'params': <String>[],
+              'file_params': <String>[],
             }
           ],
-          'params': <String>[],
+          'directory_params': <String>[],
         }
       ];
       final directory = Directory(
@@ -275,14 +275,14 @@ void main() {
           'route': '/',
           'middleware': false,
           'files': <dynamic>[],
-          'params': <String>[],
+          'directory_params': <String>[],
         },
         {
           'name': '_echo',
           'route': '/echo',
           'middleware': false,
           'files': <dynamic>[],
-          'params': <String>[],
+          'directory_params': <String>[],
         },
         {
           'name': '_echo_message',
@@ -293,10 +293,10 @@ void main() {
               'name': 'echo_message_index',
               'path': '../routes/echo/message/index.dart',
               'route': '/',
-              'params': <String>[],
+              'file_params': <String>[],
             }
           ],
-          'params': <String>[],
+          'directory_params': <String>[],
         }
       ];
       final directory = Directory(
@@ -344,10 +344,10 @@ void main() {
               'name': 'index',
               'path': '../routes/index.dart',
               'route': '/',
-              'params': <String>[],
+              'file_params': <String>[],
             }
           ],
-          'params': <String>[],
+          'directory_params': <String>[],
         },
         {
           'name': '_echo',
@@ -358,10 +358,10 @@ void main() {
               'name': r'echo_$message',
               'path': '../routes/echo/[message].dart',
               'route': '/<message>',
-              'params': <String>['message'],
+              'file_params': <String>['message'],
             }
           ],
-          'params': <String>[],
+          'directory_params': <String>[],
         }
       ];
       final directory = Directory(
@@ -410,10 +410,10 @@ void main() {
               'name': 'index',
               'path': '../routes/index.dart',
               'route': '/',
-              'params': <String>[],
+              'file_params': <String>[],
             },
           ],
-          'params': <String>[],
+          'directory_params': <String>[],
         },
         {
           'name': r'_$user',
@@ -424,24 +424,27 @@ void main() {
               'name': r'$user_$name',
               'path': '../routes/[user]/[name].dart',
               'route': '/<name>',
-              'params': ['name'],
+              'file_params': ['name'],
             }
           ],
-          'params': <String>['user'],
+          'directory_params': <String>['user'],
         },
         {
           'name': r'_$user_$id',
           'route': '/<user>/<id>',
-          'middleware': false,
+          'middleware': {
+            'name': r'$user_$id__middleware',
+            'path': '../routes/[user]/[id]/_middleware.dart'
+          },
           'files': [
             {
               'name': r'$user_$id_index',
               'path': '../routes/[user]/[id]/index.dart',
               'route': '/',
-              'params': <String>[],
+              'file_params': <String>[],
             }
           ],
-          'params': <String>['user', 'id'],
+          'directory_params': <String>['user', 'id'],
         }
       ];
       final directory = Directory(
@@ -461,6 +464,7 @@ void main() {
       final idDirectory = Directory(path.join(userDirectory.path, '[id]'))
         ..createSync();
       File(path.join(idDirectory.path, 'index.dart')).createSync();
+      File(path.join(idDirectory.path, '_middleware.dart')).createSync();
       final configuration = buildRouteConfiguration(directory);
       expect(
         configuration.directories.map((d) => d.toJson()).toList(),
@@ -505,17 +509,17 @@ void main() {
               'name': 'index',
               'path': '../routes/index.dart',
               'route': '/',
-              'params': <String>[],
+              'file_params': <String>[],
             },
           ],
-          'params': <String>[],
+          'directory_params': <String>[],
         },
         {
           'name': r'_$id',
           'route': '/<id>',
           'middleware': false,
           'files': <Map<String, dynamic>>[],
-          'params': <String>['id'],
+          'directory_params': <String>['id'],
         },
         {
           'name': r'_$id_api',
@@ -526,10 +530,10 @@ void main() {
               'name': r'$id_api_index',
               'path': '../routes/[id]/api/index.dart',
               'route': '/',
-              'params': <String>[],
+              'file_params': <String>[],
             }
           ],
-          'params': <String>['id'],
+          'directory_params': <String>['id'],
         }
       ];
       final directory = Directory(
@@ -585,17 +589,17 @@ void main() {
               'name': 'index',
               'path': '../routes/index.dart',
               'route': '/',
-              'params': <String>[],
+              'file_params': <String>[],
             },
           ],
-          'params': <String>[],
+          'directory_params': <String>[],
         },
         {
           'name': r'_$id',
           'route': '/<id>',
           'middleware': false,
           'files': <Map<String, dynamic>>[],
-          'params': <String>['id'],
+          'directory_params': <String>['id'],
         },
         {
           'name': r'_$id_api',
@@ -606,10 +610,10 @@ void main() {
               'name': r'$id_api_test',
               'path': '../routes/[id]/api/test.dart',
               'route': '/test',
-              'params': <String>[],
+              'file_params': <String>[],
             }
           ],
-          'params': <String>['id'],
+          'directory_params': <String>['id'],
         }
       ];
       final directory = Directory(
@@ -665,24 +669,24 @@ void main() {
               'name': 'index',
               'path': '../routes/index.dart',
               'route': '/',
-              'params': <String>[],
+              'file_params': <String>[],
             },
           ],
-          'params': <String>[],
+          'directory_params': <String>[],
         },
         {
           'name': r'_$id',
           'route': '/<id>',
           'middleware': false,
           'files': <Map<String, dynamic>>[],
-          'params': <String>['id'],
+          'directory_params': <String>['id'],
         },
         {
           'name': r'_$id_api',
           'route': '/<id>/api',
           'middleware': false,
           'files': <Map<String, dynamic>>[],
-          'params': <String>['id'],
+          'directory_params': <String>['id'],
         },
         {
           'name': r'_$id_api_$name',
@@ -693,10 +697,10 @@ void main() {
               'name': r'$id_api_$name_index',
               'path': '../routes/[id]/api/[name]/index.dart',
               'route': '/',
-              'params': <String>[],
+              'file_params': <String>[],
             }
           ],
-          'params': <String>['id', 'name'],
+          'directory_params': <String>['id', 'name'],
         }
       ];
       final directory = Directory(
@@ -754,24 +758,24 @@ void main() {
               'name': 'index',
               'path': '../routes/index.dart',
               'route': '/',
-              'params': <String>[],
+              'file_params': <String>[],
             },
           ],
-          'params': <String>[],
+          'directory_params': <String>[],
         },
         {
           'name': r'_$id',
           'route': '/<id>',
           'middleware': false,
           'files': <Map<String, dynamic>>[],
-          'params': <String>['id'],
+          'directory_params': <String>['id'],
         },
         {
           'name': r'_$id_api',
           'route': '/<id>/api',
           'middleware': false,
           'files': <Map<String, dynamic>>[],
-          'params': <String>['id'],
+          'directory_params': <String>['id'],
         },
         {
           'name': r'_$id_api_$name',
@@ -782,10 +786,10 @@ void main() {
               'name': r'$id_api_$name_test',
               'path': '../routes/[id]/api/[name]/test.dart',
               'route': '/test',
-              'params': <String>[],
+              'file_params': <String>[],
             }
           ],
-          'params': <String>['id', 'name'],
+          'directory_params': <String>['id', 'name'],
         }
       ];
       final directory = Directory(
@@ -839,7 +843,7 @@ void main() {
           'route': '/',
           'middleware': false,
           'files': <dynamic>[],
-          'params': <String>[],
+          'directory_params': <String>[],
         },
         {
           'name': '_api',
@@ -850,10 +854,10 @@ void main() {
               'name': 'api_api',
               'path': '../routes/api/api.dart',
               'route': '/api',
-              'params': <String>[],
+              'file_params': <String>[],
             }
           ],
-          'params': <String>[],
+          'directory_params': <String>[],
         }
       ];
       final directory = Directory(
@@ -899,10 +903,10 @@ void main() {
               'name': 'api',
               'path': '../routes/api.dart',
               'route': '/api',
-              'params': <String>[],
+              'file_params': <String>[],
             }
           ],
-          'params': <String>[],
+          'directory_params': <String>[],
         },
         {
           'name': '_api',
@@ -913,16 +917,16 @@ void main() {
               'name': 'api_v1',
               'path': '../routes/api/v1.dart',
               'route': '/v1',
-              'params': <String>[],
+              'file_params': <String>[],
             },
             {
               'name': r'api_$id',
               'path': '../routes/api/[id].dart',
               'route': '/<id>',
-              'params': <String>['id'],
+              'file_params': <String>['id'],
             }
           ],
-          'params': <String>[],
+          'directory_params': <String>[],
         },
         {
           'name': '_api_v1',
@@ -933,10 +937,10 @@ void main() {
               'name': 'api_v1_hello',
               'path': '../routes/api/v1/hello.dart',
               'route': '/hello',
-              'params': <String>[],
+              'file_params': <String>[],
             }
           ],
-          'params': <String>[],
+          'directory_params': <String>[],
         }
       ];
       final directory = Directory(
@@ -1023,10 +1027,10 @@ void main() {
               'name': 'api',
               'path': '../routes/api.dart',
               'route': '/api',
-              'params': <String>[],
+              'file_params': <String>[],
             }
           ],
-          'params': <String>[],
+          'directory_params': <String>[],
         },
         {
           'name': '_api',
@@ -1037,10 +1041,10 @@ void main() {
               'name': 'api_index',
               'path': '../routes/api/index.dart',
               'route': '/',
-              'params': <String>[],
+              'file_params': <String>[],
             }
           ],
-          'params': <String>[],
+          'directory_params': <String>[],
         }
       ];
       final directory = Directory(
