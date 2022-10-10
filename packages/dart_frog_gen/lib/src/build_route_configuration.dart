@@ -111,6 +111,7 @@ List<RouteDirectory> _getRouteDirectories({
       route: baseRoute,
       middleware: middleware,
       files: files,
+      params: directoryPath.toParams(),
     ),
   );
 
@@ -174,6 +175,7 @@ List<RouteFile> _getRouteFiles({
       name: filePath.toAlias(),
       path: relativeFilePath.replaceAll(r'\', '/'),
       route: fileRoute.toRoute(),
+      params: fileRoute.toParams(),
     );
     onRoute(route);
     files.add(route);
@@ -203,6 +205,12 @@ extension on String {
 
   String toRoute() {
     return replaceAll('[', '<').replaceAll(']', '>').replaceAll(r'\', '/');
+  }
+
+  List<String> toParams() {
+    final regexp = RegExp(r'\[(.*?)\]');
+    final matches = regexp.allMatches(this);
+    return matches.map((m) => m[0]!.replaceAll(RegExp(r'\[|\]'), '')).toList();
   }
 }
 
@@ -299,6 +307,7 @@ class RouteDirectory {
     required this.route,
     required this.middleware,
     required this.files,
+    required this.params,
   });
 
   /// The alias for the current directory.
@@ -306,6 +315,9 @@ class RouteDirectory {
 
   /// The route which will be used to mount routers.
   final String route;
+
+  /// The dynamic route params associated with the directory.
+  final List<String> params;
 
   /// Optional middleware for the provided router.
   final MiddlewareFile? middleware;
@@ -319,12 +331,14 @@ class RouteDirectory {
     String? route,
     MiddlewareFile? middleware,
     List<RouteFile>? files,
+    List<String>? params,
   }) {
     return RouteDirectory(
       name: name ?? this.name,
       route: route ?? this.route,
       middleware: middleware ?? this.middleware,
       files: files ?? this.files,
+      params: params ?? this.params,
     );
   }
 
@@ -335,6 +349,7 @@ class RouteDirectory {
       'route': route,
       'middleware': middleware?.toJson() ?? false,
       'files': files.map((f) => f.toJson()).toList(),
+      'params': params,
     };
   }
 }
@@ -348,6 +363,7 @@ class RouteFile {
     required this.name,
     required this.path,
     required this.route,
+    required this.params,
   });
 
   /// The alias for the current file.
@@ -359,12 +375,21 @@ class RouteFile {
   /// The route used by router instances.
   final String route;
 
+  /// The dynamic route params associated with the file.
+  final List<String> params;
+
   /// Create a copy of the current instance and override zero or more values.
-  RouteFile copyWith({String? name, String? path, String? route}) {
+  RouteFile copyWith({
+    String? name,
+    String? path,
+    String? route,
+    List<String>? params,
+  }) {
     return RouteFile(
       name: name ?? this.name,
       path: path ?? this.path,
       route: route ?? this.route,
+      params: params ?? this.params,
     );
   }
 
@@ -374,6 +399,7 @@ class RouteFile {
       'name': name,
       'path': path,
       'route': route,
+      'params': params,
     };
   }
 }
