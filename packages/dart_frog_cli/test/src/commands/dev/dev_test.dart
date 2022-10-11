@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:dart_frog_cli/src/commands/commands.dart';
+import 'package:dart_frog_cli/src/runtime_compatibility.dart';
 import 'package:mason/mason.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:path/path.dart' as path;
@@ -69,6 +70,7 @@ void main() {
       generatorTarget = _MockRestorableDirectoryGeneratorTarget();
       command = DevCommand(
         logger: logger,
+        ensureRuntimeCompatibility: (_) {},
         directoryWatcher: (_) => directoryWatcher,
         generator: (_) async => generator,
         generatorTarget: (_) => generatorTarget,
@@ -85,6 +87,16 @@ void main() {
         },
         sigint: sigint,
       )..testArgResults = argResults;
+    });
+
+    test('throws if ensureRuntimeCompatibility fails', () {
+      command = DevCommand(
+        logger: logger,
+        ensureRuntimeCompatibility: (_) {
+          throw const DartFrogCompatibilityException('oops');
+        },
+      );
+      expect(command.run, throwsA(isA<DartFrogCompatibilityException>()));
     });
 
     test('runs a dev server successfully.', () async {
@@ -549,6 +561,7 @@ void main() {
       when(() => sigint.watch()).thenAnswer((_) => Stream.value(sigint));
       command = DevCommand(
         logger: logger,
+        ensureRuntimeCompatibility: (_) {},
         directoryWatcher: (_) => directoryWatcher,
         generator: (_) async => generator,
         exit: (code) => exitCode = code,
@@ -616,6 +629,7 @@ void main() {
       when(() => sigint.watch()).thenAnswer((_) => const Stream.empty());
       command = DevCommand(
         logger: logger,
+        ensureRuntimeCompatibility: (_) {},
         directoryWatcher: (_) => directoryWatcher,
         generator: (_) async => generator,
         exit: (code) => exitCode = code,
@@ -681,6 +695,7 @@ void main() {
       when(() => sigint.watch()).thenAnswer((_) => const Stream.empty());
       command = DevCommand(
         logger: logger,
+        ensureRuntimeCompatibility: (_) {},
         directoryWatcher: (_) => directoryWatcher,
         generator: (_) async => generator,
         exit: (code) => exitCode = code,
