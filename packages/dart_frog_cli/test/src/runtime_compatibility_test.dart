@@ -100,7 +100,7 @@ environment:
     test('throws when the version of dart_frog is incompatible', () {
       const incompatibleVersion = '^99.99.99';
       const expected =
-          '''The current "dart_frog_cli" version requires "dart_frog" $compatibleDartFrogVersion.\nBecause the current version of "dart_frog" is $incompatibleVersion, version solving failed.''';
+          '''The current version of "dart_frog_cli" requires "dart_frog" $compatibleDartFrogVersion.\nBecause the current version of "dart_frog" is $incompatibleVersion, version solving failed.''';
       File(path.join(tempDir.path, 'pubspec.yaml')).writeAsStringSync(
         '''
 name: example

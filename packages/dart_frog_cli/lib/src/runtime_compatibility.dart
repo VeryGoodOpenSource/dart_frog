@@ -54,7 +54,7 @@ void ensureRuntimeCompatibility(Directory cwd) {
   if (dependency is HostedDependency) {
     if (!isCompatibleWithDartFrog(dependency.version)) {
       throw DartFrogCompatibilityException(
-        '''The current "dart_frog_cli" version requires "dart_frog" $compatibleDartFrogVersion.\nBecause the current version of "dart_frog" is ${dependency.version}, version solving failed.''',
+        '''The current version of "dart_frog_cli" requires "dart_frog" $compatibleDartFrogVersion.\nBecause the current version of "dart_frog" is ${dependency.version}, version solving failed.''',
       );
     }
   }
