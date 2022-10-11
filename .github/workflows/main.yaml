@@ -10,8 +10,10 @@ jobs:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/semantic_pull_request.yml@v1
 
   spell-check:
-    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/spell_check.yml@06ced12749bd8de77eeb1cfbc450fa66833c7a3d
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/spell_check.yml@c8fdb55d7a2ed1a80279dfcbf93664421663852c
     with:
+      includes: '**'
+      modified_files_only: false
       verbose: true
 
   pana:
