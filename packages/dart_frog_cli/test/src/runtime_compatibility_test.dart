@@ -8,7 +8,7 @@ import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
 void main() {
-  group('', () {
+  group('DartFrogCompatibilityException', () {
     test('toString override is correct', () {
       const message = 'test message';
       expect(
