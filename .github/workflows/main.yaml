@@ -9,6 +9,11 @@ jobs:
   build:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/semantic_pull_request.yml@v1
 
+  spell-check:
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/spell_check.yml@3ce8c5e9c27ce21e5358e896045b4ea1837b9579
+    with:
+      config: ".github/cspell.json"
+
   pana:
     runs-on: ubuntu-latest
     steps:
