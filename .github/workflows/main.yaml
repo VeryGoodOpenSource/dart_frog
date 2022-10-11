@@ -12,10 +12,8 @@ jobs:
   spell-check:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/spell_check.yml@v1
     with:
-      includes: |
-        **/*.md
+      includes: "**/*.md"
       modified_files_only: false
-      verbose: true
 
   pana:
     runs-on: ubuntu-latest
