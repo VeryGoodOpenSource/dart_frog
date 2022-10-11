@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:dart_frog_cli/src/command.dart';
 import 'package:dart_frog_cli/src/commands/build/templates/dart_frog_prod_server_bundle.dart';
 import 'package:dart_frog_cli/src/commands/commands.dart';
+import 'package:dart_frog_cli/src/runtime_compatibility.dart'
+    as runtime_compatibility;
 import 'package:mason/mason.dart';
 
 /// {@template build_command}
@@ -8,9 +12,15 @@ import 'package:mason/mason.dart';
 /// {@endtemplate}
 class BuildCommand extends DartFrogCommand {
   /// {@macro build_command}
-  BuildCommand({super.logger, GeneratorBuilder? generator})
-      : _generator = generator ?? MasonGenerator.fromBundle;
+  BuildCommand({
+    super.logger,
+    void Function(Directory)? ensureRuntimeCompatibility,
+    GeneratorBuilder? generator,
+  })  : _ensureRuntimeCompatibility = ensureRuntimeCompatibility ??
+            runtime_compatibility.ensureRuntimeCompatibility,
+        _generator = generator ?? MasonGenerator.fromBundle;
 
+  final void Function(Directory) _ensureRuntimeCompatibility;
   final GeneratorBuilder _generator;
 
   @override
@@ -21,6 +31,8 @@ class BuildCommand extends DartFrogCommand {
 
   @override
   Future<int> run() async {
+    _ensureRuntimeCompatibility(cwd);
+
     final generator = await _generator(dartFrogProdServerBundle);
     var vars = <String, dynamic>{};
 
