@@ -1,4 +1,5 @@
 import 'package:dart_frog_cli/src/commands/commands.dart';
+import 'package:dart_frog_cli/src/runtime_compatibility.dart';
 import 'package:mason/mason.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
@@ -32,8 +33,19 @@ void main() {
       generator = _MockMasonGenerator();
       command = BuildCommand(
         logger: logger,
+        ensureRuntimeCompatibility: (_) {},
         generator: (_) async => generator,
       );
+    });
+
+    test('throws if ensureRuntimeCompatibility fails', () {
+      command = BuildCommand(
+        logger: logger,
+        ensureRuntimeCompatibility: (_) {
+          throw const DartFrogCompatibilityException('oops');
+        },
+      );
+      expect(command.run, throwsA(isA<DartFrogCompatibilityException>()));
     });
 
     test('generates a build successfully.', () async {

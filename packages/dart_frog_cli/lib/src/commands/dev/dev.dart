@@ -1,10 +1,13 @@
 import 'dart:collection';
 import 'dart:convert';
 import 'dart:io' as io;
+import 'dart:io';
 
 import 'package:dart_frog_cli/src/command.dart';
 import 'package:dart_frog_cli/src/commands/commands.dart';
 import 'package:dart_frog_cli/src/commands/dev/templates/dart_frog_dev_server_bundle.dart';
+import 'package:dart_frog_cli/src/runtime_compatibility.dart'
+    as runtime_compatibility;
 import 'package:mason/mason.dart';
 import 'package:path/path.dart' as path;
 import 'package:stream_transform/stream_transform.dart';
@@ -51,6 +54,7 @@ class DevCommand extends DartFrogCommand {
   /// {@macro dev_command}
   DevCommand({
     super.logger,
+    void Function(Directory)? ensureRuntimeCompatibility,
     DirectoryWatcherBuilder? directoryWatcher,
     GeneratorBuilder? generator,
     RestorableDirectoryGeneratorTargetBuilder? generatorTarget,
@@ -59,7 +63,9 @@ class DevCommand extends DartFrogCommand {
     ProcessRun? runProcess,
     io.ProcessSignal? sigint,
     ProcessStart? startProcess,
-  })  : _directoryWatcher = directoryWatcher ?? DirectoryWatcher.new,
+  })  : _ensureRuntimeCompatibility = ensureRuntimeCompatibility ??
+            runtime_compatibility.ensureRuntimeCompatibility,
+        _directoryWatcher = directoryWatcher ?? DirectoryWatcher.new,
         _generator = generator ?? MasonGenerator.fromBundle,
         _exit = exit ?? io.exit,
         _isWindows = isWindows ?? io.Platform.isWindows,
@@ -75,6 +81,7 @@ class DevCommand extends DartFrogCommand {
     );
   }
 
+  final void Function(Directory) _ensureRuntimeCompatibility;
   final DirectoryWatcherBuilder _directoryWatcher;
   final GeneratorBuilder _generator;
   final Exit _exit;
@@ -92,6 +99,8 @@ class DevCommand extends DartFrogCommand {
 
   @override
   Future<int> run() async {
+    _ensureRuntimeCompatibility(cwd);
+
     var reloading = false;
     var hotReloadEnabled = false;
     final port = io.Platform.environment['PORT'] ?? results['port'] as String;
