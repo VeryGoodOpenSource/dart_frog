@@ -81,7 +81,7 @@ final createDartFrogBundle = MasonBundle.fromJson(<String, dynamic>{
   "vars": {
     "name": {
       "type": "string",
-      "description": "Your applicatiton name",
+      "description": "Your application name",
       "default": "example",
       "prompt": "What is your app name?"
     }
