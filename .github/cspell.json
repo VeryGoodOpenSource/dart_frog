@@ -14,5 +14,6 @@
       "description": "Forbidden VGV Spellings"
     }
   ],
-  "useGitignore": true
+  "useGitignore": true,
+  "words": ["doctl", "endtemplate", "hotreload", "intelli", "ok", "sigint"]
 }
