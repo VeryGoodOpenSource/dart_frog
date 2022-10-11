@@ -68,7 +68,7 @@ docker build build \
 
 - `[REGION]`: The region you want to deploy to (ex: us-west-1)
 - `[AWS_ACCOUNT_ID]`: The id of the account you're deploying to, without dashes (can be found in the top right menu)
-- `[REPOSITORY_NAME]`: The name of the repository you created eariler
+- `[REPOSITORY_NAME]`: The name of the repository you created earlier
 - `[IMAGE_TAG]`: A name given to this image to identify it in the repository
 
 This command will build the Docker image on your computer and can take a few seconds to a few minutes.

@@ -79,7 +79,7 @@ docker build build \
   --tag registry.digitalocean.com/[REGISTRY]/[IMAGE_NAME]
 ```
 
-- `[REGISTRY]`: The name of the registry you created eariler
+- `[REGISTRY]`: The name of the registry you created earlier
 - `[IMAGE_NAME]`: A name given to this image to identify it in the registry
 
 This command will build the Docker image on your machine and can take up to a few minutes.

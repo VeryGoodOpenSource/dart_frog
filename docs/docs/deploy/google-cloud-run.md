@@ -63,7 +63,7 @@ Running this command will do three things:
 3. Congratulations! 🎉 You have successfully built and deployed your API to Cloud Run. You can now access your API at the Service URL that is printed in the last line of output.
 
 :::note
-If you have not already enabled the nessesary Google Cloud APIs to deploy your API, `gcloud` can enable them for you. Just select `Y` when prompted.
+If you have not already enabled the necessary Google Cloud APIs to deploy your API, `gcloud` can enable them for you. Just select `Y` when prompted.
 :::
 
 :::tip
