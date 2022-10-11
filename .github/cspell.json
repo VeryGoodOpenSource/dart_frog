@@ -15,5 +15,5 @@
     }
   ],
   "useGitignore": true,
-  "files": ["**/README.md"]
+  "files": ["README.md"]
 }
