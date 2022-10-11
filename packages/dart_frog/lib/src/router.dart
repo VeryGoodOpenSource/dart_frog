@@ -53,7 +53,7 @@ class Router {
   ///
   /// If [verb] is `GET` the [handler] will also be called for `HEAD` requests
   /// matching [route]. This is because handling `GET` requests without handling
-  /// `HEAD` is always wrong. To explicitely implement a `HEAD` handler it must
+  /// `HEAD` is always wrong. To explicitly implement a `HEAD` handler it must
   /// be registered before the `GET` handler.
   void add(String verb, String route, Function handler) {
     if (!isHttpMethod(verb)) {
