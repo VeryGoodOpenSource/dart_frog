@@ -11,10 +11,7 @@ jobs:
 
   spell-check:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/spell_check.yml@c8fdb55d7a2ed1a80279dfcbf93664421663852c
-    with:
-      includes: |
-        **/*.md
-        !docs/**/*.md
+    with:      
       modified_files_only: false
       verbose: true
 
