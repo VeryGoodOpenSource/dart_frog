@@ -14,6 +14,8 @@ on:
       - ".github/workflows/examples_counter.yaml"
       - "packages/dart_frog/lib/**"
       - "packages/dart_frog/pubspec.yaml"
+      - "packages/dart_frog_cli/lib/**"
+      - "packages/dart_frog_cli/pubspec.yaml"
     branches:
       - main
 
