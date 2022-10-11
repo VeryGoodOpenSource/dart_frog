@@ -35,7 +35,7 @@ void ensureRuntimeCompatibility(Directory cwd) {
   final pubspecFile = File(path.join(cwd.path, 'pubspec.yaml'));
   if (!pubspecFile.existsSync()) {
     throw DartFrogCompatibilityException(
-      'Expected to find a pubspec.yaml in $cwd.',
+      'Expected to find a pubspec.yaml in ${cwd.path}.',
     );
   }
 

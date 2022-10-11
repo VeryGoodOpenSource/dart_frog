@@ -58,7 +58,7 @@ void main() {
     });
 
     test('throws when a pubspec.yaml does not exist', () {
-      final expected = 'Expected to find a pubspec.yaml in $tempDir.';
+      final expected = 'Expected to find a pubspec.yaml in ${tempDir.path}.';
       expect(
         () => ensureRuntimeCompatibility(tempDir),
         throwsA(
