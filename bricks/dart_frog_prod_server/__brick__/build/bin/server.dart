@@ -22,14 +22,14 @@ Future<HttpServer> createServer() async {
 Handler buildRootHandler() {
   final pipeline = const Pipeline(){{#globalMiddleware}}.addMiddleware({{#snakeCase}}{{{name}}}{{/snakeCase}}.middleware){{/globalMiddleware}};
   final router = Router(){{#directories}}
-    ..mount('{{{route}}}', (r) => build{{#pascalCase}}{{{name}}}{{/pascalCase}}Handler()(r)){{/directories}};
+    ..mount('{{{route}}}', (ctx, {{#directory_params}}{{.}},{{/directory_params}}) => build{{#pascalCase}}{{{name}}}{{/pascalCase}}Handler({{#directory_params}}{{.}},{{/directory_params}})(ctx)){{/directories}};
   return pipeline.addHandler(router);
 }
 {{#directories}}
-Handler build{{#pascalCase}}{{{name}}}{{/pascalCase}}Handler() {
+Handler build{{#pascalCase}}{{{name}}}{{/pascalCase}}Handler({{#directory_params}}String {{.}},{{/directory_params}}) {
   final pipeline = const Pipeline(){{#middleware}}.addMiddleware({{#snakeCase}}{{{name}}}{{/snakeCase}}.middleware){{/middleware}};
   final router = Router()
-    {{#files}}..all('{{{route}}}', {{#snakeCase}}{{{name}}}{{/snakeCase}}.onRequest){{/files}};
+    {{#files}}..all('{{{route}}}', (ctx,{{#file_params}}{{.}},{{/file_params}}) => {{#snakeCase}}{{{name}}}{{/snakeCase}}.onRequest(ctx, {{#directory_params}}{{.}},{{/directory_params}}{{#file_params}}{{.}},{{/file_params}})){{/files}};
   return pipeline.addHandler(router);
 }
 {{/directories}}
