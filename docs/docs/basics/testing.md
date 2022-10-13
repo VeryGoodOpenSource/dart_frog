@@ -101,7 +101,7 @@ void main() {
 
 ## Middleware 🍔
 
-Unit testing middleware is very similar to unit testing route handlers -- they are both just dart functions after all!
+Unit testing middleware is very similar to unit testing route handlers — they are both just dart functions after all!
 
 ### Basics
 
