@@ -1,3 +1,5 @@
+import 'dart:io' as io;
+
 import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:dart_frog_cli/src/commands/commands.dart';
@@ -5,6 +7,9 @@ import 'package:dart_frog_cli/src/commands/update/update.dart';
 import 'package:dart_frog_cli/src/version.dart';
 import 'package:mason/mason.dart' hide packageVersion;
 import 'package:pub_updater/pub_updater.dart';
+
+/// Typedef for [io.exit].
+typedef Exit = dynamic Function(int exitCode);
 
 /// The package name.
 const packageName = 'dart_frog_cli';
@@ -24,8 +29,12 @@ class DartFrogCommandRunner extends CommandRunner<int> {
   DartFrogCommandRunner({
     Logger? logger,
     PubUpdater? pubUpdater,
+    io.ProcessSignal? sigint,
+    Exit? exit,
   })  : _logger = logger ?? Logger(),
         _pubUpdater = pubUpdater ?? PubUpdater(),
+        _sigint = sigint ?? io.ProcessSignal.sigint,
+        _exit = exit ?? io.exit,
         super(executableName, executableDescription) {
     argParser.addFlags();
     addCommand(BuildCommand(logger: _logger));
@@ -36,11 +45,15 @@ class DartFrogCommandRunner extends CommandRunner<int> {
 
   final Logger _logger;
   final PubUpdater _pubUpdater;
+  final io.ProcessSignal _sigint;
+  final Exit _exit;
 
   @override
   Future<int> run(Iterable<String> args) async {
     final argResults = parse(args);
     late final int exitCode;
+
+    _sigint.watch().listen(_onSigint);
 
     try {
       exitCode = await runCommand(argResults) ?? ExitCode.success.code;
@@ -54,11 +67,25 @@ class DartFrogCommandRunner extends CommandRunner<int> {
     return exitCode;
   }
 
+  Future<void> _onSigint(io.ProcessSignal signal) async {
+    await _checkForUpdates();
+    _exit(0);
+  }
+
   Future<void> _checkForUpdates() async {
+    _logger.detail('[updater] checking for updates...');
     try {
       final latestVersion = await _pubUpdater.getLatestVersion(packageName);
+      _logger.detail('[updater] latest version is $latestVersion.');
+
       final isUpToDate = packageVersion == latestVersion;
+      if (isUpToDate) {
+        _logger.detail('[updater] no updates available.');
+        return;
+      }
+
       if (!isUpToDate) {
+        _logger.detail('[updater] update available.');
         final changelogLink = lightCyan.wrap(
           styleUnderlined.wrap(
             link(
@@ -77,7 +104,10 @@ ${lightYellow.wrap('Changelog:')} $changelogLink
 Run ${lightCyan.wrap('$executableName update')} to update''',
           );
       }
-    } catch (_) {}
+    } catch (_) {
+    } finally {
+      _logger.detail('[updater] update check complete.');
+    }
   }
 
   @override
