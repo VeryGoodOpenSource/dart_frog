@@ -1,3 +1,8 @@
+# 0.1.9
+
+- fix: run update check on sigint
+- feat: `package:dart_frog` runtime compatibility check
+
 # 0.1.8
 
 - fix: `dart_frog build` Dockerfile dependency resolution
