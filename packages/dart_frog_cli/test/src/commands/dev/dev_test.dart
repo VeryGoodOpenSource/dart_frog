@@ -67,6 +67,7 @@ void main() {
       process = _MockProcess();
       processResult = _MockProcessResult();
       sigint = _MockProcessSignal();
+      when(() => sigint.watch()).thenAnswer((_) => const Stream.empty());
       generatorTarget = _MockRestorableDirectoryGeneratorTarget();
       command = DevCommand(
         logger: logger,
@@ -531,7 +532,6 @@ void main() {
       const processId = 42;
       final generatorHooks = _MockGeneratorHooks();
       final processRunCalls = <List<String>>[];
-      int? exitCode;
       when(
         () => generatorHooks.preGen(
           vars: any(named: 'vars'),
@@ -554,7 +554,6 @@ void main() {
       when(() => process.stdout).thenAnswer((_) => const Stream.empty());
       when(() => process.stderr).thenAnswer((_) => const Stream.empty());
       when(() => process.pid).thenReturn(processId);
-      when(() => processResult.exitCode).thenReturn(ExitCode.success.code);
       when(
         () => directoryWatcher.events,
       ).thenAnswer((_) => StreamController<WatchEvent>().stream);
@@ -581,7 +580,6 @@ void main() {
       )..testArgResults = argResults;
       command.run().ignore();
       await untilCalled(() => process.pid);
-      expect(exitCode, equals(ExitCode.success.code));
       expect(
         processRunCalls,
         equals([
