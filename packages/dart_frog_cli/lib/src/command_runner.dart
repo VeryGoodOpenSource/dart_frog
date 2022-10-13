@@ -104,7 +104,10 @@ ${lightYellow.wrap('Changelog:')} $changelogLink
 Run ${lightCyan.wrap('$executableName update')} to update''',
           );
       }
-    } catch (_) {
+    } catch (error, stackTrace) {
+      _logger.detail(
+        '[updater] update check error.\n$error\n$stackTrace',
+      );
     } finally {
       _logger.detail('[updater] update check complete.');
     }
