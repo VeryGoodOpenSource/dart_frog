@@ -8,7 +8,7 @@ In Dart Frog, we can effectively unit test our route handlers and middleware usi
 
 ## Route Handlers 🚏
 
-Testing route handlers is pretty straightforward and doesn't require any new concepts because at the end of the day a route handler is just a plain Dart function.
+Testing route handlers is pretty straightforward and doesn't require any new concepts because a route handler is just a plain Dart function.
 
 ### Basics
 
