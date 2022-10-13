@@ -1,5 +1,6 @@
 // ignore_for_file: no_adjacent_strings_in_list
 import 'dart:async';
+import 'dart:io';
 
 import 'package:dart_frog_cli/src/command_runner.dart';
 import 'package:dart_frog_cli/src/version.dart';
@@ -11,6 +12,8 @@ import 'package:test/test.dart';
 class _MockLogger extends Mock implements Logger {}
 
 class _MockPubUpdater extends Mock implements PubUpdater {}
+
+class _MockProcessSignal extends Mock implements ProcessSignal {}
 
 const expectedUsage = [
   'A fast, minimalistic backend framework for Dart.\n'
@@ -51,19 +54,25 @@ void main() {
     late Logger logger;
     late PubUpdater pubUpdater;
     late DartFrogCommandRunner commandRunner;
+    late ProcessSignal sigint;
 
     setUp(() {
       printLogs = [];
       logger = _MockLogger();
       pubUpdater = _MockPubUpdater();
+      sigint = _MockProcessSignal();
 
       when(
         () => pubUpdater.getLatestVersion(any()),
       ).thenAnswer((_) async => packageVersion);
 
+      when(() => sigint.watch()).thenAnswer((_) => const Stream.empty());
+
       commandRunner = DartFrogCommandRunner(
         logger: logger,
         pubUpdater: pubUpdater,
+        exit: (_) {},
+        sigint: sigint,
       );
     });
 
@@ -73,6 +82,20 @@ void main() {
     });
 
     group('run', () {
+      test('checks for updates on sigint', () async {
+        final exitCalls = <int>[];
+        commandRunner = DartFrogCommandRunner(
+          logger: logger,
+          pubUpdater: pubUpdater,
+          exit: exitCalls.add,
+          sigint: sigint,
+        );
+        when(() => sigint.watch()).thenAnswer((_) => Stream.value(sigint));
+        await commandRunner.run(['--version']);
+        expect(exitCalls, equals([0]));
+        verify(() => pubUpdater.getLatestVersion(any())).called(2);
+      });
+
       test('prompts for update when newer version exists', () async {
         when(
           () => pubUpdater.getLatestVersion(any()),
@@ -136,9 +159,8 @@ void main() {
         test(
           'sets correct log level.',
           overridePrint(() async {
-            final logger = Logger();
-            await DartFrogCommandRunner(logger: logger).run(['--verbose']);
-            expect(logger.level, equals(Level.verbose));
+            await commandRunner.run(['--verbose']);
+            verify(() => logger.level = Level.verbose).called(1);
           }),
         );
 

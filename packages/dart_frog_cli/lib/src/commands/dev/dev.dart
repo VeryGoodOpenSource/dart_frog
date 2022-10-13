@@ -213,14 +213,12 @@ class DevCommand extends DartFrogCommand {
     logger.detail('[process] killing process...');
     if (_isWindows) {
       logger.detail('[process] taskkill /F /T /PID ${process.pid}');
-      final result = await _runProcess(
-        'taskkill',
-        ['/F', '/T', '/PID', '${process.pid}'],
-      );
-      logger.detail('[process] exit(${result.exitCode})');
-      return _exit(result.exitCode);
+      await _runProcess('taskkill', ['/F', '/T', '/PID', '${process.pid}']);
+    } else {
+      logger.detail('[process] process.kill()...');
+      process.kill();
     }
-    process.kill();
+    logger.detail('[process] killing process complete.');
   }
 }
 
