@@ -4,10 +4,10 @@ version: 1.0.0+1
 publish_to: none
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
+  sdk: ">=2.18.0 <3.0.0"
 
 dependencies:
-  dart_frog: ^0.1.0
+  dart_frog: ^0.2.0
   in_memory_todos_data_source:
     path: packages/in_memory_todos_data_source
   todos_data_source:
