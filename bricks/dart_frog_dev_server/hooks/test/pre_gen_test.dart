@@ -147,21 +147,52 @@ void main() {
             route: '/',
             middleware: null,
             files: [
-              RouteFile(name: 'index', path: 'index.dart', route: '/'),
-              RouteFile(name: 'hello', path: 'hello.dart', route: '/hello'),
+              RouteFile(
+                name: 'index',
+                path: 'index.dart',
+                route: '/',
+                params: [],
+              ),
+              RouteFile(
+                name: 'hello',
+                path: 'hello.dart',
+                route: '/hello',
+                params: [],
+              ),
             ],
+            params: [],
           )
         ],
         routes: [
-          RouteFile(name: 'index', path: 'index.dart', route: '/'),
-          RouteFile(name: 'hello', path: 'hello.dart', route: '/hello'),
+          RouteFile(
+            name: 'index',
+            path: 'index.dart',
+            route: '/',
+            params: [],
+          ),
+          RouteFile(
+            name: 'hello',
+            path: 'hello.dart',
+            route: '/hello',
+            params: [],
+          ),
         ],
         endpoints: {
           '/': [
-            RouteFile(name: 'index', path: 'index.dart', route: '/'),
+            RouteFile(
+              name: 'index',
+              path: 'index.dart',
+              route: '/',
+              params: [],
+            ),
           ],
           '/hello': [
-            RouteFile(name: 'hello', path: 'hello.dart', route: '/hello'),
+            RouteFile(
+              name: 'hello',
+              path: 'hello.dart',
+              route: '/hello',
+              params: [],
+            ),
           ]
         },
         rogueRoutes: [],
@@ -185,14 +216,35 @@ void main() {
               'route': '/',
               'middleware': false,
               'files': [
-                {'name': 'index', 'path': 'index.dart', 'route': '/'},
-                {'name': 'hello', 'path': 'hello.dart', 'route': '/hello'}
-              ]
+                {
+                  'name': 'index',
+                  'path': 'index.dart',
+                  'route': '/',
+                  'file_params': <String>[],
+                },
+                {
+                  'name': 'hello',
+                  'path': 'hello.dart',
+                  'route': '/hello',
+                  'file_params': <String>[],
+                }
+              ],
+              'directory_params': <String>[],
             }
           ],
           'routes': [
-            {'name': 'index', 'path': 'index.dart', 'route': '/'},
-            {'name': 'hello', 'path': 'hello.dart', 'route': '/hello'}
+            {
+              'name': 'index',
+              'path': 'index.dart',
+              'route': '/',
+              'file_params': const <String>[],
+            },
+            {
+              'name': 'hello',
+              'path': 'hello.dart',
+              'route': '/hello',
+              'file_params': const <String>[],
+            }
           ],
           'middleware': [
             {'name': 'hello_middleware', 'path': 'hello/middleware.dart'}
@@ -227,10 +279,20 @@ void main() {
     test('reports nothing when there are endpoints and no conflicts', () {
       when(() => configuration.endpoints).thenReturn({
         '/': const [
-          RouteFile(name: 'index', path: 'index.dart', route: '/'),
+          RouteFile(
+            name: 'index',
+            path: 'index.dart',
+            route: '/',
+            params: [],
+          ),
         ],
         '/hello': const [
-          RouteFile(name: 'hello', path: 'hello.dart', route: '/hello')
+          RouteFile(
+            name: 'hello',
+            path: 'hello.dart',
+            route: '/hello',
+            params: [],
+          )
         ]
       });
       reportRouteConflicts(context, configuration);
@@ -241,11 +303,26 @@ void main() {
         () {
       when(() => configuration.endpoints).thenReturn({
         '/': const [
-          RouteFile(name: 'index', path: 'index.dart', route: '/'),
+          RouteFile(
+            name: 'index',
+            path: 'index.dart',
+            route: '/',
+            params: [],
+          ),
         ],
         '/hello': const [
-          RouteFile(name: 'hello', path: 'hello.dart', route: '/hello'),
-          RouteFile(name: 'hello_index', path: 'hello/index.dart', route: '/')
+          RouteFile(
+            name: 'hello',
+            path: 'hello.dart',
+            route: '/hello',
+            params: [],
+          ),
+          RouteFile(
+            name: 'hello_index',
+            path: 'hello/index.dart',
+            route: '/',
+            params: [],
+          )
         ]
       });
       reportRouteConflicts(context, configuration);
@@ -261,15 +338,40 @@ void main() {
         'when there are multiple endpoint with conflicts', () {
       when(() => configuration.endpoints).thenReturn({
         '/': const [
-          RouteFile(name: 'index', path: 'index.dart', route: '/'),
+          RouteFile(
+            name: 'index',
+            path: 'index.dart',
+            route: '/',
+            params: [],
+          ),
         ],
         '/hello': const [
-          RouteFile(name: 'hello', path: 'hello.dart', route: '/hello'),
-          RouteFile(name: 'hello_index', path: 'hello/index.dart', route: '/')
+          RouteFile(
+            name: 'hello',
+            path: 'hello.dart',
+            route: '/hello',
+            params: [],
+          ),
+          RouteFile(
+            name: 'hello_index',
+            path: 'hello/index.dart',
+            route: '/',
+            params: [],
+          )
         ],
         '/echo': const [
-          RouteFile(name: 'echo', path: 'echo.dart', route: '/echo'),
-          RouteFile(name: 'echo_index', path: 'echo/index.dart', route: '/')
+          RouteFile(
+            name: 'echo',
+            path: 'echo.dart',
+            route: '/echo',
+            params: [],
+          ),
+          RouteFile(
+            name: 'echo_index',
+            path: 'echo/index.dart',
+            route: '/',
+            params: [],
+          )
         ]
       });
       reportRouteConflicts(context, configuration);
@@ -308,7 +410,12 @@ void main() {
     test('reports single rogue route', () {
       when(() => configuration.rogueRoutes).thenReturn(
         const [
-          RouteFile(name: 'hello', path: 'hello.dart', route: '/hello'),
+          RouteFile(
+            name: 'hello',
+            path: 'hello.dart',
+            route: '/hello',
+            params: [],
+          ),
         ],
       );
       reportRogueRoutes(context, configuration);
@@ -322,8 +429,18 @@ void main() {
     test('reports multiple rogue routes', () {
       when(() => configuration.rogueRoutes).thenReturn(
         const [
-          RouteFile(name: 'hello', path: 'hello.dart', route: '/hello'),
-          RouteFile(name: 'hi', path: 'hi.dart', route: '/hi'),
+          RouteFile(
+            name: 'hello',
+            path: 'hello.dart',
+            route: '/hello',
+            params: [],
+          ),
+          RouteFile(
+            name: 'hi',
+            path: 'hi.dart',
+            route: '/hi',
+            params: [],
+          ),
         ],
       );
       reportRogueRoutes(context, configuration);
