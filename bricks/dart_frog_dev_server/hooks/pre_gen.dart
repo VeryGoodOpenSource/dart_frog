@@ -10,20 +10,21 @@ typedef RouteConfigurationBuilder = RouteConfiguration Function(
   io.Directory directory,
 );
 
+void _defaultExit(int code) => ExitOverrides.current?.exit ?? io.exit;
+
 Future<void> run(HookContext context) async => preGen(context);
 
 Future<void> preGen(
   HookContext context, {
   RouteConfigurationBuilder buildConfiguration = buildRouteConfiguration,
-  void Function(int exitCode)? exit,
+  void Function(int exitCode) exit = _defaultExit,
 }) async {
   final RouteConfiguration configuration;
   try {
     configuration = buildConfiguration(io.Directory.current);
   } catch (error) {
     context.logger.err('$error');
-    final effectiveExit = exit ?? ExitOverrides.current?.exit ?? io.exit;
-    return effectiveExit(1);
+    return exit(1);
   }
 
   reportRouteConflicts(context, configuration);
