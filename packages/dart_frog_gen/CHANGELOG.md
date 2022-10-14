@@ -1,3 +1,9 @@
+# 0.2.0
+
+- **BREAKING** feat: support for mounting dynamic routes
+- **BREAKING** deps: upgrade to `Dart ">=2.18.0 <3.0.0"`
+- deps: upgrade to `very_good_analysis ^3.1.0`
+
 # 0.1.0
 
 - chore: stable 0.1.0 release
