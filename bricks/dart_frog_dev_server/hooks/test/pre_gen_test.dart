@@ -216,14 +216,35 @@ void main() {
               'route': '/',
               'middleware': false,
               'files': [
-                {'name': 'index', 'path': 'index.dart', 'route': '/'},
-                {'name': 'hello', 'path': 'hello.dart', 'route': '/hello'}
-              ]
+                {
+                  'name': 'index',
+                  'path': 'index.dart',
+                  'route': '/',
+                  'file_params': <String>[],
+                },
+                {
+                  'name': 'hello',
+                  'path': 'hello.dart',
+                  'route': '/hello',
+                  'file_params': <String>[],
+                }
+              ],
+              'directory_params': <String>[],
             }
           ],
           'routes': [
-            {'name': 'index', 'path': 'index.dart', 'route': '/'},
-            {'name': 'hello', 'path': 'hello.dart', 'route': '/hello'}
+            {
+              'name': 'index',
+              'path': 'index.dart',
+              'route': '/',
+              'file_params': const <String>[],
+            },
+            {
+              'name': 'hello',
+              'path': 'hello.dart',
+              'route': '/hello',
+              'file_params': const <String>[],
+            }
           ],
           'middleware': [
             {'name': 'hello_middleware', 'path': 'hello/middleware.dart'}
