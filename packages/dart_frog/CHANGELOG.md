@@ -1,3 +1,7 @@
+# 0.2.0
+
+- **BREAKING** feat: support mounting dynamic routes
+
 # 0.1.2
 
 - feat: add x-powered-by-header to `serve`
