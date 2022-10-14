@@ -39,6 +39,13 @@ class Router {
   Router({Handler notFoundHandler = _defaultNotFound})
       : _notFoundHandler = notFoundHandler;
 
+  /// Name of the parameter used for matching
+  /// the rest of the path in a mounted route.
+  ///
+  /// Two underscore prefix to avoid conflicts
+  /// with user-defined path parameters.
+  static const _kMountedPathParamRest = '__path';
+
   final List<RouterEntry> _routes = [];
   final Handler _notFoundHandler;
 
@@ -65,37 +72,83 @@ class Router {
 
   /// Handle all request to [route] using [handler].
   void all(String route, Function handler) {
-    _routes.add(RouterEntry('ALL', route, handler));
+    _all(route, handler, mounted: false);
+  }
+
+  void _all(String route, Function handler, {required bool mounted}) {
+    _routes.add(RouterEntry('ALL', route, handler, mounted: mounted));
   }
 
   /// Mount a handler below a prefix.
-  ///
-  /// In this case prefix may not contain any parameters, nor
-  void mount(String prefix, Handler handler) {
+  void mount(String prefix, Function handler) {
     if (!prefix.startsWith('/')) {
       throw ArgumentError.value(prefix, 'prefix', 'must start with a slash');
     }
 
-    // The first slash is always in request.handlerPath
-    final path = prefix.substring(1);
     if (prefix.endsWith('/')) {
-      all('$prefix<path|[^]*>', (RequestContext context) {
-        return handler(
-          RequestContext._(context.request._request.change(path: path)),
-        );
-      });
+      _all(
+        '$prefix<$_kMountedPathParamRest|[^]*>',
+        (RequestContext context, List<String> params) {
+          return _invokeMountedHandler(
+            context,
+            handler,
+            // Remove path param from extracted route params
+            [...params]..removeLast(),
+          );
+        },
+        mounted: true,
+      );
     } else {
-      all(prefix, (RequestContext context) {
-        return handler(
-          RequestContext._(context.request._request.change(path: path)),
-        );
-      });
-      all('$prefix/<path|[^]*>', (RequestContext context) {
-        return handler(
-          RequestContext._(context.request._request.change(path: '$path/')),
-        );
-      });
+      _all(
+        prefix,
+        (RequestContext context, List<String> params) {
+          return _invokeMountedHandler(context, handler, params);
+        },
+        mounted: true,
+      );
+      _all(
+        '$prefix/<$_kMountedPathParamRest|[^]*>',
+        (RequestContext context, List<String> params) {
+          return _invokeMountedHandler(
+            context,
+            handler,
+            // Remove path param from extracted route params
+            [...params]..removeLast(),
+          );
+        },
+        mounted: true,
+      );
     }
+  }
+
+  Future<Response> _invokeMountedHandler(
+    RequestContext context,
+    Function handler,
+    List<String> pathParams,
+  ) async {
+    final request = context.request;
+    final params = request._request.params;
+    final pathParamSegment = params[_kMountedPathParamRest];
+    final urlPath = request.url.path;
+    late final String effectivePath;
+    if (pathParamSegment != null && pathParamSegment.isNotEmpty) {
+      /// If we encounter the `_kMountedPathParamRest` parameter we remove it
+      /// from the request path that shelf will handle.
+      effectivePath = urlPath.substring(
+        0,
+        urlPath.length - pathParamSegment.length,
+      );
+    } else {
+      effectivePath = urlPath;
+    }
+    final modifiedRequestContext = RequestContext._(
+      request._request.change(path: effectivePath),
+    );
+
+    return await Function.apply(handler, [
+      modifiedRequestContext,
+      ...pathParams.map((param) => params[param]),
+    ]) as Response;
   }
 
   /// Route incoming requests to registered handlers.
@@ -196,6 +249,7 @@ class RouterEntry {
     String route,
     Function handler, {
     Middleware? middleware,
+    bool mounted = false,
   }) {
     middleware = middleware ?? ((Handler fn) => fn);
 
@@ -233,6 +287,7 @@ class RouterEntry {
       middleware,
       routePattern,
       params,
+      mounted,
     );
   }
 
@@ -243,6 +298,7 @@ class RouterEntry {
     this._middleware,
     this._routePattern,
     this._params,
+    this._mounted,
   );
 
   /// Pattern for parsing the route pattern
@@ -253,13 +309,18 @@ class RouterEntry {
   final Function _handler;
   final Middleware _middleware;
 
+  /// Indicates this entry is used as a mounting point.
+  final bool _mounted;
+
   /// Expression that the request path must match.
   ///
   /// This also captures any parameters in the route pattern.
   final RegExp _routePattern;
 
-  /// Names for the parameters in the route pattern.
   final List<String> _params;
+
+  /// Names for the parameters in the route pattern.
+  List<String> get params => _params.toList();
 
   /// Returns a map from parameter name to value, if the path matches the
   /// route pattern. Otherwise returns null.
@@ -287,6 +348,13 @@ class RouterEntry {
     final _context = RequestContext._(request);
 
     return await _middleware((request) async {
+      if (_mounted) {
+        // if this route is mounted, we include
+        // the route entry params so that the mount can extract the parameters/
+        // ignore: avoid_dynamic_calls
+        return await _handler(_context, this.params) as Response;
+      }
+
       if (_handler is Handler || _params.isEmpty) {
         // ignore: avoid_dynamic_calls
         return await _handler(_context) as Response;
@@ -298,5 +366,23 @@ class RouterEntry {
       ]);
       return result as Response;
     })(_context);
+  }
+}
+
+final _emptyParams = UnmodifiableMapView(<String, String>{});
+
+/// Extension on [shelf.Request] which provides access to
+/// URL parameters captured by the [Router].
+extension RouterParams on shelf.Request {
+  /// Get URL parameters captured by the [Router].
+  /// If no parameters are captured this returns an empty map.
+  ///
+  /// The returned map is unmodifiable.
+  Map<String, String> get params {
+    final p = context['shelf_router/params'];
+    if (p is Map<String, String>) {
+      return UnmodifiableMapView(p);
+    }
+    return _emptyParams;
   }
 }

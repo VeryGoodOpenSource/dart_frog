@@ -88,20 +88,12 @@ List<RouteDirectory> _getRouteDirectories({
     }
   }
 
-  final files = [
-    ..._getRouteFiles(
-      directory: directory,
-      routesDirectory: routesDirectory,
-      onRoute: onRoute,
-      onRogueRoute: onRogueRoute,
-    ),
-    ..._getRouteFilesForDynamicDirectories(
-      directory: directory,
-      routesDirectory: routesDirectory,
-      onRoute: onRoute,
-      onRogueRoute: onRogueRoute,
-    ),
-  ];
+  final files = _getRouteFiles(
+    directory: directory,
+    routesDirectory: routesDirectory,
+    onRoute: onRoute,
+    onRogueRoute: onRogueRoute,
+  );
 
   final baseRoute = directoryPath.toRoute();
   for (final file in files) {
@@ -119,59 +111,24 @@ List<RouteDirectory> _getRouteDirectories({
       route: baseRoute,
       middleware: middleware,
       files: files,
+      params: directoryPath.toParams(),
     ),
   );
 
   entities.whereType<Directory>().forEach((directory) {
-    if (!directory.isDynamicRoute) {
-      directories.addAll(
-        _getRouteDirectories(
-          directory: directory,
-          routesDirectory: routesDirectory,
-          onRoute: onRoute,
-          onMiddleware: onMiddleware,
-          onEndpoint: onEndpoint,
-          onRogueRoute: onRogueRoute,
-        ),
-      );
-    }
+    directories.addAll(
+      _getRouteDirectories(
+        directory: directory,
+        routesDirectory: routesDirectory,
+        onRoute: onRoute,
+        onMiddleware: onMiddleware,
+        onEndpoint: onEndpoint,
+        onRogueRoute: onRogueRoute,
+      ),
+    );
   });
 
   return directories;
-}
-
-List<RouteFile> _getRouteFilesForDynamicDirectories({
-  required Directory directory,
-  required Directory routesDirectory,
-  required void Function(RouteFile route) onRoute,
-  required void Function(RouteFile route) onRogueRoute,
-  String prefix = '',
-}) {
-  final files = <RouteFile>[];
-  directory
-      .listSync()
-      .sorted()
-      .whereType<Directory>()
-      .where((d) => prefix.isNotEmpty || d.isDynamicRoute)
-      .forEach((dynamicDirectory) {
-    final newPrefix = '$prefix/${path.basename(dynamicDirectory.path)}';
-    final subset = _getRouteFiles(
-      directory: dynamicDirectory,
-      routesDirectory: routesDirectory,
-      onRoute: onRoute,
-      onRogueRoute: onRogueRoute,
-      prefix: newPrefix,
-    );
-    final dynamicSubset = _getRouteFilesForDynamicDirectories(
-      directory: dynamicDirectory,
-      routesDirectory: routesDirectory,
-      onRoute: onRoute,
-      onRogueRoute: onRogueRoute,
-      prefix: newPrefix,
-    );
-    files.addAll([...subset, ...dynamicSubset]);
-  });
-  return files;
 }
 
 List<RouteFile> _getRouteFiles({
@@ -207,12 +164,7 @@ List<RouteFile> _getRouteFiles({
       var fileRoute = fileRoutePath.isEmpty ? '/' : fileRoutePath;
       fileRoute = prefix + fileRoute;
 
-      if (!fileRoute.startsWith('/')) {
-        fileRoute = '/$fileRoute';
-      }
-      if (fileRoute != '/' && fileRoute.endsWith('/')) {
-        fileRoute = fileRoute.substring(0, fileRoute.length - 1);
-      }
+      if (!fileRoute.startsWith('/')) fileRoute = '/$fileRoute';
 
       return fileRoute;
     }
@@ -223,6 +175,7 @@ List<RouteFile> _getRouteFiles({
       name: filePath.toAlias(),
       path: relativeFilePath.replaceAll(r'\', '/'),
       route: fileRoute.toRoute(),
+      params: fileRoute.toParams(),
     );
     onRoute(route);
     files.add(route);
@@ -253,17 +206,17 @@ extension on String {
   String toRoute() {
     return replaceAll('[', '<').replaceAll(']', '>').replaceAll(r'\', '/');
   }
+
+  List<String> toParams() {
+    final regexp = RegExp(r'\[(.*?)\]');
+    final matches = regexp.allMatches(this);
+    return matches.map((m) => m[0]!.replaceAll(RegExp(r'\[|\]'), '')).toList();
+  }
 }
 
 extension on List<FileSystemEntity> {
   List<FileSystemEntity> sorted() {
     return this..sort((a, b) => b.path.compareTo(a.path));
-  }
-}
-
-extension on Directory {
-  bool get isDynamicRoute {
-    return RegExp(r'\[(.*)\]').hasMatch(path.basename(this.path));
   }
 }
 
@@ -354,6 +307,7 @@ class RouteDirectory {
     required this.route,
     required this.middleware,
     required this.files,
+    required this.params,
   });
 
   /// The alias for the current directory.
@@ -361,6 +315,9 @@ class RouteDirectory {
 
   /// The route which will be used to mount routers.
   final String route;
+
+  /// The dynamic route params associated with the directory.
+  final List<String> params;
 
   /// Optional middleware for the provided router.
   final MiddlewareFile? middleware;
@@ -374,12 +331,14 @@ class RouteDirectory {
     String? route,
     MiddlewareFile? middleware,
     List<RouteFile>? files,
+    List<String>? params,
   }) {
     return RouteDirectory(
       name: name ?? this.name,
       route: route ?? this.route,
       middleware: middleware ?? this.middleware,
       files: files ?? this.files,
+      params: params ?? this.params,
     );
   }
 
@@ -390,6 +349,7 @@ class RouteDirectory {
       'route': route,
       'middleware': middleware?.toJson() ?? false,
       'files': files.map((f) => f.toJson()).toList(),
+      'directory_params': params,
     };
   }
 }
@@ -403,6 +363,7 @@ class RouteFile {
     required this.name,
     required this.path,
     required this.route,
+    required this.params,
   });
 
   /// The alias for the current file.
@@ -414,12 +375,21 @@ class RouteFile {
   /// The route used by router instances.
   final String route;
 
+  /// The dynamic route params associated with the file.
+  final List<String> params;
+
   /// Create a copy of the current instance and override zero or more values.
-  RouteFile copyWith({String? name, String? path, String? route}) {
+  RouteFile copyWith({
+    String? name,
+    String? path,
+    String? route,
+    List<String>? params,
+  }) {
     return RouteFile(
       name: name ?? this.name,
       path: path ?? this.path,
       route: route ?? this.route,
+      params: params ?? this.params,
     );
   }
 
@@ -429,6 +399,7 @@ class RouteFile {
       'name': name,
       'path': path,
       'route': route,
+      'file_params': params,
     };
   }
 }
