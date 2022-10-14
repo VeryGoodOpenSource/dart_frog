@@ -60,14 +60,14 @@ class Router {
       throw ArgumentError.value(verb, 'verb', 'expected a valid HTTP method');
     }
 
-    final screamingVerb = verb.toUpperCase();
+    final upperCaseVerb = verb.toUpperCase();
 
-    if (screamingVerb == 'GET') {
+    if (upperCaseVerb == 'GET') {
       // Handling in a 'GET' request without handling a 'HEAD' request is always
       // wrong, thus, we add a default implementation that discards the body.
       _routes.add(RouterEntry('HEAD', route, handler, middleware: _removeBody));
     }
-    _routes.add(RouterEntry(screamingVerb, route, handler));
+    _routes.add(RouterEntry(upperCaseVerb, route, handler));
   }
 
   /// Handle all request to [route] using [handler].
@@ -349,27 +349,27 @@ class RouterEntry {
     final request = context.request._request.change(
       context: {'shelf_router/params': params},
     );
-    final effectiveContext = RequestContext._(request);
+    final updatedContext = RequestContext._(request);
 
     return await _middleware((request) async {
       if (_mounted) {
         // if this route is mounted, we include
         // the route entry params so that the mount can extract the parameters/
         // ignore: avoid_dynamic_calls
-        return await _handler(effectiveContext, this.params) as Response;
+        return await _handler(updatedContext, this.params) as Response;
       }
 
       if (_handler is Handler || _params.isEmpty) {
         // ignore: avoid_dynamic_calls
-        return await _handler(effectiveContext) as Response;
+        return await _handler(updatedContext) as Response;
       }
 
       final dynamic result = await Function.apply(_handler, <dynamic>[
-        effectiveContext,
+        updatedContext,
         ..._params.map((n) => params[n]),
       ]);
       return result as Response;
-    })(effectiveContext);
+    })(updatedContext);
   }
 }
 
