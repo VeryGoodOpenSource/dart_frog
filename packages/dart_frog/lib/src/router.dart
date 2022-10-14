@@ -60,14 +60,14 @@ class Router {
       throw ArgumentError.value(verb, 'verb', 'expected a valid HTTP method');
     }
 
-    final _verb = verb.toUpperCase();
+    final screamingVerb = verb.toUpperCase();
 
-    if (_verb == 'GET') {
+    if (screamingVerb == 'GET') {
       // Handling in a 'GET' request without handling a 'HEAD' request is always
       // wrong, thus, we add a default implementation that discards the body.
       _routes.add(RouterEntry('HEAD', route, handler, middleware: _removeBody));
     }
-    _routes.add(RouterEntry(_verb, route, handler));
+    _routes.add(RouterEntry(screamingVerb, route, handler));
   }
 
   /// Handle all request to [route] using [handler].
@@ -304,8 +304,12 @@ class RouterEntry {
   /// Pattern for parsing the route pattern
   static final RegExp _parser = RegExp(r'([^<]*)(?:<([^>|]+)(?:\|([^>]*))?>)?');
 
-  /// The route entry verb and route.
-  final String verb, route;
+  /// The route entry verb.
+  final String verb;
+
+  /// The route entry route.
+  final String route;
+
   final Function _handler;
   final Middleware _middleware;
 
@@ -345,27 +349,27 @@ class RouterEntry {
     final request = context.request._request.change(
       context: {'shelf_router/params': params},
     );
-    final _context = RequestContext._(request);
+    final effectiveContext = RequestContext._(request);
 
     return await _middleware((request) async {
       if (_mounted) {
         // if this route is mounted, we include
         // the route entry params so that the mount can extract the parameters/
         // ignore: avoid_dynamic_calls
-        return await _handler(_context, this.params) as Response;
+        return await _handler(effectiveContext, this.params) as Response;
       }
 
       if (_handler is Handler || _params.isEmpty) {
         // ignore: avoid_dynamic_calls
-        return await _handler(_context) as Response;
+        return await _handler(effectiveContext) as Response;
       }
 
       final dynamic result = await Function.apply(_handler, <dynamic>[
-        _context,
+        effectiveContext,
         ..._params.map((n) => params[n]),
       ]);
       return result as Response;
-    })(_context);
+    })(effectiveContext);
   }
 }
 

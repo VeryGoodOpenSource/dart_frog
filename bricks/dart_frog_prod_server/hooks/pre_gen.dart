@@ -19,22 +19,26 @@ Future<void> preGen(
   RouteConfigurationBuilder buildConfiguration = buildRouteConfiguration,
   void Function(int exitCode)? exit,
 }) async {
-  final _exit = exit ?? ExitOverrides.current?.exit ?? io.exit;
+  final effectiveExit = exit ?? ExitOverrides.current?.exit ?? io.exit;
   final projectDirectory = directory ?? io.Directory.current;
 
-  await createBundle(context, projectDirectory, _exit);
+  await createBundle(context, projectDirectory, effectiveExit);
 
   final RouteConfiguration configuration;
   try {
     configuration = buildConfiguration(projectDirectory);
   } catch (error) {
     context.logger.err('$error');
-    return _exit(1);
+    return effectiveExit(1);
   }
 
-  reportRouteConflicts(context, configuration, _exit);
-  reportRogueRoutes(context, configuration, _exit);
-  await reportExternalPathDependencies(context, projectDirectory, _exit);
+  reportRouteConflicts(context, configuration, effectiveExit);
+  reportRogueRoutes(context, configuration, effectiveExit);
+  await reportExternalPathDependencies(
+    context,
+    projectDirectory,
+    effectiveExit,
+  );
 
   context.vars = {
     'directories': configuration.directories

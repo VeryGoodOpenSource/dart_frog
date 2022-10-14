@@ -22,8 +22,8 @@ Future<void> preGen(
     configuration = buildConfiguration(io.Directory.current);
   } catch (error) {
     context.logger.err('$error');
-    final _exit = exit ?? ExitOverrides.current?.exit ?? io.exit;
-    return _exit(1);
+    final effectiveExit = exit ?? ExitOverrides.current?.exit ?? io.exit;
+    return effectiveExit(1);
   }
 
   reportRouteConflicts(context, configuration);

@@ -19,13 +19,13 @@ void main() {
     }
 
     test('proxies to logRequests', () async {
-      final _handler = const Pipeline()
+      final effectiveHandler = const Pipeline()
           .addMiddleware(requestLogger(logger: logger))
           .addHandler((_) => Response());
       final request = Request.get(Uri.parse('http://localhost/'));
       final context = _MockRequestContext();
       when(() => context.request).thenReturn(request);
-      await _handler(context);
+      await effectiveHandler(context);
 
       expect(gotLog, isTrue);
     });

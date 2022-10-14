@@ -19,15 +19,15 @@ Future<void> postGen(
   ProcessRunner runProcess = io.Process.run,
   void Function(int exitCode)? exit,
 }) async {
-  final _exit = exit ?? ExitOverrides.current?.exit ?? io.exit;
-  final _directory = directory ?? io.Directory.current;
-  final buildDirectoryPath = path.join(_directory.path, 'build');
+  final effectiveExit = exit ?? ExitOverrides.current?.exit ?? io.exit;
+  final effectiveDirectory = directory ?? io.Directory.current;
+  final buildDirectoryPath = path.join(effectiveDirectory.path, 'build');
 
   await dartPubGet(
     context,
     workingDirectory: buildDirectoryPath,
     runProcess: runProcess,
-    exit: _exit,
+    exit: effectiveExit,
   );
 
   final relativeBuildPath = path.relative(buildDirectoryPath);
