@@ -75,10 +75,10 @@ List<RouteDirectory> _getRouteDirectories({
   // Only add nested middleware -- global middleware is added separately.
   MiddlewareFile? middleware;
   if (directory.path != path.join(Directory.current.path, 'routes')) {
-    final _middleware = File(path.join(directory.path, '_middleware.dart'));
-    if (_middleware.existsSync()) {
+    final middlewareFile = File(path.join(directory.path, '_middleware.dart'));
+    if (middlewareFile.existsSync()) {
       final middlewarePath = path
-          .relative(_middleware.path, from: routesDirectory.path)
+          .relative(middlewareFile.path, from: routesDirectory.path)
           .replaceAll(r'\', '/');
       middleware = MiddlewareFile(
         name: middlewarePath.toAlias(),

@@ -11,23 +11,24 @@ typedef ProcessRunner = Future<io.ProcessResult> Function(
   bool runInShell,
 });
 
+void _defaultExit(int code) => ExitOverrides.current?.exit ?? io.exit;
+
 Future<void> run(HookContext context) => postGen(context);
 
 Future<void> postGen(
   HookContext context, {
   io.Directory? directory,
   ProcessRunner runProcess = io.Process.run,
-  void Function(int exitCode)? exit,
+  void Function(int exitCode) exit = _defaultExit,
 }) async {
-  final _exit = exit ?? ExitOverrides.current?.exit ?? io.exit;
-  final _directory = directory ?? io.Directory.current;
-  final buildDirectoryPath = path.join(_directory.path, 'build');
+  final projectDirectory = directory ?? io.Directory.current;
+  final buildDirectoryPath = path.join(projectDirectory.path, 'build');
 
   await dartPubGet(
     context,
     workingDirectory: buildDirectoryPath,
     runProcess: runProcess,
-    exit: _exit,
+    exit: exit,
   );
 
   final relativeBuildPath = path.relative(buildDirectoryPath);

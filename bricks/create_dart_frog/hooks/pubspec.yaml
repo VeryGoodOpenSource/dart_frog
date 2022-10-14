@@ -1,7 +1,7 @@
 name: create_dart_frog_hooks
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.18.0 <3.0.0"
 
 dependencies:
   mason: ^0.1.0-dev.31
@@ -10,4 +10,4 @@ dependencies:
 dev_dependencies:
   mocktail: ^0.3.0
   test: ^1.19.2
-  very_good_analysis: ^3.0.1
+  very_good_analysis: ^3.1.0

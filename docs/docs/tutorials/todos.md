@@ -178,7 +178,7 @@ dev_dependencies:
   json_serializable: ^6.3.1
   mocktail: ^0.3.0
   test: ^1.19.2
-  very_good_analysis: ^3.0.1
+  very_good_analysis: ^3.1.0
 ```
 
 Install the newly added dependencies via:
@@ -377,7 +377,7 @@ dependencies:
 dev_dependencies:
   mocktail: ^0.3.0
   test: ^1.19.2
-  very_good_analysis: ^3.0.1
+  very_good_analysis: ^3.1.0
 ```
 
 :::note
@@ -456,7 +456,7 @@ dependencies:
 dev_dependencies:
   mocktail: ^0.3.0
   test: ^1.19.2
-  very_good_analysis: ^3.0.1
+  very_good_analysis: ^3.1.0
 ```
 
 Install the newly added dependencies via:
