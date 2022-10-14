@@ -1,28 +1,7 @@
 version: 2
-enable-beta-ecosystems: true
 updates:
   - package-ecosystem: "github-actions"
     directory: "/"
-    schedule:
-      interval: "daily"
-  - package-ecosystem: "npm"
-    directory: "/docs"
-    schedule:
-      interval: "daily"
-  - package-ecosystem: "pub"
-    directory: "/example"
-    schedule:
-      interval: "daily"
-  - package-ecosystem: "pub"
-    directory: "/packages/dart_frog"
-    schedule:
-      interval: "daily"
-  - package-ecosystem: "pub"
-    directory: "/packages/dart_frog_cli"
-    schedule:
-      interval: "daily"
-  - package-ecosystem: "pub"
-    directory: "/packages/dart_frog_gen"
     schedule:
       interval: "daily"
   - package-ecosystem: "pub"
@@ -35,5 +14,49 @@ updates:
       interval: "daily"
   - package-ecosystem: "pub"
     directory: "/bricks/dart_frog_prod_server/hooks"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/examples/echo"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/examples/hello_world"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/examples/counter"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/examples/todos"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/examples/todos/packages/todos_data_source"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/examples/todos/packages/in_memory_todos_data_source"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/dart_frog_cli"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/dart_frog_cli/e2e"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/dart_frog_gen"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/dart_frog"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "npm"
+    directory: "/docs"
     schedule:
       interval: "daily"
