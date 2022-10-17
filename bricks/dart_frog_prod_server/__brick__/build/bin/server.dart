@@ -16,7 +16,9 @@ Future<HttpServer> createServer() async {
   final ip = InternetAddress.anyIPv4;
   final port = int.parse(Platform.environment['PORT'] ?? '8080');
   final handler = Cascade(){{#serveStaticFiles}}.add(createStaticFileHandler()){{/serveStaticFiles}}.add(buildRootHandler()).handler;
-  {{#invokeCustomEntrypoint}}return entrypoint.run(handler, ip, port);{{/invokeCustomEntrypoint}}{{^invokeCustomEntrypoint}}return serve(handler, ip, port);{{/invokeCustomEntrypoint}}
+  final server = await {{#invokeCustomEntrypoint}}entrypoint.run(handler, ip, port){{/invokeCustomEntrypoint}}{{^invokeCustomEntrypoint}}serve(handler, ip, port){{/invokeCustomEntrypoint}};
+  print('\x1B[92m✓\x1B[0m Running on http://${server.address.host}:${server.port}');
+  return server;
 }
 
 Handler buildRootHandler() {
