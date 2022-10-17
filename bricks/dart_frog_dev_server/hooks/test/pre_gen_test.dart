@@ -145,7 +145,7 @@ void main() {
           RouteDirectory(
             name: '_',
             route: '/',
-            middleware: null,
+            middleware: [],
             files: [
               RouteFile(
                 name: 'index',
@@ -214,7 +214,7 @@ void main() {
             {
               'name': '_',
               'route': '/',
-              'middleware': false,
+              'middleware': <Map<String, dynamic>>[],
               'files': [
                 {
                   'name': 'index',
