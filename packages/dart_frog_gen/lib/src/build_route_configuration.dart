@@ -64,7 +64,7 @@ List<RouteDirectory> _getRouteDirectories({
   required void Function(MiddlewareFile route) onMiddleware,
   required void Function(String endpoint, RouteFile file) onEndpoint,
   required void Function(RouteFile route) onRogueRoute,
-  List<MiddlewareFile> cascadingMiddleware = const [],
+  List<MiddlewareFile> middleware = const [],
 }) {
   final directories = <RouteDirectory>[];
   final entities = directory.listSync().sorted();
@@ -74,24 +74,24 @@ List<RouteDirectory> _getRouteDirectories({
       ? directorySegment
       : '/$directorySegment';
   // Only add nested middleware -- global middleware is added separately.
-  MiddlewareFile? currentMiddleware;
+  MiddlewareFile? localMiddleware;
   if (directory.path != path.join(Directory.current.path, 'routes')) {
     final middlewareFile = File(path.join(directory.path, '_middleware.dart'));
     if (middlewareFile.existsSync()) {
       final middlewarePath = path
           .relative(middlewareFile.path, from: routesDirectory.path)
           .replaceAll(r'\', '/');
-      currentMiddleware = MiddlewareFile(
+      localMiddleware = MiddlewareFile(
         name: middlewarePath.toAlias(),
         path: path.join('..', 'routes', middlewarePath).replaceAll(r'\', '/'),
       );
-      onMiddleware(currentMiddleware);
+      onMiddleware(localMiddleware);
     }
   }
 
-  final middleware = [
-    ...cascadingMiddleware,
-    if (currentMiddleware != null) currentMiddleware,
+  final updatedMiddleware = [
+    ...middleware,
+    if (localMiddleware != null) localMiddleware,
   ];
 
   final files = _getRouteFiles(
@@ -116,7 +116,7 @@ List<RouteDirectory> _getRouteDirectories({
       RouteDirectory(
         name: directoryPath.toAlias(),
         route: baseRoute,
-        middleware: middleware,
+        middleware: updatedMiddleware,
         files: files,
         params: directoryPath.toParams(),
       ),
@@ -132,7 +132,7 @@ List<RouteDirectory> _getRouteDirectories({
         onMiddleware: onMiddleware,
         onEndpoint: onEndpoint,
         onRogueRoute: onRogueRoute,
-        cascadingMiddleware: middleware,
+        middleware: updatedMiddleware,
       ),
     );
   });
