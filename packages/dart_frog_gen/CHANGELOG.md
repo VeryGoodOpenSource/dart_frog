@@ -1,3 +1,8 @@
+# 0.3.0
+
+- **BREAKING** fix: support for cascading middleware
+  - `RouteDirectory` signature for `middleware` changed from `MiddlewareFile?` -> `List<MiddlewareFile>`
+
 # 0.2.0
 
 - **BREAKING** feat: support for mounting dynamic routes
