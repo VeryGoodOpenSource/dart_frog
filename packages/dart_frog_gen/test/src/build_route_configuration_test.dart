@@ -505,6 +505,20 @@ void main() {
           'directory_params': []
         },
         {
+          'name': '_api',
+          'route': '/api',
+          'middleware': [],
+          'files': [
+            {
+              'name': 'api_v1',
+              'path': '../routes/api/v1.dart',
+              'route': '/v1',
+              'file_params': []
+            }
+          ],
+          'directory_params': []
+        },
+        {
           'name': r'_$user',
           'route': '/<user>',
           'middleware': [
@@ -558,6 +572,9 @@ void main() {
       final routes = Directory(path.join(directory.path, 'routes'))
         ..createSync();
       File(path.join(routes.path, 'index.dart')).createSync();
+      final apiDirectory = Directory(path.join(routes.path, 'api'))
+        ..createSync();
+      File(path.join(apiDirectory.path, 'v1.dart')).createSync();
       final userDirectory = Directory(path.join(routes.path, '[user]'))
         ..createSync();
       File(path.join(userDirectory.path, '_middleware.dart')).createSync();
@@ -579,6 +596,13 @@ void main() {
               (r) => r.path,
               'path',
               '../routes/index.dart',
+            )
+          ],
+          '/api/v1': [
+            isA<RouteFile>().having(
+              (r) => r.path,
+              'path',
+              '../routes/api/v1.dart',
             )
           ],
           '/<user>/<name>': [
