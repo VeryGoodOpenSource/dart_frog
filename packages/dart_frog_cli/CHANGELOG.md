@@ -1,3 +1,9 @@
+# 0.2.1
+
+- fix: support cascading middleware
+- feat: add startup log to production build
+- deps: upgrade to mason ^0.1.0-dev.34
+
 # 0.2.0
 
 - **BREAKING** feat: support for mounting dynamic routes
