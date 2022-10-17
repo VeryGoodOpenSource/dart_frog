@@ -5,9 +5,9 @@ environment:
   sdk: ">=2.18.0 <3.0.0"
 
 dependencies:
-  dart_frog_gen: ^0.2.0
+  dart_frog_gen: ^0.3.0
   io: ^1.0.3
-  mason: ^0.1.0-dev.31
+  mason: ^0.1.0-dev.34
   path: ^1.8.1
   pubspec_parse: ^1.2.0
 
