@@ -64,6 +64,7 @@ List<RouteDirectory> _getRouteDirectories({
   required void Function(MiddlewareFile route) onMiddleware,
   required void Function(String endpoint, RouteFile file) onEndpoint,
   required void Function(RouteFile route) onRogueRoute,
+  List<MiddlewareFile> cascadingMiddleware = const [],
 }) {
   final directories = <RouteDirectory>[];
   final entities = directory.listSync().sorted();
@@ -73,20 +74,25 @@ List<RouteDirectory> _getRouteDirectories({
       ? directorySegment
       : '/$directorySegment';
   // Only add nested middleware -- global middleware is added separately.
-  MiddlewareFile? middleware;
+  MiddlewareFile? currentMiddleware;
   if (directory.path != path.join(Directory.current.path, 'routes')) {
     final middlewareFile = File(path.join(directory.path, '_middleware.dart'));
     if (middlewareFile.existsSync()) {
       final middlewarePath = path
           .relative(middlewareFile.path, from: routesDirectory.path)
           .replaceAll(r'\', '/');
-      middleware = MiddlewareFile(
+      currentMiddleware = MiddlewareFile(
         name: middlewarePath.toAlias(),
         path: path.join('..', 'routes', middlewarePath).replaceAll(r'\', '/'),
       );
-      onMiddleware(middleware);
+      onMiddleware(currentMiddleware);
     }
   }
+
+  final middleware = [
+    ...cascadingMiddleware,
+    if (currentMiddleware != null) currentMiddleware,
+  ];
 
   final files = _getRouteFiles(
     directory: directory,
@@ -95,25 +101,27 @@ List<RouteDirectory> _getRouteDirectories({
     onRogueRoute: onRogueRoute,
   );
 
-  final baseRoute = directoryPath.toRoute();
-  for (final file in files) {
-    var endpoint = (baseRoute + file.route.toRoute()).replaceAll('//', '/');
-    if (endpoint.endsWith('/')) {
-      endpoint = endpoint.substring(0, endpoint.length - 1);
+  if (files.isNotEmpty) {
+    final baseRoute = directoryPath.toRoute();
+    for (final file in files) {
+      var endpoint = (baseRoute + file.route.toRoute()).replaceAll('//', '/');
+      if (endpoint.endsWith('/')) {
+        endpoint = endpoint.substring(0, endpoint.length - 1);
+      }
+      if (endpoint.isEmpty) endpoint = '/';
+      onEndpoint(endpoint, file);
     }
-    if (endpoint.isEmpty) endpoint = '/';
-    onEndpoint(endpoint, file);
-  }
 
-  directories.add(
-    RouteDirectory(
-      name: directoryPath.toAlias(),
-      route: baseRoute,
-      middleware: middleware,
-      files: files,
-      params: directoryPath.toParams(),
-    ),
-  );
+    directories.add(
+      RouteDirectory(
+        name: directoryPath.toAlias(),
+        route: baseRoute,
+        middleware: middleware,
+        files: files,
+        params: directoryPath.toParams(),
+      ),
+    );
+  }
 
   entities.whereType<Directory>().forEach((directory) {
     directories.addAll(
@@ -124,6 +132,7 @@ List<RouteDirectory> _getRouteDirectories({
         onMiddleware: onMiddleware,
         onEndpoint: onEndpoint,
         onRogueRoute: onRogueRoute,
+        cascadingMiddleware: middleware,
       ),
     );
   });
@@ -319,8 +328,8 @@ class RouteDirectory {
   /// The dynamic route params associated with the directory.
   final List<String> params;
 
-  /// Optional middleware for the provided router.
-  final MiddlewareFile? middleware;
+  /// List of middleware for the provided router.
+  final List<MiddlewareFile> middleware;
 
   /// A list of nested route files within the directory.
   final List<RouteFile> files;
@@ -329,7 +338,7 @@ class RouteDirectory {
   RouteDirectory copyWith({
     String? name,
     String? route,
-    MiddlewareFile? middleware,
+    List<MiddlewareFile>? middleware,
     List<RouteFile>? files,
     List<String>? params,
   }) {
@@ -347,7 +356,7 @@ class RouteDirectory {
     return <String, dynamic>{
       'name': name,
       'route': route,
-      'middleware': middleware?.toJson() ?? false,
+      'middleware': middleware.map((m) => m.toJson()).toList(),
       'files': files.map((f) => f.toJson()).toList(),
       'directory_params': params,
     };
