@@ -9,7 +9,7 @@ void main() {
       final original = RouteDirectory(
         name: 'index',
         route: '/',
-        middleware: null,
+        middleware: [],
         files: [],
         params: [],
       );
@@ -25,20 +25,20 @@ void main() {
       final original = RouteDirectory(
         name: 'index',
         route: '/',
-        middleware: null,
+        middleware: [],
         files: [],
         params: [],
       );
       final copy = original.copyWith(
         name: 'copy',
         route: '/copy',
-        middleware: MiddlewareFile(name: '/', path: '/'),
+        middleware: [MiddlewareFile(name: '/', path: '/')],
         files: [],
         params: ['copy'],
       );
       expect(copy.name, equals('copy'));
       expect(copy.route, equals('/copy'));
-      expect(copy.middleware, isNotNull);
+      expect(copy.middleware, isNotEmpty);
       expect(copy.files, isEmpty);
       expect(copy.params, equals(['copy']));
     });
@@ -47,7 +47,7 @@ void main() {
       final routeDirectory = RouteDirectory(
         name: 'index',
         route: '/api/v1/users/<id>',
-        middleware: null,
+        middleware: [],
         files: [
           RouteFile(
             name: 'name',
@@ -63,7 +63,7 @@ void main() {
         equals(<String, dynamic>{
           'name': 'index',
           'route': '/api/v1/users/<id>',
-          'middleware': false,
+          'middleware': <Map<String, dynamic>>[],
           'files': [
             <String, dynamic>{
               'name': 'name',
