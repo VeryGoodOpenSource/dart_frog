@@ -1,0 +1,34 @@
+name: examples/kitchen_sink
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+    paths:
+      - "examples/kitchen_sink/routes/**"
+      - "examples/kitchen_sink/lib/**"
+      - "examples/kitchen_sink/test/**"
+      - "examples/kitchen_sink/e2e/**"
+      - ".github/workflows/examples_kitchen_sink.yaml"
+      - "packages/dart_frog/lib/**"
+      - "packages/dart_frog/pubspec.yaml"
+      - "packages/dart_frog_cli/lib/**"
+      - "packages/dart_frog_cli/pubspec.yaml"
+    branches:
+      - main
+
+jobs:
+  build:
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@v1
+    with:
+      working_directory: examples/kitchen_sink
+      analyze_directories: "routes test"
+      report_on: "routes"
+
+  docker:
+    uses: ./.github/workflows/.docker_tests.yaml
+    with:
+      setup: rm pubspec_overrides.yaml && dart pub global activate --source path ../../packages/dart_frog_cli
+      working_directory: examples/kitchen_sink
