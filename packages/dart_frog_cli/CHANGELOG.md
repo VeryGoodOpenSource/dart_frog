@@ -1,3 +1,7 @@
+# 0.2.2
+
+- fix: nested dynamic route resolution
+
 # 0.2.1
 
 - fix: support cascading middleware
