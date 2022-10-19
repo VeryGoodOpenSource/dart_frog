@@ -622,6 +622,44 @@ void main() {
     expect(catchAllResponse.body, equals('catch-all-handler'));
   });
 
+  test('dynamic routes mountedParams', () async {
+    final context = _MockRequestContext();
+
+    final usersRouter = () {
+      final router = Router();
+
+      String getUser(RequestContext c) => c.mountedParams['user']!;
+
+      router.get(
+        '/self',
+        (RequestContext context) => Response(body: "I'm ${getUser(context)}"),
+      );
+      return router;
+    }();
+
+    final app = Router()
+      ..mount('/users/<user>', (
+        RequestContext context,
+        String user,
+      ) {
+        return usersRouter(context);
+      });
+
+    server.mount((request) async {
+      when(() => context.request).thenReturn(
+        Request(request.method, request.requestedUri),
+      );
+      final response = await app.call(context);
+      final body = await response.body();
+      return shelf.Response(response.statusCode, body: body);
+    });
+
+    final response = await http.get(
+      Uri.parse('${server.url}/users/jack/self'),
+    );
+    expect(response.body, equals("I'm jack"));
+  });
+
   group('RouterEntry', () {
     void testPattern(
       String pattern, {
