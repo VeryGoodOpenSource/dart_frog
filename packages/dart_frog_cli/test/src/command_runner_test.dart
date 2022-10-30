@@ -82,6 +82,18 @@ void main() {
     });
 
     group('run', () {
+      test('ensures usage is shown on invalid flags', () async {
+        final exitCode = await commandRunner.run(['--bogus-flag']);
+        expect(exitCode, ExitCode.usage.code);
+        verify(
+          () => logger.err(
+            any(
+              that: startsWith('Could not find an option named "bogus-flag".'),
+            ),
+          ),
+        );
+      });
+
       test('checks for updates on sigint', () async {
         final exitCalls = <int>[];
         commandRunner = DartFrogCommandRunner(
