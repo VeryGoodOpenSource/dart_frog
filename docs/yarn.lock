@@ -1444,10 +1444,10 @@
     postcss-sort-media-queries "^4.2.1"
     tslib "^2.4.0"
 
-"@docusaurus/eslint-plugin@^2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@docusaurus/eslint-plugin/-/eslint-plugin-2.1.0.tgz#c1d6718d82cb3cfa6d757c456bc08802f2f4759d"
-  integrity sha512-OCMGVORXDEXyPMjY9Qnoyd6THT/2wxtOgkMm3FZf2EHWVJB+EJap0Q2slCNViyvhryb2qpQT5vIIDSP5UAz8bA==
+"@docusaurus/eslint-plugin@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@docusaurus/eslint-plugin/-/eslint-plugin-2.2.0.tgz#c840feb7126a7f0139c746ec3f5c419600c1c5a1"
+  integrity sha512-bz50+EZr8IMIKaupBGXxHrfYCPcNtnzh9FLbxQrlCzesSyUnlKwMOdhH0i+uTrjpZC3OPo0NSf9cz6bBabN/wg==
   dependencies:
     "@typescript-eslint/utils" "^5.30.5"
     tslib "^2.4.0"
