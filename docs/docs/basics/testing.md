@@ -44,7 +44,7 @@ void main() {
       final context = _MockRequestContext();
 
       // Act
-      final response = route.onRequest(context);
+      final response = await route.onRequest(context);
 
       // Assert
       expect(response.statusCode, equals(HttpStatus.ok));
@@ -89,7 +89,7 @@ void main() {
       when(() => context.read<String>()).thenReturn(greeting);
 
       // Act
-      final response = route.onRequest(context);
+      final response = await route.onRequest(context);
 
       // Assert
       expect(response.statusCode, equals(HttpStatus.ok));
