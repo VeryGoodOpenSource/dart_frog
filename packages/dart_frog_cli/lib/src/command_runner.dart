@@ -50,11 +50,17 @@ class DartFrogCommandRunner extends CommandRunner<int> {
 
   @override
   Future<int> run(Iterable<String> args) async {
-    final argResults = parse(args);
-    late final int exitCode;
+    late final ArgResults argResults;
+    try {
+      argResults = parse(args);
+    } on UsageException catch (error) {
+      _logger.err('$error');
+      return ExitCode.usage.code;
+    }
 
     _sigint.watch().listen(_onSigint);
 
+    late final int exitCode;
     try {
       exitCode = await runCommand(argResults) ?? ExitCode.success.code;
     } catch (error) {

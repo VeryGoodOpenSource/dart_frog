@@ -82,6 +82,26 @@ void main() {
     });
 
     group('run', () {
+      test('shows usage when invalid option is passed', () async {
+        final exitCode = await commandRunner.run(['--invalid-option']);
+        expect(exitCode, ExitCode.usage.code);
+        verify(
+          () => logger.err(
+            any(
+              that: predicate<String>((message) {
+                final containsError = message.contains(
+                  'Could not find an option named "invalid-option".',
+                );
+                final containsUsage = message.contains(
+                  'Usage: dart_frog <command> [arguments]',
+                );
+                return containsError && containsUsage;
+              }),
+            ),
+          ),
+        ).called(1);
+      });
+
       test('checks for updates on sigint', () async {
         final exitCalls = <int>[];
         commandRunner = DartFrogCommandRunner(
