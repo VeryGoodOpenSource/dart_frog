@@ -83,15 +83,23 @@ void main() {
 
     group('run', () {
       test('ensures usage is shown on invalid flags', () async {
-        final exitCode = await commandRunner.run(['--bogus-flag']);
+        final exitCode = await commandRunner.run(['--invalid-flag']);
         expect(exitCode, ExitCode.usage.code);
         verify(
           () => logger.err(
             any(
-              that: startsWith('Could not find an option named "bogus-flag".'),
+              that: predicate<String>((message) {
+                final containsError = message.contains(
+                  'Could not find an option named "invalid-flag".',
+                );
+                final containsUsage = message.contains(
+                  'Usage: dart_frog <command> [arguments]',
+                );
+                return containsError && containsUsage;
+              }),
             ),
           ),
-        );
+        ).called(1);
       });
 
       test('checks for updates on sigint', () async {
