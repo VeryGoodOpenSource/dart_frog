@@ -82,15 +82,15 @@ void main() {
     });
 
     group('run', () {
-      test('ensures usage is shown on invalid flags', () async {
-        final exitCode = await commandRunner.run(['--invalid-flag']);
+      test('shows usage when invalid option is passed', () async {
+        final exitCode = await commandRunner.run(['--invalid-option']);
         expect(exitCode, ExitCode.usage.code);
         verify(
           () => logger.err(
             any(
               that: predicate<String>((message) {
                 final containsError = message.contains(
-                  'Could not find an option named "invalid-flag".',
+                  'Could not find an option named "invalid-option".',
                 );
                 final containsUsage = message.contains(
                   'Usage: dart_frog <command> [arguments]',
