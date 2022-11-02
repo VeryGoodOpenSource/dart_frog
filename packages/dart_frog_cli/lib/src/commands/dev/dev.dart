@@ -73,12 +73,19 @@ class DevCommand extends DartFrogCommand {
         _sigint = sigint ?? io.ProcessSignal.sigint,
         _startProcess = startProcess ?? io.Process.start,
         _generatorTarget = generatorTarget ?? _defaultGeneratorTarget {
-    argParser.addOption(
-      'port',
-      abbr: 'p',
-      defaultsTo: '8080',
-      help: 'Which port number the server should start on.',
-    );
+    argParser
+      ..addOption(
+        'port',
+        abbr: 'p',
+        defaultsTo: '8080',
+        help: 'Which port number the server should start on.',
+      )
+      ..addFlag(
+        'write-service-info',
+        abbr: 'w',
+        defaultsTo: true,
+        help: 'Which port number the server should start on.',
+      );
   }
 
   final void Function(Directory) _ensureRuntimeCompatibility;
@@ -134,12 +141,31 @@ class DevCommand extends DartFrogCommand {
     }
 
     Future<void> serve() async {
-      logger.detail(
-        '''[process] dart --enable-vm-service ${path.join('.dart_frog', 'server.dart')}''',
+      const dartFrogPath = '.dart_frog';
+      final serverDartPath = path.join(dartFrogPath, 'server.dart');
+      // The dart option requires a URI,
+      // and absolute path would be most appropriate.
+
+      // $ dart --write-service-info=<file_uri>
+      late final vmServiceInfo = path.toUri(
+        path.join(Directory.current.path, dartFrogPath, 'vm-service-info.json'),
       );
+
+      final resultsContain = results.arguments.contains;
+      final shouldWriteVmServiceInfo =
+          resultsContain('--write-service-info') || resultsContain('-w');
+
+      logger.detail(
+        '''[process] dart --enable-vm-service $serverDartPath''',
+      );
+
       final process = await _startProcess(
         'dart',
-        ['--enable-vm-service', path.join('.dart_frog', 'server.dart')],
+        [
+          '--enable-vm-service',
+          if (shouldWriteVmServiceInfo) '--write-service-info=$vmServiceInfo',
+          serverDartPath,
+        ],
         runInShell: true,
       );
 
