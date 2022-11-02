@@ -1,3 +1,7 @@
+# 0.2.3
+
+- fix: handle `UsageException` when invalid option is passed
+
 # 0.2.2
 
 - fix: nested dynamic route resolution
