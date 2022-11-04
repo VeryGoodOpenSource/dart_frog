@@ -121,10 +121,10 @@ class Request {
   /// The body as a string.
   Future<String> body() => _request.readAsString();
 
-  /// The body as json (`Map<String, dynamic>`).
-  Future<Map<String, dynamic>> json() async {
-    return jsonDecode(await _request.readAsString()) as Map<String, dynamic>;
-  }
+  /// The body as a json object.
+  /// This object could be anything that can be represented by json
+  /// e.g. a map, a list, a string, a number, a bool...
+  Future<dynamic> json() async => jsonDecode(await _request.readAsString());
 
   /// Creates a new [Request] by copying existing values and applying specified
   /// changes.
