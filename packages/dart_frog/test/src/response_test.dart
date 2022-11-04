@@ -19,10 +19,15 @@ void main() {
       });
     });
 
-    test('has correct body', () {
+    test('has correct body (string)', () {
       const body = 'test-body';
       final response = Response(body: body);
       expect(response.body(), completion(equals(body)));
+    });
+
+    test('has correct body (empty)', () {
+      final response = Response();
+      expect(response.body(), completion(isEmpty));
     });
 
     test('has correct headers', () {
@@ -90,6 +95,11 @@ void main() {
         const body = false;
         final response = Response.json(body: body);
         expect(response.json(), completion(equals(body)));
+      });
+
+      test('has correct body (empty)', () {
+        final response = Response.json();
+        expect(response.json(), completion(isEmpty));
       });
     });
   });
