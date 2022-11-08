@@ -1,3 +1,7 @@
+# 0.3.0
+
+- feat: upgrade to dart_frog ^0.3.0
+
 # 0.2.4
 
 - fix: hook execution after pub cache clean
