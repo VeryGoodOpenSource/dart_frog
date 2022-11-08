@@ -1,3 +1,7 @@
+# 0.2.4
+
+- fix: hook execution after pub cache clean
+
 # 0.2.3
 
 - fix: handle `UsageException` when invalid option is passed
