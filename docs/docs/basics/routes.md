@@ -85,7 +85,7 @@ Response onRequest(RequestContext context) {
   // Access the incoming request.
   final request = context.request;
 
-  // Access the headers as a `Map<String, String`.
+  // Access the headers as a `Map<String, String>`.
   final headers = request.headers;
 
   // Do something with the headers...
@@ -105,7 +105,7 @@ Response onRequest(RequestContext context) {
   // Access the incoming request.
   final request = context.request;
 
-  // Access the query parameters as a `Map<String, String`.
+  // Access the query parameters as a `Map<String, String>`.
   final params = request.uri.queryParameters;
 
   // Get the value for the key `name`.
