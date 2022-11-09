@@ -22,7 +22,7 @@ Handler middleware(Handler handler) {
 }
 ```
 
-We can later access the provided via from within a route handler using `context.read<T>()`:
+We can later access the provided `String` from within a route handler using `context.read<T>()`:
 
 ```dart
 import 'package:dart_frog/dart_frog.dart';
