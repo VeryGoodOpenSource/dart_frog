@@ -1,3 +1,7 @@
+# 0.3.0
+
+- **BREAKING** fix: `Request.json()` and `Response.json()` return `Future<dynamic>`
+
 # 0.2.0
 
 - **BREAKING** feat: support mounting dynamic routes

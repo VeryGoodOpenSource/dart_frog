@@ -17,6 +17,11 @@ void main() {
       expect(request.uri, equals(localhost));
     });
 
+    test('has correct body (empty)', () {
+      final request = Request('GET', localhost);
+      expect(request.body(), completion(isEmpty));
+    });
+
     test('has correct body (string)', () {
       const body = '__test_body__';
       final request = Request('GET', localhost, body: body);
@@ -91,6 +96,46 @@ void main() {
       test('has correct method', () {
         final request = Request.put(localhost);
         expect(request.method, equals(HttpMethod.put));
+      });
+    });
+
+    group('bytes', () {
+      test('has correct body', () {
+        final bytes = utf8.encode('hello');
+        final request = Request.get(localhost, body: bytes);
+        expect(request.bytes(), emits(equals(bytes)));
+      });
+    });
+
+    group('json', () {
+      test('has correct body (map)', () {
+        final body = <String, dynamic>{'foo': 'bar'};
+        final request = Request.get(localhost, body: json.encode(body));
+        expect(request.json(), completion(equals(body)));
+      });
+
+      test('has correct body (list)', () {
+        final body = <String>['foo', 'bar'];
+        final request = Request.get(localhost, body: json.encode(body));
+        expect(request.json(), completion(equals(body)));
+      });
+
+      test('has correct body (string)', () {
+        const body = 'foo';
+        final request = Request.get(localhost, body: json.encode(body));
+        expect(request.json(), completion(equals(body)));
+      });
+
+      test('has correct body (number)', () {
+        const body = 42.0;
+        final request = Request.get(localhost, body: json.encode(body));
+        expect(request.json(), completion(equals(body)));
+      });
+
+      test('has correct body (bool)', () {
+        const body = false;
+        final request = Request.get(localhost, body: json.encode(body));
+        expect(request.json(), completion(equals(body)));
       });
     });
   });

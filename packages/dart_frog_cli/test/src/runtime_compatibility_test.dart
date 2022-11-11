@@ -21,9 +21,9 @@ void main() {
   group('isCompatibleWithDartFrog', () {
     test('returns true when the dart_frog version is compatible', () {
       final compatibleVersions = [
-        VersionConstraint.parse('0.2.0'),
-        VersionConstraint.parse('^0.2.0'),
-        VersionConstraint.parse('>=0.2.0 <0.3.0'),
+        VersionConstraint.parse('0.3.0'),
+        VersionConstraint.parse('^0.3.0'),
+        VersionConstraint.parse('>=0.3.0 <0.4.0'),
       ];
       for (final version in compatibleVersions) {
         expect(isCompatibleWithDartFrog(version), isTrue);
