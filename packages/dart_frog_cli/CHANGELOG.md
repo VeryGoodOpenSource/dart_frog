@@ -1,3 +1,8 @@
+# 0.3.1
+
+- feat: upgrade to mason ^0.1.0-dev.38
+  - perf: significant decrease in hook startup times
+
 # 0.3.0
 
 - feat: upgrade to dart_frog ^0.3.0
