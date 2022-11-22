@@ -27,5 +27,12 @@ dev_dependencies:
   test: ^1.19.2
   very_good_analysis: ^3.1.0
 
+dependency_overrides:
+  mason:
+    git:
+      url: https://github.com/felangel/mason
+      path: packages/mason
+      ref: feat/hooks-relative-imports
+
 executables:
   dart_frog:
