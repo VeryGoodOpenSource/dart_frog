@@ -21,8 +21,17 @@ void main() {
   });
 
   group('POST /', () {
+    final contentTypeFormUrlEncodedHeader = {
+      HttpHeaders.contentTypeHeader: ContentType(
+        'application',
+        'x-www-form-urlencoded',
+      ).mimeType,
+    };
     test('responds with a 200 and an empty project configuration', () async {
-      final request = Request.post(Uri.parse('http://localhost/'));
+      final request = Request.post(
+        Uri.parse('http://localhost/'),
+        headers: contentTypeFormUrlEncodedHeader,
+      );
       final context = _MockRequestContext();
       when(() => context.request).thenReturn(request);
       final response = await route.onRequest(context);
@@ -36,6 +45,7 @@ void main() {
     test('responds with a 200 and a populated project configuration', () async {
       final request = Request.post(
         Uri.parse('http://localhost/'),
+        headers: contentTypeFormUrlEncodedHeader,
         body: 'name=my_app&version=3.3.8',
       );
       final context = _MockRequestContext();
