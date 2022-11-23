@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
+import 'package:dart_frog/src/body_parsers/form_data.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -63,6 +64,46 @@ void main() {
         final bytes = utf8.encode('hello');
         final response = Response.bytes(body: bytes);
         expect(response.bytes(), emits(equals(bytes)));
+      });
+    });
+
+    group('formData', () {
+      final contentTypeFormUrlEncoded = {
+        HttpHeaders.contentTypeHeader: formUrlEncodedContentType.mimeType
+      };
+
+      test('throws StateError on invalid content-type', () async {
+        final response = Response();
+        expect(response.formData(), throwsStateError);
+      });
+
+      test('has correct data (no body)', () async {
+        final response = Response(headers: contentTypeFormUrlEncoded);
+        expect(response.formData(), completion(equals({})));
+      });
+
+      test('has correct data (empty body)', () async {
+        final response = Response(headers: contentTypeFormUrlEncoded, body: '');
+        expect(response.formData(), completion(equals({})));
+      });
+
+      test('has correct data (single key/value pair)', () async {
+        final response = Response(
+          headers: contentTypeFormUrlEncoded,
+          body: 'foo=bar',
+        );
+        expect(response.formData(), completion(equals({'foo': 'bar'})));
+      });
+
+      test('has correct data (multiple key/value pairs)', () async {
+        final response = Response(
+          headers: contentTypeFormUrlEncoded,
+          body: 'foo=bar&bar=baz',
+        );
+        expect(
+          response.formData(),
+          completion(equals({'foo': 'bar', 'bar': 'baz'})),
+        );
       });
     });
 
