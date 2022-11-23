@@ -28,9 +28,7 @@ void main() {
       expect(response.statusCode, equals(HttpStatus.ok));
       expect(
         response.body,
-        equals({
-          'project_configuration': {'name': 'my_app', 'version': '3.0.0'}
-        }),
+        equals('{"project_configuration":{"name":"my_app","version":"3.0.0"}}'),
       );
     });
   });
