@@ -115,13 +115,18 @@ class Request {
     return HttpMethod.values.firstWhere((m) => m.value == _request.method);
   }
 
-  /// The body as a byte array stream.
+  /// Returns a [Stream] representing the body.
   Stream<List<int>> bytes() => _request.read();
 
-  /// The body as a string.
+  /// Returns a [Future] containing the body as a [String].
   Future<String> body() => _request.readAsString();
 
-  /// The body as a json object.
+  /// Returns a [Future] containing the form data as a [Map].
+  Future<Map<String, String>> formData() {
+    return parseFormData(headers: headers, body: body);
+  }
+
+  /// Returns a [Future] containing the body text parsed as a json object.
   /// This object could be anything that can be represented by json
   /// e.g. a map, a list, a string, a number, a bool...
   Future<dynamic> json() async => jsonDecode(await _request.readAsString());
