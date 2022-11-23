@@ -1,3 +1,7 @@
+# 0.3.1
+
+- feat: add `formData` to `Request`/`Response`
+
 # 0.3.0
 
 - **BREAKING** fix: `Request.json()` and `Response.json()` return `Future<dynamic>`
