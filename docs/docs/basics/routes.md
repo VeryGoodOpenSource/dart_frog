@@ -165,8 +165,77 @@ curl --request POST \
 The body is "Hello!".
 ```
 
-:::tip
+#### JSON
+
 When the `Content-Type` is `application/json`, you can use `context.request.json()` to read the contents of the request body as a `Map<String, dynamic>`.
+
+```dart
+import 'package:dart_frog/dart_frog.dart';
+
+Future<Response> onRequest(RequestContext context) async {
+  // Access the incoming request.
+  final request = context.request;
+
+  // Access the request body as parsed `JSON`.
+  final body = await request.json();
+
+  return Response.json(body: {'request_body': body});
+}
+```
+
+We can make a request to the above handler with some data and we should see:
+
+```
+curl --request POST \
+  --url http://localhost:8080/example \
+  --header 'Content-Type: application/json' \
+  --data '{
+  "hello": "world"
+}'
+
+{
+  "request_body": {
+    "hello": "world"
+  }
+}
+```
+
+#### Form Data
+
+When the `Content-Type` is `application/x-www-form-urlencoded`, you can use `context.request.formData()` to read the contents of the request body as a `Map<String, String>`.
+
+```dart
+import 'package:dart_frog/dart_frog.dart';
+
+Future<Response> onRequest(RequestContext context) async {
+  // Access the incoming request.
+  final request = context.request;
+
+  // Access the request body form data.
+  final body = await request.formData();
+
+  return Response.json(body: {'request_body': body});
+}
+```
+
+```
+curl --request POST \
+  --url http://localhost:8080/example \
+  --data hello=world
+
+{
+  "request_body": {
+    "hello": "world"
+  }
+}
+```
+
+:::info
+The `formData` API is supported in `dart_frog >=0.3.1`
+:::
+
+:::caution
+`request.formData()` will throw a `StateError` if the MIME type is not `application/x-www-form-urlencoded`.
 :::
 
 ## Responses 📤
