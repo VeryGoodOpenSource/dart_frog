@@ -32,7 +32,7 @@ dependency_overrides:
     git:
       url: https://github.com/felangel/mason
       path: packages/mason
-      ref: feat/hooks-relative-imports
+      ref: 95acdb30bd8e0151a6dd36bb4b84a0bacfa32289
 
 executables:
   dart_frog:
