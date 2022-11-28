@@ -45,6 +45,44 @@ void main() {
       expect(path.basename(entities.first.path), equals(projectName));
     });
 
+    test('creates the project directory with a custom Dockerfile', () async {
+      final customDockerFileContents = '''
+# My Custom Dockerfile
+FROM dart:2.18 AS build
+
+WORKDIR /app
+
+COPY pubspec.* ./
+RUN dart pub get
+
+COPY . .
+
+RUN dart pub get --offline
+RUN dart compile exe bin/server.dart -o bin/server
+
+FROM scratch
+COPY --from=build /runtime/ /
+COPY --from=build /app/bin/server /app/bin/
+
+CMD ["/app/bin/server"]
+''';
+      final tempDirectory = Directory.systemTemp.createTempSync();
+      final projectDirectoryPath = path.join(tempDirectory.path, projectName);
+      final projectDirectory = Directory(projectDirectoryPath);
+      await dartFrogCreate(projectName: projectName, directory: tempDirectory);
+      File(
+        path.join(projectDirectoryPath, 'Dockerfile'),
+      ).writeAsStringSync(customDockerFileContents);
+      await dartFrogBuild(directory: projectDirectory);
+      expect(
+        File(
+          path.join(projectDirectoryPath, 'build', 'Dockerfile'),
+        ).readAsStringSync(),
+        equals(customDockerFileContents),
+      );
+      await tempDirectory.delete(recursive: true);
+    });
+
     testServer('GET / returns 200 with greeting', (host) async {
       final response = await http.get(Uri.parse(host));
       expect(response.statusCode, equals(HttpStatus.ok));
