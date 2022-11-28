@@ -3,6 +3,8 @@ sidebar_position: 2
 title: 🐳 Custom Dockerfile
 ---
 
+<!-- cSpell:ignore WORKDIR -->
+
 # Custom Dockerfile 🐳
 
 A `Dockerfile` is automatically generated when creating a production build via the `dart_frog build` command. The generated `Dockerfile` will look roughly like:
