@@ -1,5 +1,6 @@
 ---
 sidebar_position: 1
+title: ☁️ Google Cloud Run
 ---
 
 # Google Cloud Run ☁️

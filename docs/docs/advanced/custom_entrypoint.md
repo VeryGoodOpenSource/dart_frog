@@ -1,5 +1,6 @@
 ---
 sidebar_position: 1
+title: 🎬 Custom Server Entrypoint
 ---
 
 # Custom Server Entrypoint 🎬

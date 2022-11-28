@@ -1,5 +1,6 @@
 ---
 sidebar_position: 3
+title: 🔢 Counter
 description: Build a simple "Counter" application.
 ---
 
