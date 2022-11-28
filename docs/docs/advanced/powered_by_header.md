@@ -1,5 +1,6 @@
 ---
 sidebar_position: 2
+title: 🔋 Powered By Header
 ---
 
 # Powered By Header 🔋

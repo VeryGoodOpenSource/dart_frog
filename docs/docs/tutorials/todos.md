@@ -1,5 +1,6 @@
 ---
 sidebar_position: 4
+title: 🗒 Todos
 description: Build a simple "Todos" application.
 ---
 
