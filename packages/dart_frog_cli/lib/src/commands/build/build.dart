@@ -47,7 +47,7 @@ class BuildCommand extends DartFrogCommand {
     final _ = await generator.generate(
       DirectoryGeneratorTarget(cwd),
       vars: vars,
-      fileConflictResolution: FileConflictResolution.overwrite,
+      fileConflictResolution: FileConflictResolution.skip,
     );
 
     logger.detail('[codegen] running post-gen...');
