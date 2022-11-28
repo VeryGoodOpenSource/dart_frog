@@ -70,9 +70,9 @@ CMD ["/app/bin/server"]
       final projectDirectoryPath = path.join(tempDirectory.path, projectName);
       final projectDirectory = Directory(projectDirectoryPath);
       await dartFrogCreate(projectName: projectName, directory: tempDirectory);
-      File(path.join(projectDirectoryPath, 'Dockerfile'))
-        ..createSync(recursive: true)
-        ..writeAsStringSync(customDockerFileContents);
+      File(
+        path.join(projectDirectoryPath, 'Dockerfile'),
+      ).writeAsStringSync(customDockerFileContents);
       await dartFrogBuild(directory: projectDirectory);
       expect(
         File(
@@ -80,6 +80,7 @@ CMD ["/app/bin/server"]
         ).readAsStringSync(),
         equals(customDockerFileContents),
       );
+      await tempDirectory.delete(recursive: true);
     });
 
     testServer('GET / returns 200 with greeting', (host) async {
