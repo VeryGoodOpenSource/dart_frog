@@ -65,7 +65,7 @@ void main() {
         () => generator.generate(
           any(),
           vars: any(named: 'vars'),
-          fileConflictResolution: FileConflictResolution.skip,
+          fileConflictResolution: FileConflictResolution.overwrite,
         ),
       ).thenAnswer((_) async => []);
       when(
