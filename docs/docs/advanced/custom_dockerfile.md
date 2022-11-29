@@ -3,13 +3,11 @@ sidebar_position: 2
 title: 🐳 Custom Dockerfile
 ---
 
-<!-- cSpell:ignore WORKDIR -->
-
 # Custom Dockerfile 🐳
 
 A `Dockerfile` is automatically generated when creating a production build via the `dart_frog build` command.
 
-To use a custom `Dockerfile`, you can create a `Dockerfile` at the root of the project.
+To use a custom `Dockerfile`, create a `Dockerfile` at the root of the project.
 
 ```
 ├── Dockerfile <-- NEW
@@ -67,8 +65,10 @@ To build your Docker image run:
 docker build . -t dart-frog-app
 ```
 
-Then run your Docker container via:
+Then, run your Docker container via:
 
 ```sh
 docker run -i -t -p 8080:8080 dart-frog-app
 ```
+
+<!-- cSpell:ignore WORKDIR -->
