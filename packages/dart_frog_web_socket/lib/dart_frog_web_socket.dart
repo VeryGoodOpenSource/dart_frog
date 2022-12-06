@@ -1,4 +1,4 @@
-/// Web Socket support for package:dart_frog
+/// WebSocket support for package:dart_frog
 library dart_frog_web_socket;
 
 export 'package:web_socket_channel/web_socket_channel.dart';
