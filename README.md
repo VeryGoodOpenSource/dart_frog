@@ -17,11 +17,12 @@ For official documentation, please visit https://dartfrog.vgv.dev.
 
 ## Packages 📦
 
-| Package                                                                                           | Pub                                                                                                      |
-| ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| [dart_frog](https://github.com/verygoodopensource/dart_frog/tree/main/packages/dart_frog)         | [![pub package](https://img.shields.io/pub/v/dart_frog.svg)](https://pub.dev/packages/dart_frog)         |
-| [dart_frog_gen](https://github.com/verygoodopensource/dart_frog/tree/main/packages/dart_frog_gen) | [![pub package](https://img.shields.io/pub/v/dart_frog_gen.svg)](https://pub.dev/packages/dart_frog_gen) |
-| [dart_frog_cli](https://github.com/verygoodopensource/dart_frog/tree/main/packages/dart_frog_cli) | [![pub package](https://img.shields.io/pub/v/dart_frog_cli.svg)](https://pub.dev/packages/dart_frog_cli) |
+| Package                                                                                                         | Pub                                                                                                                    |
+| --------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| [dart_frog](https://github.com/verygoodopensource/dart_frog/tree/main/packages/dart_frog)                       | [![pub package](https://img.shields.io/pub/v/dart_frog.svg)](https://pub.dev/packages/dart_frog)                       |
+| [dart_frog_gen](https://github.com/verygoodopensource/dart_frog/tree/main/packages/dart_frog_gen)               | [![pub package](https://img.shields.io/pub/v/dart_frog_gen.svg)](https://pub.dev/packages/dart_frog_gen)               |
+| [dart_frog_cli](https://github.com/verygoodopensource/dart_frog/tree/main/packages/dart_frog_cli)               | [![pub package](https://img.shields.io/pub/v/dart_frog_cli.svg)](https://pub.dev/packages/dart_frog_cli)               |
+| [dart_frog_web_socket](https://github.com/verygoodopensource/dart_frog/tree/main/packages/dart_frog_web_socket) | [![pub package](https://img.shields.io/pub/v/dart_frog_web_socket.svg)](https://pub.dev/packages/dart_frog_web_socket) |
 
 ## Quick Start 🚀
 
