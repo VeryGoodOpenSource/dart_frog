@@ -41,6 +41,10 @@ updates:
     schedule:
       interval: "daily"
   - package-ecosystem: "pub"
+    directory: "/examples/kitchen_sink"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
     directory: "/packages/dart_frog_cli"
     schedule:
       interval: "daily"
@@ -54,6 +58,10 @@ updates:
       interval: "daily"
   - package-ecosystem: "pub"
     directory: "/packages/dart_frog"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/dart_frog_web_socket"
     schedule:
       interval: "daily"
   - package-ecosystem: "npm"
