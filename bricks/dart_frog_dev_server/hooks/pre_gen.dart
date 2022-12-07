@@ -35,6 +35,7 @@ Future<void> preGen(
   await reportExternalPathDependencies(context, io.Directory.current);
 
   context.vars = {
+    'name': 'kitchen_sink',
     'port': context.vars['port'] ?? '8080',
     'directories': configuration.directories
         .map((c) => c.toJson())

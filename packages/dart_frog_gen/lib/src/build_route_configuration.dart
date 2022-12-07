@@ -115,6 +115,7 @@ List<RouteDirectory> _getRouteDirectories({
     directories.add(
       RouteDirectory(
         name: directoryPath.toAlias(),
+        resourceName: baseRoute.toResource(),
         route: baseRoute,
         middleware: updatedMiddleware,
         files: files,
@@ -182,6 +183,7 @@ List<RouteFile> _getRouteFiles({
     final relativeFilePath = path.join('..', 'routes', filePath);
     final route = RouteFile(
       name: filePath.toAlias(),
+      endpointName: fileRoute.toEndpoint(),
       path: relativeFilePath.replaceAll(r'\', '/'),
       route: fileRoute.toRoute(),
       params: fileRoute.toParams(),
@@ -202,6 +204,26 @@ List<RouteFile> _getRouteFiles({
 }
 
 extension on String {
+  String toResource() {
+    if (this == '/') return 'root';
+    return path
+        .withoutExtension(this)
+        .replaceAll('<', r'$')
+        .replaceAll('>', '')
+        .replaceAll('/', '_');
+  }
+
+  String toEndpoint() {
+    final endpoint = path
+        .basenameWithoutExtension(this)
+        .replaceAll('[', r'$')
+        .replaceAll(']', '')
+        .replaceAll(r'\', '_')
+        .replaceAll('/', '_');
+    if (endpoint.isEmpty || endpoint == '_') return 'index';
+    return endpoint;
+  }
+
   String toAlias() {
     final alias = path
         .withoutExtension(this)
@@ -313,6 +335,7 @@ class RouteDirectory {
   /// {@macro route_directory}
   const RouteDirectory({
     required this.name,
+    required this.resourceName,
     required this.route,
     required this.middleware,
     required this.files,
@@ -321,6 +344,9 @@ class RouteDirectory {
 
   /// The alias for the current directory.
   final String name;
+
+  /// The name for the associated API resource.
+  final String resourceName;
 
   /// The route which will be used to mount routers.
   final String route;
@@ -337,6 +363,7 @@ class RouteDirectory {
   /// Create a copy of the current instance and override zero or more values.
   RouteDirectory copyWith({
     String? name,
+    String? resourceName,
     String? route,
     List<MiddlewareFile>? middleware,
     List<RouteFile>? files,
@@ -344,6 +371,7 @@ class RouteDirectory {
   }) {
     return RouteDirectory(
       name: name ?? this.name,
+      resourceName: resourceName ?? this.resourceName,
       route: route ?? this.route,
       middleware: middleware ?? this.middleware,
       files: files ?? this.files,
@@ -355,6 +383,7 @@ class RouteDirectory {
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'name': name,
+      'resource_name': resourceName,
       'route': route,
       'middleware': middleware.map((m) => m.toJson()).toList(),
       'files': files.map((f) => f.toJson()).toList(),
@@ -370,6 +399,7 @@ class RouteFile {
   /// {@macro route_file}
   const RouteFile({
     required this.name,
+    required this.endpointName,
     required this.path,
     required this.route,
     required this.params,
@@ -377,6 +407,9 @@ class RouteFile {
 
   /// The alias for the current file.
   final String name;
+
+  /// The name for the respective endpoint.
+  final String endpointName;
 
   /// The import path for the current instance.
   final String path;
@@ -390,12 +423,14 @@ class RouteFile {
   /// Create a copy of the current instance and override zero or more values.
   RouteFile copyWith({
     String? name,
+    String? endpointName,
     String? path,
     String? route,
     List<String>? params,
   }) {
     return RouteFile(
       name: name ?? this.name,
+      endpointName: endpointName ?? this.endpointName,
       path: path ?? this.path,
       route: route ?? this.route,
       params: params ?? this.params,
@@ -406,6 +441,7 @@ class RouteFile {
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'name': name,
+      'endpoint_name': endpointName,
       'path': path,
       'route': route,
       'file_params': params,
