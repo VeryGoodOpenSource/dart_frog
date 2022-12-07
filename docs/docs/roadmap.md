@@ -45,7 +45,7 @@ In the interest of transparency, we want to share high-level details of our road
 - [ ] CLI `new` command to generate new `routes` and `middleware`
 - [ ] Health Check endpoint for monitoring
 - [ ] Logger which can be configured to adhere to standard log formats (https://cloud.google.com/run/docs/logging)
-- [X] WebSocket support
+- [x] WebSocket support
 - [ ] VSCode/IntelliJ support for DartFrog
   - [ ] Create a new project
   - [ ] New Routes
