@@ -1,11 +1,15 @@
 ---
 sidebar_position: 3
-title: 🔌 Working with WebSockets
+title: 🔌 WebSockets
 ---
 
-# Working with WebSockets 🔌
+# WebSockets 🔌
 
 Dart Frog recently introduced [`package:dart_frog_web_socket`](https://pub.dev/packages/dart_frog_web_socket) to make working with WebSockets easier.
+
+:::info
+We added WebSocket support as a separate package to keep the Dart Frog package lightweight, containing only core functionality. In the future, we may add additional packages in order to extend the Dart Frog ecosystem without bloating the core.
+:::
 
 ## Installation
 
@@ -49,9 +53,9 @@ Future<Response> onRequest(RequestContext context) async {
 We need to refactor the request handler to be `async` and return a `Future<Response>` when using the `webSocketHandler`.
 :::
 
-The `webSocketHandler` will handle upgrading HTTP requests to WebSocket connections and provides an `onConnection` callback which exposes the `WebSocketChannel` as well as an optional subprotocol.
+The `webSocketHandler` will handle upgrading `HTTP` requests to WebSocket connections and provides an `onConnection` callback which exposes the `WebSocketChannel` as well as an optional subprotocol.
 
-## Receiving Messages on the Server
+## Receiving Messages from the Client
 
 Next, we can subscribe to the stream of messages exposed by the `WebSocketChannel`:
 
@@ -62,7 +66,7 @@ import 'package:dart_frog_web_socket/dart_frog_web_socket.dart';
 Future<Response> onRequest(RequestContext context) async {
   final handler = webSocketHandler((channel, protocol) {
     channel.stream.listen((message) {
-      // Handle incoming client messages
+      // Handle incoming client messages.
       print(message);
     });
   });
@@ -70,11 +74,11 @@ Future<Response> onRequest(RequestContext context) async {
 }
 ```
 
-For simplicity, we are just printing any messages sent by connected clients.
+For simplicity, we are just printing all messages sent by connected clients.
 
 Before moving on, let's verify that a client is able to establish a connection and send a message to our server. To do this, we'll create a simple client in Dart.
 
-## Sending Messages on the Client
+## Sending Messages from the Client
 
 Create a new directory called `example` at the project root and create a `pubspec.yaml`:
 
@@ -122,7 +126,7 @@ dart_frog dev
 Be sure to run `dart_frog dev` from the project root.
 :::
 
-Once the server is running, in a new terminal, we can run our example client to test the connection:
+Once the server is running in a new terminal, we can run our example client to test the connection:
 
 ```sh
 dart example/main.dart
@@ -138,6 +142,94 @@ The Dart DevTools debugger and profiler is available at: http://127.0.0.1:8181/Y
 hello
 ```
 
-## Sending Messages on the Server
+## Sending Messages from the Server
 
-Now, let's send a message back to the client from the server
+Now, let's send a message back to the client from the server. We can do that by adding a message to the channel sink on the server just like we previously did on the client.
+
+```dart
+import 'package:dart_frog/dart_frog.dart';
+import 'package:dart_frog_web_socket/dart_frog_web_socket.dart';
+
+Future<Response> onRequest(RequestContext context) async {
+  final handler = webSocketHandler((channel, protocol) {
+    channel.stream.listen((message) {
+      // Handle incoming client messages.
+      print(message);
+    });
+
+    // Send a message back to the client.
+    channel.sink.add('hi');
+  });
+  return handler(context);
+}
+```
+
+## Receiving Messages from the Server
+
+Lastly, we need to update the client code to subscribe to messages from the server.
+
+```dart
+import 'package:web_socket_channel/web_socket_channel.dart';
+
+void main() {
+  // Connect to the remote WebSocket endpoint.
+  final uri = Uri.parse('ws://localhost:8080/ws');
+  final channel = WebSocketChannel.connect(uri);
+
+  // Send a message to the server.
+  channel.sink.add('hello');
+
+  // Subscribe to messages from the server.
+  channel.stream.listen((message) {
+    print(message);
+  });
+}
+```
+
+Once we save all the changes and let the server hot reload, we can run the client code again:
+
+```sh
+dart example/main.dart
+```
+
+And we should see the following output:
+
+**Server**
+
+```sh
+[hotreload] Hot reload is enabled.
+hello
+```
+
+**Client**
+
+```sh
+hi
+```
+
+## Simplifying Things Further
+
+To make things even simpler, we can refactor the route handler implementation in cases where the route is only managing WebSocket connections:
+
+```dart
+import 'package:dart_frog/dart_frog.dart';
+import 'package:dart_frog_web_socket/dart_frog_web_socket.dart';
+
+Handler get onRequest {
+  return webSocketHandler((channel, protocol) {
+    channel.stream.listen((message) {
+      // Handle incoming client messages.
+      print(message);
+    });
+
+    // Send a message back to the client.
+    channel.sink.add('hi');
+  });
+}
+```
+
+## Conclusion
+
+That's it! 🎉
+
+We've successfully established a WebSocket connection between the Dart Frog server and a client. We've also demonstrated how messages can be streamed between a server and one or more clients.
