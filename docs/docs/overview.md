@@ -94,3 +94,8 @@ dart_frog build
 🚧 Generated API Documentation 📔
 
 [dart_installation_link]: https://dart.dev/get-dart
+
+
+On a mac with M1 the memory requirement it is:
+The dev server with generated application require: 52.3Mb + 32.5Mb + 167.8Mb = 252.6Mb memory
+The production server with generated application require around 173Mb memory.
