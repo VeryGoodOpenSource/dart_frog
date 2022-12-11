@@ -183,7 +183,7 @@ List<RouteFile> _getRouteFiles({
     final route = RouteFile(
       name: filePath.toAlias(),
       path: relativeFilePath.replaceAll(r'\', '/'),
-      route: fileRoute.toRoute(),      
+      route: fileRoute.toRoute(),
       params: fileRoute.toParams(),
     );
     onRoute(route);
