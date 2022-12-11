@@ -1,9 +1,10 @@
-import '../.dart_frog/kitchen_sink_client/lib/kitchen_sink_client.dart';
+import 'package:kitchen_sink_client/kitchen_sink_client.dart';
 
 void main() async {
   final client = KitchenSinkClient.localhost();
 
-  final response = await client.users$id.$name('1', 'felix').post();
+  final response = await client.usersById('1').byName('Felix').get();
+  print(response.statusCode);
   print(await response.body());
 
   client.close();

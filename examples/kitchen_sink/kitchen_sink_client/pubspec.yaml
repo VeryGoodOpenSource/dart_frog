@@ -1,6 +1,6 @@
-name: {{name.snakeCase()}}_client
-description: The {{name.snakeCase}} Dart Client
-version: 1.0.0+1
+name: kitchen_sink_client
+description: The  Dart Client
+version: 1.0.0+1s
 publish_to: none
 
 environment:

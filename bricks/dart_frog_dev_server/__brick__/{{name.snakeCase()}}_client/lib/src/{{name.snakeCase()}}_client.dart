@@ -20,8 +20,8 @@ class {{name.pascalCase()}}Client {
 
   {{#directories}}
   /// The '{{{route}}}' resource
-  {{resource_name.pascalCase()}}Resource get {{resource_name.camelCase()}} {
-    return {{resource_name.pascalCase()}}Resource(_baseUri, '{{{route}}}', _client);
+  {{resource_name.pascalCase()}}Resource {{resource_name.camelCase()}}({{#directory_params}}String {{.}},{{/directory_params}}) {
+    return {{resource_name.pascalCase()}}Resource(_baseUri, '{{{request_path}}}', _client);
   }{{/directories}}
 
   /// Closes the client and cleans up any resources associated with it.

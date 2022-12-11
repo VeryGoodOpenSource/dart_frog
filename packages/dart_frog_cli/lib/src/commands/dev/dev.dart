@@ -40,9 +40,7 @@ typedef Exit = dynamic Function(int exitCode);
 
 RestorableDirectoryGeneratorTarget _defaultGeneratorTarget(Logger? logger) {
   return RestorableDirectoryGeneratorTarget(
-    io.Directory(
-      path.join(io.Directory.current.path, '.dart_frog'),
-    ),
+    io.Directory.current,
     logger: logger,
   );
 }

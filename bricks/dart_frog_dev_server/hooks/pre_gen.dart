@@ -3,6 +3,8 @@ import 'dart:io' as io;
 
 import 'package:dart_frog_gen/dart_frog_gen.dart';
 import 'package:mason/mason.dart' show HookContext;
+import 'package:path/path.dart' as path;
+import 'package:pubspec_parse/pubspec_parse.dart';
 
 import 'src/exit_overrides.dart';
 import 'src/report_external_path_dependencies.dart';
@@ -30,12 +32,18 @@ Future<void> preGen(
     return exit(1);
   }
 
+  final pubspec = Pubspec.parse(
+    await io.File(
+      path.join(io.Directory.current.path, 'pubspec.yaml'),
+    ).readAsString(),
+  );
+
   reportRouteConflicts(context, configuration);
   reportRogueRoutes(context, configuration);
   await reportExternalPathDependencies(context, io.Directory.current);
 
   context.vars = {
-    'name': 'kitchen_sink',
+    'name': pubspec.name,
     'port': context.vars['port'] ?? '8080',
     'directories': configuration.directories
         .map((c) => c.toJson())

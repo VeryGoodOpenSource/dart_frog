@@ -12,8 +12,8 @@ class {{resource_name.pascalCase()}}Resource {
 
   {{#files}}
   // '{{{route}}}' endpoint
-  Endpoint {{endpoint_name.camelCase()}}({{#directory_params}}String {{.}},{{/directory_params}}{{#file_params}}String {{.}},{{/file_params}}) {
-    const route = '{{{route}}}';
+  Endpoint {{endpoint_name.camelCase()}}({{#file_params}}String {{.}},{{/file_params}}) {
+    final route = '{{{request_path}}}';
     final path = route == '/' ? _path : '$_path$route';
     final uri = Uri.parse('${_uri.toString()}$path');
     return Endpoint(uri, _client);
