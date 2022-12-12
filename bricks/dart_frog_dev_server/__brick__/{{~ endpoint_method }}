@@ -1,4 +1,4 @@
-/// '{{{path}}}' endpoint
+/// The '{{{path}}}' endpoint.
 Endpoint {{name.camelCase()}}({{#params}}String {{.}}{{/params}}) {    
   final uri = Uri.parse('$_uri$_path{{{path}}}');
   return Endpoint(uri, _client);

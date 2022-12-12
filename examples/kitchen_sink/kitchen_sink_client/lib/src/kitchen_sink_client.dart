@@ -20,28 +20,28 @@ class KitchenSinkClient {
   final http.Client _client;
   final Uri _baseUri;
 
-  /// '/' endpoint
+  /// The '/' endpoint.
   Endpoint index() {
     final uri = Uri.parse('$_baseUri/');
     return Endpoint(uri, _client);
   }
 
-  /// The '/greet' resource
+  /// The '/greet' resource.
   GreetResource greet() {
     return GreetResource(_baseUri, '/greet', _client);
   }
 
-  /// The '/projects' resource
+  /// The '/projects' resource.
   ProjectsResource projects() {
     return ProjectsResource(_baseUri, '/projects', _client);
   }
 
-  /// The '/users' resource
+  /// The '/users' resource.
   UsersResource users() {
     return UsersResource(_baseUri, '/users', _client);
   }
 
-  /// The '/api' resource
+  /// The '/api' resource.
   ApiResource api() {
     return ApiResource(_baseUri, '/api', _client);
   }

@@ -16,13 +16,13 @@ class UsersByIdResource {
   final String _path;
   final http.Client _client;
 
-  /// '/' endpoint
+  /// The '/' endpoint.
   Endpoint index() {
     final uri = Uri.parse('$_uri$_path/');
     return Endpoint(uri, _client);
   }
 
-  /// '/$name' endpoint
+  /// The '/$name' endpoint.
   Endpoint byName(String name) {
     final uri = Uri.parse('$_uri$_path/$name');
     return Endpoint(uri, _client);
@@ -40,13 +40,13 @@ class ApiPetsResource {
   final String _path;
   final http.Client _client;
 
-  /// '/' endpoint
+  /// The '/' endpoint.
   Endpoint index() {
     final uri = Uri.parse('$_uri$_path/');
     return Endpoint(uri, _client);
   }
 
-  /// '/$name' endpoint
+  /// The '/$name' endpoint.
   Endpoint byName(String name) {
     final uri = Uri.parse('$_uri$_path/$name');
     return Endpoint(uri, _client);
@@ -64,7 +64,7 @@ class GreetResource {
   final String _path;
   final http.Client _client;
 
-  /// '/$name' endpoint
+  /// The '/$name' endpoint.
   Endpoint byName(String name) {
     final uri = Uri.parse('$_uri$_path/$name');
     return Endpoint(uri, _client);
@@ -82,7 +82,7 @@ class ProjectsResource {
   final String _path;
   final http.Client _client;
 
-  /// '/' endpoint
+  /// The '/' endpoint.
   Endpoint index() {
     final uri = Uri.parse('$_uri$_path/');
     return Endpoint(uri, _client);
@@ -100,7 +100,7 @@ class UsersResource {
   final String _path;
   final http.Client _client;
 
-  /// The '/$id' resource
+  /// The '/$id' resource.
   UsersByIdResource byId(String id) {
     final uri = Uri.parse('$_uri$_path');
     return UsersByIdResource(uri, '/$id', _client);
@@ -118,7 +118,7 @@ class ApiResource {
   final String _path;
   final http.Client _client;
 
-  /// The '/pets' resource
+  /// The '/pets' resource.
   ApiPetsResource pets() {
     final uri = Uri.parse('$_uri$_path');
     return ApiPetsResource(uri, '/pets', _client);
