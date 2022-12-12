@@ -1,3 +1,5 @@
+{{> generated_header }}
+
 import 'package:dart_frog/dart_frog.dart' show HttpMethod;
 
 /// {@template request}

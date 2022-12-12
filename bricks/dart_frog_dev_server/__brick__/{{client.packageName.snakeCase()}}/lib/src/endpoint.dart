@@ -1,7 +1,9 @@
+{{> generated_header }}
+
 import 'package:dart_frog/dart_frog.dart' show HttpMethod, Response;
 import 'package:http/http.dart' as http;
 
-import './request.dart';
+import 'package:{{client.packageName.snakeCase()}}/{{client.packageName.snakeCase()}}.dart';
 
 /// {@template endpoint}
 /// An API endpoint.

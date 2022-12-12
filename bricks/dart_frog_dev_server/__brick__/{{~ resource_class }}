@@ -1,0 +1,17 @@
+/// {@template {{name.snakeCase()}}_resource}
+/// The {{name.pascalCase()}} resource.
+/// {@endtemplate}
+class {{name.pascalCase()}}Resource {
+  /// {@macro {{name.snakeCase()}}_resource}
+  {{name.pascalCase()}}Resource(this._uri, this._path, this._client);
+  
+  final Uri _uri;
+  final String _path;
+  final http.Client _client;
+
+  {{#endpoints}}{{> endpoint_method }}
+  {{/endpoints}}
+
+  {{#resources}}{{> resource_method }}
+  {{/resources}}
+}

@@ -120,6 +120,12 @@ class DevCommand extends DartFrogCommand {
         vars: vars,
         fileConflictResolution: FileConflictResolution.overwrite,
       );
+      logger.detail('[codegen] running post-gen...');
+      await generator.hooks.postGen(
+        vars: vars,
+        workingDirectory: cwd.path,
+        onVarsChanged: (v) => vars = v,
+      );
       logger.detail('[codegen] complete.');
     }
 

@@ -1,7 +1,10 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint
+
 import 'package:dart_frog/dart_frog.dart' show HttpMethod, Response;
 import 'package:http/http.dart' as http;
 
-import './request.dart';
+import 'package:kitchen_sink_client/kitchen_sink_client.dart';
 
 /// {@template endpoint}
 /// An API endpoint.

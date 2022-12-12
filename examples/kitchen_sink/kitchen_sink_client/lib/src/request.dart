@@ -1,3 +1,6 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint
+
 import 'package:dart_frog/dart_frog.dart' show HttpMethod;
 
 /// {@template request}

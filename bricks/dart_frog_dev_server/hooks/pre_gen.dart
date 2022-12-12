@@ -3,8 +3,6 @@ import 'dart:io' as io;
 
 import 'package:dart_frog_gen/dart_frog_gen.dart';
 import 'package:mason/mason.dart' show HookContext;
-import 'package:path/path.dart' as path;
-import 'package:pubspec_parse/pubspec_parse.dart';
 
 import 'src/exit_overrides.dart';
 import 'src/report_external_path_dependencies.dart';
@@ -15,47 +13,54 @@ typedef RouteConfigurationBuilder = RouteConfiguration Function(
   io.Directory directory,
 );
 
+typedef ClientConfigurationBuilder = ClientConfiguration Function(
+  io.Directory directory,
+);
+
 void _defaultExit(int code) => ExitOverrides.current?.exit ?? io.exit;
 
 Future<void> run(HookContext context) async => preGen(context);
 
 Future<void> preGen(
   HookContext context, {
-  RouteConfigurationBuilder buildConfiguration = buildRouteConfiguration,
+  RouteConfigurationBuilder getRouteConfiguration = buildRouteConfiguration,
+  ClientConfigurationBuilder getClientConfiguration = buildClientConfiguration,
   void Function(int exitCode) exit = _defaultExit,
 }) async {
-  final RouteConfiguration configuration;
+  final RouteConfiguration routeConfiguration;
   try {
-    configuration = buildConfiguration(io.Directory.current);
+    routeConfiguration = getRouteConfiguration(io.Directory.current);
   } catch (error) {
     context.logger.err('$error');
     return exit(1);
   }
 
-  final pubspec = Pubspec.parse(
-    await io.File(
-      path.join(io.Directory.current.path, 'pubspec.yaml'),
-    ).readAsString(),
-  );
+  final ClientConfiguration clientConfiguration;
+  try {
+    clientConfiguration = buildClientConfiguration(io.Directory.current);
+  } catch (error) {
+    context.logger.err('$error');
+    return exit(1);
+  }
 
-  reportRouteConflicts(context, configuration);
-  reportRogueRoutes(context, configuration);
+  reportRouteConflicts(context, routeConfiguration);
+  reportRogueRoutes(context, routeConfiguration);
   await reportExternalPathDependencies(context, io.Directory.current);
 
   context.vars = {
-    'name': pubspec.name,
     'port': context.vars['port'] ?? '8080',
-    'directories': configuration.directories
+    'directories': routeConfiguration.directories
         .map((c) => c.toJson())
         .toList()
         .reversed
         .toList(),
-    'routes': configuration.routes.map((r) => r.toJson()).toList(),
-    'middleware': configuration.middleware.map((m) => m.toJson()).toList(),
-    'globalMiddleware': configuration.globalMiddleware != null
-        ? configuration.globalMiddleware!.toJson()
+    'routes': routeConfiguration.routes.map((r) => r.toJson()).toList(),
+    'middleware': routeConfiguration.middleware.map((m) => m.toJson()).toList(),
+    'globalMiddleware': routeConfiguration.globalMiddleware != null
+        ? routeConfiguration.globalMiddleware!.toJson()
         : false,
-    'serveStaticFiles': configuration.serveStaticFiles,
-    'invokeCustomEntrypoint': configuration.invokeCustomEntrypoint,
+    'serveStaticFiles': routeConfiguration.serveStaticFiles,
+    'invokeCustomEntrypoint': routeConfiguration.invokeCustomEntrypoint,
+    'client': clientConfiguration.toJson(),
   };
 }

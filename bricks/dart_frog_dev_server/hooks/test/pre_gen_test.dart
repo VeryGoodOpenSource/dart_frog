@@ -45,12 +45,12 @@ void main() {
       );
     });
 
-    test('exit(1) if buildRouteConfiguration throws', () async {
+    test('exit(1) if getRouteConfiguration throws', () async {
       final exitCalls = <int>[];
       final exception = Exception('oops');
       await preGen(
         context,
-        buildConfiguration: (_) => throw exception,
+        getRouteConfiguration: (_) => throw exception,
         exit: exitCalls.add,
       );
       expect(exitCalls, equals([1]));
@@ -70,7 +70,7 @@ void main() {
       final exitCalls = <int>[];
       await preGen(
         context,
-        buildConfiguration: (_) => configuration,
+        getRouteConfiguration: (_) => configuration,
         exit: exitCalls.add,
       );
       expect(exitCalls, isEmpty);
@@ -103,7 +103,7 @@ void main() {
       final exitCalls = <int>[];
       await preGen(
         context,
-        buildConfiguration: (_) => configuration,
+        getRouteConfiguration: (_) => configuration,
         exit: exitCalls.add,
       );
       expect(exitCalls, isEmpty);
@@ -195,7 +195,7 @@ void main() {
       final exitCalls = <int>[];
       await preGen(
         context,
-        buildConfiguration: (_) => configuration,
+        getRouteConfiguration: (_) => configuration,
         exit: exitCalls.add,
       );
       expect(exitCalls, isEmpty);
