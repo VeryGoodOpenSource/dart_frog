@@ -1,5 +1,5 @@
 /// {@template {{name.snakeCase()}}_resource}
-/// The {{name.pascalCase()}} resource.
+/// The '{{{path}}}' resource.
 /// {@endtemplate}
 class {{name.pascalCase()}}Resource {
   /// {@macro {{name.snakeCase()}}_resource}
@@ -9,9 +9,11 @@ class {{name.pascalCase()}}Resource {
   final String _path;
   final http.Client _client;
 
-  {{#endpoints}}{{> endpoint_method }}
+  {{#endpoints}}
+  {{> endpoint_method }}
   {{/endpoints}}
 
-  {{#resources}}{{> resource_method }}
+  {{#resources}}
+  {{> resource_method }}
   {{/resources}}
 }

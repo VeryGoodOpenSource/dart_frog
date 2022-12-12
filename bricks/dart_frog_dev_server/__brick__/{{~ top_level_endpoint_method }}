@@ -1,5 +1,5 @@
 /// '{{{path}}}' endpoint
-Endpoint {{name.camelCase()}}({{#params}}String {{.}},{{/params}}) {    
+Endpoint {{name.camelCase()}}({{#params}}String {{.}}{{/params}}) {    
   final uri = Uri.parse('$_baseUri{{{path}}}');
   return Endpoint(uri, _client);
 }

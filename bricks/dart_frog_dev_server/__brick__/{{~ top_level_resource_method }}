@@ -1,4 +1,4 @@
 /// The '{{{path}}}' resource
-{{name.pascalCase()}}Resource {{method.camelCase()}}({{#params}}String {{.}},{{/params}}) {
+{{name.pascalCase()}}Resource {{method.camelCase()}}({{#params}}String {{.}}{{/params}}) {
   return {{name.pascalCase()}}Resource(_baseUri, '{{{path}}}', _client);
 }

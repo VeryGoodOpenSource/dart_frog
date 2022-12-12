@@ -19,10 +19,14 @@ class {{client.packageName.pascalCase()}} {
   final http.Client _client;
   final Uri _baseUri;
   
-  {{#client.endpoints}}{{> top_level_endpoint_method }}
+  {{#client.endpoints}}
+  {{> top_level_endpoint_method }}
   {{/client.endpoints}}
-  {{#client.resources}}{{> top_level_resource_method }}
+  
+  {{#client.resources}}
+  {{> top_level_resource_method }}
   {{/client.resources}}
+  
   /// Closes the client and cleans up any resources associated with it.
   void close() => _client.close();
 }

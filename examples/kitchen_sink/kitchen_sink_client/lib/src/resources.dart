@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:kitchen_sink_client/kitchen_sink_client.dart';
 
 /// {@template users_by_id_resource}
-/// The UsersById resource.
+/// The '/$id' resource.
 /// {@endtemplate}
 class UsersByIdResource {
   /// {@macro users_by_id_resource}
@@ -23,16 +23,14 @@ class UsersByIdResource {
   }
 
   /// '/$name' endpoint
-  Endpoint byName(
-    String name,
-  ) {
+  Endpoint byName(String name) {
     final uri = Uri.parse('$_uri$_path/$name');
     return Endpoint(uri, _client);
   }
 }
 
 /// {@template api_pets_resource}
-/// The ApiPets resource.
+/// The '/pets' resource.
 /// {@endtemplate}
 class ApiPetsResource {
   /// {@macro api_pets_resource}
@@ -49,16 +47,14 @@ class ApiPetsResource {
   }
 
   /// '/$name' endpoint
-  Endpoint byName(
-    String name,
-  ) {
+  Endpoint byName(String name) {
     final uri = Uri.parse('$_uri$_path/$name');
     return Endpoint(uri, _client);
   }
 }
 
 /// {@template greet_resource}
-/// The Greet resource.
+/// The '/greet' resource.
 /// {@endtemplate}
 class GreetResource {
   /// {@macro greet_resource}
@@ -69,16 +65,14 @@ class GreetResource {
   final http.Client _client;
 
   /// '/$name' endpoint
-  Endpoint byName(
-    String name,
-  ) {
+  Endpoint byName(String name) {
     final uri = Uri.parse('$_uri$_path/$name');
     return Endpoint(uri, _client);
   }
 }
 
 /// {@template projects_resource}
-/// The Projects resource.
+/// The '/projects' resource.
 /// {@endtemplate}
 class ProjectsResource {
   /// {@macro projects_resource}
@@ -96,7 +90,7 @@ class ProjectsResource {
 }
 
 /// {@template users_resource}
-/// The Users resource.
+/// The '/users' resource.
 /// {@endtemplate}
 class UsersResource {
   /// {@macro users_resource}
@@ -107,16 +101,14 @@ class UsersResource {
   final http.Client _client;
 
   /// The '/$id' resource
-  UsersByIdResource byId(
-    String id,
-  ) {
+  UsersByIdResource byId(String id) {
     final uri = Uri.parse('$_uri$_path');
     return UsersByIdResource(uri, '/$id', _client);
   }
 }
 
 /// {@template api_resource}
-/// The Api resource.
+/// The '/api' resource.
 /// {@endtemplate}
 class ApiResource {
   /// {@macro api_resource}
