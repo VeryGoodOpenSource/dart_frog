@@ -10,6 +10,6 @@ class CounterCubit extends BroadcastCubit<int> {
   /// Increment the current state.
   void increment() => emit(state + 1);
 
-  /// Increment the current state.
+  /// Decrement the current state.
   void decrement() => emit(state - 1);
 }
