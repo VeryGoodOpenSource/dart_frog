@@ -55,8 +55,8 @@ void main() {
 
       socket.send(Message.increment.value);
 
-      await untilCalled(() => counterCubit.increment());
-      verify(() => counterCubit.increment()).called(1);
+      await untilCalled(counterCubit.increment);
+      verify(counterCubit.increment).called(1);
 
       socket.close();
     });
@@ -75,8 +75,28 @@ void main() {
 
       socket.send(Message.decrement.value);
 
-      await untilCalled(() => counterCubit.decrement());
-      verify(() => counterCubit.decrement()).called(1);
+      await untilCalled(counterCubit.decrement);
+      verify(counterCubit.decrement).called(1);
+
+      socket.close();
+    });
+
+    test('ignores invalid messages.', () async {
+      server = await serve(
+        (context) => route.onRequest(
+          context.provide<CounterCubit>(() => counterCubit),
+        ),
+        InternetAddress.anyIPv4,
+        0,
+      );
+      final socket = WebSocket(Uri.parse('ws://localhost:${server.port}'));
+
+      await expectLater(socket.messages, emits(anything));
+
+      socket.send('invalid_message');
+
+      verifyNever(counterCubit.increment);
+      verifyNever(counterCubit.decrement);
 
       socket.close();
     });
