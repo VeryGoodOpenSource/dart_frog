@@ -166,6 +166,10 @@ Future<Response> onRequest(RequestContext context) async {
 }
 ```
 
+:::info
+For more information, refer to the [WebSocket documentation](/docs/advanced/web_socket).
+:::
+
 Save the changes and hot reload should kick in ⚡️
 
 Now we should be able to write a simple script to test the WebSocket connection.
