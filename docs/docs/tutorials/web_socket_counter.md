@@ -43,7 +43,7 @@ We should see the following output:
 
 ## Creating a new app
 
-To create a new Dart Frog app, open your terminal, `cd` into the directory where you'd like to create the app, and run the following command:
+To create a new Dart Frog app, open your terminal, change to the directory where you'd like to create the app, and run the following command:
 
 ```bash
 dart_frog create web_socket_counter
