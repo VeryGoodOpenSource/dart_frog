@@ -404,4 +404,3 @@ If you restart the server, the count will always be reset to 0 because it is onl
 :::
 
 🎉 Congrats, you've created a real-time counter application using Dart Frog. View the [full source code](https://github.com/VeryGoodOpenSource/dart_frog/tree/main/examples/web_socket_counter).
-
