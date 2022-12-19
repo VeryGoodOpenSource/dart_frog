@@ -10,7 +10,7 @@ description: Build a real time "Counter" powered by WebSockets.
 **Difficulty**: 🟠 Intermediate<br/>
 **Length**: 30 minutes
 
-Before getting started, [read the prerequisites](/docs/overview#prerequisites) to make sure your development environment is ready.
+Before getting started, [read the Dart Frog prerequisites](/docs/overview#prerequisites) to make sure your development environment is ready.
 :::
 
 ## Overview
@@ -65,7 +65,7 @@ dart_frog dev
 
 ## Running the development server
 
-You should now have a directory called `web_socket_counter` -- `cd` into it:
+You should now have a directory called `web_socket_counter`. Let's `cd` into it:
 
 ```bash
 cd web_socket_counter
@@ -115,7 +115,7 @@ Save the changes and hot reload should kick in ⚡️
 [hotreload] - Application reloaded.
 ```
 
-Now if we visit [http://localhost:8080/ws](http://localhost:8080/ws) in the browser or via cURL:
+Now if we visit [http://localhost:8080/ws](http://localhost:8080/ws) in the browser or via `cURL`:
 
 ```bash
 curl --request GET \
