@@ -212,9 +212,9 @@ void main() {
 }
 ```
 
-We're using [`package:web_socket_channel`](https://pub.dev/packages/web_socket_channel) to connect to our Dart Frog `/ws` endpoint. We can send messages to the server by calling `add` on the `WebSocketChannel` sink . We can listen to incoming messages by subscribing to the `WebSocketChannel` stream.
+We're using [`package:web_socket_channel`](https://pub.dev/packages/web_socket_channel) to connect to our Dart Frog `/ws` endpoint. We can send messages to the server by calling `add` on the `WebSocketChannel` sink. We can listen to incoming messages by subscribing to the `WebSocketChannel` stream.
 
-With the Dart Frog server running, open a separate terminal and run the example script:
+With the Dart Frog server still running, open a separate terminal and run the example script:
 
 ```bash
 dart example/main.dart
@@ -226,7 +226,7 @@ We should see the following output on the client:
 hello from the server
 ```
 
-On the server we should see the following:
+On the server we should see the following output:
 
 ```
 connected
@@ -240,7 +240,7 @@ Awesome! We've configured a WebSocket handler and established a connection to ou
 
 Now that we've configured the WebSocket handler, we're going to shift gears and work on creating a component that will manage the state of the counter.
 
-In this example, we're going to use a cubit from the [Bloc Library](https://bloclibrary.dev) to manage the state of our counter because it provides a reactive API which allows us to stream state changes as well as inspect the current state at any given point in time. We're going to use [package:broadcast_bloc](https://pub.dev/packages/broadcast_bloc) which allows our blocs/cubits to broadcast their state changes to any subscribed stream channels which will come in handy later on.
+In this example, we're going to use a cubit from the [Bloc Library](https://bloclibrary.dev) to manage the state of our counter because it provides a reactive API which allows us to stream state changes and query the current state at any given point in time. We're going to use [package:broadcast_bloc](https://pub.dev/packages/broadcast_bloc) which allows blocs/cubits to broadcast their state changes to any subscribed stream channels -- this will come in handy later on.
 
 Let's add the `broadcast_bloc` dependency:
 
@@ -305,7 +305,7 @@ For more information, refer to the [middleware documentation](/docs/basics/middl
 
 ## Using the Counter
 
-We can access the `CounterCubit` instance from our WebSocket handler via `context.read<CounterCubit>`.
+We can access the `CounterCubit` instance from our WebSocket handler via `context.read<CounterCubit>()`.
 
 ```dart
 import 'package:dart_frog/dart_frog.dart';
