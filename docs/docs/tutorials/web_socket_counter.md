@@ -290,7 +290,7 @@ export 'middleware/counter_provider.dart';
 
 ## Providing the Counter
 
-We need to use the `counterProvider` in order to have access to it in subroutes. Create a global piece of middleware (`routes/_middleware.dart`):
+We need to use the `counterProvider` in order to have access to it in sub-routes. Create a global piece of middleware (`routes/_middleware.dart`):
 
 ```dart
 import 'package:dart_frog/dart_frog.dart';
