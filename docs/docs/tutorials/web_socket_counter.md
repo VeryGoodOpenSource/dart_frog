@@ -15,9 +15,9 @@ Before getting started, [read the prerequisites](/docs/overview#prerequisites) t
 
 ## Overview
 
-In this tutorial, we're going to build an app that exposes a single endpoint which handles WebSocket connections and maintains a real-time counter which can be incremented/decremented by connected clients.
+In this tutorial, we're going to build an app that exposes a single endpoint which handles WebSocket connections and maintains a real-time counter which can be incremented and decremented by connected clients.
 
-When we're done, we should be able to connect to the `/ws` endpoint and send/receive messages.
+When we're done, we should be able to connect to the `/ws` endpoint and send or receive messages.
 
 ```dart
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -33,7 +33,7 @@ void main() async {
 }
 ```
 
-And we should see the following output:
+We should see the following output:
 
 ```
 0 # initial
