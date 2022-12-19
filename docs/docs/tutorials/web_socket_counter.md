@@ -244,7 +244,7 @@ Awesome! We've configured a WebSocket handler and established a connection to ou
 
 Now that we've configured the WebSocket handler, we're going to shift gears and work on creating a component that will manage the state of the counter.
 
-In this example, we're going to use a cubit from the [Bloc Library](https://bloclibrary.dev) to manage the state of our counter because it provides a reactive API which allows us to stream state changes and query the current state at any given point in time. We're going to use [package:broadcast_bloc](https://pub.dev/packages/broadcast_bloc) which allows blocs or cubits to broadcast their state changes to any subscribed stream channels -- this will come in handy later on.
+In this example, we're going to use a cubit from the [Bloc Library](https://bloclibrary.dev) to manage the state of our counter because it provides a reactive API which allows us to stream state changes and query the current state at any given point in time. We're going to use [package:broadcast_bloc](https://pub.dev/packages/broadcast_bloc) which allows blocs or cubits to broadcast their state changes to any subscribed stream channels — this will come in handy later on.
 
 Let's add the `broadcast_bloc` dependency:
 
