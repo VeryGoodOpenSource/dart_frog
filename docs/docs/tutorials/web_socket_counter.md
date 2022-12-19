@@ -218,7 +218,7 @@ void main() {
 
 We're using [`package:web_socket_channel`](https://pub.dev/packages/web_socket_channel) to connect to our Dart Frog `/ws` endpoint. We can send messages to the server by calling `add` on the `WebSocketChannel` sink. We can listen to incoming messages by subscribing to the `WebSocketChannel` stream.
 
-With the Dart Frog server still running, open a separate terminal and run the example script:
+With the Dart Frog server still running, open a separate terminal, and run the example script:
 
 ```bash
 dart example/main.dart
