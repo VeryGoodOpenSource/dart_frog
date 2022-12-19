@@ -65,7 +65,7 @@ dart_frog dev
 
 ## Running the development server
 
-You should now have a directory called `web_socket_counter`. Let's `cd` into it:
+You should now have a directory called `web_socket_counter`. Let's change directories into the newly created project:
 
 ```bash
 cd web_socket_counter
