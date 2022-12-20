@@ -8,9 +8,10 @@ import 'package:kitchen_sink_client/kitchen_sink_client.dart';
 /// {@template by_name_cars_resource}
 /// The '/cars' resource.
 /// {@endtemplate}
-class ByNameCarsResource {
+class ByNameCarsResource extends Endpoint {
   /// {@macro by_name_cars_resource}
-  ByNameCarsResource(this._uri, this._path, this._client);
+  ByNameCarsResource(this._uri, this._path, this._client)
+      : super(Uri.parse('$_uri$_path/'), _client);
 
   final Uri _uri;
   final String _path;
@@ -108,10 +109,9 @@ class GreetResource {
 /// {@template by_name_resource}
 /// The '/${name}' resource.
 /// {@endtemplate}
-class ByNameResource extends Endpoint {
+class ByNameResource {
   /// {@macro by_name_resource}
-  ByNameResource(this._uri, this._path, this._client)
-      : super(Uri.parse('$_uri$_path/'), _client);
+  ByNameResource(this._uri, this._path, this._client);
 
   final Uri _uri;
   final String _path;

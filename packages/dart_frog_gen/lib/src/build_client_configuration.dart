@@ -32,7 +32,7 @@ ClientConfiguration buildClientConfiguration(Directory directory) {
 
   final resources = <ClientResource>[];
   for (final directory in routesDirectory.listSync().whereType<Directory>()) {
-    resources.addAll(
+    resources.add(
       _getResourcesForDirectory(
         directory: directory,
         routesDirectory: routesDirectory,
@@ -62,7 +62,7 @@ List<ClientEndpoint> _getEndpointsForDirectory({
   return routes.map((entity) => entity.toEndpoint(routesDirectory)).toList();
 }
 
-List<ClientResource> _getResourcesForDirectory({
+ClientResource _getResourcesForDirectory({
   required Directory directory,
   required Directory routesDirectory,
 }) {
@@ -71,21 +71,17 @@ List<ClientResource> _getResourcesForDirectory({
     routesDirectory: routesDirectory,
   );
 
-  var resource = directory.toResource(endpoints: endpoints);
-
+  final resources = <ClientResource>[];
   directory.listSync().whereType<Directory>().forEach((directory) {
-    resource = resource.copyWith(
-      resources: [
-        ...resource.resources,
-        ..._getResourcesForDirectory(
-          directory: directory,
-          routesDirectory: routesDirectory,
-        ),
-      ],
+    resources.add(
+      _getResourcesForDirectory(
+        directory: directory,
+        routesDirectory: routesDirectory,
+      ),
     );
   });
 
-  return [resource];
+  return directory.toResource(endpoints: endpoints, resources: resources);
 }
 
 extension on String {
