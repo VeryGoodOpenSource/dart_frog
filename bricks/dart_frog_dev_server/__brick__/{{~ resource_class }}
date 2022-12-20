@@ -1,19 +1,19 @@
 /// {@template {{name.snakeCase()}}_resource}
 /// The '{{{path}}}' resource.
 /// {@endtemplate}
-class {{name.pascalCase()}}Resource {
+class {{name.pascalCase()}}Resource{{#extendsEndpoint}} extends Endpoint{{/extendsEndpoint}} {
   /// {@macro {{name.snakeCase()}}_resource}
-  {{name.pascalCase()}}Resource(this._uri, this._path, this._client);
+  {{name.pascalCase()}}Resource(this._uri, this._path, this._client){{#extendsEndpoint}} : super(Uri.parse('$_uri$_path/'), _client){{/extendsEndpoint}};
   
   final Uri _uri;
   final String _path;
   final http.Client _client;
 
   {{#endpoints}}
-  {{> endpoint_method }}
+  {{#params.0}}{{> endpoint_method }}{{/params.0}}{{^params.0}}{{> endpoint_getter }}{{/params.0}}
   {{/endpoints}}
 
   {{#resources}}
-  {{> resource_method }}
+  {{#params.0}}{{> resource_method }}{{/params.0}}{{^params.0}}{{> resource_getter }}{{/params.0}}
   {{/resources}}
 }

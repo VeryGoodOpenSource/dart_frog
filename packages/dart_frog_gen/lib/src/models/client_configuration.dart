@@ -8,10 +8,14 @@ class ClientConfiguration {
     required this.packageName,
     required this.endpoints,
     required this.resources,
+    required this.extendsEndpoint,
   });
 
   /// The name of the client side package.
   final String packageName;
+
+  /// Whether the client should extend Endpoint.
+  final bool extendsEndpoint;
 
   /// A list of top-level endpoints.
   final List<ClientEndpoint> endpoints;
@@ -25,6 +29,7 @@ class ClientConfiguration {
       'packageName': packageName,
       'endpoints': endpoints.map((e) => e.toJson()).toList(),
       'resources': resources.map((r) => r.toJson()).toList(),
+      'extendsEndpoint': extendsEndpoint,
     };
   }
 }
@@ -53,7 +58,7 @@ class ClientEndpoint {
   Map<String, dynamic> toJson() {
     return {
       'name': name,
-      'params': params,
+      'params': params.isNotEmpty ? params : [false],
       'path': path,
     };
   }
@@ -67,15 +72,16 @@ class ClientResource {
   const ClientResource({
     required this.name,
     required this.method,
-    required this.params,
     required this.path,
+    required this.params,
     required this.endpoints,
     required this.resources,
+    required this.extendsEndpoint,
   });
 
   /// The name of the resource.
   final String name;
-  
+
   /// The name of the resource method.
   final String method;
 
@@ -91,6 +97,9 @@ class ClientResource {
   /// The list of resources for the specific resource.
   final List<ClientResource> resources;
 
+  /// Whether the current resource should extend Endpoint.
+  final bool extendsEndpoint;
+
   /// Create a copy of the current instance.
   ClientResource copyWith({
     String? name,
@@ -99,6 +108,7 @@ class ClientResource {
     String? path,
     List<ClientEndpoint>? endpoints,
     List<ClientResource>? resources,
+    bool? extendsEndpoint,
   }) {
     return ClientResource(
       name: name ?? this.name,
@@ -107,6 +117,7 @@ class ClientResource {
       path: path ?? this.path,
       endpoints: endpoints ?? this.endpoints,
       resources: resources ?? this.resources,
+      extendsEndpoint: extendsEndpoint ?? this.extendsEndpoint,
     );
   }
 
@@ -115,10 +126,11 @@ class ClientResource {
     return {
       'name': name,
       'method': method,
-      'params': params,
+      'params': params.isNotEmpty ? params : [false],
       'path': path,
       'endpoints': endpoints.map((e) => e.toJson()).toList(),
       'resources': resources.map((r) => r.toJson()).toList(),
+      'extendsEndpoint': extendsEndpoint,
     };
   }
 }

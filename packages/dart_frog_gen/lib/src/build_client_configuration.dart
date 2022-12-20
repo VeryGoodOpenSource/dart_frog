@@ -40,10 +40,17 @@ ClientConfiguration buildClientConfiguration(Directory directory) {
     );
   }
 
+  final indexEndpointIndex = endpoints.indexWhere((e) => e.name == 'index');
+  final extendsEndpoint = indexEndpointIndex != -1;
+  final normalizedEndpoints = extendsEndpoint
+      ? ([...endpoints]..removeAt(indexEndpointIndex))
+      : endpoints;
+
   return ClientConfiguration(
     packageName: packageName,
-    endpoints: endpoints,
+    endpoints: normalizedEndpoints,
     resources: resources,
+    extendsEndpoint: extendsEndpoint,
   );
 }
 
@@ -68,10 +75,13 @@ List<ClientResource> _getResourcesForDirectory({
 
   directory.listSync().whereType<Directory>().forEach((directory) {
     resource = resource.copyWith(
-      resources: _getResourcesForDirectory(
-        directory: directory,
-        routesDirectory: routesDirectory,
-      ),
+      resources: [
+        ...resource.resources,
+        ..._getResourcesForDirectory(
+          directory: directory,
+          routesDirectory: routesDirectory,
+        ),
+      ],
     );
   });
 
@@ -82,10 +92,11 @@ extension on String {
   String toEndpoint() {
     final endpoint = path
         .basenameWithoutExtension(this)
-        .replaceAll('[', 'by_')
+        .replaceFirst('[', 'by_')
+        .replaceAll('[', 'and_')
         .replaceAll(']', '')
-        .replaceAll(r'\', '_')
-        .replaceAll('/', '_');
+        .replaceAll(RegExp(r'(\\+)'), '_')
+        .replaceAll(RegExp('(/+)'), '_');
     if (endpoint.isEmpty || endpoint == '_') return 'index';
     return endpoint;
   }
@@ -94,16 +105,18 @@ extension on String {
     if (this == '/') return 'root';
     return path
         .withoutExtension(this)
-        .replaceAll('[', 'by_')
+        .replaceFirst('[', 'by_')
+        .replaceAll('[', 'and_')
         .replaceAll(']', '')
-        .replaceAll('/', '_');
+        .replaceAll(RegExp(r'(\\+)'), '_')
+        .replaceAll(RegExp('(/+)'), '_');
   }
 
   String toRequestPath() {
     return replaceAll('<', r'$')
         .replaceAll('>', '')
-        .replaceAll('[', r'$')
-        .replaceAll(']', '')
+        .replaceAll('[', r'${')
+        .replaceAll(']', '}')
         .replaceAll(r'\', '/');
   }
 }
@@ -153,12 +166,19 @@ extension on FileSystemEntity {
         ? directorySegment
         : '/$directorySegment';
 
+    final indexEndpointIndex = endpoints.indexWhere((e) => e.name == 'index');
+    final extendsEndpoint = indexEndpointIndex != -1;
+    final normalizedEndpoints = extendsEndpoint
+        ? ([...endpoints]..removeAt(indexEndpointIndex))
+        : endpoints;
+
     return ClientResource(
       name: fullDirectoryPath.toResource(),
       method: directoryPath.toResource(),
+      extendsEndpoint: extendsEndpoint,
       params: directoryPath.toParams(),
       path: directoryPath.toRequestPath(),
-      endpoints: endpoints,
+      endpoints: normalizedEndpoints,
       resources: resources,
     );
   }

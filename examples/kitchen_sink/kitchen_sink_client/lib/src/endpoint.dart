@@ -1,5 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, unused_field
 
 import 'package:dart_frog/dart_frog.dart' show HttpMethod, Response;
 import 'package:http/http.dart' as http;
