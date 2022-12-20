@@ -8,80 +8,65 @@ import 'package:test/test.dart';
 
 void main() {
   group('buildRouteConfiguration', () {
-    tearDown(() {
-      try {
-        Directory(
-          path.join(Directory.current.path, 'test', '.fixtures'),
-        ).deleteSync(recursive: true);
-      } catch (_) {}
-    });
-
     test('throws exception when routes directory does not exist', () {
-      expect(() => buildRouteConfiguration(Directory.current), throwsException);
+      expect(() => buildRouteConfiguration(createTempDir()), throwsException);
     });
 
     test('excludes global middleware when it does not exist', () {
-      final directory = Directory.systemTemp.createTempSync();
-      Directory(path.join(directory.path, 'routes')).createSync();
-      final configuration = buildRouteConfiguration(directory);
+      final configuration = buildRouteConfiguration(
+        createTempDir(directories: ['routes']),
+      );
       expect(configuration.globalMiddleware, isNull);
     });
 
     test('serveStaticFiles is true when public directory exists', () {
-      final directory = Directory.systemTemp.createTempSync();
-      Directory(path.join(directory.path, 'routes')).createSync();
-      Directory(path.join(directory.path, 'public')).createSync();
-      final configuration = buildRouteConfiguration(directory);
+      final configuration = buildRouteConfiguration(
+        createTempDir(directories: ['routes', 'public']),
+      );
       expect(configuration.serveStaticFiles, isTrue);
     });
 
     test('serveStaticFiles is false when public directory does not exist', () {
-      final directory = Directory.systemTemp.createTempSync();
-      Directory(path.join(directory.path, 'routes')).createSync();
-      final configuration = buildRouteConfiguration(directory);
+      final configuration = buildRouteConfiguration(
+        createTempDir(directories: ['routes']),
+      );
       expect(configuration.serveStaticFiles, isFalse);
     });
 
     test('invokeCustomEntrypoint is true when main.dart exists', () {
-      final directory = Directory.systemTemp.createTempSync();
-      Directory(path.join(directory.path, 'routes')).createSync();
-      File(path.join(directory.path, 'main.dart')).createSync();
-      final configuration = buildRouteConfiguration(directory);
+      final configuration = buildRouteConfiguration(
+        createTempDir(
+          directories: ['routes'],
+          files: ['main.dart'],
+        ),
+      );
       expect(configuration.invokeCustomEntrypoint, isTrue);
     });
 
     test('invokeCustomEntrypoint is false when main.dart does not exist', () {
-      final directory = Directory.systemTemp.createTempSync();
-      Directory(path.join(directory.path, 'routes')).createSync();
-      final configuration = buildRouteConfiguration(directory);
+      final configuration = buildRouteConfiguration(
+        createTempDir(directories: ['routes']),
+      );
       expect(configuration.invokeCustomEntrypoint, isFalse);
     });
 
     test('includes global middleware when it exists', () {
-      final directory = Directory.systemTemp.createTempSync();
-      final routes = Directory(path.join(directory.path, 'routes'))
-        ..createSync();
-      File(path.join(routes.path, '_middleware.dart')).createSync();
-      final configuration = buildRouteConfiguration(directory);
+      final configuration = buildRouteConfiguration(
+        createTempDir(files: ['routes/_middleware.dart']),
+      );
       expect(configuration.globalMiddleware, isNotNull);
     });
 
     test('endpoint includes multiple routes when conflicts exist', () {
-      final directory = Directory(
-        path.join(
-          Directory.current.path,
-          'test',
-          '.fixtures',
-          'single_conflict',
+      final configuration = buildRouteConfiguration(
+        createTempDir(
+          files: [
+            'routes/users.dart',
+            'routes/users/index.dart',
+          ],
         ),
-      )..createSync(recursive: true);
-      final routes = Directory(path.join(directory.path, 'routes'))
-        ..createSync();
-      File(path.join(routes.path, 'users.dart')).createSync();
-      final usersDirectory = Directory(path.join(routes.path, 'users'))
-        ..createSync();
-      File(path.join(usersDirectory.path, 'index.dart')).createSync();
-      final configuration = buildRouteConfiguration(directory);
+      );
+
       expect(
         configuration.endpoints,
         equals({
@@ -118,13 +103,11 @@ void main() {
           'directory_params': []
         }
       ];
-      final directory = Directory(
-        path.join(Directory.current.path, 'test', '.fixtures', 'single'),
-      )..createSync(recursive: true);
-      final routes = Directory(path.join(directory.path, 'routes'))
-        ..createSync();
-      File(path.join(routes.path, 'index.dart')).createSync();
-      final configuration = buildRouteConfiguration(directory);
+
+      final configuration = buildRouteConfiguration(
+        createTempDir(files: ['routes/index.dart']),
+      );
+
       expect(
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
@@ -166,19 +149,16 @@ void main() {
           'directory_params': []
         }
       ];
-      final directory = Directory(
-        path.join(
-          Directory.current.path,
-          'test',
-          '.fixtures',
-          'multiple_top_level',
+
+      final configuration = buildRouteConfiguration(
+        createTempDir(
+          files: [
+            'routes/index.dart',
+            'routes/hello.dart',
+          ],
         ),
-      )..createSync(recursive: true);
-      final routes = Directory(path.join(directory.path, 'routes'))
-        ..createSync();
-      File(path.join(routes.path, 'index.dart')).createSync();
-      File(path.join(routes.path, 'hello.dart')).createSync();
-      final configuration = buildRouteConfiguration(directory);
+      );
+
       expect(
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
@@ -235,16 +215,16 @@ void main() {
           'directory_params': []
         }
       ];
-      final directory = Directory(
-        path.join(Directory.current.path, 'test', '.fixtures', 'nested'),
-      )..createSync(recursive: true);
-      final routes = Directory(path.join(directory.path, 'routes'))
-        ..createSync();
-      File(path.join(routes.path, 'index.dart')).createSync();
-      final echoDirectory = Directory(path.join(routes.path, 'echo'))
-        ..createSync();
-      File(path.join(echoDirectory.path, 'message.dart')).createSync();
-      final configuration = buildRouteConfiguration(directory);
+
+      final configuration = buildRouteConfiguration(
+        createTempDir(
+          files: [
+            'routes/index.dart',
+            'routes/echo/message.dart',
+          ],
+        ),
+      );
+
       expect(
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
@@ -287,22 +267,13 @@ void main() {
           'directory_params': []
         }
       ];
-      final directory = Directory(
-        path.join(
-          Directory.current.path,
-          'test',
-          '.fixtures',
-          'nested_directories',
+
+      final configuration = buildRouteConfiguration(
+        createTempDir(
+          files: ['routes/echo/message/index.dart'],
         ),
-      )..createSync(recursive: true);
-      final routes = Directory(path.join(directory.path, 'routes'))
-        ..createSync();
-      final echoDirectory = Directory(path.join(routes.path, 'echo'))
-        ..createSync();
-      final messageDirectory =
-          Directory(path.join(echoDirectory.path, 'message'))..createSync();
-      File(path.join(messageDirectory.path, 'index.dart')).createSync();
-      final configuration = buildRouteConfiguration(directory);
+      );
+
       expect(
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
@@ -352,16 +323,16 @@ void main() {
           'directory_params': []
         }
       ];
-      final directory = Directory(
-        path.join(Directory.current.path, 'test', '.fixtures', 'dynamic'),
-      )..createSync(recursive: true);
-      final routes = Directory(path.join(directory.path, 'routes'))
-        ..createSync();
-      File(path.join(routes.path, 'index.dart')).createSync();
-      final echoDirectory = Directory(path.join(routes.path, 'echo'))
-        ..createSync();
-      File(path.join(echoDirectory.path, '[message].dart')).createSync();
-      final configuration = buildRouteConfiguration(directory);
+
+      final configuration = buildRouteConfiguration(
+        createTempDir(
+          files: [
+            'routes/index.dart',
+            'routes/echo/[message].dart',
+          ],
+        ),
+      );
+
       expect(
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
@@ -437,25 +408,18 @@ void main() {
           'directory_params': ['user', 'id']
         }
       ];
-      final directory = Directory(
-        path.join(
-          Directory.current.path,
-          'test',
-          '.fixtures',
-          'dynamic_nested',
+
+      final configuration = buildRouteConfiguration(
+        createTempDir(
+          files: [
+            'routes/index.dart',
+            'routes/[user]/[name].dart',
+            'routes/[user]/[id]/index.dart',
+            'routes/[user]/[id]/_middleware.dart',
+          ],
         ),
-      )..createSync(recursive: true);
-      final routes = Directory(path.join(directory.path, 'routes'))
-        ..createSync();
-      File(path.join(routes.path, 'index.dart')).createSync();
-      final userDirectory = Directory(path.join(routes.path, '[user]'))
-        ..createSync();
-      File(path.join(userDirectory.path, '[name].dart')).createSync();
-      final idDirectory = Directory(path.join(userDirectory.path, '[id]'))
-        ..createSync();
-      File(path.join(idDirectory.path, 'index.dart')).createSync();
-      File(path.join(idDirectory.path, '_middleware.dart')).createSync();
-      final configuration = buildRouteConfiguration(directory);
+      );
+
       expect(
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
@@ -561,29 +525,20 @@ void main() {
           'directory_params': ['user', 'id']
         }
       ];
-      final directory = Directory(
-        path.join(
-          Directory.current.path,
-          'test',
-          '.fixtures',
-          'dynamic_nested_cascading_middleware',
+
+      final configuration = buildRouteConfiguration(
+        createTempDir(
+          files: [
+            'routes/index.dart',
+            'routes/api/v1.dart',
+            'routes/[user]/_middleware.dart',
+            'routes/[user]/[name].dart',
+            'routes/[user]/[id]/index.dart',
+            'routes/[user]/[id]/_middleware.dart',
+          ],
         ),
-      )..createSync(recursive: true);
-      final routes = Directory(path.join(directory.path, 'routes'))
-        ..createSync();
-      File(path.join(routes.path, 'index.dart')).createSync();
-      final apiDirectory = Directory(path.join(routes.path, 'api'))
-        ..createSync();
-      File(path.join(apiDirectory.path, 'v1.dart')).createSync();
-      final userDirectory = Directory(path.join(routes.path, '[user]'))
-        ..createSync();
-      File(path.join(userDirectory.path, '_middleware.dart')).createSync();
-      File(path.join(userDirectory.path, '[name].dart')).createSync();
-      final idDirectory = Directory(path.join(userDirectory.path, '[id]'))
-        ..createSync();
-      File(path.join(idDirectory.path, 'index.dart')).createSync();
-      File(path.join(idDirectory.path, '_middleware.dart')).createSync();
-      final configuration = buildRouteConfiguration(directory);
+      );
+
       expect(
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
@@ -654,23 +609,16 @@ void main() {
           'directory_params': ['id']
         }
       ];
-      final directory = Directory(
-        path.join(
-          Directory.current.path,
-          'test',
-          '.fixtures',
-          'dynamic_static_nesting1',
+
+      final configuration = buildRouteConfiguration(
+        createTempDir(
+          files: [
+            'routes/index.dart',
+            'routes/[id]/api/index.dart',
+          ],
         ),
-      )..createSync(recursive: true);
-      final routes = Directory(path.join(directory.path, 'routes'))
-        ..createSync();
-      File(path.join(routes.path, 'index.dart')).createSync();
-      final idDirectory = Directory(path.join(routes.path, '[id]'))
-        ..createSync();
-      final apiDirectory = Directory(path.join(idDirectory.path, 'api'))
-        ..createSync();
-      File(path.join(apiDirectory.path, 'index.dart')).createSync();
-      final configuration = buildRouteConfiguration(directory);
+      );
+
       expect(
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
@@ -727,23 +675,16 @@ void main() {
           'directory_params': ['id']
         }
       ];
-      final directory = Directory(
-        path.join(
-          Directory.current.path,
-          'test',
-          '.fixtures',
-          'dynamic_static_nesting2',
+
+      final configuration = buildRouteConfiguration(
+        createTempDir(
+          files: [
+            'routes/index.dart',
+            'routes/[id]/api/test.dart',
+          ],
         ),
-      )..createSync(recursive: true);
-      final routes = Directory(path.join(directory.path, 'routes'))
-        ..createSync();
-      File(path.join(routes.path, 'index.dart')).createSync();
-      final idDirectory = Directory(path.join(routes.path, '[id]'))
-        ..createSync();
-      final apiDirectory = Directory(path.join(idDirectory.path, 'api'))
-        ..createSync();
-      File(path.join(apiDirectory.path, 'test.dart')).createSync();
-      final configuration = buildRouteConfiguration(directory);
+      );
+
       expect(
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
@@ -800,25 +741,16 @@ void main() {
           'directory_params': ['id', 'name']
         }
       ];
-      final directory = Directory(
-        path.join(
-          Directory.current.path,
-          'test',
-          '.fixtures',
-          'dynamic_static_nesting3',
+
+      final configuration = buildRouteConfiguration(
+        createTempDir(
+          files: [
+            'routes/index.dart',
+            'routes/[id]/api/[name]/index.dart',
+          ],
         ),
-      )..createSync(recursive: true);
-      final routes = Directory(path.join(directory.path, 'routes'))
-        ..createSync();
-      File(path.join(routes.path, 'index.dart')).createSync();
-      final idDirectory = Directory(path.join(routes.path, '[id]'))
-        ..createSync();
-      final apiDirectory = Directory(path.join(idDirectory.path, 'api'))
-        ..createSync();
-      final nameDirectory = Directory(path.join(apiDirectory.path, '[name]'))
-        ..createSync();
-      File(path.join(nameDirectory.path, 'index.dart')).createSync();
-      final configuration = buildRouteConfiguration(directory);
+      );
+
       expect(
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
@@ -875,25 +807,16 @@ void main() {
           'directory_params': ['id', 'name']
         }
       ];
-      final directory = Directory(
-        path.join(
-          Directory.current.path,
-          'test',
-          '.fixtures',
-          'dynamic_static_nesting4',
+
+      final configuration = buildRouteConfiguration(
+        createTempDir(
+          files: [
+            'routes/index.dart',
+            'routes/[id]/api/[name]/test.dart',
+          ],
         ),
-      )..createSync(recursive: true);
-      final routes = Directory(path.join(directory.path, 'routes'))
-        ..createSync();
-      File(path.join(routes.path, 'index.dart')).createSync();
-      final idDirectory = Directory(path.join(routes.path, '[id]'))
-        ..createSync();
-      final apiDirectory = Directory(path.join(idDirectory.path, 'api'))
-        ..createSync();
-      final nameDirectory = Directory(path.join(apiDirectory.path, '[name]'))
-        ..createSync();
-      File(path.join(nameDirectory.path, 'test.dart')).createSync();
-      final configuration = buildRouteConfiguration(directory);
+      );
+
       expect(
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
@@ -936,20 +859,13 @@ void main() {
           'directory_params': []
         }
       ];
-      final directory = Directory(
-        path.join(
-          Directory.current.path,
-          'test',
-          '.fixtures',
-          'dynamic_static_nesting3',
+
+      final configuration = buildRouteConfiguration(
+        createTempDir(
+          files: ['routes/api/api.dart'],
         ),
-      )..createSync(recursive: true);
-      final routes = Directory(path.join(directory.path, 'routes'))
-        ..createSync();
-      final apiDirectory = Directory(path.join(routes.path, 'api'))
-        ..createSync();
-      File(path.join(apiDirectory.path, 'api.dart')).createSync();
-      final configuration = buildRouteConfiguration(directory);
+      );
+
       expect(
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
@@ -1019,25 +935,18 @@ void main() {
           'directory_params': [],
         }
       ];
-      final directory = Directory(
-        path.join(
-          Directory.current.path,
-          'test',
-          '.fixtures',
-          'rogue_routes',
+
+      final configuration = buildRouteConfiguration(
+        createTempDir(
+          files: [
+            'routes/api.dart',
+            'routes/api/[id].dart',
+            'routes/api/v1.dart',
+            'routes/api/v1/hello.dart',
+          ],
         ),
-      )..createSync(recursive: true);
-      final routes = Directory(path.join(directory.path, 'routes'))
-        ..createSync();
-      File(path.join(routes.path, 'api.dart')).createSync();
-      final apiDirectory = Directory(path.join(routes.path, 'api'))
-        ..createSync();
-      File(path.join(apiDirectory.path, '[id].dart')).createSync();
-      File(path.join(apiDirectory.path, 'v1.dart')).createSync();
-      final v1Directory = Directory(path.join(apiDirectory.path, 'v1'))
-        ..createSync();
-      File(path.join(v1Directory.path, 'hello.dart')).createSync();
-      final configuration = buildRouteConfiguration(directory);
+      );
+
       expect(
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
@@ -1123,21 +1032,16 @@ void main() {
           'directory_params': [],
         }
       ];
-      final directory = Directory(
-        path.join(
-          Directory.current.path,
-          'test',
-          '.fixtures',
-          'rogue_routes_with_conflict',
+
+      final configuration = buildRouteConfiguration(
+        createTempDir(
+          files: [
+            'routes/api.dart',
+            'routes/api/index.dart',
+          ],
         ),
-      )..createSync(recursive: true);
-      final routes = Directory(path.join(directory.path, 'routes'))
-        ..createSync();
-      File(path.join(routes.path, 'api.dart')).createSync();
-      final apiDirectory = Directory(path.join(routes.path, 'api'))
-        ..createSync();
-      File(path.join(apiDirectory.path, 'index.dart')).createSync();
-      final configuration = buildRouteConfiguration(directory);
+      );
+
       expect(
         configuration.directories.map((d) => d.toJson()).toList(),
         equals(expected),
@@ -1162,4 +1066,18 @@ void main() {
       expect(configuration.rogueRoutes, isEmpty);
     });
   });
+}
+
+Directory createTempDir({
+  List<String> directories = const [],
+  List<String> files = const [],
+}) {
+  final tempDir = Directory.systemTemp.createTempSync();
+  for (final directory in directories) {
+    Directory(path.join(tempDir.path, directory)).createSync(recursive: true);
+  }
+  for (final f in files) {
+    File(path.join(tempDir.path, f)).createSync(recursive: true);
+  }
+  return tempDir;
 }
