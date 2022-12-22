@@ -26,20 +26,15 @@ class KitchenSinkClient extends Endpoint {
   }
 
   /// The '/${name}' resource.
-  ByNameResource byName(
+  NameResource name(
     String name,
   ) {
-    return ByNameResource(_baseUri, '/${name}', _client);
+    return NameResource(_baseUri, '/${name}', _client);
   }
 
   /// The '/projects' resource.
   ProjectsResource get projects {
     return ProjectsResource(_baseUri, '/projects', _client);
-  }
-
-  /// The '/foo' resource.
-  FooResource get foo {
-    return FooResource(_baseUri, '/foo', _client);
   }
 
   /// The '/users' resource.

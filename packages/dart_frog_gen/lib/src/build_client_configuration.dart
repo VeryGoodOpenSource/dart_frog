@@ -88,24 +88,25 @@ extension on String {
   String toEndpoint() {
     final endpoint = path
         .basenameWithoutExtension(this)
-        .replaceFirst('[', 'by_')
-        .replaceAll('[', 'and_')
+        .replaceAll('[', '_')
         .replaceAll(']', '')
         .replaceAll(RegExp(r'(\\+)'), '_')
-        .replaceAll(RegExp('(/+)'), '_');
+        .replaceAll(RegExp('(/+)'), '_')
+        .replaceAll(RegExp('(_+)'), '_');
     if (endpoint.isEmpty || endpoint == '_') return 'index';
     return endpoint;
   }
 
   String toResource() {
-    if (this == '/') return 'root';
-    return path
+    final resource = path
         .withoutExtension(this)
-        .replaceFirst('[', 'by_')
-        .replaceAll('[', 'and_')
+        .replaceAll('[', '_')
         .replaceAll(']', '')
         .replaceAll(RegExp(r'(\\+)'), '_')
-        .replaceAll(RegExp('(/+)'), '_');
+        .replaceAll(RegExp('(/+)'), '_')
+        .replaceAll(RegExp('(_+)'), '_');
+    if (resource.isEmpty || resource == '_') return 'root';
+    return resource;
   }
 
   String toRequestPath() {

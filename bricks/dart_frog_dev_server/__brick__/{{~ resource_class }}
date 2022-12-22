@@ -10,10 +10,10 @@ class {{name.pascalCase()}}Resource{{#extendsEndpoint}} extends Endpoint{{/exten
   final http.Client _client;
 
   {{#endpoints}}
-  {{#params.0}}{{> endpoint_method }}{{/params.0}}{{^params.0}}{{> endpoint_getter }}{{/params.0}}
+  {{#params.0}}{{#multipleParams}}{{> endpoint_method_named }}{{/multipleParams}}{{^multipleParams}}{{> endpoint_method }}{{/multipleParams}}{{/params.0}}{{^params.0}}{{> endpoint_getter }}{{/params.0}}
   {{/endpoints}}
 
   {{#resources}}
-  {{#params.0}}{{> resource_method }}{{/params.0}}{{^params.0}}{{> resource_getter }}{{/params.0}}
+  {{#params.0}}{{#multipleParams}}{{> resource_method_named }}{{/multipleParams}}{{^multipleParams}}{{> resource_method }}{{/multipleParams}}{{/params.0}}{{^params.0}}{{> resource_getter }}{{/params.0}}
   {{/resources}}
 }

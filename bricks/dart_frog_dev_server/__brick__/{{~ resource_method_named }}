@@ -1,0 +1,5 @@
+/// The '{{{path}}}' resource.
+{{name.pascalCase()}}Resource {{method.camelCase()}}({ {{#params}}required String {{.}},{{/params}} }) {
+  final uri = Uri.parse('$_uri$_path');
+  return {{name.pascalCase()}}Resource(uri, '{{{path}}}', _client);
+}

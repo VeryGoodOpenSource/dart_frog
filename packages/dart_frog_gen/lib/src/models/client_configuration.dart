@@ -59,6 +59,7 @@ class ClientEndpoint {
     return {
       'name': name,
       'params': params.isNotEmpty ? params : [false],
+      'multipleParams': params.length > 1,
       'path': path,
     };
   }
@@ -127,6 +128,7 @@ class ClientResource {
       'name': name,
       'method': method,
       'params': params.isNotEmpty ? params : [false],
+      'multipleParams': params.length > 1,
       'path': path,
       'endpoints': endpoints.map((e) => e.toJson()).toList(),
       'resources': resources.map((r) => r.toJson()).toList(),

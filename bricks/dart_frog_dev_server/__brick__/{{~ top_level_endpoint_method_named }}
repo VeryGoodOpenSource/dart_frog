@@ -1,0 +1,5 @@
+/// The '{{{path}}}' endpoint.
+Endpoint {{name.camelCase()}}({ {{#params}}required String {{.}},{{/params}} }) {    
+  final uri = Uri.parse('$_baseUri{{{path}}}');
+  return Endpoint(uri, _client);
+}

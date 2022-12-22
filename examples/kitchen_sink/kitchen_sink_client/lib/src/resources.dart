@@ -5,12 +5,12 @@ import 'package:http/http.dart' as http;
 
 import 'package:kitchen_sink_client/kitchen_sink_client.dart';
 
-/// {@template by_name_cars_resource}
+/// {@template name_cars_resource}
 /// The '/cars' resource.
 /// {@endtemplate}
-class ByNameCarsResource extends Endpoint {
-  /// {@macro by_name_cars_resource}
-  ByNameCarsResource(this._uri, this._path, this._client)
+class NameCarsResource extends Endpoint {
+  /// {@macro name_cars_resource}
+  NameCarsResource(this._uri, this._path, this._client)
       : super(Uri.parse('$_uri$_path/'), _client);
 
   final Uri _uri;
@@ -18,38 +18,12 @@ class ByNameCarsResource extends Endpoint {
   final http.Client _client;
 }
 
-/// {@template foo_by_uid_and_name_resource}
-/// The '/${uid}_${name}' resource.
-/// {@endtemplate}
-class FooByUidAndNameResource extends Endpoint {
-  /// {@macro foo_by_uid_and_name_resource}
-  FooByUidAndNameResource(this._uri, this._path, this._client)
-      : super(Uri.parse('$_uri$_path/'), _client);
-
-  final Uri _uri;
-  final String _path;
-  final http.Client _client;
-}
-
-/// {@template foo_by_ids_and_name_resource}
-/// The '/${ids}_${name}' resource.
-/// {@endtemplate}
-class FooByIdsAndNameResource extends Endpoint {
-  /// {@macro foo_by_ids_and_name_resource}
-  FooByIdsAndNameResource(this._uri, this._path, this._client)
-      : super(Uri.parse('$_uri$_path/'), _client);
-
-  final Uri _uri;
-  final String _path;
-  final http.Client _client;
-}
-
-/// {@template users_by_id_resource}
+/// {@template users_id_resource}
 /// The '/${id}' resource.
 /// {@endtemplate}
-class UsersByIdResource extends Endpoint {
-  /// {@macro users_by_id_resource}
-  UsersByIdResource(this._uri, this._path, this._client)
+class UsersIdResource extends Endpoint {
+  /// {@macro users_id_resource}
+  UsersIdResource(this._uri, this._path, this._client)
       : super(Uri.parse('$_uri$_path/'), _client);
 
   final Uri _uri;
@@ -57,7 +31,7 @@ class UsersByIdResource extends Endpoint {
   final http.Client _client;
 
   /// The '/${name}' endpoint.
-  Endpoint byName(
+  Endpoint name(
     String name,
   ) {
     final uri = Uri.parse('$_uri$_path/${name}');
@@ -78,7 +52,7 @@ class ApiPetsResource extends Endpoint {
   final http.Client _client;
 
   /// The '/${name}' endpoint.
-  Endpoint byName(
+  Endpoint name(
     String name,
   ) {
     final uri = Uri.parse('$_uri$_path/${name}');
@@ -98,7 +72,7 @@ class GreetResource {
   final http.Client _client;
 
   /// The '/${name}' endpoint.
-  Endpoint byName(
+  Endpoint name(
     String name,
   ) {
     final uri = Uri.parse('$_uri$_path/${name}');
@@ -106,21 +80,21 @@ class GreetResource {
   }
 }
 
-/// {@template by_name_resource}
+/// {@template name_resource}
 /// The '/${name}' resource.
 /// {@endtemplate}
-class ByNameResource {
-  /// {@macro by_name_resource}
-  ByNameResource(this._uri, this._path, this._client);
+class NameResource {
+  /// {@macro name_resource}
+  NameResource(this._uri, this._path, this._client);
 
   final Uri _uri;
   final String _path;
   final http.Client _client;
 
   /// The '/cars' resource.
-  ByNameCarsResource get cars {
+  NameCarsResource get cars {
     final uri = Uri.parse('$_uri$_path');
-    return ByNameCarsResource(uri, '/cars', _client);
+    return NameCarsResource(uri, '/cars', _client);
   }
 }
 
@@ -137,36 +111,6 @@ class ProjectsResource extends Endpoint {
   final http.Client _client;
 }
 
-/// {@template foo_resource}
-/// The '/foo' resource.
-/// {@endtemplate}
-class FooResource {
-  /// {@macro foo_resource}
-  FooResource(this._uri, this._path, this._client);
-
-  final Uri _uri;
-  final String _path;
-  final http.Client _client;
-
-  /// The '/${uid}_${name}' resource.
-  FooByUidAndNameResource byUidAndName(
-    String uid,
-    String name,
-  ) {
-    final uri = Uri.parse('$_uri$_path');
-    return FooByUidAndNameResource(uri, '/${uid}_${name}', _client);
-  }
-
-  /// The '/${ids}_${name}' resource.
-  FooByIdsAndNameResource byIdsAndName(
-    String ids,
-    String name,
-  ) {
-    final uri = Uri.parse('$_uri$_path');
-    return FooByIdsAndNameResource(uri, '/${ids}_${name}', _client);
-  }
-}
-
 /// {@template users_resource}
 /// The '/users' resource.
 /// {@endtemplate}
@@ -179,11 +123,11 @@ class UsersResource {
   final http.Client _client;
 
   /// The '/${id}' resource.
-  UsersByIdResource byId(
+  UsersIdResource id(
     String id,
   ) {
     final uri = Uri.parse('$_uri$_path');
-    return UsersByIdResource(uri, '/${id}', _client);
+    return UsersIdResource(uri, '/${id}', _client);
   }
 }
 

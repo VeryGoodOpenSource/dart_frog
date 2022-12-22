@@ -19,11 +19,11 @@ class {{client.packageName.pascalCase()}}{{#client.extendsEndpoint}} extends End
   final Uri _baseUri;
   
   {{#client.endpoints}}
-  {{#params.0}}{{> top_level_endpoint_method }}{{/params.0}}{{^params.0}}{{> top_level_endpoint_getter }}{{/params.0}}
+  {{#params.0}}{{#multipleParams}}{{> top_level_endpoint_method_named }}{{/multipleParams}}{{^multipleParams}}{{> top_level_endpoint_method }}{{/multipleParams}}{{/params.0}}{{^params.0}}{{> top_level_endpoint_getter }}{{/params.0}}
   {{/client.endpoints}}
   
   {{#client.resources}}
-  {{#params.0}}{{> top_level_resource_method }}{{/params.0}}{{^params.0}}{{> top_level_resource_getter }}{{/params.0}}
+  {{#params.0}}{{#multipleParams}}{{> top_level_resource_method_named }}{{/multipleParams}}{{^multipleParams}}{{> top_level_resource_method }}{{/multipleParams}}{{/params.0}}{{^params.0}}{{> top_level_resource_getter }}{{/params.0}}
   {{/client.resources}}
   
   /// Closes the client and cleans up any resources associated with it.
