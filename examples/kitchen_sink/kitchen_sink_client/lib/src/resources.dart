@@ -5,61 +5,6 @@ import 'package:http/http.dart' as http;
 
 import 'package:kitchen_sink_client/kitchen_sink_client.dart';
 
-/// {@template name_cars_resource}
-/// The '/cars' resource.
-/// {@endtemplate}
-class NameCarsResource extends Endpoint {
-  /// {@macro name_cars_resource}
-  NameCarsResource(this._uri, this._path, this._client)
-      : super(Uri.parse('$_uri$_path/'), _client);
-
-  final Uri _uri;
-  final String _path;
-  final http.Client _client;
-}
-
-/// {@template users_id_resource}
-/// The '/${id}' resource.
-/// {@endtemplate}
-class UsersIdResource extends Endpoint {
-  /// {@macro users_id_resource}
-  UsersIdResource(this._uri, this._path, this._client)
-      : super(Uri.parse('$_uri$_path/'), _client);
-
-  final Uri _uri;
-  final String _path;
-  final http.Client _client;
-
-  /// The '/${name}' endpoint.
-  Endpoint name(
-    String name,
-  ) {
-    final uri = Uri.parse('$_uri$_path/${name}');
-    return Endpoint(uri, _client);
-  }
-}
-
-/// {@template api_pets_resource}
-/// The '/pets' resource.
-/// {@endtemplate}
-class ApiPetsResource extends Endpoint {
-  /// {@macro api_pets_resource}
-  ApiPetsResource(this._uri, this._path, this._client)
-      : super(Uri.parse('$_uri$_path/'), _client);
-
-  final Uri _uri;
-  final String _path;
-  final http.Client _client;
-
-  /// The '/${name}' endpoint.
-  Endpoint name(
-    String name,
-  ) {
-    final uri = Uri.parse('$_uri$_path/${name}');
-    return Endpoint(uri, _client);
-  }
-}
-
 /// {@template greet_resource}
 /// The '/greet' resource.
 /// {@endtemplate}
@@ -78,6 +23,19 @@ class GreetResource {
     final uri = Uri.parse('$_uri$_path/${name}');
     return Endpoint(uri, _client);
   }
+}
+
+/// {@template name_cars_resource}
+/// The '/cars' resource.
+/// {@endtemplate}
+class NameCarsResource extends Endpoint {
+  /// {@macro name_cars_resource}
+  NameCarsResource(this._uri, this._path, this._client)
+      : super(Uri.parse('$_uri$_path/'), _client);
+
+  final Uri _uri;
+  final String _path;
+  final http.Client _client;
 }
 
 /// {@template name_resource}
@@ -111,6 +69,27 @@ class ProjectsResource extends Endpoint {
   final http.Client _client;
 }
 
+/// {@template users_id_resource}
+/// The '/${id}' resource.
+/// {@endtemplate}
+class UsersIdResource extends Endpoint {
+  /// {@macro users_id_resource}
+  UsersIdResource(this._uri, this._path, this._client)
+      : super(Uri.parse('$_uri$_path/'), _client);
+
+  final Uri _uri;
+  final String _path;
+  final http.Client _client;
+
+  /// The '/${name}' endpoint.
+  Endpoint name(
+    String name,
+  ) {
+    final uri = Uri.parse('$_uri$_path/${name}');
+    return Endpoint(uri, _client);
+  }
+}
+
 /// {@template users_resource}
 /// The '/users' resource.
 /// {@endtemplate}
@@ -128,6 +107,27 @@ class UsersResource {
   ) {
     final uri = Uri.parse('$_uri$_path');
     return UsersIdResource(uri, '/${id}', _client);
+  }
+}
+
+/// {@template api_pets_resource}
+/// The '/pets' resource.
+/// {@endtemplate}
+class ApiPetsResource extends Endpoint {
+  /// {@macro api_pets_resource}
+  ApiPetsResource(this._uri, this._path, this._client)
+      : super(Uri.parse('$_uri$_path/'), _client);
+
+  final Uri _uri;
+  final String _path;
+  final http.Client _client;
+
+  /// The '/${name}' endpoint.
+  Endpoint name(
+    String name,
+  ) {
+    final uri = Uri.parse('$_uri$_path/${name}');
+    return Endpoint(uri, _client);
   }
 }
 

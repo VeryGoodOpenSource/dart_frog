@@ -32,14 +32,17 @@ ClientConfiguration buildClientConfiguration(Directory directory) {
 
   final resourcesFlat = <ClientResource>[];
   final resources = <ClientResource>[];
+
+  void onResource(ClientResource resource) => resourcesFlat.add;
+
   for (final directory in routesDirectory.listSync().whereType<Directory>()) {
-    resources.add(
-      _getResourceForDirectory(
-        directory: directory,
-        routesDirectory: routesDirectory,
-        onResource: resourcesFlat.add,
-      ),
+    final resource = _getResourceForDirectory(
+      directory: directory,
+      routesDirectory: routesDirectory,
+      onResource: onResource,
     );
+    resources.add(resource);
+    onResource(resource);
   }
 
   final indexEndpointIndex = endpoints.indexWhere((e) => e.name == 'index');
