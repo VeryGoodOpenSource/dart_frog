@@ -30,12 +30,14 @@ ClientConfiguration buildClientConfiguration(Directory directory) {
     )
   ];
 
+  final resourcesFlat = <ClientResource>[];
   final resources = <ClientResource>[];
   for (final directory in routesDirectory.listSync().whereType<Directory>()) {
     resources.add(
-      _getResourcesForDirectory(
+      _getResourceForDirectory(
         directory: directory,
         routesDirectory: routesDirectory,
+        onResource: resourcesFlat.add,
       ),
     );
   }
@@ -50,6 +52,7 @@ ClientConfiguration buildClientConfiguration(Directory directory) {
     packageName: packageName,
     endpoints: normalizedEndpoints,
     resources: resources,
+    resourcesFlat: resourcesFlat,
     extendsEndpoint: extendsEndpoint,
   );
 }
@@ -62,9 +65,10 @@ List<ClientEndpoint> _getEndpointsForDirectory({
   return routes.map((entity) => entity.toEndpoint(routesDirectory)).toList();
 }
 
-ClientResource _getResourcesForDirectory({
+ClientResource _getResourceForDirectory({
   required Directory directory,
   required Directory routesDirectory,
+  required void Function(ClientResource resource) onResource,
 }) {
   final endpoints = _getEndpointsForDirectory(
     directory: directory,
@@ -73,12 +77,13 @@ ClientResource _getResourcesForDirectory({
 
   final resources = <ClientResource>[];
   directory.listSync().whereType<Directory>().forEach((directory) {
-    resources.add(
-      _getResourcesForDirectory(
-        directory: directory,
-        routesDirectory: routesDirectory,
-      ),
+    final resource = _getResourceForDirectory(
+      directory: directory,
+      routesDirectory: routesDirectory,
+      onResource: onResource,
     );
+    resources.add(resource);
+    onResource(resource);
   });
 
   return directory.toResource(endpoints: endpoints, resources: resources);

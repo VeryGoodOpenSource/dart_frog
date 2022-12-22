@@ -8,6 +8,7 @@ class ClientConfiguration {
     required this.packageName,
     required this.endpoints,
     required this.resources,
+    required this.resourcesFlat,
     required this.extendsEndpoint,
   });
 
@@ -23,12 +24,16 @@ class ClientConfiguration {
   /// A list of api resources.
   final List<ClientResource> resources;
 
+    /// A flattened list of api resources.
+  final List<ClientResource> resourcesFlat;
+
   /// Converts the current configuration into a `Map<String, dynamic>`.
   Map<String, dynamic> toJson() {
     return {
       'packageName': packageName,
       'endpoints': endpoints.map((e) => e.toJson()).toList(),
       'resources': resources.map((r) => r.toJson()).toList(),
+      'resourcesFlat': resourcesFlat.map((r) => r.toJson()).toList(),
       'extendsEndpoint': extendsEndpoint,
     };
   }
