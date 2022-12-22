@@ -71,16 +71,8 @@ void main() {
         configuration.endpoints,
         equals({
           '/users': [
-            isA<RouteFile>().having(
-              (r) => r.path,
-              'path',
-              '../routes/users.dart',
-            ),
-            isA<RouteFile>().having(
-              (r) => r.path,
-              'path',
-              '../routes/users/index.dart',
-            )
+            isARouteFile(path: '../routes/users.dart'),
+            isARouteFile(path: '../routes/users/index.dart')
           ]
         }),
       );
@@ -115,13 +107,7 @@ void main() {
       expect(
         configuration.endpoints,
         equals({
-          '/': [
-            isA<RouteFile>().having(
-              (r) => r.path,
-              'path',
-              '../routes/index.dart',
-            )
-          ]
+          '/': [isARouteFile(path: '../routes/index.dart')]
         }),
       );
     });
@@ -166,20 +152,8 @@ void main() {
       expect(
         configuration.endpoints,
         equals({
-          '/': [
-            isA<RouteFile>().having(
-              (r) => r.path,
-              'path',
-              '../routes/index.dart',
-            )
-          ],
-          '/hello': [
-            isA<RouteFile>().having(
-              (r) => r.path,
-              'path',
-              '../routes/hello.dart',
-            )
-          ]
+          '/': [isARouteFile(path: '../routes/index.dart')],
+          '/hello': [isARouteFile(path: '../routes/hello.dart')]
         }),
       );
     });
@@ -232,20 +206,8 @@ void main() {
       expect(
         configuration.endpoints,
         equals({
-          '/': [
-            isA<RouteFile>().having(
-              (r) => r.path,
-              'path',
-              '../routes/index.dart',
-            )
-          ],
-          '/echo/message': [
-            isA<RouteFile>().having(
-              (r) => r.path,
-              'path',
-              '../routes/echo/message.dart',
-            )
-          ]
+          '/': [isARouteFile(path: '../routes/index.dart')],
+          '/echo/message': [isARouteFile(path: '../routes/echo/message.dart')]
         }),
       );
     });
@@ -282,11 +244,7 @@ void main() {
         configuration.endpoints,
         equals({
           '/echo/message': [
-            isA<RouteFile>().having(
-              (r) => r.path,
-              'path',
-              '../routes/echo/message/index.dart',
-            )
+            isARouteFile(path: '../routes/echo/message/index.dart')
           ]
         }),
       );
@@ -341,18 +299,10 @@ void main() {
         configuration.endpoints,
         equals({
           '/': [
-            isA<RouteFile>().having(
-              (r) => r.path,
-              'path',
-              '../routes/index.dart',
-            )
+            isARouteFile(path: '../routes/index.dart'),
           ],
           '/echo/<message>': [
-            isA<RouteFile>().having(
-              (r) => r.path,
-              'path',
-              '../routes/echo/[message].dart',
-            )
+            isARouteFile(path: '../routes/echo/[message].dart'),
           ]
         }),
       );
@@ -428,25 +378,13 @@ void main() {
         configuration.endpoints,
         equals({
           '/': [
-            isA<RouteFile>().having(
-              (r) => r.path,
-              'path',
-              '../routes/index.dart',
-            )
+            isARouteFile(path: '../routes/index.dart'),
           ],
           '/<user>/<name>': [
-            isA<RouteFile>().having(
-              (r) => r.path,
-              'path',
-              '../routes/[user]/[name].dart',
-            )
+            isARouteFile(path: '../routes/[user]/[name].dart'),
           ],
           '/<user>/<id>': [
-            isA<RouteFile>().having(
-              (r) => r.path,
-              'path',
-              '../routes/[user]/[id]/index.dart',
-            )
+            isARouteFile(path: '../routes/[user]/[id]/index.dart'),
           ]
         }),
       );
@@ -547,32 +485,16 @@ void main() {
         configuration.endpoints,
         equals({
           '/': [
-            isA<RouteFile>().having(
-              (r) => r.path,
-              'path',
-              '../routes/index.dart',
-            )
+            isARouteFile(path: '../routes/index.dart'),
           ],
           '/api/v1': [
-            isA<RouteFile>().having(
-              (r) => r.path,
-              'path',
-              '../routes/api/v1.dart',
-            )
+            isARouteFile(path: '../routes/api/v1.dart'),
           ],
           '/<user>/<name>': [
-            isA<RouteFile>().having(
-              (r) => r.path,
-              'path',
-              '../routes/[user]/[name].dart',
-            )
+            isARouteFile(path: '../routes/[user]/[name].dart'),
           ],
           '/<user>/<id>': [
-            isA<RouteFile>().having(
-              (r) => r.path,
-              'path',
-              '../routes/[user]/[id]/index.dart',
-            )
+            isARouteFile(path: '../routes/[user]/[id]/index.dart'),
           ]
         }),
       );
@@ -626,20 +548,8 @@ void main() {
       expect(
         configuration.endpoints,
         equals({
-          '/': [
-            isA<RouteFile>().having(
-              (r) => r.path,
-              'path',
-              '../routes/index.dart',
-            )
-          ],
-          '/<id>/api': [
-            isA<RouteFile>().having(
-              (r) => r.path,
-              'path',
-              '../routes/[id]/api/index.dart',
-            )
-          ],
+          '/': [isARouteFile(path: '../routes/index.dart')],
+          '/<id>/api': [isARouteFile(path: '../routes/[id]/api/index.dart')],
         }),
       );
     });
@@ -693,18 +603,10 @@ void main() {
         configuration.endpoints,
         equals({
           '/': [
-            isA<RouteFile>().having(
-              (r) => r.path,
-              'path',
-              '../routes/index.dart',
-            )
+            isARouteFile(path: '../routes/index.dart'),
           ],
           '/<id>/api/test': [
-            isA<RouteFile>().having(
-              (r) => r.path,
-              'path',
-              '../routes/[id]/api/test.dart',
-            )
+            isARouteFile(path: '../routes/[id]/api/test.dart'),
           ],
         }),
       );
@@ -759,18 +661,10 @@ void main() {
         configuration.endpoints,
         equals({
           '/': [
-            isA<RouteFile>().having(
-              (r) => r.path,
-              'path',
-              '../routes/index.dart',
-            )
+            isARouteFile(path: '../routes/index.dart'),
           ],
           '/<id>/api/<name>': [
-            isA<RouteFile>().having(
-              (r) => r.path,
-              'path',
-              '../routes/[id]/api/[name]/index.dart',
-            )
+            isARouteFile(path: '../routes/[id]/api/[name]/index.dart'),
           ],
         }),
       );
@@ -825,18 +719,10 @@ void main() {
         configuration.endpoints,
         equals({
           '/': [
-            isA<RouteFile>().having(
-              (r) => r.path,
-              'path',
-              '../routes/index.dart',
-            )
+            isARouteFile(path: '../routes/index.dart'),
           ],
           '/<id>/api/<name>/test': [
-            isA<RouteFile>().having(
-              (r) => r.path,
-              'path',
-              '../routes/[id]/api/[name]/test.dart',
-            )
+            isARouteFile(path: '../routes/[id]/api/[name]/test.dart'),
           ],
         }),
       );
@@ -873,13 +759,187 @@ void main() {
       expect(
         configuration.endpoints,
         equals({
-          '/api/api': [
-            isA<RouteFile>().having(
-              (r) => r.path,
-              'path',
-              '../routes/api/api.dart',
-            )
+          '/api/api': [isARouteFile(path: '../routes/api/api.dart')],
+        }),
+      );
+    });
+
+    test('supports /[a]_[b].dart', () {
+      const expected = [
+        {
+          'name': '_',
+          'route': '/',
+          'middleware': [],
+          'files': [
+            {
+              'name': r'$a_$b',
+              'path': '../routes/[a]_[b].dart',
+              'route': '/<a>_<b>',
+              'file_params': ['a', 'b']
+            }
           ],
+          'directory_params': []
+        }
+      ];
+
+      final configuration = buildRouteConfiguration(
+        createTempDir(
+          files: ['routes/[a]_[b].dart'],
+        ),
+      );
+
+      expect(
+        configuration.directories.map((d) => d.toJson()).toList(),
+        equals(expected),
+      );
+      expect(
+        configuration.endpoints,
+        equals({
+          '/<a>_<b>': [isARouteFile(path: '../routes/[a]_[b].dart')],
+        }),
+      );
+    });
+
+    test('supports /[a]_[b]/index.dart', () {
+      const expected = [
+        {
+          'name': r'_$a_$b',
+          'route': '/<a>_<b>',
+          'middleware': [],
+          'files': [
+            {
+              'name': r'$a_$b_index',
+              'path': '../routes/[a]_[b]/index.dart',
+              'route': '/',
+              'file_params': []
+            }
+          ],
+          'directory_params': ['a', 'b']
+        }
+      ];
+
+      final configuration = buildRouteConfiguration(
+        createTempDir(
+          files: ['routes/[a]_[b]/index.dart'],
+        ),
+      );
+
+      expect(
+        configuration.directories.map((d) => d.toJson()).toList(),
+        equals(expected),
+      );
+      expect(
+        configuration.endpoints,
+        equals({
+          '/<a>_<b>': [isARouteFile(path: '../routes/[a]_[b]/index.dart')],
+        }),
+      );
+    });
+
+    test('supports /a_[b].dart', () {
+      const expected = [
+        {
+          'name': '_',
+          'route': '/',
+          'middleware': [],
+          'files': [
+            {
+              'name': r'a_$b',
+              'path': '../routes/a_[b].dart',
+              'route': '/a_<b>',
+              'file_params': ['b']
+            }
+          ],
+          'directory_params': []
+        }
+      ];
+
+      final configuration = buildRouteConfiguration(
+        createTempDir(
+          files: ['routes/a_[b].dart'],
+        ),
+      );
+
+      expect(
+        configuration.directories.map((d) => d.toJson()).toList(),
+        equals(expected),
+      );
+      expect(
+        configuration.endpoints,
+        equals({
+          '/a_<b>': [isARouteFile(path: '../routes/a_[b].dart')],
+        }),
+      );
+    });
+
+    test('supports /a_[b]_c.dart', () {
+      const expected = [
+        {
+          'name': '_',
+          'route': '/',
+          'middleware': [],
+          'files': [
+            {
+              'name': r'a_$b_c',
+              'path': '../routes/a_[b]_c.dart',
+              'route': '/a_<b>_c',
+              'file_params': ['b']
+            }
+          ],
+          'directory_params': []
+        }
+      ];
+
+      final configuration = buildRouteConfiguration(
+        createTempDir(
+          files: ['routes/a_[b]_c.dart'],
+        ),
+      );
+
+      expect(
+        configuration.directories.map((d) => d.toJson()).toList(),
+        equals(expected),
+      );
+      expect(
+        configuration.endpoints,
+        equals({
+          '/a_<b>_c': [isARouteFile(path: '../routes/a_[b]_c.dart')],
+        }),
+      );
+    });
+
+    test('supports /[a]-[b].dart', () {
+      const expected = [
+        {
+          'name': '_',
+          'route': '/',
+          'middleware': [],
+          'files': [
+            {
+              'name': r'$a-$b',
+              'path': '../routes/[a]-[b].dart',
+              'route': '/<a>-<b>',
+              'file_params': ['a', 'b']
+            }
+          ],
+          'directory_params': []
+        }
+      ];
+
+      final configuration = buildRouteConfiguration(
+        createTempDir(
+          files: ['routes/[a]-[b].dart'],
+        ),
+      );
+
+      expect(
+        configuration.directories.map((d) => d.toJson()).toList(),
+        equals(expected),
+      );
+      expect(
+        configuration.endpoints,
+        equals({
+          '/<a>-<b>': [isARouteFile(path: '../routes/[a]-[b].dart')],
         }),
       );
     });
@@ -1080,4 +1140,8 @@ Directory createTempDir({
     File(path.join(tempDir.path, f)).createSync(recursive: true);
   }
   return tempDir;
+}
+
+Matcher isARouteFile({required String path}) {
+  return isA<RouteFile>().having((r) => r.path, 'path', path);
 }
