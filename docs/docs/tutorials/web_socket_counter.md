@@ -119,7 +119,7 @@ Now if we visit [http://localhost:8080/ws](http://localhost:8080/ws) in the brow
 
 ```bash
 curl --request GET \
-  --url http://localhost:8080
+  --url http://localhost:8080/ws
 ```
 
 We should see our new response:
