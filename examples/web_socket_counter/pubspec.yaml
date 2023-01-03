@@ -9,7 +9,7 @@ environment:
 dependencies:
   broadcast_bloc: ^0.1.0-dev.1
   dart_frog: ^0.3.0
-  dart_frog_web_socket: ^0.1.0-dev.1
+  dart_frog_web_socket: ^0.1.0-dev.2
 
 dev_dependencies:
   bloc_test: ^9.1.0
