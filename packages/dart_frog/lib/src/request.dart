@@ -95,6 +95,8 @@ class Request {
 
   final shelf.Request _request;
 
+  Completer<List<int>>? _bodyBytesCompleter;
+
   /// Connection information for the associated HTTP request.
   HttpConnectionInfo get connectionInfo {
     return _request.context['shelf.io.connection_info']! as HttpConnectionInfo;
@@ -115,11 +117,25 @@ class Request {
     return HttpMethod.values.firstWhere((m) => m.value == _request.method);
   }
 
+  Future<List<int>> _bytes() async {
+    if (_bodyBytesCompleter == null) {
+      _bodyBytesCompleter = Completer<List<int>>();
+      final bytes = await _request.read().fold<List<int>>(
+        <int>[],
+        (previous, element) => previous..addAll(element),
+      );
+      _bodyBytesCompleter!.complete(bytes);
+    }
+    return _bodyBytesCompleter!.future;
+  }
+
   /// Returns a [Stream] representing the body.
-  Stream<List<int>> bytes() => _request.read();
+  Stream<List<int>> bytes() async* {
+    yield await _bytes();
+  }
 
   /// Returns a [Future] containing the body as a [String].
-  Future<String> body() => _request.readAsString();
+  Future<String> body() => utf8.decodeStream(bytes());
 
   /// Returns a [Future] containing the form data as a [Map].
   Future<Map<String, String>> formData() {

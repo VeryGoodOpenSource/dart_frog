@@ -45,6 +45,28 @@ void main() {
       expect(response.headers['foo'], equals('bar,baz'));
     });
 
+    test('body can be read multiple times (sync)', () {
+      const body = 'test-body';
+      final response = Response(body: body);
+
+      expect(response.body(), completion(equals(body)));
+      expect(response.body(), completion(equals(body)));
+
+      expect(response.bytes(), emits(utf8.encode(body)));
+      expect(response.bytes(), emits(utf8.encode(body)));
+    });
+
+    test('body can be read multiple times (async)', () async {
+      const body = '__test_body__';
+      final response = Response(body: body);
+
+      await expectLater(response.body(), completion(equals(body)));
+      await expectLater(response.body(), completion(equals(body)));
+
+      await expectLater(response.bytes(), emits(utf8.encode(body)));
+      await expectLater(response.bytes(), emits(utf8.encode(body)));
+    });
+
     group('copyWith', () {
       test('returns a copy with overridden properties', () {
         const headers = <String, String>{'foo': 'bar'};

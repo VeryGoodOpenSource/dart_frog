@@ -50,6 +50,8 @@ class Response {
 
   final shelf.Response _response;
 
+  Completer<List<int>>? _bodyBytesCompleter;
+
   /// The HTTP status code of the response.
   int get statusCode => _response.statusCode;
 
@@ -57,11 +59,25 @@ class Response {
   /// The returned map is unmodifiable.
   Map<String, String> get headers => _response.headers;
 
+  Future<List<int>> _bytes() async {
+    if (_bodyBytesCompleter == null) {
+      _bodyBytesCompleter = Completer<List<int>>();
+      final bytes = await _response.read().fold<List<int>>(
+        <int>[],
+        (previous, element) => previous..addAll(element),
+      );
+      _bodyBytesCompleter!.complete(bytes);
+    }
+    return _bodyBytesCompleter!.future;
+  }
+
   /// Returns a [Stream] representing the body.
-  Stream<List<int>> bytes() => _response.read();
+  Stream<List<int>> bytes() async* {
+    yield await _bytes();
+  }
 
   /// Returns a [Future] containing the body as a [String].
-  Future<String> body() => _response.readAsString();
+  Future<String> body() => utf8.decodeStream(bytes());
 
   /// Returns a [Future] containing the form data as a [Map].
   Future<Map<String, String>> formData() {
