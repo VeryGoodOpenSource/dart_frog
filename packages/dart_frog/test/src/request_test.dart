@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -42,6 +43,21 @@ void main() {
       expect(request.bytes(), emits(utf8.encode(body)));
     });
 
+    test('throws exception when unable to read body', () async {
+      final exception = Exception('oops');
+      final body = Stream<Object>.error(exception);
+      final request = Request('GET', localhost, body: body);
+      expect(request.body, throwsA(exception));
+    });
+
+    test('throws exception when unable to read body multiple times', () async {
+      final exception = Exception('oops');
+      final body = Stream<Object>.error(exception);
+      final request = Request('GET', localhost, body: body);
+      expect(request.body, throwsA(exception));
+      expect(request.body, throwsA(exception));
+    });
+
     test('has correct headers', () {
       const headers = <String, String>{'foo': 'bar'};
       final request = Request('GET', localhost, headers: headers);
@@ -49,25 +65,25 @@ void main() {
     });
 
     test('body can be read multiple times (sync)', () {
-      const body = '__test_body__';
+      final body = json.encode({'test': 'body'});
       final request = Request('GET', localhost, body: body);
 
       expect(request.body(), completion(equals(body)));
       expect(request.body(), completion(equals(body)));
 
-      expect(request.bytes(), emits(utf8.encode(body)));
-      expect(request.bytes(), emits(utf8.encode(body)));
+      expect(request.json(), completion(equals(json.decode(body))));
+      expect(request.json(), completion(equals(json.decode(body))));
     });
 
     test('body can be read multiple times (async)', () async {
-      const body = '__test_body__';
+      final body = json.encode({'test': 'body'});
       final request = Request('GET', localhost, body: body);
 
       await expectLater(request.body(), completion(equals(body)));
       await expectLater(request.body(), completion(equals(body)));
 
-      await expectLater(request.bytes(), emits(utf8.encode(body)));
-      await expectLater(request.bytes(), emits(utf8.encode(body)));
+      await expectLater(request.json(), completion(equals(json.decode(body))));
+      await expectLater(request.json(), completion(equals(json.decode(body))));
     });
 
     group('copyWith', () {

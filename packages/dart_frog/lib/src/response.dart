@@ -50,7 +50,7 @@ class Response {
 
   final shelf.Response _response;
 
-  Completer<List<int>>? _bodyBytesCompleter;
+  Completer<String>? _bodyCompleter;
 
   /// The HTTP status code of the response.
   int get statusCode => _response.statusCode;
@@ -59,25 +59,21 @@ class Response {
   /// The returned map is unmodifiable.
   Map<String, String> get headers => _response.headers;
 
-  Future<List<int>> _bytes() async {
-    if (_bodyBytesCompleter == null) {
-      _bodyBytesCompleter = Completer<List<int>>();
-      final bytes = await _response.read().fold<List<int>>(
-        <int>[],
-        (previous, element) => previous..addAll(element),
-      );
-      _bodyBytesCompleter!.complete(bytes);
-    }
-    return _bodyBytesCompleter!.future;
-  }
-
   /// Returns a [Stream] representing the body.
-  Stream<List<int>> bytes() async* {
-    yield await _bytes();
-  }
+  Stream<List<int>> bytes() => _response.read();
 
   /// Returns a [Future] containing the body as a [String].
-  Future<String> body() => utf8.decodeStream(bytes());
+  Future<String> body() async {
+    if (_bodyCompleter == null) {
+      _bodyCompleter = Completer<String>();
+      try {
+        _bodyCompleter!.complete(await _response.readAsString());
+      } catch (error, stackTrace) {
+        _bodyCompleter!.completeError(error, stackTrace);
+      }
+    }
+    return _bodyCompleter!.future;
+  }
 
   /// Returns a [Future] containing the form data as a [Map].
   Future<Map<String, String>> formData() {
@@ -87,7 +83,7 @@ class Response {
   /// Returns a [Future] containing the body text parsed as a json object.
   /// This object could be anything that can be represented by json
   /// e.g. a map, a list, a string, a number, a bool...
-  Future<dynamic> json() async => jsonDecode(await _response.readAsString());
+  Future<dynamic> json() async => jsonDecode(await body());
 
   /// Creates a new [Response] by copying existing values and applying specified
   /// changes.

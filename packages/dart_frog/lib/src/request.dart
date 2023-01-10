@@ -95,7 +95,7 @@ class Request {
 
   final shelf.Request _request;
 
-  Completer<List<int>>? _bodyBytesCompleter;
+  Completer<String>? _bodyCompleter;
 
   /// Connection information for the associated HTTP request.
   HttpConnectionInfo get connectionInfo {
@@ -117,25 +117,21 @@ class Request {
     return HttpMethod.values.firstWhere((m) => m.value == _request.method);
   }
 
-  Future<List<int>> _bytes() async {
-    if (_bodyBytesCompleter == null) {
-      _bodyBytesCompleter = Completer<List<int>>();
-      final bytes = await _request.read().fold<List<int>>(
-        <int>[],
-        (previous, element) => previous..addAll(element),
-      );
-      _bodyBytesCompleter!.complete(bytes);
-    }
-    return _bodyBytesCompleter!.future;
-  }
-
   /// Returns a [Stream] representing the body.
-  Stream<List<int>> bytes() async* {
-    yield await _bytes();
-  }
+  Stream<List<int>> bytes() => _request.read();
 
   /// Returns a [Future] containing the body as a [String].
-  Future<String> body() => utf8.decodeStream(bytes());
+  Future<String> body() async {
+    if (_bodyCompleter == null) {
+      _bodyCompleter = Completer<String>();
+      try {
+        _bodyCompleter!.complete(await _request.readAsString());
+      } catch (error, stackTrace) {
+        _bodyCompleter!.completeError(error, stackTrace);
+      }
+    }
+    return _bodyCompleter!.future;
+  }
 
   /// Returns a [Future] containing the form data as a [Map].
   Future<Map<String, String>> formData() {
@@ -145,7 +141,7 @@ class Request {
   /// Returns a [Future] containing the body text parsed as a json object.
   /// This object could be anything that can be represented by json
   /// e.g. a map, a list, a string, a number, a bool...
-  Future<dynamic> json() async => jsonDecode(await _request.readAsString());
+  Future<dynamic> json() async => jsonDecode(await body());
 
   /// Creates a new [Request] by copying existing values and applying specified
   /// changes.
