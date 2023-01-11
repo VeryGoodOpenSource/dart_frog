@@ -79,4 +79,44 @@ void main() {
     expect(response.statusCode, equals(HttpStatus.ok));
     expect(await response.body(), equals('body: $body'));
   });
+
+  test('middleware can be used to read the response body', () async {
+    const emptyBody = '(empty)';
+    Middleware responseValidator() {
+      return (handler) {
+        return (context) async {
+          final response = await handler(context);
+          final body = await response.body();
+          if (body.isEmpty) return Response(body: emptyBody);
+          return response;
+        };
+      };
+    }
+
+    Future<Response> onRequest(RequestContext context) async {
+      final body = await context.request.body();
+      return Response(body: body);
+    }
+
+    final handler = const Pipeline()
+        .addMiddleware(responseValidator())
+        .addHandler(onRequest);
+
+    var request = Request.get(Uri.parse('http://localhost/'));
+    var context = _MockRequestContext();
+    when(() => context.request).thenReturn(request);
+    var response = await handler(context);
+
+    expect(response.statusCode, equals(HttpStatus.ok));
+    expect(await response.body(), equals(emptyBody));
+
+    const body = '__test_body__';
+    request = Request.get(Uri.parse('http://localhost/'), body: body);
+    context = _MockRequestContext();
+    when(() => context.request).thenReturn(request);
+    response = await handler(context);
+
+    expect(response.statusCode, equals(HttpStatus.ok));
+    expect(await response.body(), equals(body));
+  });
 }
