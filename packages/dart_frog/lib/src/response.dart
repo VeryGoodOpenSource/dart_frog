@@ -50,8 +50,6 @@ class Response {
 
   shelf.Response _response;
 
-  Completer<String>? _bodyCompleter;
-
   /// The HTTP status code of the response.
   int get statusCode => _response.statusCode;
 
@@ -64,17 +62,22 @@ class Response {
 
   /// Returns a [Future] containing the body as a [String].
   Future<String> body() async {
-    if (_bodyCompleter == null) {
-      _bodyCompleter = Completer<String>();
-      try {
-        final body = await _response.readAsString();
-        _response = _response.change(body: body);
-        _bodyCompleter!.complete(body);
-      } catch (error, stackTrace) {
-        _bodyCompleter!.completeError(error, stackTrace);
-      }
+    const responseBodyKey = 'dart_frog.response.body';
+    final bodyFromContext =
+        _response.context[responseBodyKey] as Completer<String>?;
+    if (bodyFromContext != null) return bodyFromContext.future;
+
+    final completer = Completer<String>();
+    try {
+      _response = _response.change(
+        context: {..._response.context, responseBodyKey: completer},
+      );
+      completer.complete(await _response.readAsString());
+    } catch (error, stackTrace) {
+      completer.completeError(error, stackTrace);
     }
-    return _bodyCompleter!.future;
+
+    return completer.future;
   }
 
   /// Returns a [Future] containing the form data as a [Map].

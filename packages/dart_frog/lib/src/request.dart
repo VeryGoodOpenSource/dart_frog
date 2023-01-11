@@ -95,8 +95,6 @@ class Request {
 
   shelf.Request _request;
 
-  Completer<String>? _bodyCompleter;
-
   /// Connection information for the associated HTTP request.
   HttpConnectionInfo get connectionInfo {
     return _request.context['shelf.io.connection_info']! as HttpConnectionInfo;
@@ -122,17 +120,22 @@ class Request {
 
   /// Returns a [Future] containing the body as a [String].
   Future<String> body() async {
-    if (_bodyCompleter == null) {
-      _bodyCompleter = Completer<String>();
-      try {
-        final body = await _request.readAsString();
-        _request = _request.change(body: body);
-        _bodyCompleter!.complete(body);
-      } catch (error, stackTrace) {
-        _bodyCompleter!.completeError(error, stackTrace);
-      }
+    const requestBodyKey = 'dart_frog.request.body';
+    final bodyFromContext =
+        _request.context[requestBodyKey] as Completer<String>?;
+    if (bodyFromContext != null) return bodyFromContext.future;
+
+    final completer = Completer<String>();
+    try {
+      _request = _request.change(
+        context: {..._request.context, requestBodyKey: completer},
+      );
+      completer.complete(await _request.readAsString());
+    } catch (error, stackTrace) {
+      completer.completeError(error, stackTrace);
     }
-    return _bodyCompleter!.future;
+
+    return completer.future;
   }
 
   /// Returns a [Future] containing the form data as a [Map].
