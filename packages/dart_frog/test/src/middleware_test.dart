@@ -108,7 +108,7 @@ void main() {
     var response = await handler(context);
 
     expect(response.statusCode, equals(HttpStatus.ok));
-    expect(await response.body(), equals(emptyBody));
+    expect(response.body(), completion(equals(emptyBody)));
 
     const body = '__test_body__';
     request = Request.get(Uri.parse('http://localhost/'), body: body);
@@ -117,6 +117,6 @@ void main() {
     response = await handler(context);
 
     expect(response.statusCode, equals(HttpStatus.ok));
-    expect(await response.body(), equals(body));
+    expect(response.body(), completion(equals(body)));
   });
 }
