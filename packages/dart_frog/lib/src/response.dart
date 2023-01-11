@@ -48,7 +48,7 @@ class Response {
 
   Response._(this._response);
 
-  final shelf.Response _response;
+  shelf.Response _response;
 
   Completer<String>? _bodyCompleter;
 
@@ -67,7 +67,9 @@ class Response {
     if (_bodyCompleter == null) {
       _bodyCompleter = Completer<String>();
       try {
-        _bodyCompleter!.complete(await _response.readAsString());
+        final body = await _response.readAsString();
+        _response = _response.change(body: body);
+        _bodyCompleter!.complete(body);
       } catch (error, stackTrace) {
         _bodyCompleter!.completeError(error, stackTrace);
       }

@@ -93,7 +93,7 @@ class Request {
 
   Request._(this._request);
 
-  final shelf.Request _request;
+  shelf.Request _request;
 
   Completer<String>? _bodyCompleter;
 
@@ -125,7 +125,9 @@ class Request {
     if (_bodyCompleter == null) {
       _bodyCompleter = Completer<String>();
       try {
-        _bodyCompleter!.complete(await _request.readAsString());
+        final body = await _request.readAsString();
+        _request = _request.change(body: body);
+        _bodyCompleter!.complete(body);
       } catch (error, stackTrace) {
         _bodyCompleter!.completeError(error, stackTrace);
       }
