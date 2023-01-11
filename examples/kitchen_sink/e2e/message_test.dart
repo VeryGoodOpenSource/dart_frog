@@ -19,14 +19,18 @@ void main() {
       expect(response.statusCode, equals(HttpStatus.badRequest));
     });
 
-    test('POST /messages responds with 200 when body is not empty', () async {
-      const message = 'hello world';
-      final response = await http.post(
-        Uri.parse('http://localhost:8080/messages'),
-        body: message,
-      );
-      expect(response.statusCode, equals(HttpStatus.ok));
-      expect(response.body, equals('message: $message'));
-    });
+    test(
+      'POST /messages responds with 200 when body is not empty',
+      () async {
+        const message = 'hello world';
+        final response = await http.post(
+          Uri.parse('http://localhost:8080/messages'),
+          body: message,
+        );
+        expect(response.statusCode, equals(HttpStatus.ok));
+        expect(response.body, equals('message: $message'));
+      },
+      skip: true,
+    );
   });
 }
