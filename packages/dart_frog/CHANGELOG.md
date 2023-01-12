@@ -1,3 +1,7 @@
+# 0.3.2
+
+- feat: cache `Request` and `Response` body
+
 # 0.3.1
 
 - feat: add `formData` to `Request`/`Response`
