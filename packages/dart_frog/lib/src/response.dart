@@ -48,7 +48,7 @@ class Response {
 
   Response._(this._response);
 
-  final shelf.Response _response;
+  shelf.Response _response;
 
   /// The HTTP status code of the response.
   int get statusCode => _response.statusCode;
@@ -61,7 +61,24 @@ class Response {
   Stream<List<int>> bytes() => _response.read();
 
   /// Returns a [Future] containing the body as a [String].
-  Future<String> body() => _response.readAsString();
+  Future<String> body() async {
+    const responseBodyKey = 'dart_frog.response.body';
+    final bodyFromContext =
+        _response.context[responseBodyKey] as Completer<String>?;
+    if (bodyFromContext != null) return bodyFromContext.future;
+
+    final completer = Completer<String>();
+    try {
+      _response = _response.change(
+        context: {..._response.context, responseBodyKey: completer},
+      );
+      completer.complete(await _response.readAsString());
+    } catch (error, stackTrace) {
+      completer.completeError(error, stackTrace);
+    }
+
+    return completer.future;
+  }
 
   /// Returns a [Future] containing the form data as a [Map].
   Future<Map<String, String>> formData() {
@@ -71,7 +88,7 @@ class Response {
   /// Returns a [Future] containing the body text parsed as a json object.
   /// This object could be anything that can be represented by json
   /// e.g. a map, a list, a string, a number, a bool...
-  Future<dynamic> json() async => jsonDecode(await _response.readAsString());
+  Future<dynamic> json() async => jsonDecode(await body());
 
   /// Creates a new [Response] by copying existing values and applying specified
   /// changes.

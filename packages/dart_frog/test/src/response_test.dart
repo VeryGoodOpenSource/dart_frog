@@ -31,6 +31,17 @@ void main() {
       expect(response.body(), completion(isEmpty));
     });
 
+    test('throws exception when unable to read body', () async {
+      final request = Response.bytes(body: base64Decode('1234'));
+      expect(request.body, throwsException);
+    });
+
+    test('throws exception when unable to read body multiple times.', () async {
+      final request = Response.bytes(body: base64Decode('1234'));
+      expect(request.body, throwsException);
+      expect(request.body, throwsException);
+    });
+
     test('has correct headers', () {
       const headers = <String, String>{'foo': 'bar'};
       final response = Response(headers: headers);
@@ -43,6 +54,28 @@ void main() {
       };
       final response = Response(headers: headers);
       expect(response.headers['foo'], equals('bar,baz'));
+    });
+
+    test('body can be read multiple times (sync)', () {
+      final body = json.encode({'test': 'body'});
+      final response = Response(body: body);
+
+      expect(response.body(), completion(equals(body)));
+      expect(response.body(), completion(equals(body)));
+
+      expect(response.json(), completion(equals(json.decode(body))));
+      expect(response.json(), completion(equals(json.decode(body))));
+    });
+
+    test('body can be read multiple times (async)', () async {
+      final body = json.encode({'test': 'body'});
+      final response = Response(body: body);
+
+      await expectLater(response.body(), completion(equals(body)));
+      await expectLater(response.body(), completion(equals(body)));
+
+      await expectLater(response.json(), completion(equals(json.decode(body))));
+      await expectLater(response.json(), completion(equals(json.decode(body))));
     });
 
     group('copyWith', () {
