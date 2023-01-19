@@ -350,7 +350,7 @@ Future<Response> onRequest(RequestContext context) async {
 
 ## Dynamic Routes 🌓
 
-Dart Frog supports dynamic routes. For example, if you create a file called `routes/posts/[id].dart`, then it will be accessible at `/posts/1`, `/posts/2`, etc.
+Dart Frog supports dynamic routes. For example, if you create a file called `routes/posts/[id].dart`, then it will be accessible at `/posts/1`, `/posts/2`, and so on.
 
 Routing parameters are forwarded to the `onRequest` method as seen below.
 
@@ -362,9 +362,9 @@ Response onRequest(RequestContext context, String id) {
 }
 ```
 
-Dart Frog also supports nested dynamic routes. For example, if you create a file called, `routes/users/[userId]/posts/[postId].dart`, then it will be accessible at `/users/alice/posts/1`, `/users/sam/posts/42`, etc.
+Dart Frog also supports nested dynamic routes. For example, if you create a file called, `routes/users/[userId]/posts/[postId].dart`, then it will be accessible at `/users/alice/posts/1`, `/users/sam/posts/42`, and so on.
 
-Just as before, routing parameters are forwarded to the `onRequest` method:
+Just as with all dynamic routes, routing parameters are forwarded to the `onRequest` method:
 
 ```dart
 Response onRequest(RequestContext context, String userId, String postId) {
