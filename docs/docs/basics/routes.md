@@ -362,6 +362,16 @@ Response onRequest(RequestContext context, String id) {
 }
 ```
 
+Dart Frog also supports nested dynamic routes. For example, if you create a file called, `routes/users/[userId]/posts/[postId].dart`, then it will be accessible at `/users/alice/posts/1`, `/users/sam/posts/42`, etc.
+
+Just as before, routing parameters are forwarded to the `onRequest` method:
+
+```dart
+Response onRequest(RequestContext context, String userId, String postId) {
+  return Response(body: 'user id: $userId, post id: $postId');
+}
+```
+
 ## Route Conflicts 💥
 
 When defining routes, it's possible to encounter route conflicts.
