@@ -33,7 +33,7 @@ ClientConfiguration buildClientConfiguration(Directory directory) {
   final resourcesFlat = <ClientResource>[];
   final resources = <ClientResource>[];
 
-  void onResource(ClientResource resource) => resourcesFlat.add;
+  void onResource(ClientResource resource) => resourcesFlat.add(resource);
 
   for (final directory in routesDirectory.listSync().whereType<Directory>()) {
     final resource = _getResourceForDirectory(
