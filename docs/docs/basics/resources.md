@@ -1,5 +1,6 @@
 ---
 sidebar_position: 7
+title: 📚 Additional Resources
 ---
 
 # Additional Resources 📚

@@ -153,7 +153,7 @@ const config = {
         copyright: `Copyright © ${new Date().getFullYear()} Very Good Ventures.<br/>Built with 💙 by <a target="_blank" rel="noopener" aria-label="Very Good Ventures" href="https://verygood.ventures">Very Good Ventures</a>.`,
       },
       prism: {
-        additionalLanguages: ['bash', 'dart', 'yaml'],
+        additionalLanguages: ['bash', 'dart', 'docker', 'yaml'],
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
       },

@@ -1,0 +1,28 @@
+name: dart_frog_web_socket
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/dart_frog_web_socket.yaml"
+      - "packages/dart_frog_web_socket/lib/**"
+      - "packages/dart_frog_web_socket/test/**"
+      - "packages/dart_frog_web_socket/pubspec.yaml"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/dart_frog_web_socket.yaml"
+      - "packages/dart_frog_web_socket/lib/**"
+      - "packages/dart_frog_web_socket/test/**"
+      - "packages/dart_frog_web_socket/pubspec.yaml"
+
+jobs:
+  build:
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@v1
+    with:
+      working_directory: packages/dart_frog_web_socket
+
+  pana:
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/pana.yml@v1
+    with:
+      working_directory: packages/dart_frog_web_socket

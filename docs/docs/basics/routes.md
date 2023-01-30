@@ -1,5 +1,6 @@
 ---
 sidebar_position: 1
+title: 🚏 Routes
 ---
 
 # Routes 🚏
@@ -165,8 +166,77 @@ curl --request POST \
 The body is "Hello!".
 ```
 
-:::tip
+#### JSON
+
 When the `Content-Type` is `application/json`, you can use `context.request.json()` to read the contents of the request body as a `Map<String, dynamic>`.
+
+```dart
+import 'package:dart_frog/dart_frog.dart';
+
+Future<Response> onRequest(RequestContext context) async {
+  // Access the incoming request.
+  final request = context.request;
+
+  // Access the request body as parsed `JSON`.
+  final body = await request.json();
+
+  return Response.json(body: {'request_body': body});
+}
+```
+
+We can make a request to the above handler with some data and we should see:
+
+```
+curl --request POST \
+  --url http://localhost:8080/example \
+  --header 'Content-Type: application/json' \
+  --data '{
+  "hello": "world"
+}'
+
+{
+  "request_body": {
+    "hello": "world"
+  }
+}
+```
+
+#### Form Data
+
+When the `Content-Type` is `application/x-www-form-urlencoded`, you can use `context.request.formData()` to read the contents of the request body as a `Map<String, String>`.
+
+```dart
+import 'package:dart_frog/dart_frog.dart';
+
+Future<Response> onRequest(RequestContext context) async {
+  // Access the incoming request.
+  final request = context.request;
+
+  // Access the request body form data.
+  final body = await request.formData();
+
+  return Response.json(body: {'request_body': body});
+}
+```
+
+```
+curl --request POST \
+  --url http://localhost:8080/example \
+  --data hello=world
+
+{
+  "request_body": {
+    "hello": "world"
+  }
+}
+```
+
+:::info
+The `formData` API is supported in `dart_frog >=0.3.1`
+:::
+
+:::caution
+`request.formData()` will throw a `StateError` if the MIME type is not `application/x-www-form-urlencoded`.
 :::
 
 ## Responses 📤
@@ -280,7 +350,7 @@ Future<Response> onRequest(RequestContext context) async {
 
 ## Dynamic Routes 🌓
 
-Dart Frog supports dynamic routes. For example, if you create a file called `routes/posts/[id].dart`, then it will be accessible at `/posts/1`, `/posts/2`, etc.
+Dart Frog supports dynamic routes. For example, if you create a file called `routes/posts/[id].dart`, then it will be accessible at `/posts/1`, `/posts/2`, and so on.
 
 Routing parameters are forwarded to the `onRequest` method as seen below.
 
@@ -289,6 +359,16 @@ import 'package:dart_frog/dart_frog.dart';
 
 Response onRequest(RequestContext context, String id) {
   return Response(body: 'post id: $id');
+}
+```
+
+Dart Frog also supports nested dynamic routes. For example, if you create a file called, `routes/users/[userId]/posts/[postId].dart`, then it will be accessible at `/users/alice/posts/1`, `/users/sam/posts/42`, and so on.
+
+Just as with all dynamic routes, routing parameters are forwarded to the `onRequest` method:
+
+```dart
+Response onRequest(RequestContext context, String userId, String postId) {
+  return Response(body: 'user id: $userId, post id: $postId');
 }
 ```
 

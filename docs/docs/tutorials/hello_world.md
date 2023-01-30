@@ -1,5 +1,6 @@
 ---
 sidebar_position: 1
+title: 👋 Hello World
 description: Build a simple "Hello World" application.
 ---
 

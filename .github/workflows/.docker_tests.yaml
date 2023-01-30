@@ -7,6 +7,10 @@ on:
         required: false
         type: string
         default: ""
+      docker_directory:
+        required: false
+        type: string
+        default: "build"
       test_directory:
         required: false
         type: string
@@ -41,7 +45,7 @@ jobs:
         run: dart_frog build
 
       - name: 🐳 Build Docker Image
-        run: docker build -q build -t e2e-image
+        run: docker build -q ${{inputs.docker_directory}} -t e2e-image
 
       - name: ⚡️ Run Docker Image
         run: docker run -d -p 8080:8080 --name e2e --rm e2e-image

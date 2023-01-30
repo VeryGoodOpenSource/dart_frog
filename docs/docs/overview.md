@@ -87,6 +87,8 @@ dart_frog build
 
 ✅ Static File Support 📁
 
+✅ WebSocket Support 🔌
+
 🚧 Generated Dart Client Package 📦
 
 🚧 Generated API Documentation 📔

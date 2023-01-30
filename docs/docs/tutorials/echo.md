@@ -1,5 +1,6 @@
 ---
 sidebar_position: 2
+title: 🔊 Echo
 description: Build a simple "Echo" application.
 ---
 

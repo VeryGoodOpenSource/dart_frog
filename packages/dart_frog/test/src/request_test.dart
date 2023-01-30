@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
+import 'package:dart_frog/src/body_parsers/body_parsers.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -40,10 +43,47 @@ void main() {
       expect(request.bytes(), emits(utf8.encode(body)));
     });
 
+    test('throws exception when unable to read body', () async {
+      final exception = Exception('oops');
+      final body = Stream<Object>.error(exception);
+      final request = Request('GET', localhost, body: body);
+      expect(request.body, throwsA(exception));
+    });
+
+    test('throws exception when unable to read body multiple times', () async {
+      final exception = Exception('oops');
+      final body = Stream<Object>.error(exception);
+      final request = Request('GET', localhost, body: body);
+      expect(request.body, throwsA(exception));
+      expect(request.body, throwsA(exception));
+    });
+
     test('has correct headers', () {
       const headers = <String, String>{'foo': 'bar'};
       final request = Request('GET', localhost, headers: headers);
       expect(request.headers['foo'], equals(headers['foo']));
+    });
+
+    test('body can be read multiple times (sync)', () {
+      final body = json.encode({'test': 'body'});
+      final request = Request('GET', localhost, body: body);
+
+      expect(request.body(), completion(equals(body)));
+      expect(request.body(), completion(equals(body)));
+
+      expect(request.json(), completion(equals(json.decode(body))));
+      expect(request.json(), completion(equals(json.decode(body))));
+    });
+
+    test('body can be read multiple times (async)', () async {
+      final body = json.encode({'test': 'body'});
+      final request = Request('GET', localhost, body: body);
+
+      await expectLater(request.body(), completion(equals(body)));
+      await expectLater(request.body(), completion(equals(body)));
+
+      await expectLater(request.json(), completion(equals(json.decode(body))));
+      await expectLater(request.json(), completion(equals(json.decode(body))));
     });
 
     group('copyWith', () {
@@ -104,6 +144,55 @@ void main() {
         final bytes = utf8.encode('hello');
         final request = Request.get(localhost, body: bytes);
         expect(request.bytes(), emits(equals(bytes)));
+      });
+    });
+
+    group('formData', () {
+      final contentTypeFormUrlEncoded = {
+        HttpHeaders.contentTypeHeader: formUrlEncodedContentType.mimeType
+      };
+
+      test('throws StateError on invalid content-type', () async {
+        final request = Request.post(localhost);
+        expect(request.formData(), throwsStateError);
+      });
+
+      test('has correct data (no body)', () async {
+        final request = Request.post(
+          localhost,
+          headers: contentTypeFormUrlEncoded,
+        );
+        expect(request.formData(), completion(equals({})));
+      });
+
+      test('has correct data (empty body)', () async {
+        final request = Request.post(
+          localhost,
+          headers: contentTypeFormUrlEncoded,
+          body: '',
+        );
+        expect(request.formData(), completion(equals({})));
+      });
+
+      test('has correct data (single key/value pair)', () async {
+        final request = Request.post(
+          localhost,
+          headers: contentTypeFormUrlEncoded,
+          body: 'foo=bar',
+        );
+        expect(request.formData(), completion(equals({'foo': 'bar'})));
+      });
+
+      test('has correct data (multiple key/value pairs)', () async {
+        final request = Request.post(
+          localhost,
+          headers: contentTypeFormUrlEncoded,
+          body: 'foo=bar&bar=baz',
+        );
+        expect(
+          request.formData(),
+          completion(equals({'foo': 'bar', 'bar': 'baz'})),
+        );
       });
     });
 

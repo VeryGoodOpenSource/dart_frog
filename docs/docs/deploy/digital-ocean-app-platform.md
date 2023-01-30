@@ -1,5 +1,6 @@
 ---
 sidebar_position: 3
+title: 🌊 Digital Ocean App Platform
 ---
 
 # Digital Ocean App Platform 🌊

@@ -17,11 +17,12 @@ For official documentation, please visit https://dartfrog.vgv.dev.
 
 ## Packages 📦
 
-| Package                                                                                           | Pub                                                                                                      |
-| ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| [dart_frog](https://github.com/verygoodopensource/dart_frog/tree/main/packages/dart_frog)         | [![pub package](https://img.shields.io/pub/v/dart_frog.svg)](https://pub.dev/packages/dart_frog)         |
-| [dart_frog_gen](https://github.com/verygoodopensource/dart_frog/tree/main/packages/dart_frog_gen) | [![pub package](https://img.shields.io/pub/v/dart_frog_gen.svg)](https://pub.dev/packages/dart_frog_gen) |
-| [dart_frog_cli](https://github.com/verygoodopensource/dart_frog/tree/main/packages/dart_frog_cli) | [![pub package](https://img.shields.io/pub/v/dart_frog_cli.svg)](https://pub.dev/packages/dart_frog_cli) |
+| Package                                                                                                         | Pub                                                                                                                    |
+| --------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| [dart_frog](https://github.com/verygoodopensource/dart_frog/tree/main/packages/dart_frog)                       | [![pub package](https://img.shields.io/pub/v/dart_frog.svg)](https://pub.dev/packages/dart_frog)                       |
+| [dart_frog_gen](https://github.com/verygoodopensource/dart_frog/tree/main/packages/dart_frog_gen)               | [![pub package](https://img.shields.io/pub/v/dart_frog_gen.svg)](https://pub.dev/packages/dart_frog_gen)               |
+| [dart_frog_cli](https://github.com/verygoodopensource/dart_frog/tree/main/packages/dart_frog_cli)               | [![pub package](https://img.shields.io/pub/v/dart_frog_cli.svg)](https://pub.dev/packages/dart_frog_cli)               |
+| [dart_frog_web_socket](https://github.com/verygoodopensource/dart_frog/tree/main/packages/dart_frog_web_socket) | [![pub package](https://img.shields.io/pub/v/dart_frog_web_socket.svg)](https://pub.dev/packages/dart_frog_web_socket) |
 
 ## Quick Start 🚀
 
@@ -72,34 +73,6 @@ Dart Frog is built on top of [shelf](https://pub.dev/packages/shelf) and [mason]
 The goal of Dart Frog is to help developers effectively build backends in Dart. Currently, Dart Frog is focused on optimizing the process of building backends which aggregate, compose, and normalize data from multiple sources.
 
 Dart Frog provides a simple core with a small API surface area in order to reduce the learning curve and ramp-up time for developers. In addition, Dart Frog is intended to help Flutter/Dart developers maximize their productivity by having a unified tech stack that enables sharing tooling, models, and more!
-
-## Feature Set ✨
-
-✅ Hot Reload ⚡️
-
-✅ Dart Dev Tools ⚙️
-
-✅ File System Routing 🚏
-
-✅ Index Routes 🗂
-
-✅ Nested Routes 🪆
-
-✅ Dynamic Routes 🌓
-
-✅ Middleware 🍔
-
-✅ Dependency Injection 💉
-
-✅ Production Builds 👷‍♂️
-
-✅ Docker 🐳
-
-✅ Static File Support 📁
-
-🚧 Generated Dart Client Package 📦
-
-🚧 Generated API Documentation 📔
 
 [dart_installation_link]: https://dart.dev/get-dart
 [ci_badge]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/main.yaml/badge.svg
