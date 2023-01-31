@@ -101,7 +101,7 @@ void main() {
       verify(() => logger.progress('Checking for updates')).called(1);
       verify(
         () => logger.err(
-          '''Error updating Very Good CLI: Oh no! Installing this is not possible right now!''',
+          '''Error updating Dart Frog CLI: Oh no! Installing this is not possible right now!''',
         ),
       );
       verify(

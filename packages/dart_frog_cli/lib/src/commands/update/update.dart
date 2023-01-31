@@ -59,7 +59,7 @@ class UpdateCommand extends Command<int> {
     }
     if (result.exitCode != ExitCode.success.code) {
       updateProgress.fail();
-      _logger.err('Error updating Very Good CLI: ${result.stderr}');
+      _logger.err('Error updating Dart Frog CLI: ${result.stderr}');
       return ExitCode.software.code;
     }
     updateProgress.complete('Updated to $latestVersion');
