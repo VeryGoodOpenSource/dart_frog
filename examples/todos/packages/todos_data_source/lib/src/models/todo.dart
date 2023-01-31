@@ -4,8 +4,8 @@ import 'package:meta/meta.dart';
 
 part 'todo.g.dart';
 
-/// {@template todo}
-/// A single todo item.
+/// {@template `todo`}
+/// A single `todo` item.
 ///
 /// Contains a [title], [description] and [id], in addition to a [isCompleted]
 /// flag.
@@ -20,7 +20,7 @@ part 'todo.g.dart';
 @immutable
 @JsonSerializable()
 class Todo extends Equatable {
-  /// {@macro todo}
+  /// {@macro `todo`}
   Todo({
     this.id,
     required this.title,
@@ -28,29 +28,29 @@ class Todo extends Equatable {
     this.isCompleted = false,
   }) : assert(id == null || id.isNotEmpty, 'id cannot be empty');
 
-  /// The unique identifier of the todo.
+  /// The unique identifier of the `todo`.
   ///
   /// Cannot be empty.
   final String? id;
 
-  /// The title of the todo.
+  /// The title of the `todo`.
   ///
   /// Note that the title may be empty.
   final String title;
 
-  /// The description of the todo.
+  /// The description of the `todo`.
   ///
   /// Defaults to an empty string.
   final String description;
 
-  /// Whether the todo is completed.
+  /// Whether the `todo` is completed.
   ///
   /// Defaults to `false`.
   final bool isCompleted;
 
-  /// Returns a copy of this todo with the given values updated.
+  /// Returns a copy of this `todo` with the given values updated.
   ///
-  /// {@macro todo}
+  /// {@macro `todo`}
   Todo copyWith({
     String? id,
     String? title,
