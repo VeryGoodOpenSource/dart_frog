@@ -99,7 +99,7 @@ void main() {
       final result = await command.run();
       expect(result, equals(ExitCode.software.code));
       verify(() => logger.progress('Checking for updates')).called(1);
-      verify(() => logger.err('''Error updating Dart Frog CLI: $error'''));
+      verify(() => logger.err('Error updating Dart Frog CLI: $error'));
       verify(
         () => pubUpdater.update(
           packageName: any(named: 'packageName'),
