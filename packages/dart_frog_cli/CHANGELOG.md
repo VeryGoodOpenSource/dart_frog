@@ -1,3 +1,8 @@
+# 0.3.2
+
+- fix: update silently fails when the sdk is incompatible
+- feat: `dart_frog create` uses Dart 2.19
+
 # 0.3.1
 
 - feat: upgrade to mason ^0.1.0-dev.38
