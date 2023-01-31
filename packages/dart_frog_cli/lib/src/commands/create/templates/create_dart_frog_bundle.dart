@@ -20,7 +20,7 @@ final createDartFrogBundle = MasonBundle.fromJson(<String, dynamic>{
     {
       "path": "pubspec.yaml",
       "data":
-          "bmFtZToge3tuYW1lLnNuYWtlQ2FzZSgpfX0KZGVzY3JpcHRpb246IEFuIG5ldyBEYXJ0IEZyb2cgYXBwbGljYXRpb24KdmVyc2lvbjogMS4wLjArMQpwdWJsaXNoX3RvOiBub25lCgplbnZpcm9ubWVudDoKICBzZGs6ICI+PTIuMTguMCA8My4wLjAiCgpkZXBlbmRlbmNpZXM6CiAgZGFydF9mcm9nOiBeMC4zLjAKCmRldl9kZXBlbmRlbmNpZXM6CiAgbW9ja3RhaWw6IF4wLjMuMAogIHRlc3Q6IF4xLjE5LjIKICB2ZXJ5X2dvb2RfYW5hbHlzaXM6IF4zLjEuMAo=",
+          "bmFtZToge3tuYW1lLnNuYWtlQ2FzZSgpfX0KZGVzY3JpcHRpb246IEFuIG5ldyBEYXJ0IEZyb2cgYXBwbGljYXRpb24KdmVyc2lvbjogMS4wLjArMQpwdWJsaXNoX3RvOiBub25lCgplbnZpcm9ubWVudDoKICBzZGs6ICI+PTIuMTkuMCA8My4wLjAiCgpkZXBlbmRlbmNpZXM6CiAgZGFydF9mcm9nOiBeMC4zLjAKCmRldl9kZXBlbmRlbmNpZXM6CiAgbW9ja3RhaWw6IF4wLjMuMAogIHRlc3Q6IF4xLjE5LjIKICB2ZXJ5X2dvb2RfYW5hbHlzaXM6IF4zLjEuMAo=",
       "type": "text"
     },
     {
@@ -52,7 +52,7 @@ final createDartFrogBundle = MasonBundle.fromJson(<String, dynamic>{
     {
       "path": "pubspec.yaml",
       "data":
-          "bmFtZTogY3JlYXRlX2RhcnRfZnJvZ19ob29rcwoKZW52aXJvbm1lbnQ6CiAgc2RrOiAiPj0yLjE4LjAgPDMuMC4wIgoKZGVwZW5kZW5jaWVzOgogIG1hc29uOiBeMC4xLjAtZGV2LjM4CiAgcGF0aDogXjEuOC4xCgpkZXZfZGVwZW5kZW5jaWVzOgogIG1vY2t0YWlsOiBeMC4zLjAKICB0ZXN0OiBeMS4xOS4yCiAgdmVyeV9nb29kX2FuYWx5c2lzOiBeMy4xLjAK",
+          "bmFtZTogY3JlYXRlX2RhcnRfZnJvZ19ob29rcwoKZW52aXJvbm1lbnQ6CiAgc2RrOiAiPj0yLjE4LjAgPDMuMC4wIgoKZGVwZW5kZW5jaWVzOgogIG1hc29uOiBeMC4xLjAtZGV2LjM5CiAgcGF0aDogXjEuOC4xCgpkZXZfZGVwZW5kZW5jaWVzOgogIG1vY2t0YWlsOiBeMC4zLjAKICB0ZXN0OiBeMS4xOS4yCiAgdmVyeV9nb29kX2FuYWx5c2lzOiBeMy4xLjAK",
       "type": "text"
     },
     {
