@@ -83,12 +83,12 @@ void main() {
     });
 
     test('handles pub update process errors', () async {
+      const error = 'Oh no! Installing this is not possible right now!';
       when(() => processResult.exitCode).thenReturn(1);
-
-      when<dynamic>(() => processResult.stderr)
-          .thenReturn('Oh no! Installing this is not possible right now!');
-      when(() => pubUpdater.getLatestVersion(any()))
-          .thenAnswer((_) async => latestVersion);
+      when<dynamic>(() => processResult.stderr).thenReturn(error);
+      when(
+        () => pubUpdater.getLatestVersion(any()),
+      ).thenAnswer((_) async => latestVersion);
       when(
         () => pubUpdater.update(
           packageName: any(named: 'packageName'),
@@ -99,11 +99,7 @@ void main() {
       final result = await command.run();
       expect(result, equals(ExitCode.software.code));
       verify(() => logger.progress('Checking for updates')).called(1);
-      verify(
-        () => logger.err(
-          '''Error updating Dart Frog CLI: Oh no! Installing this is not possible right now!''',
-        ),
-      );
+      verify(() => logger.err('''Error updating Dart Frog CLI: $error'''));
       verify(
         () => pubUpdater.update(
           packageName: any(named: 'packageName'),
