@@ -2,6 +2,7 @@ import 'dart:io' as io;
 
 import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
+import 'package:cli_completion/cli_completion.dart';
 import 'package:dart_frog_cli/src/commands/commands.dart';
 import 'package:dart_frog_cli/src/commands/update/update.dart';
 import 'package:dart_frog_cli/src/version.dart';
@@ -24,7 +25,7 @@ const executableDescription =
 /// {@template dart_frog_command_runner}
 /// A [CommandRunner] for the Dart Frog CLI.
 /// {@endtemplate}
-class DartFrogCommandRunner extends CommandRunner<int> {
+class DartFrogCommandRunner extends CompletionCommandRunner<int> {
   /// {@macro dart_frog_command_runner}
   DartFrogCommandRunner({
     Logger? logger,
@@ -68,7 +69,10 @@ class DartFrogCommandRunner extends CommandRunner<int> {
       exitCode = ExitCode.software.code;
     }
 
-    if (argResults.command?.name != 'update') await _checkForUpdates();
+    if (argResults.command?.name != 'update' &&
+        argResults.command?.name != 'completion') {
+      await _checkForUpdates();
+    }
 
     return exitCode;
   }
@@ -121,6 +125,10 @@ Run ${lightCyan.wrap('$executableName update')} to update''',
 
   @override
   Future<int?> runCommand(ArgResults topLevelResults) async {
+    if (topLevelResults.command?.name == 'completion') {
+      await super.runCommand(topLevelResults);
+      return ExitCode.success.code;
+    }
     if (topLevelResults['version'] == true) {
       _logger.info(packageVersion);
       return ExitCode.success.code;
