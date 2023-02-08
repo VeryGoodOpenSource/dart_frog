@@ -13,4 +13,4 @@ dev_dependencies:
   mocktail: ^0.3.0
   path: ^1.8.2
   test: ^1.19.2
-  very_good_analysis: ^3.1.0
+  very_good_analysis: ^4.0.0+1
