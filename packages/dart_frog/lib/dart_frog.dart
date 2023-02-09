@@ -9,6 +9,7 @@ export 'src/_internal.dart'
         RequestContext,
         Response,
         Router,
+        MultipartFile,
         fromShelfHandler,
         fromShelfMiddleware,
         requestLogger,
