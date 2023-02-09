@@ -11,7 +11,7 @@ title: 📚 Additional Resources
 - [Livestream demo][livestream_link]
 
 :::info
-Did you know the [dart2js][dart2js_compiler_link] compiler [used to be called frog][dart2js_frog_pr_link]?
+Fun fact: Did you know the [dart2js][dart2js_compiler_link] compiler [used to be called frog][dart2js_frog_pr_link]?
 :::
 
 [blog_link]: https://verygood.ventures/blog/dart-frog
