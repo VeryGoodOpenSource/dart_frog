@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:dart_frog/dart_frog.dart';
 import 'package:dart_frog/src/body_parsers/body_parsers.dart';
@@ -225,6 +226,63 @@ void main() {
         const body = false;
         final request = Request.get(localhost, body: json.encode(body));
         expect(request.json(), completion(equals(body)));
+      });
+    });
+
+    group('multipart', () {
+      final contentValue = '${multipartContentType.mimeType}; boundary=end';
+      final contentTypeMultipart = {
+        HttpHeaders.contentTypeHeader: contentValue
+      };
+
+      test('throws StateError on invalid content-type', () async {
+        final request = Request.post(localhost);
+        expect(request.multipart(), throwsStateError);
+      });
+
+      test('has correct data (empty body)', () async {
+        final request = Request.post(
+          localhost,
+          headers: contentTypeMultipart,
+          body: '\r\n--end\r\n\r\n\r\n--end--\r\n',
+        );
+        expect(request.multipart(), completion(equals({})));
+      });
+
+      test('has correct data (text value)', () async {
+        final request = Request.post(
+          localhost,
+          headers: contentTypeMultipart,
+          body: '\r\n--end\r\n'
+              'content-disposition: form-data; name="foo" \r\n'
+              '\r\nbar\r\n--end--\r\n',
+        );
+        expect(request.multipart(), completion(equals({'foo': 'bar'})));
+      });
+
+      test('has correct data (text value and file value)', () async {
+        const file = 'test_file.png';
+        const contentFile = 'Value of the second field!';
+
+        final multipartFile = MultipartFile(
+          fileContent: Uint8List.fromList(contentFile.codeUnits),
+          fileName: file,
+        );
+
+        final request = Request.post(
+          localhost,
+          headers: contentTypeMultipart,
+          body: '\r\n--end\r\n'
+              'content-disposition: form-data; name="foo" \r\n'
+              '\r\nbar\r\n--end\r\n'
+              'content-disposition: form-data; name="file"; '
+              'filename="$file"\r\n'
+              '\r\n$contentFile\r\n--end--\r\n',
+        );
+        expect(
+          request.multipart(),
+          completion(equals({'foo': 'bar', 'file': multipartFile})),
+        );
       });
     });
   });
