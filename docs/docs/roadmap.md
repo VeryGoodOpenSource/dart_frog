@@ -44,7 +44,7 @@ In the interest of transparency, we want to share high-level details of our road
 - [ ] DartFrog Testing Library (utilities for unit and e2e testing)
 - [ ] CLI `new` command to generate new `routes` and `middleware`
 - [ ] Health Check endpoint for monitoring
-- [ ] Logger which can be configured to adhere to standard log formats (http://cloud.google.com/run/docs/logging)
+- [ ] Logger which can be configured to adhere to standard log formats (https://cloud.google.com/run/docs/logging)
 - [x] WebSocket support
 - [ ] VSCode/IntelliJ support for DartFrog
   - [ ] Create a new project
