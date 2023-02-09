@@ -143,6 +143,11 @@ class Request {
     return parseFormData(headers: headers, body: body);
   }
 
+  /// Returns a [Future] containing the multipart form-data as a [Map]
+  Future<Map<String, dynamic>> multipart() {
+    return parseMultipart(headers: headers, body: bytes);
+  }
+
   /// Returns a [Future] containing the body text parsed as a json object.
   /// This object could be anything that can be represented by json
   /// e.g. a map, a list, a string, a number, a bool...
