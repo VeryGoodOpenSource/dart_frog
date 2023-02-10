@@ -76,14 +76,8 @@ jobs:
 
       - name: 🧪 Run Tests
         run: |
-          dart pub global activate coverage 1.2.0
+          dart pub global activate coverage
           dart test -j ${{inputs.concurrency}} --coverage=coverage --platform=${{inputs.platform}} && dart pub global run coverage:format_coverage --lcov --in=coverage --out=coverage/lcov.info --packages=.dart_tool/package_config.json --report-on=${{inputs.report_on}}
-
-      - name: ☁️ Upload Coverage
-        uses: actions/upload-artifact@v3
-        with:
-          name: coverage-report
-          path: ${{inputs.working_directory}}/coverage/lcov.info
 
       - name: 📊 Check Code Coverage
         uses: VeryGoodOpenSource/very_good_coverage@v2
