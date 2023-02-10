@@ -16,6 +16,7 @@ jobs:
   build:
     uses: ./.github/workflows/.dart_package.yaml
     with:
+      runs_on: macos-latest
       working_directory: bricks/dart_frog_prod_server/hooks
       analyze_directories: .
       report_on: "pre_gen.dart,post_gen.dart"
