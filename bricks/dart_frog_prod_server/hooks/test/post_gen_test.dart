@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:mason/mason.dart'
-    show HookContext, Logger, Progress, ExitCode, lightCyan;
+    show ExitCode, HookContext, Logger, Progress, lightCyan;
 import 'package:mocktail/mocktail.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
