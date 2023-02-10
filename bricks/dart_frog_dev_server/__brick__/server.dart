@@ -13,7 +13,7 @@ import 'package:dart_frog/dart_frog.dart';
 void main() => hotReload(createServer);
 
 Future<HttpServer> createServer() {
-  const address = 'localhost';
+  final address = InternetAddress.anyIPv6;
   final port = int.parse(Platform.environment['PORT'] ?? '{{port}}');
   final handler = Cascade(){{#serveStaticFiles}}.add(createStaticFileHandler()){{/serveStaticFiles}}.add(buildRootHandler()).handler;
   {{#invokeCustomEntrypoint}}return entrypoint.run(handler, address, port);{{/invokeCustomEntrypoint}}{{^invokeCustomEntrypoint}}return serve(handler, address, port);{{/invokeCustomEntrypoint}}
