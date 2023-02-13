@@ -15,7 +15,7 @@ void main() {
     });
 
     test('can return multiple 404s', () async {
-      final server = await serve(Router(), 'localhost', 3001);
+      final server = await serve(Router().call, 'localhost', 3001);
       final client = HttpClient();
       var request = await client.getUrl(Uri.parse('http://localhost:3001'));
       var response = await request.close();
