@@ -7,6 +7,7 @@ concurrency:
 on:
   pull_request:
     paths:
+      - "examples/counter/pubspec.yaml"
       - "examples/counter/routes/**"
       - "examples/counter/lib/**"
       - "examples/counter/test/**"
