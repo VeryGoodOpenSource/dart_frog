@@ -22,8 +22,8 @@ part 'todo.g.dart';
 class Todo extends Equatable {
   /// {@macro `todo`}
   Todo({
-    this.id,
     required this.title,
+    this.id,
     this.description = '',
     this.isCompleted = false,
   }) : assert(id == null || id.isNotEmpty, 'id cannot be empty');

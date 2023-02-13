@@ -7,7 +7,7 @@ concurrency:
 on:
   pull_request:
     paths:
-      - "examples/hello_world/routes/**"
+      - "examples/hello_world/pubspec.yaml"
       - "examples/hello_world/lib/**"
       - "examples/hello_world/test/**"
       - "examples/hello_world/e2e/**"

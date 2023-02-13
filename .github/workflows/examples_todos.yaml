@@ -7,9 +7,11 @@ concurrency:
 on:
   pull_request:
     paths:
+      - "examples/todos/pubspec.yaml"
       - "examples/todos/routes/**"
       - "examples/todos/lib/**"
       - "examples/todos/test/**"
+      - "examples/todos/packages/**/pubspec.yaml"
       - "examples/todos/packages/**/lib/**"
       - "examples/todos/packages/**/test/**"
       - "examples/todos/packages/**/e2e/**"
