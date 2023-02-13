@@ -17,5 +17,5 @@ export 'src/create_static_file_handler.dart' show createStaticFileHandler;
 export 'src/handler.dart' show Handler;
 export 'src/hot_reload.dart' show hotReload;
 export 'src/http_method.dart' show HttpMethod;
-export 'src/middleware.dart' show Middleware, HandlerUse;
+export 'src/middleware.dart' show HandlerUse, Middleware;
 export 'src/provider.dart' show provider;

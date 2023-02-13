@@ -14,6 +14,8 @@
 // limitations under the License.
 
 @TestOn('vm')
+library;
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -291,7 +293,7 @@ void main() {
 
     final app = Router()
       ..all('/hello', (RequestContext context) => Response(body: 'hello-world'))
-      ..mount('/api/', api)
+      ..mount('/api/', api.call)
       ..all(
         '/<_|[^]*>',
         (RequestContext context) => Response(body: 'catch-all-handler'),
@@ -339,7 +341,7 @@ void main() {
     final app = Router()
       ..mount(
         '/api/',
-        const Pipeline().addMiddleware(middleware).addHandler(api),
+        const Pipeline().addMiddleware(middleware).addHandler(api.call),
       );
 
     server.mount((request) async {
@@ -370,7 +372,7 @@ void main() {
       ..all('/hello', (RequestContext context) {
         return Response(body: 'hello-world');
       })
-      ..mount('/api', api)
+      ..mount('/api', api.call)
       ..all('/<_|[^]*>', (RequestContext context) {
         return Response(body: 'catch-all-handler');
       });
@@ -491,7 +493,7 @@ void main() {
           return Response(body: '$user to $other: $action');
         });
 
-      return router;
+      return router.call;
     }
 
     // Routes for a specific <user>.
@@ -508,7 +510,7 @@ void main() {
         ..get('/', (RequestContext context) {
           return Response(body: '$user root');
         });
-      return router;
+      return router.call;
     }
 
     final app = Router()
