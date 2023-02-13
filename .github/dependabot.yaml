@@ -4,6 +4,10 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+  - package-ecosystem: "npm"
+    directory: "/docs"
+    schedule:
+      interval: "daily"
   - package-ecosystem: "pub"
     directory: "/bricks/create_dart_frog/hooks"
     schedule:
@@ -22,6 +26,10 @@ updates:
       interval: "daily"
   - package-ecosystem: "pub"
     directory: "/examples/hello_world"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/examples/web_socket_counter"
     schedule:
       interval: "daily"
   - package-ecosystem: "pub"
@@ -62,9 +70,5 @@ updates:
       interval: "daily"
   - package-ecosystem: "pub"
     directory: "/packages/dart_frog_web_socket"
-    schedule:
-      interval: "daily"
-  - package-ecosystem: "npm"
-    directory: "/docs"
     schedule:
       interval: "daily"
