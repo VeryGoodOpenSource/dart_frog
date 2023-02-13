@@ -244,12 +244,12 @@ extension on FileSystemEntity {
 class RouteConfiguration {
   /// {@macro route_configuration}
   const RouteConfiguration({
-    this.globalMiddleware,
     required this.middleware,
     required this.directories,
     required this.routes,
     required this.endpoints,
     required this.rogueRoutes,
+    this.globalMiddleware,
     this.serveStaticFiles = false,
     this.invokeCustomEntrypoint = false,
   });
