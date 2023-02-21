@@ -5,7 +5,7 @@ title: 📚 Additional Resources
 
 # Additional Resources 📚
 
-- [Awesome Dart Frog repo]: Highlights awesome Dart Frog resources — articles, videos, open source projects, and more!
+- [Awesome Dart Frog repo][awesome_df]: Highlights awesome Dart Frog resources — articles, videos, open source projects, and more!
 
 :::info
 Fun fact: Did you know the [dart2js][dart2js_compiler_link] compiler [used to be called frog][dart2js_frog_pr_link]?
