@@ -3,7 +3,7 @@ part of '_internal.dart';
 /// {@template request}
 /// An HTTP request.
 /// {@endtemplate}
-class Request {
+inline class Request {
   /// {@template request}
   Request(
     String method,

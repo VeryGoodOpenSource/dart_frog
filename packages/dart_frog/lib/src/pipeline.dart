@@ -4,7 +4,7 @@ part of '_internal.dart';
 /// A helper that makes it easy to compose a set of [Middleware] and a
 /// [Handler].
 /// {@endtemplate}
-class Pipeline {
+inline class Pipeline {
   /// {@macro pipeline}
   const Pipeline() : this._(const shelf.Pipeline());
 

@@ -7,7 +7,7 @@ issue_tracker: https://github.com/VeryGoodOpenSource/dart_frog/issues
 documentation: https://dartfrog.vgv.dev/docs/overview
 
 environment:
-  sdk: ">=2.19.0 <3.0.0"
+  sdk: ">=3.0.0-0 <3.0.0"
 
 dependencies:
   http_methods: ^1.1.0

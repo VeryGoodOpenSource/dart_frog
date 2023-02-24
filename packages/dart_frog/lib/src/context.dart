@@ -3,7 +3,7 @@ part of '_internal.dart';
 /// {@template context}
 /// An object representing a request-specific context.
 /// {@endtemplate}
-class RequestContext {
+inline class RequestContext {
   RequestContext._(shelf.Request request) : request = Request._(request);
 
   /// The associated [Request].

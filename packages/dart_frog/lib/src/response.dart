@@ -3,7 +3,7 @@ part of '_internal.dart';
 /// {@template response}
 /// An HTTP response.
 /// {@endtemplate}
-class Response {
+inline class Response {
   /// Create a [Response] with a string body.
   Response({
     int statusCode = 200,
