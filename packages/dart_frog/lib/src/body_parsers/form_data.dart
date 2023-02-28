@@ -68,8 +68,8 @@ Future<FormData> _extractMultipartFormData({
   required Map<String, String> headers,
   required Stream<List<int>> bytes,
 }) async {
-  final contentType = headers[HttpHeaders.contentTypeHeader];
-  final mediaType = MediaType.parse(contentType!);
+  final contentType = headers[HttpHeaders.contentTypeHeader]!;
+  final mediaType = MediaType.parse(contentType);
   final boundary = mediaType.parameters['boundary'];
   final transformer = MimeMultipartTransformer(boundary!);
 
