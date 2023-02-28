@@ -13,6 +13,7 @@ export 'src/_internal.dart'
         fromShelfMiddleware,
         requestLogger,
         serve;
+export 'src/body_parsers/body_parsers.dart' show AttachedFile, FormData;
 export 'src/create_static_file_handler.dart' show createStaticFileHandler;
 export 'src/handler.dart' show Handler;
 export 'src/hot_reload.dart' show hotReload;

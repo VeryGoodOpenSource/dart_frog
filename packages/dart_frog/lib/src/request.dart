@@ -139,7 +139,7 @@ class Request {
   }
 
   /// Returns a [Future] containing the form data as a [Map].
-  Future<Map<String, dynamic>> formData() {
+  Future<FormData> formData() {
     return parseFormData(headers: headers, body: body, bytes: bytes);
   }
 
