@@ -129,7 +129,7 @@ Actual MIME type: "application/json"
         expect(
           formData.files,
           equals({
-            'my_file': isAttachedFile(
+            'my_file': isUploadedFile(
               'my_file.txt',
               ContentType.text,
               'file content',
@@ -171,12 +171,12 @@ Actual MIME type: "application/json"
         expect(
           formData.files,
           equals({
-            'my_file': isAttachedFile(
+            'my_file': isUploadedFile(
               'my_file.txt',
               ContentType.text,
               'file content',
             ),
-            'my_other_file': isAttachedFile(
+            'my_other_file': isUploadedFile(
               'my_other_file.txt',
               ContentType.text,
               'file content',
@@ -250,7 +250,7 @@ Actual MIME type: "application/json"
   });
 }
 
-Matcher isAttachedFile(String name, ContentType contentType, String content) {
+Matcher isUploadedFile(String name, ContentType contentType, String content) {
   return isA<UploadedFile>()
       .having((f) => f.name, 'name', equals(name))
       .having(
