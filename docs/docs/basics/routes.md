@@ -203,7 +203,7 @@ curl --request POST \
 
 #### Form Data
 
-When the `Content-Type` is `application/x-www-form-urlencoded`, you can use `context.request.formData()` to read the contents of the request body as a `Map<String, String>`.
+When the `Content-Type` is `application/x-www-form-urlencoded` or `multipart/form-data`, you can use `context.request.formData()` to read the contents of the request body.
 
 ```dart
 import 'package:dart_frog/dart_frog.dart';
@@ -213,9 +213,9 @@ Future<Response> onRequest(RequestContext context) async {
   final request = context.request;
 
   // Access the request body form data.
-  final body = await request.formData();
+  final formData = await request.formData();
 
-  return Response.json(body: {'request_body': body});
+  return Response.json(body: {'form_data': formData.fields});
 }
 ```
 
@@ -225,18 +225,53 @@ curl --request POST \
   --data hello=world
 
 {
-  "request_body": {
+  "form_data": {
     "hello": "world"
   }
 }
 ```
 
+If the request is a multipart form data request you can also access files that were uploaded.
+
+```dart
+import 'package:dart_frog/dart_frog.dart';
+
+Future<Response> onRequest(RequestContext context) async {
+  // Access the incoming request.
+  final request = context.request;
+
+  // Access the request body form data.
+  final formData = await request.formData();
+
+  // Retrieve an uploaded file.
+  final photo = formData.files['photo'];
+
+  if (photo == null || photo.contentType.mimeType != contentTypePng.mimeType) {
+    return Response(statusCode: HttpStatus.badRequest);
+  }
+
+  return Response.json(
+    body: {'message': 'Successfully uploaded ${photo.name}'},
+  );
+}
+```
+
+```
+curl --request POST \
+  --url http://localhost:8080/example \
+  --form photo=@photo.png
+
+{
+  "message": "Successfully uploaded photo.png"
+}
+```
+
 :::info
-The `formData` API is supported in `dart_frog >=0.3.1`
+The `formData` API is available since `dart_frog >=0.3.1` and the support for multipart form data was added in `dart_frog >=0.3.3`.
 :::
 
 :::caution
-`request.formData()` will throw a `StateError` if the MIME type is not `application/x-www-form-urlencoded`.
+`request.formData()` will throw a `StateError` if the MIME type is not `application/x-www-form-urlencoded` or `multipart/form-data`.
 :::
 
 ## Responses 📤
