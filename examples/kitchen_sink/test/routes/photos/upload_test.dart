@@ -14,7 +14,7 @@ class _MockRequest extends Mock implements Request {}
 
 void main() {
   group('POST /upload', () {
-    test('responds with a 400', () async {
+    test('responds with a 400 when file extension is not .png', () async {
       final context = _MockRequestContext();
       final request = _MockRequest();
       when(() => context.request).thenReturn(request);
