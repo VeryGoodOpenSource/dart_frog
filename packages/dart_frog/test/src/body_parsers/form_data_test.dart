@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, deprecated_member_use_from_same_package
 
 import 'dart:convert';
 import 'dart:io';
@@ -208,12 +208,12 @@ Actual MIME type: "application/json"
     });
   });
 
-  group('$AttachedFile', () {
+  group('$UploadedFile', () {
     test('toString', () {
       final byteStream = Stream.fromIterable([
         [1, 2, 3, 4]
       ]);
-      final file = AttachedFile('name', ContentType.text, byteStream);
+      final file = UploadedFile('name', ContentType.text, byteStream);
 
       expect(
         file.toString(),
@@ -225,7 +225,7 @@ Actual MIME type: "application/json"
       final byteStream = Stream.fromIterable([
         [1, 2, 3, 4]
       ]);
-      final file = AttachedFile('name', ContentType.text, byteStream);
+      final file = UploadedFile('name', ContentType.text, byteStream);
 
       expect(
         await file.content(),
@@ -237,7 +237,7 @@ Actual MIME type: "application/json"
       final byteStream = Stream.fromIterable([
         [1, 2, 3, 4]
       ]);
-      final file = AttachedFile('name', ContentType.text, byteStream);
+      final file = UploadedFile('name', ContentType.text, byteStream);
 
       expect(
         file.bytes(),
@@ -250,7 +250,7 @@ Actual MIME type: "application/json"
 }
 
 Matcher isAttachedFile(String name, ContentType contentType, String content) {
-  return isA<AttachedFile>()
+  return isA<UploadedFile>()
       .having((f) => f.name, 'name', equals(name))
       .having(
         (f) => f.content(),

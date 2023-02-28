@@ -74,7 +74,7 @@ Future<FormData> _extractMultipartFormData({
   final transformer = MimeMultipartTransformer(boundary!);
 
   final fields = <String, String>{};
-  final files = <String, AttachedFile>{};
+  final files = <String, UploadedFile>{};
 
   await for (final part in transformer.bind(bytes)) {
     final contentDisposition = part.headers['content-disposition'];
@@ -91,7 +91,7 @@ Future<FormData> _extractMultipartFormData({
     final fileName = values['filename'];
 
     if (fileName != null) {
-      files[name] = AttachedFile(
+      files[name] = UploadedFile(
         fileName,
         ContentType.parse(part.headers['content-type'] ?? 'text/plain'),
         part,
@@ -114,13 +114,13 @@ class FormData with MapMixin<String, String> {
 
   final Map<String, String> _fields;
 
-  final Map<String, AttachedFile> _files;
+  final Map<String, UploadedFile> _files;
 
   /// The fields that were submitted in the form.
   Map<String, String> get fields => Map.unmodifiable(_fields);
 
-  /// The files that were attached to the form.
-  Map<String, AttachedFile> get files => Map.unmodifiable(_files);
+  /// The files that were uploaded in the form.
+  Map<String, UploadedFile> get files => Map.unmodifiable(_files);
 
   @override
   @Deprecated('Use `fields[key]` to retrieve values')
@@ -153,21 +153,21 @@ class FormData with MapMixin<String, String> {
   String? remove(Object? key) => _fields.remove(key);
 }
 
-/// {@template attached_file}
-/// The attached file of a form data request.
+/// {@template uploaded_file}
+/// The uploaded file of a form data request.
 /// {@endtemplate}
-class AttachedFile {
-  /// {@macro attached_file}
-  const AttachedFile(
+class UploadedFile {
+  /// {@macro uploaded_file}
+  const UploadedFile(
     this.name,
     this.contentType,
     this._byteStream,
   );
 
-  /// The name of the attached file.
+  /// The name of the uploaded file.
   final String name;
 
-  /// The type of the attached file.
+  /// The type of the uploaded file.
   final ContentType contentType;
 
   final Stream<List<int>> _byteStream;
@@ -176,7 +176,6 @@ class AttachedFile {
   ///
   /// Can only be called once.
   Future<List<int>> content() async {
-    // TODO(wolfen): is this a good name? Felix (💀 RIP 2023) doesn't think so.
     return (await _byteStream.toList())
         .fold<List<int>>([], (p, e) => p..addAll(e));
   }
