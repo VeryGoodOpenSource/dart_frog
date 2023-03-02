@@ -189,7 +189,10 @@ Actual MIME type: "application/json"
 
   group('$FormData', () {
     test('is backwards compatible with a Map<String, String>', () {
-      final formData = FormData({'foo': 'bar', 'bar': 'baz'}, {});
+      final formData = FormData(
+        fields: {'foo': 'bar', 'bar': 'baz'},
+        files: {},
+      );
 
       expect(formData['foo'], equals('bar'));
       expect(formData.keys, equals(['foo', 'bar']));

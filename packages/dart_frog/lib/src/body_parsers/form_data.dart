@@ -61,8 +61,10 @@ bool _isMultipartFormData(ContentType? contentType) {
 }
 
 FormData _extractFormUrlEncodedFormData({required String body}) {
-  return FormData(Uri.splitQueryString(body), {});
+  return FormData(fields: Uri.splitQueryString(body), files: {});
 }
+
+final _keyValueRegexp = RegExp('(?:(?<key>[a-zA-Z0-9-_]+)="(?<value>.*?)";*)+');
 
 Future<FormData> _extractMultipartFormData({
   required Map<String, String> headers,
@@ -81,7 +83,7 @@ Future<FormData> _extractMultipartFormData({
     if (contentDisposition == null) continue;
     if (!contentDisposition.startsWith('form-data;')) continue;
 
-    final values = RegExp('(?:(?<key>[a-zA-Z0-9-_]+)="(?<value>.*?)";*)+')
+    final values = _keyValueRegexp
         .allMatches(contentDisposition)
         .fold(<String, String>{}, (map, match) {
       return map..[match.namedGroup('key')!] = match.namedGroup('value')!;
@@ -102,7 +104,7 @@ Future<FormData> _extractMultipartFormData({
     }
   }
 
-  return FormData(fields, files);
+  return FormData(fields: fields, files: files);
 }
 
 /// {@template form_data}
@@ -110,7 +112,11 @@ Future<FormData> _extractMultipartFormData({
 /// {@endtemplate}
 class FormData with MapMixin<String, String> {
   /// {@macro form_data}
-  const FormData(this._fields, this._files);
+  const FormData({
+    required Map<String, String> fields,
+    required Map<String, UploadedFile> files,
+  })  : _fields = fields,
+        _files = files;
 
   final Map<String, String> _fields;
 

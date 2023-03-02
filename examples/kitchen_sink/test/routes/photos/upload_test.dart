@@ -19,13 +19,16 @@ void main() {
       final request = _MockRequest();
       when(() => context.request).thenReturn(request);
 
-      final formData = FormData({}, {
-        'photo': UploadedFile(
-          'file.txt',
-          ContentType.text,
-          Stream.fromIterable([[]]),
-        )
-      });
+      final formData = FormData(
+        fields: {},
+        files: {
+          'photo': UploadedFile(
+            'file.txt',
+            ContentType.text,
+            Stream.fromIterable([[]]),
+          )
+        },
+      );
       when(request.formData).thenAnswer((_) async => formData);
 
       final response = await route.onRequest(context);
@@ -37,13 +40,16 @@ void main() {
       final request = _MockRequest();
       when(() => context.request).thenReturn(request);
 
-      final formData = FormData({}, {
-        'photo': UploadedFile(
-          'picture.png',
-          ContentType('image', 'png'),
-          Stream.fromIterable([[]]),
-        )
-      });
+      final formData = FormData(
+        fields: {},
+        files: {
+          'photo': UploadedFile(
+            'picture.png',
+            ContentType('image', 'png'),
+            Stream.fromIterable([[]]),
+          )
+        },
+      );
       when(request.formData).thenAnswer((_) async => formData);
 
       final response = await route.onRequest(context);
