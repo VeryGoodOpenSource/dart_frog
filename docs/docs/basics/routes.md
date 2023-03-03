@@ -203,7 +203,7 @@ curl --request POST \
 
 #### Form Data
 
-When the `Content-Type` is `application/x-www-form-urlencoded` or `multipart/form-data`, you can use `context.request.formData()` to read the contents of the request body.
+When the `Content-Type` is `application/x-www-form-urlencoded` or `multipart/form-data`, you can use `context.request.formData()` to read the contents of the request body as `FormData`.
 
 ```dart
 import 'package:dart_frog/dart_frog.dart';
