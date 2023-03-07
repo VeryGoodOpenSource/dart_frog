@@ -167,7 +167,7 @@ version: 0.1.0+1
 publish_to: none
 
 environment:
-  sdk: '>=2.17.0 <3.0.0'
+  sdk: '>=2.19.0 <3.0.0'
 
 dependencies:
   equatable: ^2.0.3
@@ -179,7 +179,7 @@ dev_dependencies:
   json_serializable: ^6.3.1
   mocktail: ^0.3.0
   test: ^1.19.2
-  very_good_analysis: ^3.1.0
+  very_good_analysis: ^4.0.0
 ```
 
 Install the newly added dependencies via:
@@ -368,7 +368,7 @@ version: 0.1.0+1
 publish_to: none
 
 environment:
-  sdk: '>=2.17.0 <3.0.0'
+  sdk: '>=2.19.0 <3.0.0'
 
 dependencies:
   todos_data_source:
@@ -378,7 +378,7 @@ dependencies:
 dev_dependencies:
   mocktail: ^0.3.0
   test: ^1.19.2
-  very_good_analysis: ^3.1.0
+  very_good_analysis: ^4.0.0
 ```
 
 :::note
@@ -445,10 +445,10 @@ version: 1.0.0+1
 publish_to: none
 
 environment:
-  sdk: '>=2.17.0 <3.0.0'
+  sdk: '>=2.19.0 <3.0.0'
 
 dependencies:
-  dart_frog: ^0.0.1-dev
+  dart_frog: ^0.3.0
   in_memory_todos_data_source:
     path: packages/in_memory_todos_data_source
   todos_data_source:
@@ -457,7 +457,7 @@ dependencies:
 dev_dependencies:
   mocktail: ^0.3.0
   test: ^1.19.2
-  very_good_analysis: ^3.1.0
+  very_good_analysis: ^4.0.0
 ```
 
 Install the newly added dependencies via:

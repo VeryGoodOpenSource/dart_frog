@@ -1,7 +1,6 @@
 import 'dart:collection';
 import 'dart:convert';
 import 'dart:io' as io;
-import 'dart:io';
 
 import 'package:dart_frog_cli/src/command.dart';
 import 'package:dart_frog_cli/src/commands/commands.dart';
@@ -54,7 +53,7 @@ class DevCommand extends DartFrogCommand {
   /// {@macro dev_command}
   DevCommand({
     super.logger,
-    void Function(Directory)? ensureRuntimeCompatibility,
+    void Function(io.Directory)? ensureRuntimeCompatibility,
     DirectoryWatcherBuilder? directoryWatcher,
     GeneratorBuilder? generator,
     RestorableDirectoryGeneratorTargetBuilder? generatorTarget,
@@ -81,7 +80,7 @@ class DevCommand extends DartFrogCommand {
     );
   }
 
-  final void Function(Directory) _ensureRuntimeCompatibility;
+  final void Function(io.Directory) _ensureRuntimeCompatibility;
   final DirectoryWatcherBuilder _directoryWatcher;
   final GeneratorBuilder _generator;
   final Exit _exit;

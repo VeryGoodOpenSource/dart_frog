@@ -1,3 +1,8 @@
+# 0.3.3
+
+- fix: adjust `InternetAddress` to `anyIPv6`
+- refactor: update to Dart 2.19 and `very_good_analysis ^4.0.0`
+
 # 0.3.2
 
 - fix: update silently fails when the sdk is incompatible
