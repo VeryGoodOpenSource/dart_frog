@@ -1,4 +1,4 @@
-Dart_frog_lint is a developer tool for users of dart_frog, to help spot commong mistakes.  
+Dart_frog_lint is a developer tool for users of dart_frog, to help spot common mistakes.  
 It helps verify that file conventions are properly respected.
 
 ## Table of content
@@ -59,7 +59,7 @@ Note that you can both enable and disable lint rules at once.
 This can be useful if your `analysis_options.yaml` includes another one:
 
 ```yaml
-include: path/to/another/analys_options.yaml
+include: path/to/another/analysis_options.yaml
 analyzer:
   plugins:
     - custom_lint
@@ -141,14 +141,14 @@ Future<HttpServer> run(Handler handler, InternetAddress ip, int port) {
 ```dart
 // main.dart
 
-// A "run" function is present, but the return value or parameters are incorrrect
+// A "run" function is present, but the return value or parameters are incorrect
 void run() {}
 ```
 
 ### dart_frog_middleware
 
 The `dart_frog_middleware` lint checks that `routes/*_middleware.dart` files contain a
-valid `middleware` function. See also [Middlewares](https://dartfrog.vgv.dev/docs/basics/middleware).
+valid `middleware` function. See also [Middleware](https://dartfrog.vgv.dev/docs/basics/middleware).
 
 **Good**:
 
@@ -172,7 +172,7 @@ Handler middleware(Handler handler) {
 // routes/my_middleware.dart
 // The file must contain a valid top-level "middleware" function
 
-// A "middleware" function is present, but the return value or parameters are incorrrect
+// A "middleware" function is present, but the return value or parameters are incorrect
 void middleware() {}
 ```
 
@@ -215,7 +215,7 @@ Future<Response> onRequest(RequestContext context) async {
 
 ```dart
 // routes/hello.dart
-// An "onRequest" function is present, but the return value or parameters are incorrrect
+// An "onRequest" function is present, but the return value or parameters are incorrect
 void onRequest() {}
 ```
 
