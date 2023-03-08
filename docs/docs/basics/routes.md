@@ -267,7 +267,7 @@ curl --request POST \
 ```
 
 :::info
-The `formData` API is available since `dart_frog >=0.3.1` and the support for multipart form data was added in `dart_frog >=0.3.3`.
+The `formData` API is available since `dart_frog >=0.3.1` and the support for multipart form data was added in `dart_frog >=0.3.4`.
 :::
 
 :::caution
