@@ -225,26 +225,26 @@ Actual MIME type: "application/json"
       );
     });
 
-    test('content', () async {
+    test('readAsBytes', () async {
       final byteStream = Stream.fromIterable([
         [1, 2, 3, 4]
       ]);
       final file = UploadedFile('name', ContentType.text, byteStream);
 
       expect(
-        await file.content(),
+        await file.readAsBytes(),
         equals([1, 2, 3, 4]),
       );
     });
 
-    test('bytes', () {
+    test('openRead', () {
       final byteStream = Stream.fromIterable([
         [1, 2, 3, 4]
       ]);
       final file = UploadedFile('name', ContentType.text, byteStream);
 
       expect(
-        file.bytes(),
+        file.openRead(),
         emitsInOrder([
           [1, 2, 3, 4]
         ]),
@@ -257,7 +257,7 @@ Matcher isUploadedFile(String name, ContentType contentType, String content) {
   return isA<UploadedFile>()
       .having((f) => f.name, 'name', equals(name))
       .having(
-        (f) => f.content(),
+        (f) => f.readAsBytes(),
         'name',
         completion(equals(utf8.encode(content))),
       )

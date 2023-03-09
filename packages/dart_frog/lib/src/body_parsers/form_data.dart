@@ -178,18 +178,18 @@ class UploadedFile {
 
   final Stream<List<int>> _byteStream;
 
-  /// Returns the content of the file as a list of bytes.
+  /// Read the content of the file as a list of bytes.
   ///
   /// Can only be called once.
-  Future<List<int>> content() async {
+  Future<List<int>> readAsBytes() async {
     return (await _byteStream.toList())
         .fold<List<int>>([], (p, e) => p..addAll(e));
   }
 
-  /// Returns the content of the file as a stream of bytes.
+  /// Open the content of the file as a stream of bytes.
   ///
   /// Can only be called once.
-  Stream<List<int>> bytes() => _byteStream;
+  Stream<List<int>> openRead() => _byteStream;
 
   @override
   String toString() {
