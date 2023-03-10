@@ -45,6 +45,16 @@ RouteConfiguration buildRouteConfiguration(Directory directory) {
   );
   final publicDirectory = Directory(path.join(directory.path, 'public'));
   final mainDartFile = File(path.join(directory.path, 'main.dart'));
+
+  final customInitRegex = RegExp(
+    r'^Future(?:Or)?<void>\s*init\(InternetAddress .*?,\s*int .*?\)\s*(?:async)?\s*{',
+    multiLine: true,
+  );
+
+  final mainDartFileExists = mainDartFile.existsSync();
+  final hasCustomInit = mainDartFileExists &&
+      customInitRegex.hasMatch(mainDartFile.readAsStringSync());
+
   return RouteConfiguration(
     globalMiddleware: globalMiddleware,
     middleware: middleware,
@@ -53,7 +63,8 @@ RouteConfiguration buildRouteConfiguration(Directory directory) {
     rogueRoutes: rogueRoutes,
     endpoints: endpoints,
     serveStaticFiles: publicDirectory.existsSync(),
-    invokeCustomEntrypoint: mainDartFile.existsSync(),
+    invokeCustomEntrypoint: mainDartFileExists,
+    invokeCustomInit: hasCustomInit,
   );
 }
 
@@ -252,10 +263,14 @@ class RouteConfiguration {
     this.globalMiddleware,
     this.serveStaticFiles = false,
     this.invokeCustomEntrypoint = false,
+    this.invokeCustomInit = false,
   });
 
   /// Whether to invoke a custom entrypoint script (`main.dart`).
   final bool invokeCustomEntrypoint;
+
+  /// Whether to invoke a custom init method (`init` in `main.dart`).
+  final bool invokeCustomInit;
 
   /// Whether to serve static files. Defaults to false.
   final bool serveStaticFiles;
