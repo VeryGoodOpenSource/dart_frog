@@ -8,6 +8,8 @@ part of '_internal.dart';
 /// By default, the header will be:
 ///
 /// `"X-Powered-By": "Dart with package:dart_frog"`
+///
+///  If a [securityContext] is provided an HTTPS server will be started
 Future<HttpServer> serve(
   Handler handler,
   Object address,
