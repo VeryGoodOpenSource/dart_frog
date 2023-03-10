@@ -13,6 +13,7 @@ Future<HttpServer> serve(
   Object address,
   int port, {
   String? poweredByHeader = 'Dart with package:dart_frog',
+  SecurityContext? securityContext,
 }) {
   return shelf_io.serve(
     (shelf.Request request) async {
@@ -22,5 +23,6 @@ Future<HttpServer> serve(
     address,
     port,
     poweredByHeader: poweredByHeader,
+    securityContext: securityContext,
   );
 }
