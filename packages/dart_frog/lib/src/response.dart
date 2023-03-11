@@ -19,6 +19,19 @@ class Response {
           ),
         );
 
+  /// Create a [Response] with a stream of bytes.
+  Response.stream({
+    int statusCode = 200,
+    Stream<List<int>>? body,
+    Map<String, Object>? headers,
+  }) : this._(
+          shelf.Response(
+            statusCode,
+            body: body,
+            headers: headers,
+          ),
+        );
+
   /// Create a [Response] with a byte array body.
   Response.bytes({
     int statusCode = 200,
