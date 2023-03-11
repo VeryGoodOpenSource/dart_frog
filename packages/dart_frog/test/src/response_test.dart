@@ -100,6 +100,15 @@ void main() {
       });
     });
 
+    group('stream', () {
+      test('has correct body', () {
+        final bytes = utf8.encode('hello');
+        final stream = Stream.value(bytes);
+        final response = Response.stream(body: stream);
+        expect(response.bytes(), emits(equals(bytes)));
+      });
+    });
+
     group('formData', () {
       final contentTypeFormUrlEncoded = {
         HttpHeaders.contentTypeHeader: formUrlEncodedContentType.mimeType
