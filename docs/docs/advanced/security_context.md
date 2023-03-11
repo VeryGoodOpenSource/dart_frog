@@ -5,7 +5,7 @@ title: 🔑 Security Context
 
 # Security Context 🔑
 
-By default, Dart Frog starts with HTTP protocol. To run through HTTPS, you must pass the Security Context when calling `serve` from a [custom entrypoint](/docs/advanced/custom_entrypoint):
+By default, Dart Frog uses the insecure HTTP protocol. To enable the secure HTTPS protocol, you must pass a `SecurityContext` to the `serve` method in a [custom entrypoint](/docs/advanced/custom_entrypoint):
 
 ```dart
 import 'dart:io';
