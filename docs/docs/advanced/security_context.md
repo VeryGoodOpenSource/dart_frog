@@ -24,4 +24,4 @@ Future<HttpServer> run(Handler handler, InternetAddress ip, int port) {
 }
 ```
 
-More information about using SSL certificates is available in the [datr:io documentation](https://api.flutter.dev/flutter/dart-io/SecurityContext-class.html).
+For more information about SSL certificates and the `SecurityContext`, see the [`dart:io` documentation](https://api.flutter.dev/flutter/dart-io/SecurityContext-class.html).
