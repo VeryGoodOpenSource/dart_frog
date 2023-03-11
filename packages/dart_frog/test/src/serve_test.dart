@@ -151,8 +151,12 @@ SFTrELxay/xfdivEUxK9wEIG
       final securityContext = SecurityContext()
         ..useCertificateChainBytes(utf8.encode(chain))
         ..usePrivateKeyBytes(utf8.encode(key));
-      final server = await serve((_) => Response(), 'localhost', 3000,
-          securityContext: securityContext);
+      final server = await serve(
+        (_) => Response(),
+        'localhost',
+        3000,
+        securityContext: securityContext,
+      );
       final client = HttpClient();
       final request = await client.getUrl(Uri.parse('https://localhost:3000'));
       final response = await request.close();
