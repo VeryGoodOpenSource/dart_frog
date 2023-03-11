@@ -157,7 +157,9 @@ SFTrELxay/xfdivEUxK9wEIG
         3000,
         securityContext: securityContext,
       );
-      final client = HttpClient();
+      final client = HttpClient()
+        ..badCertificateCallback =
+            (X509Certificate cert, String host, int port) => true;
       final request = await client.getUrl(Uri.parse('https://localhost:3000'));
       final response = await request.close();
       expect(response.statusCode, equals(HttpStatus.ok));
