@@ -90,7 +90,7 @@ custom_lint:
   enable_all_lint_rules: false
   rules:
     # You can now enable one specific rule in the "rules" list
-    - missing_provider_scope
+    - dart_frog_middleware
 ```
 
 ## Running dart_frog_lint in the terminal/CI
