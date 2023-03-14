@@ -159,7 +159,7 @@ SFTrELxay/xfdivEUxK9wEIG
       );
       final client = HttpClient()
         ..badCertificateCallback =
-            (X509Certificate cert, String host, int port) => true;
+            (X509Certificate cert, String host, int port) => cert.pem == chain;
       final request = await client.getUrl(Uri.parse('https://localhost:3000'));
       final response = await request.close();
       expect(response.statusCode, equals(HttpStatus.ok));
