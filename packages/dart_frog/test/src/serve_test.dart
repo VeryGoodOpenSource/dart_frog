@@ -167,5 +167,17 @@ SFTrELxay/xfdivEUxK9wEIG
       expect(response.statusCode, equals(HttpStatus.ok));
       await server.close();
     });
+    
+    test(
+        '''throws a HandshakeException when trying to use https without a securityContext''',
+        () async {
+      await serve((_) => Response(), 'localhost', 3000);
+      final client = HttpClient();
+
+      await expectLater(
+        () => client.getUrl(Uri.parse('https://localhost:3000')),
+        throwsA(isA<HandshakeException>()),
+      );
+    });
   });
 }
