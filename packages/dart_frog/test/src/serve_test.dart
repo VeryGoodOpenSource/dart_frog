@@ -117,7 +117,8 @@ eOjaAAhQ8UcVmvJrtt5GoDh9Bl/jB60gVGL0XFr9E1b3DZWgMpgyzBreGlpXPL87
 47P6RMmzpAp/efrY+scKk9UH/6CElsWt2lYrv4XUBjsCXdrGrYpuG3aS5ohowvWd
 lM5/EJeo2XQrb5AOE+mGMOZrI1F113IjZkP73OVrUyAKg5vsHDvHwRQ/blz3W2fG
 iTz7oBJ+5dtzLcZNFkDgNhBGKSu8
------END CERTIFICATE-----''';
+-----END CERTIFICATE-----
+''';
       const key = '''
 -----BEGIN PRIVATE KEY-----
 MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC4PHE6IrELM/JS
@@ -146,7 +147,8 @@ S4aDpgYCyMdu9jSVvcmwDOewRVT/K+CiytLSgJkI5wKBgE9Lun9U4sW8uKDL0q9g
 GhAvwnx67SU85gBKK+C1P9yBp8QGQEjFHtRBLUh5R4lXBvPW9e+VuS0vcj6QKGuy
 4fWk4JDF7cwbR/HqlyNQrynnSIm1qats3Oe2AiJzKNXMzQj/IiVgF/cp5z1qjkKZ
 SFTrELxay/xfdivEUxK9wEIG
------END PRIVATE KEY-----''';
+-----END PRIVATE KEY-----
+''';
 
       final securityContext = SecurityContext()
         ..useCertificateChainBytes(utf8.encode(chain))
