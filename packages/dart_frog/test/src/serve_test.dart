@@ -167,7 +167,7 @@ SFTrELxay/xfdivEUxK9wEIG
       expect(response.statusCode, equals(HttpStatus.ok));
       await server.close();
     });
-    
+
     test(
         '''throws a HandshakeException when trying to use https without a securityContext''',
         () async {
