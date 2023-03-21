@@ -46,8 +46,12 @@ Next, open the newly created project and start the dev server via:
 dart_frog dev
 ```
 
-:::tip
+:::info
 By default port `8080` is used. A custom port can be used via the `--port` option.
+:::
+
+:::tip
+You can also attach a debugger to the dev server, see [debugging](/docs/basics/debugging) for more information.
 :::
 
 :::caution

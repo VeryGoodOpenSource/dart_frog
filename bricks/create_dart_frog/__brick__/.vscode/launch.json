@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Launch dev server",
+        "request": "attach",
+        "type": "dart",
+        "preLaunchTask": "api: start dev server",
+        "postDebugTask": "api: stop dev server",
+      }
+    ]
+  }

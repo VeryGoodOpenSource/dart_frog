@@ -1,0 +1,43 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "api: start dev server",
+        "command": "dart_frog dev",
+        "type": "shell",
+        "isBackground": true,
+        "presentation": {
+          "close": true,
+        },
+        "problemMatcher": {
+            "owner": "dart",
+            "fileLocation": ["relative", "${workspaceFolder}"],
+            "pattern": {
+                "regexp": ".",
+                "file": 1,
+                "line": 2,
+                "column": 3,
+            },
+            "background": {
+                "activeOnStart": true,
+                "beginsPattern": {
+                    "regexp": "."
+                },
+                "endsPattern": {
+                    "regexp": "^\\[hotreload\\] (\\d{2}:\\d{2}:\\d{2} - Application reloaded\\.|Hot reload is enabled\\.)$"
+                }
+            }
+        },
+      },
+      {
+        "label": "api: stop dev server",
+        "type": "shell",
+        "command": "pkill -f \"sh $HOME/.pub-cache/bin/dart_frog dev\"",
+        "presentation": {
+            "reveal": "silent",
+            "panel": "dedicated",
+            "close": true,
+        }
+      }
+    ]
+  }
