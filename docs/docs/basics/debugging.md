@@ -9,7 +9,7 @@ Using the Dart VM URI, you can attach the dart debugger to the dart frog process
 
 ## Debugging with VS Code
 
-Using the [Dart extension][dart_extension_link] for VS Code, you can create a launch configuration 
+Using the [Dart extension][dart_extension_link] for VS Code, you can create a launch configuration
 to attach the debugger to the dev server. Using VS Code's tasks, you can also start and stop the dev
 server automatically when the debugger is started and stopped.
 
@@ -19,6 +19,7 @@ terminal and a popup will prompt for the VM service URI. You can copy the URI fr
 To setup the launch configuration, create the following files in your project's `.vscode` folder:
 
 ### launch.json
+
 ```json
 {
   "version": "0.2.0",
@@ -30,7 +31,7 @@ To setup the launch configuration, create the following files in your project's 
       "preLaunchTask": "api: start dev server",
       "postDebugTask": "api: stop dev server",
       // Optionally, you can specify other options like the current working directory.
-      "cwd": "${workspaceFolder}/api",
+      "cwd": "${workspaceFolder}/api"
     }
     // Other debug configurations...
   ]
@@ -38,15 +39,16 @@ To setup the launch configuration, create the following files in your project's 
 ```
 
 ### tasks.json
+
 ```json
 {
-  "version": "2.0.0", 
-  // Optionally, you can specify other options like the current working directory 
+  "version": "2.0.0",
+  // Optionally, you can specify other options like the current working directory
   // or environment variables.
   "options": {
     "cwd": "${workspaceFolder}/api",
     "env": {
-      "API_KEY": "...",
+      "API_KEY": "..."
     }
   },
   "tasks": [
@@ -56,47 +58,45 @@ To setup the launch configuration, create the following files in your project's 
       "type": "shell",
       "isBackground": true,
       "presentation": {
-        "close": true,
+        "close": true
       },
       "problemMatcher": {
-          "owner": "dart",
-          "fileLocation": ["relative", "${workspaceFolder}/api"],
-          "pattern": {
-              "regexp": ".",
-              "file": 1,
-              "line": 2,
-              "column": 3,
+        "owner": "dart",
+        "fileLocation": ["relative", "${workspaceFolder}/api"],
+        "pattern": {
+          "regexp": ".",
+          "file": 1,
+          "line": 2,
+          "column": 3
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": {
+            "regexp": "."
           },
-          "background": {
-              "activeOnStart": true,
-              "beginsPattern": {
-                  "regexp": "."
-              },
-              "endsPattern": {
-                  "regexp": "^\\[hotreload\\] (\\d{2}:\\d{2}:\\d{2} - Application reloaded\\.|Hot reload is enabled\\.)$"
-              }
+          "endsPattern": {
+            "regexp": "^\\[hotreload\\] (\\d{2}:\\d{2}:\\d{2} - Application reloaded\\.|Hot reload is enabled\\.)$"
           }
-      },
+        }
+      }
     },
     {
       "label": "api: stop dev server",
       "type": "shell",
       "command": "pkill -f \"sh $HOME/.pub-cache/bin/dart_frog dev\"",
       "presentation": {
-          "reveal": "silent",
-          "panel": "dedicated",
-          "close": true,
+        "reveal": "silent",
+        "panel": "dedicated",
+        "close": true
       }
     }
   ]
 }
-
 ```
-
 
 ## Debugging with IntelliJ and Android Studio
 
-Using the [Dart plugin][dart_plugin_link], you can create a new run configuration for 
+Using the [Dart plugin][dart_plugin_link], you can create a new run configuration for
 `Dart Remote Debug` and attach the debugger to the running dev server. When you debug the run configuration you created, it will prompt you for the VM service URI. You can copy the URI from the output, it looks like this: `The Dart VM service is listening on http://127.0.0.1:8181/lLn6oHhbw-Y=/` (only copy the URI, not the message).
 
 [dart_extension_link]: https://marketplace.visualstudio.com/items?itemName=Dart-Code.dart-code
