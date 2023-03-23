@@ -1,3 +1,13 @@
+# 0.3.3
+
+- fix: adjust `InternetAddress` to `anyIPv6`
+- refactor: update to Dart 2.19 and `very_good_analysis ^4.0.0`
+
+# 0.3.2
+
+- fix: update silently fails when the sdk is incompatible
+- feat: `dart_frog create` uses Dart 2.19
+
 # 0.3.1
 
 - feat: upgrade to mason ^0.1.0-dev.38

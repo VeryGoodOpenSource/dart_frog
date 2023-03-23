@@ -1,3 +1,8 @@
+# 0.3.1
+
+- deps: upgrade to `Dart ">=2.19.0 <3.0.0"`
+- deps: upgrade to `very_good_analysis ^4.0.0`
+
 # 0.3.0
 
 - **BREAKING** fix: support for cascading middleware
