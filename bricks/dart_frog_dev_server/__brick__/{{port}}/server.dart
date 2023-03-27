@@ -6,9 +6,9 @@ import 'dart:io';
 import 'package:dart_frog/dart_frog.dart';
 
 {{#invokeCustomEntrypoint}}import '../main.dart' as entrypoint;{{/invokeCustomEntrypoint}}
-{{#routes}}import '{{{path}}}' as {{#snakeCase}}{{{name}}}{{/snakeCase}};
+{{#routes}}import '../{{{path}}}' as {{#snakeCase}}{{{name}}}{{/snakeCase}};
 {{/routes}}
-{{#middleware}}import '{{{path}}}' as {{#snakeCase}}{{{name}}}{{/snakeCase}};
+{{#middleware}}import '../{{{path}}}' as {{#snakeCase}}{{{name}}}{{/snakeCase}};
 {{/middleware}}
 void main() => hotReload(createServer);
 

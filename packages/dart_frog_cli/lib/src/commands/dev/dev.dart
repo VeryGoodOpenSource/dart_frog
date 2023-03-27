@@ -133,15 +133,16 @@ class DevCommand extends DartFrogCommand {
     }
 
     Future<void> serve() async {
+      final serverPath = path.join(cwd.path, '.dart_frog', port, 'server.dart');
       logger.detail(
-        '''[process] dart --enable-vm-service ${path.join('.dart_frog', 'server.dart')}''',
+        '''[process] dart --enable-vm-service $serverPath}''',
       );
       final process = await _startProcess(
         'dart',
         [
           'run',
           '--enable-vm-service=$port',
-          path.join('.dart_frog', 'server.dart')
+          serverPath,
         ],
         runInShell: true,
       );
