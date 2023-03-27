@@ -138,10 +138,13 @@ class DevCommand extends DartFrogCommand {
       );
       final process = await _startProcess(
         'dart',
-        ['--enable-vm-service', path.join('.dart_frog', 'server.dart')],
+        [
+          'run',
+          '--enable-vm-service=$port',
+          path.join('.dart_frog', 'server.dart')
+        ],
         runInShell: true,
       );
-
       // On Windows listen for CTRL-C and use taskkill to kill
       // the spawned process along with any child processes.
       // https://github.com/dart-lang/sdk/issues/22470
