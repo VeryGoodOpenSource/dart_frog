@@ -100,7 +100,7 @@ void main() {
         routes: [],
         rogueRoutes: [],
         endpoints: {},
-        invokeCustomEntrypoint: true,
+        invokeCustomInit: true,
       );
       final exitCalls = <int>[];
       await preGen(
