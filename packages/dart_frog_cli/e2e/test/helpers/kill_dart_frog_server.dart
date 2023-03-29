@@ -30,10 +30,11 @@ Future<void> killDartFrogServer(int pid, {String port = '8080'}) async {
   }
 
   if (Platform.isMacOS) {
-    final result = await Process.run('kill', ['-9', '$pid']);
+    final result = await Process.run('pkill', ['-f', 'dart_frog']);
 
     if (result.exitCode != 0) {
-      throw Exception('`kill -9 $pid` exited with code ${result.exitCode}');
+      throw Exception(
+          '`pkill -f dart_frog` exited with code ${result.exitCode}');
     }
 
     return;
