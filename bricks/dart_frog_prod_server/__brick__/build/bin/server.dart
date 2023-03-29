@@ -12,8 +12,8 @@ import 'package:dart_frog/dart_frog.dart';
 {{/middleware}}
 void main() async {
   final address = InternetAddress.anyIPv6;
-  final port = int.parse(Platform.environment['PORT'] ?? '8080');
-  {{#invokeCustomInit}}await entrypoint.init(address, port);{{/invokeCustomInit}}
+  final port = int.parse(Platform.environment['PORT'] ?? '8080');{{#invokeCustomInit}}
+  await entrypoint.init(address, port);{{/invokeCustomInit}}
   createServer(address, port);
 }
 
