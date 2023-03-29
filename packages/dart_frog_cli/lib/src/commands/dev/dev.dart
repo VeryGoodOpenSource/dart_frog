@@ -133,7 +133,7 @@ class DevCommand extends DartFrogCommand {
     }
 
     Future<void> serve() async {
-      final serverPath = path.join(cwd.path, '.dart_frog', port, 'server.dart');
+      final serverPath = path.join(cwd.path, '.dart_frog', 'server_$port.dart');
       logger.detail(
         '''[process] dart --enable-vm-service $serverPath}''',
       );
