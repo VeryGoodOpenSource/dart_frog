@@ -33,7 +33,7 @@ Future<void> killDartFrogServer(int pid, {String port = '8080'}) async {
     final result = await Process.run('kill', ['-9', '$pid']);
 
     if (result.exitCode != 0) {
-      throw Exception('`kill -3 $pid` exited with code ${result.exitCode}');
+      throw Exception('`kill -9 $pid` exited with code ${result.exitCode}');
     }
 
     return;
