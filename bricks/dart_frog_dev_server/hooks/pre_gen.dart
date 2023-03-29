@@ -48,5 +48,6 @@ Future<void> preGen(
         : false,
     'serveStaticFiles': configuration.serveStaticFiles,
     'invokeCustomEntrypoint': configuration.invokeCustomEntrypoint,
+    'invokeCustomInit': configuration.invokeCustomInit,
   };
 }
