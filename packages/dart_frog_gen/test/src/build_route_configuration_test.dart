@@ -50,6 +50,74 @@ void main() {
       expect(configuration.invokeCustomEntrypoint, isFalse);
     });
 
+    test('invokeCustomInit is true when init exists in main.dart', () {
+      final tempDirectory = createTempDir(
+        directories: ['routes'],
+        files: ['main.dart'],
+      );
+
+      File(path.join(tempDirectory.path, 'main.dart')).writeAsStringSync('''
+Future<void> init(InternetAddress ip, int port) async {}
+''');
+
+      final configuration = buildRouteConfiguration(tempDirectory);
+      expect(configuration.invokeCustomEntrypoint, isTrue);
+    });
+
+    test('invokeCustomInit is true when init with FutureOr exists in main.dart',
+        () {
+      final tempDirectory = createTempDir(
+        directories: ['routes'],
+        files: ['main.dart'],
+      );
+
+      File(path.join(tempDirectory.path, 'main.dart')).writeAsStringSync('''
+FutureOr<void> init(InternetAddress ip, int port) async {}
+''');
+
+      final configuration = buildRouteConfiguration(tempDirectory);
+      expect(configuration.invokeCustomEntrypoint, isTrue);
+    });
+
+    test(
+        '''invokeCustomInit is true when init with different parameter names exists in main.dart''',
+        () {
+      final tempDirectory = createTempDir(
+        directories: ['routes'],
+        files: ['main.dart'],
+      );
+
+      File(path.join(tempDirectory.path, 'main.dart')).writeAsStringSync('''
+Future<void> init(InternetAddress hello, int world) async {}
+''');
+
+      final configuration = buildRouteConfiguration(tempDirectory);
+      expect(configuration.invokeCustomEntrypoint, isTrue);
+    });
+
+    test(
+        '''invokeCustomInit is true when init with bad spacing exists in main.dart''',
+        () {
+      final tempDirectory = createTempDir(
+        directories: ['routes'],
+        files: ['main.dart'],
+      );
+
+      File(path.join(tempDirectory.path, 'main.dart')).writeAsStringSync('''
+Future<void>init(InternetAddress ip,int port)async{}
+''');
+
+      final configuration = buildRouteConfiguration(tempDirectory);
+      expect(configuration.invokeCustomEntrypoint, isTrue);
+    });
+
+    test('invokeCustomEntrypoint is false when main.dart does not exist', () {
+      final configuration = buildRouteConfiguration(
+        createTempDir(directories: ['routes']),
+      );
+      expect(configuration.invokeCustomInit, isFalse);
+    });
+
     test('includes global middleware when it exists', () {
       final configuration = buildRouteConfiguration(
         createTempDir(files: ['routes/_middleware.dart']),
