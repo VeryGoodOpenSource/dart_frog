@@ -1,6 +1,6 @@
 import 'dart:io';
 
-Future<void> killDartFrogServer(int pid) async {
+Future<void> killDartFrogServer(int pid, {String port = '8080'}) async {
   if (Platform.isWindows) {
     final result = await Process.run(
       'taskkill',
@@ -10,7 +10,7 @@ Future<void> killDartFrogServer(int pid) async {
 
     if (result.exitCode != 0) {
       throw Exception(
-        'taskkill /F /T /PID $pid exited with code ${result.exitCode}',
+        '`taskkill /F /T /PID $pid` exited with code ${result.exitCode}',
       );
     }
 
@@ -18,11 +18,11 @@ Future<void> killDartFrogServer(int pid) async {
   }
 
   if (Platform.isLinux) {
-    final result = await Process.run('fuser', ['-n', 'tcp', '-k', '8080']);
+    final result = await Process.run('fuser', ['-n', 'tcp', '-k', port]);
 
     if (result.exitCode != 0) {
       throw Exception(
-        'fuser -n tcp -k 8080 exited with code ${result.exitCode}',
+        '`fuser -n tcp -k $port` exited with code ${result.exitCode}',
       );
     }
 
@@ -30,10 +30,10 @@ Future<void> killDartFrogServer(int pid) async {
   }
 
   if (Platform.isMacOS) {
-    final result = await Process.run('pkill', ['-f', 'dart_frog']);
+    final result = await Process.run('kill', ['-9', '$pid']);
 
     if (result.exitCode != 0) {
-      throw Exception('pkill -f dart_frog exited with code ${result.exitCode}');
+      throw Exception('`kill -3 $pid` exited with code ${result.exitCode}');
     }
 
     return;
