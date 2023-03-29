@@ -2,12 +2,18 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-Future<Process> dartFrogDev({required Directory directory}) async {
+Future<Process> dartFrogDev({
+  required Directory directory,
+  String? port,
+}) async {
   final completer = Completer<Process>();
 
   final process = await Process.start(
     'dart_frog',
-    ['dev'],
+    [
+      'dev',
+      if (port != null) '--port=$port',
+    ],
     workingDirectory: directory.path,
     runInShell: true,
   );

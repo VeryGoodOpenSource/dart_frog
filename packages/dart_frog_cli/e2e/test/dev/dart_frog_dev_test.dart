@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
-import 'helpers/helpers.dart';
+import '../helpers/helpers.dart';
 
 /// Objectives:
 ///
