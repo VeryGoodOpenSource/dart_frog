@@ -158,10 +158,15 @@ class DevCommand extends DartFrogCommand {
 
         logger.err(message);
 
+        final warnignRegex = RegExp(r'^.* Warning: .*$', multiLine: true);
+
         if (!hotReloadEnabled) {
-          await _killProcess(process);
-          logger.detail('[process] exit(1)');
-          _exit(1);
+          if (!warnignRegex.hasMatch(message)) {
+            logger.detail('Killing because $message');
+            await _killProcess(process);
+            logger.detail('[process] exit(1)');
+            _exit(1);
+          }
         }
 
         await target.rollback();
@@ -260,6 +265,7 @@ class RestorableDirectoryGeneratorTarget extends DirectoryGeneratorTarget {
   final CreateFile? _createFile;
   final Logger? _logger;
   final Queue<CachedFile> _cachedSnapshots;
+
   CachedFile? get _cachedSnapshot {
     return _cachedSnapshots.isNotEmpty ? _cachedSnapshots.last : null;
   }
