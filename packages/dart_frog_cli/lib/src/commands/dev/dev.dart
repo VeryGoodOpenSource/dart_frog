@@ -38,7 +38,7 @@ typedef RestorableDirectoryGeneratorTargetBuilder
 typedef Exit = dynamic Function(int exitCode);
 
 /// Regex for detecting warnings in the output of `dart run`.
-final _warningRegex = RegExp('^.* Warning: .*', multiLine: true);
+final _warningRegex = RegExp(r'^.*:\d+:\d+: Warning: .*', multiLine: true);
 
 RestorableDirectoryGeneratorTarget _defaultGeneratorTarget(Logger? logger) {
   return RestorableDirectoryGeneratorTarget(
