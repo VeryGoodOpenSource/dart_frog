@@ -160,13 +160,11 @@ class DevCommand extends DartFrogCommand {
 
         final warnignRegex = RegExp(r'^.* Warning: .*$', multiLine: true);
 
-        if (!hotReloadEnabled) {
-          if (!warnignRegex.hasMatch(message)) {
-            logger.detail('Killing because $message');
-            await _killProcess(process);
-            logger.detail('[process] exit(1)');
-            _exit(1);
-          }
+        if (!hotReloadEnabled && !warnignRegex.hasMatch(message)) {
+          logger.detail('Killing because $message');
+          await _killProcess(process);
+          logger.detail('[process] exit(1)');
+          _exit(1);
         }
 
         await target.rollback();

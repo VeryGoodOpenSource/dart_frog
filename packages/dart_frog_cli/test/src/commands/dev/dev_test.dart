@@ -658,6 +658,71 @@ void main() {
     });
 
     test(
+      'dont kills process if a warning occurs before '
+      'hotreload is enabled',
+      () async {
+        final generatorHooks = _MockGeneratorHooks();
+        when(
+          () => generatorHooks.preGen(
+            vars: any(named: 'vars'),
+            workingDirectory: any(named: 'workingDirectory'),
+            onVarsChanged: any(named: 'onVarsChanged'),
+          ),
+        ).thenAnswer((invocation) async {
+          (invocation.namedArguments[const Symbol('onVarsChanged')] as void
+                  Function(Map<String, dynamic> vars))
+              .call(<String, dynamic>{});
+        });
+        when(
+          () => generator.generate(
+            any(),
+            vars: any(named: 'vars'),
+            fileConflictResolution: FileConflictResolution.overwrite,
+          ),
+        ).thenAnswer((_) async => []);
+        when(() => generator.hooks).thenReturn(generatorHooks);
+        when(() => process.stdout).thenAnswer((_) => const Stream.empty());
+        when(() => process.stderr).thenAnswer(
+          (_) => Stream.value(
+            utf8.encode("""
+lib/my_model.g.dart:53:20: Warning: Operand of null-aware operation '!' has type 'String' which excludes null.
+          ? _value.name!
+                   ^
+          """),
+          ),
+        );
+        when(
+          () => directoryWatcher.events,
+        ).thenAnswer(
+          (_) => Stream.value(WatchEvent(ChangeType.MODIFY, 'README.md')),
+        );
+        command = DevCommand(
+          logger: logger,
+          ensureRuntimeCompatibility: (_) {},
+          directoryWatcher: (_) => directoryWatcher,
+          generator: (_) async => generator,
+          startProcess: (
+            String executable,
+            List<String> arguments, {
+            bool runInShell = false,
+          }) async {
+            return process;
+          },
+          sigint: sigint,
+        )..testArgResults = argResults;
+        final exitCode = await command.run();
+        expect(exitCode, equals(ExitCode.success.code));
+        verify(
+          () => generatorHooks.preGen(
+            vars: <String, dynamic>{'port': '8080'},
+            workingDirectory: any(named: 'workingDirectory'),
+            onVarsChanged: any(named: 'onVarsChanged'),
+          ),
+        ).called(1);
+        verifyNever(() => process.kill());
+      },
+    );
+    test(
         'kills process if error occurs before '
         'hotreload is enabled on non-windows', () async {
       final generatorHooks = _MockGeneratorHooks();
