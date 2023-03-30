@@ -661,6 +661,11 @@ void main() {
       'dont kills process if a warning occurs before '
       'hotreload is enabled',
       () async {
+        const warningMessage = """
+lib/my_model.g.dart:53:20: Warning: Operand of null-aware operation '!' has type 'String' which excludes null.
+          ? _value.name!
+                   ^
+          """;
         final generatorHooks = _MockGeneratorHooks();
         when(
           () => generatorHooks.preGen(
@@ -684,11 +689,7 @@ void main() {
         when(() => process.stdout).thenAnswer((_) => const Stream.empty());
         when(() => process.stderr).thenAnswer(
           (_) => Stream.value(
-            utf8.encode("""
-lib/my_model.g.dart:53:20: Warning: Operand of null-aware operation '!' has type 'String' which excludes null.
-          ? _value.name!
-                   ^
-          """),
+            utf8.encode(warningMessage),
           ),
         );
         when(
@@ -720,6 +721,7 @@ lib/my_model.g.dart:53:20: Warning: Operand of null-aware operation '!' has type
           ),
         ).called(1);
         verifyNever(() => process.kill());
+        verify(() => logger.warn(warningMessage.trim())).called(1);
       },
     );
     test(

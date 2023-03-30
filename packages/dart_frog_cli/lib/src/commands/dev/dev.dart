@@ -159,15 +159,16 @@ class DevCommand extends DartFrogCommand {
         final message = utf8.decode(_).trim();
         if (message.isEmpty) return;
 
-        final isWarning = _warningRegex.hasMatch(message);
+        /// Do not kill the process if the error is a warning from the SDK.
+        final isSDKWarning = _warningRegex.hasMatch(message);
 
-        if (isWarning) {
+        if (isSDKWarning) {
           logger.warn(message);
         } else {
           logger.err(message);
         }
 
-        if (!hotReloadEnabled && !isWarning) {
+        if (!hotReloadEnabled && !isSDKWarning) {
           await _killProcess(process);
           logger.detail('[process] exit(1)');
           _exit(1);
