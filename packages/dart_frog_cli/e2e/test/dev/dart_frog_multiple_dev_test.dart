@@ -19,7 +19,7 @@ void main() {
 
     late Process process1;
     const port1 = '8080';
-    // late Process process2;
+    late Process process2;
     const port2 = '8081';
 
     setUpAll(() async {
@@ -28,7 +28,7 @@ void main() {
         directory: Directory(path.join(tempDirectory.path, projectName)),
         port: port1,
       );
-      /*process2 =*/ await dartFrogDev(
+      process2 = await dartFrogDev(
         directory: Directory(path.join(tempDirectory.path, projectName)),
         port: port2,
       );
@@ -36,8 +36,7 @@ void main() {
 
     tearDownAll(() async {
       await killDartFrogServer(process1.pid, port: port1);
-      // FIXME(alestiago): Running killDartFrogServer on MacOs kills both processes.
-      // await killDartFrogServer(process2.pid, port: port2);
+      await killDartFrogServer(process2.pid, port: port2);
       tempDirectory.delete(recursive: true).ignore();
     });
 
