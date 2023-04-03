@@ -74,34 +74,6 @@ The goal of Dart Frog is to help developers effectively build backends in Dart. 
 
 Dart Frog provides a simple core with a small API surface area in order to reduce the learning curve and ramp-up time for developers. In addition, Dart Frog is intended to help Flutter/Dart developers maximize their productivity by having a unified tech stack that enables sharing tooling, models, and more!
 
-## Feature Set ✨
-
-✅ Hot Reload ⚡️
-
-✅ Dart Dev Tools ⚙️
-
-✅ File System Routing 🚏
-
-✅ Index Routes 🗂
-
-✅ Nested Routes 🪆
-
-✅ Dynamic Routes 🌓
-
-✅ Middleware 🍔
-
-✅ Dependency Injection 💉
-
-✅ Production Builds 👷‍♂️
-
-✅ Docker 🐳
-
-✅ Static File Support 📁
-
-🚧 Generated Dart Client Package 📦
-
-🚧 Generated API Documentation 📔
-
 [dart_installation_link]: https://dart.dev/get-dart
 [ci_badge]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/main.yaml/badge.svg
 [ci_link]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/main.yaml

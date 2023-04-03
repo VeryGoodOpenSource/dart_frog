@@ -93,7 +93,7 @@ class Request {
 
   Request._(this._request);
 
-  final shelf.Request _request;
+  shelf.Request _request;
 
   /// Connection information for the associated HTTP request.
   HttpConnectionInfo get connectionInfo {
@@ -119,17 +119,34 @@ class Request {
   Stream<List<int>> bytes() => _request.read();
 
   /// Returns a [Future] containing the body as a [String].
-  Future<String> body() => _request.readAsString();
+  Future<String> body() async {
+    const requestBodyKey = 'dart_frog.request.body';
+    final bodyFromContext =
+        _request.context[requestBodyKey] as Completer<String>?;
+    if (bodyFromContext != null) return bodyFromContext.future;
+
+    final completer = Completer<String>();
+    try {
+      _request = _request.change(
+        context: {..._request.context, requestBodyKey: completer},
+      );
+      completer.complete(await _request.readAsString());
+    } catch (error, stackTrace) {
+      completer.completeError(error, stackTrace);
+    }
+
+    return completer.future;
+  }
 
   /// Returns a [Future] containing the form data as a [Map].
-  Future<Map<String, String>> formData() {
-    return parseFormData(headers: headers, body: body);
+  Future<FormData> formData() {
+    return parseFormData(headers: headers, body: body, bytes: bytes);
   }
 
   /// Returns a [Future] containing the body text parsed as a json object.
   /// This object could be anything that can be represented by json
   /// e.g. a map, a list, a string, a number, a bool...
-  Future<dynamic> json() async => jsonDecode(await _request.readAsString());
+  Future<dynamic> json() async => jsonDecode(await body());
 
   /// Creates a new [Request] by copying existing values and applying specified
   /// changes.

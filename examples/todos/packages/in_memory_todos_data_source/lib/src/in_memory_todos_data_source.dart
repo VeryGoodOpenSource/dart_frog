@@ -3,7 +3,7 @@ import 'package:uuid/uuid.dart';
 
 /// An in-memory implementation of the [TodosDataSource] interface.
 class InMemoryTodosDataSource implements TodosDataSource {
-  /// Map of ID -> Todo
+  /// Map of ID -> `Todo`
   final _cache = <String, Todo>{};
 
   @override

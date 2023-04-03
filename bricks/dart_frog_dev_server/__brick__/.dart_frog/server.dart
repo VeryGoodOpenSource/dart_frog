@@ -10,13 +10,16 @@ import 'package:dart_frog/dart_frog.dart';
 {{/routes}}
 {{#middleware}}import '{{{path}}}' as {{#snakeCase}}{{{name}}}{{/snakeCase}};
 {{/middleware}}
-void main() => hotReload(createServer);
+void main() async {
+  final address = InternetAddress.anyIPv6;
+  final port = int.parse(Platform.environment['PORT'] ?? '{{{port}}}');{{#invokeCustomInit}}
+  await entrypoint.init(address, port);{{/invokeCustomInit}}
+  hotReload(() => createServer(address, port));
+}
 
-Future<HttpServer> createServer() {
-  final ip = InternetAddress.anyIPv4;
-  final port = int.parse(Platform.environment['PORT'] ?? '{{port}}');
+Future<HttpServer> createServer(InternetAddress address, int port) {
   final handler = Cascade(){{#serveStaticFiles}}.add(createStaticFileHandler()){{/serveStaticFiles}}.add(buildRootHandler()).handler;
-  {{#invokeCustomEntrypoint}}return entrypoint.run(handler, ip, port);{{/invokeCustomEntrypoint}}{{^invokeCustomEntrypoint}}return serve(handler, ip, port);{{/invokeCustomEntrypoint}}
+  {{#invokeCustomEntrypoint}}return entrypoint.run(handler, address, port);{{/invokeCustomEntrypoint}}{{^invokeCustomEntrypoint}}return serve(handler, address, port);{{/invokeCustomEntrypoint}}
 }
 
 Handler buildRootHandler() {

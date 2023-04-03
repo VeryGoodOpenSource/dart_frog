@@ -7,6 +7,7 @@ concurrency:
 on:
   pull_request:
     paths:
+      - "examples/kitchen_sink/pubspec.yaml"
       - "examples/kitchen_sink/routes/**"
       - "examples/kitchen_sink/lib/**"
       - "examples/kitchen_sink/test/**"

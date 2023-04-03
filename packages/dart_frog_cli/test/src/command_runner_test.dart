@@ -158,6 +158,20 @@ void main() {
         }),
       );
 
+      test(
+        'does not show update message when the shell calls the '
+        'completion command',
+        () async {
+          when(
+            () => pubUpdater.getLatestVersion(any()),
+          ).thenAnswer((_) async => latestVersion);
+
+          final result = await commandRunner.run(['completion']);
+          expect(result, equals(ExitCode.success.code));
+          verifyNever(() => logger.info(updateMessage));
+        },
+      );
+
       group('--help', () {
         test(
           'outputs usage',

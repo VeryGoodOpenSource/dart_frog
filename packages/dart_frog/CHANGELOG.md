@@ -1,3 +1,21 @@
+# 0.3.5
+
+- feat: add SecurityContext named argument to serve method
+- feat: add Response.stream
+
+# 0.3.4
+
+- feat: add support for `multipart/form-data` ([#551](https://github.com/VeryGoodOpenSource/dart_frog/pull/551))
+
+# 0.3.3
+
+- deps: upgrade to `Dart ">=2.19.0 <3.0.0"`
+- deps: upgrade to `very_good_analysis ^4.0.0`
+
+# 0.3.2
+
+- feat: cache `Request` and `Response` body
+
 # 0.3.1
 
 - feat: add `formData` to `Request`/`Response`

@@ -1,0 +1,35 @@
+name: examples/web_socket_counter
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+    paths:
+      - "examples/web_socket_counter/pubspec.yaml"
+      - "examples/web_socket_counter/routes/**"
+      - "examples/web_socket_counter/lib/**"
+      - "examples/web_socket_counter/test/**"
+      - "examples/web_socket_counter/e2e/**"
+      - ".github/workflows/examples_counter.yaml"
+      - "packages/dart_frog/lib/**"
+      - "packages/dart_frog/pubspec.yaml"
+      - "packages/dart_frog_cli/lib/**"
+      - "packages/dart_frog_cli/pubspec.yaml"
+    branches:
+      - main
+
+jobs:
+  build:
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@v1
+    with:
+      working_directory: examples/web_socket_counter
+      analyze_directories: "routes test"
+      report_on: "routes"
+
+  docker:
+    uses: ./.github/workflows/.docker_tests.yaml
+    with:
+      setup: rm pubspec_overrides.yaml && dart pub global activate --source path ../../packages/dart_frog_cli
+      working_directory: examples/web_socket_counter

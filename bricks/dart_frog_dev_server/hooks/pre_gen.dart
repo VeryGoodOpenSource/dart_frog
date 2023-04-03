@@ -61,6 +61,7 @@ Future<void> preGen(
         : false,
     'serveStaticFiles': routeConfiguration.serveStaticFiles,
     'invokeCustomEntrypoint': routeConfiguration.invokeCustomEntrypoint,
+    'invokeCustomInit': routeConfiguration.invokeCustomInit,
     'client': clientConfiguration.toJson(),
   };
 }

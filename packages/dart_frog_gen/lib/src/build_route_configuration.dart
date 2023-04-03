@@ -47,6 +47,16 @@ RouteConfiguration buildRouteConfiguration(Directory directory) {
   );
   final publicDirectory = Directory(path.join(directory.path, 'public'));
   final mainDartFile = File(path.join(directory.path, 'main.dart'));
+
+  final customInitRegex = RegExp(
+    r'^Future(?:Or)?<void>\s*init\(InternetAddress .*?,\s*int .*?\)\s*(?:async)?\s*{',
+    multiLine: true,
+  );
+
+  final mainDartFileExists = mainDartFile.existsSync();
+  final hasCustomInit = mainDartFileExists &&
+      customInitRegex.hasMatch(mainDartFile.readAsStringSync());
+
   return RouteConfiguration(
     globalMiddleware: globalMiddleware,
     middleware: middleware,
@@ -55,7 +65,8 @@ RouteConfiguration buildRouteConfiguration(Directory directory) {
     rogueRoutes: rogueRoutes,
     endpoints: endpoints,
     serveStaticFiles: publicDirectory.existsSync(),
-    invokeCustomEntrypoint: mainDartFile.existsSync(),
+    invokeCustomEntrypoint: mainDartFileExists,
+    invokeCustomInit: hasCustomInit,
   );
 }
 
