@@ -87,6 +87,39 @@ void main() {
           'globalMiddleware': false,
           'serveStaticFiles': false,
           'invokeCustomEntrypoint': true,
+          'invokeCustomInit': false,
+          'pathDependencies': <String>[]
+        }),
+      );
+    });
+
+    test('retains invokeCustomInit (true)', () async {
+      const configuration = RouteConfiguration(
+        middleware: [],
+        directories: [],
+        routes: [],
+        rogueRoutes: [],
+        endpoints: {},
+        invokeCustomInit: true,
+      );
+      final exitCalls = <int>[];
+      await preGen(
+        context,
+        buildConfiguration: (_) => configuration,
+        exit: exitCalls.add,
+      );
+      expect(exitCalls, isEmpty);
+      verifyNever(() => logger.err(any()));
+      expect(
+        context.vars,
+        equals({
+          'directories': <RouteDirectory>[],
+          'routes': <RouteFile>[],
+          'middleware': <MiddlewareFile>[],
+          'globalMiddleware': false,
+          'serveStaticFiles': false,
+          'invokeCustomEntrypoint': false,
+          'invokeCustomInit': true,
           'pathDependencies': <String>[]
         }),
       );
@@ -215,6 +248,7 @@ void main() {
           'globalMiddleware': {'name': 'middleware', 'path': 'middleware.dart'},
           'serveStaticFiles': true,
           'invokeCustomEntrypoint': false,
+          'invokeCustomInit': false,
           'pathDependencies': <String>[],
         }),
       );
