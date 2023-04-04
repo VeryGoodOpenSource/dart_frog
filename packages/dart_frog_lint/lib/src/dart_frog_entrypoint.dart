@@ -81,7 +81,7 @@ class DartFrogEntrypoint extends DartLintRule {
           !httpServerTypeChecker.isExactlyType(
             (returnType as InterfaceType).typeArguments.single,
           )) {
-        // The parameter is not a Handler
+        // The parameter is not a HttpServer
         reporter.reportErrorForNode(code, run);
         return;
       }
