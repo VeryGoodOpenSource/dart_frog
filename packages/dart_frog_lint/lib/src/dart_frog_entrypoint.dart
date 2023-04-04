@@ -41,7 +41,7 @@ class DartFrogEntrypoint extends DartLintRule {
       }
 
       if (run.functionExpression.parameters?.parameters.length != 3) {
-        // Only one parameter is allowed
+        // Only three parameters are allowed
         reporter.reportErrorForNode(code, run);
         return;
       }
