@@ -18,9 +18,9 @@ void main() {
     final tempDirectory = Directory.systemTemp.createTempSync();
 
     late Process process1;
-    const port1 = '8080';
+    const port1 = '7100';
     late Process process2;
-    const port2 = '8081';
+    const port2 = '7200';
 
     setUpAll(() async {
       await dartFrogCreate(projectName: projectName, directory: tempDirectory);
