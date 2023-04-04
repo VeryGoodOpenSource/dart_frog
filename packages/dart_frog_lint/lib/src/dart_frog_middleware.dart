@@ -5,7 +5,7 @@ import 'package:custom_lint_builder/custom_lint_builder.dart';
 import 'package:dart_frog_lint/src/types.dart';
 
 /// {@template dart_frog_lint.request}
-/// The definition of `dart_frog_request` lints.
+/// The definition of `dart_frog_middleware` lints.
 /// {@endtemplate}
 class DartFrogMiddleware extends DartLintRule {
   /// {@macro dart_frog_lint.request}
