@@ -64,7 +64,7 @@ class DartFrogEntrypoint extends DartLintRule {
       }
 
       if (ipType == null || !internetAddressTypeChecker.isExactlyType(ipType)) {
-        // The parameter is not a Handler
+        // The parameter is not an InternetAddress
         reporter.reportErrorForNode(code, run);
         return;
       }
