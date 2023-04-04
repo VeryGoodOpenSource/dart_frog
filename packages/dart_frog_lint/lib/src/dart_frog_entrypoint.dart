@@ -70,7 +70,7 @@ class DartFrogEntrypoint extends DartLintRule {
       }
 
       if (portType?.isDartCoreInt != true) {
-        // The parameter is not a Handler
+        // The parameter is not a int
         reporter.reportErrorForNode(code, run);
         return;
       }
