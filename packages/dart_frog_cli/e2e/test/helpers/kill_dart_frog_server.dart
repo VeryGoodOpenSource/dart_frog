@@ -31,7 +31,6 @@ Future<void> killDartFrogServer(int pid, {String port = '8080'}) async {
 
   if (Platform.isMacOS) {
     final result = await Process.run('kill', ['-9', '$pid']);
-    // kill -9 $(lsof -ti:7100)
 
     if (result.exitCode != 0) {
       throw Exception(
