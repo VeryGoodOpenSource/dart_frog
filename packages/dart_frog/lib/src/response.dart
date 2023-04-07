@@ -54,8 +54,8 @@ class Response {
           statusCode: statusCode,
           body: body != null ? jsonEncode(body) : null,
           headers: {
-            ...headers,
             HttpHeaders.contentTypeHeader: ContentType.json.value,
+            ...headers,
           },
         );
 
