@@ -1,3 +1,7 @@
+# 0.3.5
+
+- fix: filter out error messages from killing the server process ([#592](https://github.com/VeryGoodOpenSource/dart_frog/pull/592))
+
 # 0.3.4
 
 - refactor: remove duplicate `dart:io` import ([#556](https://github.com/VeryGoodOpenSource/dart_frog/pull/556))
