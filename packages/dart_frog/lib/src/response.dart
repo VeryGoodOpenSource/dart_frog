@@ -77,7 +77,8 @@ class Response {
   /// Returns a [Future] containing the body as a [String].
   Future<String> body() async {
     const responseBodyKey = 'dart_frog.response.body';
-    final bodyFromContext = _response.context[responseBodyKey] as Completer<String>?;
+    final bodyFromContext =
+        _response.context[responseBodyKey] as Completer<String>?;
     if (bodyFromContext != null) return bodyFromContext.future;
 
     final completer = Completer<String>();
