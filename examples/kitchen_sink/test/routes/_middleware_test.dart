@@ -9,19 +9,20 @@ class _MockRequestContext extends Mock implements RequestContext {}
 void main() {
   group('middleware', () {
     test('provides greeting', () async {
-      String? greeting;
-      final handler = middleware(
-        (context) {
-          greeting = context.read<String>();
-          return Response(body: '');
-        },
-      );
+      final handler = middleware((_) => Response());
       final request = Request.get(Uri.parse('http://localhost/'));
       final context = _MockRequestContext();
+
       when(() => context.request).thenReturn(request);
+      when(() => context.provide<String>(any())).thenReturn(context);
 
       await handler(context);
-      expect(greeting, equals('Hello'));
+
+      final create = verify(() => context.provide<String>(captureAny()))
+          .captured
+          .single as String Function();
+
+      expect(create(), equals('Hello'));
     });
   });
 }
