@@ -59,6 +59,158 @@ class Response {
           },
         );
 
+  /// Create a 400 Bad Request [Response].
+  Response.badRequest({
+    Object? body,
+    Map<String, Object>? headers,
+    Encoding? encoding,
+    Map<String, Object>? context,
+  }) : this._(
+          shelf.Response.badRequest(
+            body: body,
+            headers: headers,
+            encoding: encoding,
+            context: context,
+          ),
+        );
+
+  /// Create a 403 Forbidden [Response].
+  Response.forbidden(
+    Object? body, {
+    Map<String, Object>? headers,
+    Encoding? encoding,
+    Map<String, Object>? context,
+  }) : this._(
+          shelf.Response.forbidden(
+            body,
+            headers: headers,
+            encoding: encoding,
+            context: context,
+          ),
+        );
+
+  /// Create a 302 Found [Response].
+  Response.found(
+    Object location, {
+    Object? body,
+    Map<String, Object>? headers,
+    Encoding? encoding,
+    Map<String, Object>? context,
+  }) : this._(
+          shelf.Response.found(
+            location,
+            body: body,
+            headers: headers,
+            encoding: encoding,
+            context: context,
+          ),
+        );
+
+  /// Create a 500 Internal Server Error [Response].
+  Response.internalServerError({
+    Object? body,
+    Map<String, Object>? headers,
+    Encoding? encoding,
+    Map<String, Object>? context,
+  }) : this._(
+          shelf.Response.internalServerError(
+            body: body,
+            headers: headers,
+            encoding: encoding,
+            context: context,
+          ),
+        );
+
+  /// Create a 301 Moved Permanently [Response].
+  Response.movedPermanently(
+    Object location, {
+    Object? body,
+    Map<String, Object>? headers,
+    Encoding? encoding,
+    Map<String, Object>? context,
+  }) : this._(
+          shelf.Response.movedPermanently(
+            location,
+            body: body,
+            headers: headers,
+            encoding: encoding,
+            context: context,
+          ),
+        );
+
+  /// Create a 404 Not Found [Response].
+  Response.notFound(
+    Object? body, {
+    Map<String, Object>? headers,
+    Encoding? encoding,
+    Map<String, Object>? context,
+  }) : this._(
+          shelf.Response.notFound(
+            body,
+            headers: headers,
+            encoding: encoding,
+            context: context,
+          ),
+        );
+
+  /// Create a 304 Not Modified [Response].
+  Response.notModified({
+    Map<String, Object>? headers,
+    Map<String, Object>? context,
+  }) : this._(
+          shelf.Response.notModified(
+            headers: headers,
+            context: context,
+          ),
+        );
+
+  /// Create a 200 OK [Response].
+  Response.ok(
+    Object? body, {
+    Map<String, Object>? headers,
+    Encoding? encoding,
+    Map<String, Object>? context,
+  }) : this._(
+          shelf.Response.ok(
+            body,
+            headers: headers,
+            encoding: encoding,
+            context: context,
+          ),
+        );
+
+  /// Create a 303 See Other [Response].
+  Response.seeOther(
+    Object location, {
+    Object? body,
+    Map<String, Object>? headers,
+    Encoding? encoding,
+    Map<String, Object>? context,
+  }) : this._(
+          shelf.Response.seeOther(
+            location,
+            body: body,
+            headers: headers,
+            encoding: encoding,
+            context: context,
+          ),
+        );
+
+  /// Create a 401 Unauthorized [Response].
+  Response.unauthorized(
+    Object? body, {
+    Map<String, Object>? headers,
+    Encoding? encoding,
+    Map<String, Object>? context,
+  }) : this._(
+          shelf.Response.unauthorized(
+            body,
+            headers: headers,
+            encoding: encoding,
+            context: context,
+          ),
+        );
+
   Response._(this._response);
 
   shelf.Response _response;
