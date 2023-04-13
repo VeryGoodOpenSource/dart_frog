@@ -121,9 +121,7 @@ void main() {
 
   test('chaining middleware retains request context', () async {
     const value = 'test-value';
-    Middleware noop() {
-      return (handler) => (context) async => handler(context);
-    }
+    Middleware noop() => (handler) => (context) => handler(context);
 
     Future<Response> onRequest(RequestContext context) async {
       final value = context.read<String>();
@@ -134,8 +132,10 @@ void main() {
         const Pipeline().addMiddleware(noop()).addHandler(onRequest);
     final request = Request.get(Uri.parse('http://localhost/'));
     final context = _MockRequestContext();
+
     when(() => context.read<String>()).thenReturn(value);
     when(() => context.request).thenReturn(request);
+
     final response = await handler(context);
 
     expect(response.statusCode, equals(HttpStatus.ok));
