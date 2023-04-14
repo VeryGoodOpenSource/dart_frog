@@ -10,19 +10,19 @@ class _MockRequestContext extends Mock implements RequestContext {}
 void main() {
   group('middleware', () {
     test('provides a CounterCubit instance.', () async {
-      CounterCubit? cubit;
-      final handler = middleware(
-        (context) {
-          cubit = context.read<CounterCubit>();
-          return Response();
-        },
-      );
+      final handler = middleware((_) => Response());
       final request = Request.get(Uri.parse('http://localhost/'));
       final context = _MockRequestContext();
+
       when(() => context.request).thenReturn(request);
+      when(() => context.provide<CounterCubit>(any())).thenReturn(context);
 
       await handler(context);
-      expect(cubit, isNotNull);
+
+      final create = verify(() => context.provide<CounterCubit>(captureAny()))
+          .captured
+          .single as CounterCubit Function();
+      expect(create(), isA<CounterCubit>());
     });
   });
 }
