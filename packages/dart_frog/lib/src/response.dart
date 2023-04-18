@@ -55,7 +55,8 @@ class Response {
           body: body != null ? jsonEncode(body) : null,
           headers: {
             ...headers,
-            HttpHeaders.contentTypeHeader: ContentType.json.value,
+            if (!headers.containsKey(HttpHeaders.contentTypeHeader))
+              HttpHeaders.contentTypeHeader: ContentType.json.value,
           },
         );
 

@@ -37,6 +37,9 @@ typedef RestorableDirectoryGeneratorTargetBuilder
 /// Typedef for [io.exit].
 typedef Exit = dynamic Function(int exitCode);
 
+/// Regex for detecting warnings in the output of `dart run`.
+final _warningRegex = RegExp(r'^.*:\d+:\d+: Warning: .*', multiLine: true);
+
 RestorableDirectoryGeneratorTarget _defaultGeneratorTarget(Logger? logger) {
   return RestorableDirectoryGeneratorTarget(
     io.Directory(
@@ -156,9 +159,16 @@ class DevCommand extends DartFrogCommand {
         final message = utf8.decode(_).trim();
         if (message.isEmpty) return;
 
-        logger.err(message);
+        /// Do not kill the process if the error is a warning from the SDK.
+        final isSDKWarning = _warningRegex.hasMatch(message);
 
-        if (!hotReloadEnabled) {
+        if (isSDKWarning) {
+          logger.warn(message);
+        } else {
+          logger.err(message);
+        }
+
+        if (!hotReloadEnabled && !isSDKWarning) {
           await _killProcess(process);
           logger.detail('[process] exit(1)');
           _exit(1);
@@ -260,6 +270,7 @@ class RestorableDirectoryGeneratorTarget extends DirectoryGeneratorTarget {
   final CreateFile? _createFile;
   final Logger? _logger;
   final Queue<CachedFile> _cachedSnapshots;
+
   CachedFile? get _cachedSnapshot {
     return _cachedSnapshots.isNotEmpty ? _cachedSnapshots.last : null;
   }

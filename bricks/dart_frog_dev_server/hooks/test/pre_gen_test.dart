@@ -84,7 +84,8 @@ void main() {
           'middleware': <MiddlewareFile>[],
           'globalMiddleware': false,
           'serveStaticFiles': false,
-          'invokeCustomEntrypoint': false
+          'invokeCustomEntrypoint': false,
+          'invokeCustomInit': false
         }),
       );
     });
@@ -118,6 +119,41 @@ void main() {
           'globalMiddleware': false,
           'serveStaticFiles': false,
           'invokeCustomEntrypoint': true,
+          'invokeCustomInit': false
+        }),
+      );
+    });
+
+    test('retains invokeCustomInit (true)', () async {
+      const customPort = '8081';
+      context.vars['port'] = customPort;
+      const configuration = RouteConfiguration(
+        middleware: [],
+        directories: [],
+        routes: [],
+        rogueRoutes: [],
+        endpoints: {},
+        invokeCustomInit: true,
+      );
+      final exitCalls = <int>[];
+      await preGen(
+        context,
+        buildConfiguration: (_) => configuration,
+        exit: exitCalls.add,
+      );
+      expect(exitCalls, isEmpty);
+      verifyNever(() => logger.err(any()));
+      expect(
+        context.vars,
+        equals({
+          'port': customPort,
+          'directories': <RouteDirectory>[],
+          'routes': <RouteFile>[],
+          'middleware': <MiddlewareFile>[],
+          'globalMiddleware': false,
+          'serveStaticFiles': false,
+          'invokeCustomEntrypoint': false,
+          'invokeCustomInit': true
         }),
       );
     });
@@ -246,6 +282,7 @@ void main() {
           'globalMiddleware': {'name': 'middleware', 'path': 'middleware.dart'},
           'serveStaticFiles': true,
           'invokeCustomEntrypoint': false,
+          'invokeCustomInit': false
         }),
       );
     });
