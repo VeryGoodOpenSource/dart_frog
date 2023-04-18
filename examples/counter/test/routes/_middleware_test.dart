@@ -9,25 +9,22 @@ class _MockRequestContext extends Mock implements RequestContext {}
 void main() {
   group('middleware', () {
     test('provides incremented count', () async {
-      int? count;
-      final handler = middleware(
-        (context) {
-          count = context.read<int>();
-          return Response(body: '');
-        },
-      );
+      final handler = middleware((context) => Response());
       final request = Request.get(Uri.parse('http://localhost/'));
       final context = _MockRequestContext();
+
       when(() => context.request).thenReturn(request);
+      when(() => context.provide<int>(any())).thenReturn(context);
 
       await handler(context);
-      expect(count, equals(1));
 
-      await handler(context);
-      expect(count, equals(2));
+      final create = verify(() => context.provide<int>(captureAny()))
+          .captured
+          .single as int Function();
 
-      await handler(context);
-      expect(count, equals(3));
+      expect(create(), equals(1));
+      expect(create(), equals(2));
+      expect(create(), equals(3));
     });
   });
 }

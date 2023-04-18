@@ -184,6 +184,17 @@ void main() {
         final response = Response.json();
         expect(response.json(), completion(isEmpty));
       });
+
+      test('has correct content-type when overriden in headers', () {
+        final headers = <String, String>{
+          HttpHeaders.contentTypeHeader: ContentType.html.value,
+        };
+        final response = Response.json(headers: headers);
+        expect(
+          response.headers[HttpHeaders.contentTypeHeader],
+          equals(ContentType.html.value),
+        );
+      });
     });
   });
 }
