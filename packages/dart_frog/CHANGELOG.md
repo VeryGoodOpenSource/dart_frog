@@ -1,3 +1,8 @@
+# 0.3.6
+
+- fix: `Pipeline` does not maintain `RequestContext` ([#605](https://github.com/VeryGoodOpenSource/dart_frog/pull/605))
+- fix: `Response.json()` overwrites `content-type` header ([#596](https://github.com/VeryGoodOpenSource/dart_frog/pull/596))
+
 # 0.3.5
 
 - feat: add SecurityContext named argument to serve method
