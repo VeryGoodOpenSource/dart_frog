@@ -31,6 +31,7 @@ class DartFrogRequest extends DartLintRule {
   ) {
     // package:glob which filesToAnalyze uses does not seem to support exclude
     // patterns, so we have to manually filter out the _middleware.dart files
+    // See https://github.com/dart-lang/glob/issues/75
     if (resolver.path.endsWith('_middleware.dart')) return;
 
     context.registry.addCompilationUnit((node) {
