@@ -3,7 +3,7 @@ import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
 void main() {
-  group(parseRoute, () {
+  group('parseRoute', () {
     test('throws if path is not within a "routes" directory', () {
       final path = p.join('path', 'to', 'file.dart');
       expect(() => parseRoute(path), throwsArgumentError);
