@@ -39,8 +39,16 @@ bool isHandler(DartType type) {
   return _handlerTypeChecker.isExactly(alias.element);
 }
 
+bool _isFromDartSdk(DartType type) => type.element?.library?.isInSdk ?? false;
+
 /// [TypeChecker] for `InternetAddress`
-const internetAddressTypeChecker = TypeChecker.fromName('InternetAddress');
+bool isInternetAddress(DartType type) {
+  const nameChecker = TypeChecker.fromName('InternetAddress');
+  return _isFromDartSdk(type) && nameChecker.isExactlyType(type);
+}
 
 /// [TypeChecker] for `HttpServer`
-const httpServerTypeChecker = TypeChecker.fromName('HttpServer');
+bool isHttpServer(DartType type) {
+  const nameChecker = TypeChecker.fromName('HttpServer');
+  return _isFromDartSdk(type) && nameChecker.isExactlyType(type);
+}

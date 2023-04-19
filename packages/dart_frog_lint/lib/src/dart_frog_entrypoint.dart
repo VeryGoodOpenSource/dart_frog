@@ -63,7 +63,7 @@ class DartFrogEntrypoint extends DartLintRule {
         return;
       }
 
-      if (ipType == null || !internetAddressTypeChecker.isExactlyType(ipType)) {
+      if (ipType == null || !isInternetAddress(ipType)) {
         // The parameter is not an InternetAddress
         reporter.reportErrorForNode(code, run);
         return;
@@ -78,7 +78,7 @@ class DartFrogEntrypoint extends DartLintRule {
       final returnType = run.returnType?.type;
       if (returnType == null ||
           !returnType.isDartAsyncFuture ||
-          !httpServerTypeChecker.isExactlyType(
+          !isHttpServer(
             (returnType as InterfaceType).typeArguments.single,
           )) {
         // The parameter is not a HttpServer
