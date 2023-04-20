@@ -2,3 +2,5 @@
 library dart_frog_gen;
 
 export 'src/build_route_configuration.dart';
+export 'src/path_to_route.dart';
+export 'src/route_configuration_diagnostics/route_configuration_diagnostics.dart';

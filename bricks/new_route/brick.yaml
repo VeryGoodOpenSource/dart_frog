@@ -1,0 +1,12 @@
+name: new_route
+description: A dart frog new route brick
+version: 0.0.0+never
+
+environment:
+  mason: ">=0.1.0-dev <0.1.0"
+
+vars:
+  route:
+    type: string
+    description: The path for the desired route
+    prompt: What is the path for the desired route?
