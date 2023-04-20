@@ -15,8 +15,10 @@ Future<void> preGen(
   io.Directory? directory,
   RouteConfigurationBuilder buildConfiguration = buildRouteConfiguration,
 }) async {
-  final insertedRoute = (context.vars['route'] as String).replaceAll(r'\', '/');
-  final routeNormalized = insertedRoute.diamondParameterSyntax;
+  final route = (context.vars['route'] as String).replaceAll(r'\', '/');
+
+  final routeNormalized =
+      (route.startsWith('/') ? route : '/$route').diamondParameterSyntax;
 
   final projectDirectory = directory ?? io.Directory.current;
   final routesDirectory = io.Directory(p.join(projectDirectory.path, 'routes'));
@@ -34,7 +36,7 @@ Future<void> preGen(
 
   if (endpointExists) {
     context.logger
-        .err('Failed to create route: $insertedRoute already exists.');
+        .err('Failed to create route: $route already exists.');
     io.exit(1);
   }
 
@@ -64,21 +66,26 @@ Future<void> preGen(
 
       io.Directory(p.withoutExtension(filepath)).createSync();
 
+      final newFilepath = filepath.replaceFirst('.dart', '/index.dart');
+
       io.File(filepath)
           .renameSync(filepath.replaceFirst('.dart', '/index.dart'));
 
       context.logger.info(
-        'Renamed $filepath to ${filepath.replaceFirst('.dart', '/index.dart')} to avoid rogue routes',
+        'Renamed ${p.relative(filepath)} to ${p.relative(newFilepath)} to avoid rogue routes',
       );
     }
   }
+
 
   final routeFileName = routeToPath(
     routeNormalized,
     preferIndex: existsAsDirectory,
     preamble: p.relative(routesDirectory.path),
   ).bracketParameterSyntax;
+
   context.logger.info('Creating route file: $routeFileName');
+
   context.vars['dirname'] = p.dirname(routeFileName);
   context.vars['filename'] = p.withoutExtension(p.basename(routeFileName));
   context.vars['params'] = routeFileName.parameters;
