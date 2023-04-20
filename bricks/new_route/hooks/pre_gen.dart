@@ -78,10 +78,10 @@ Future<void> preGen(
     preferIndex: existsAsDirectory,
     preamble: p.relative(routesDirectory.path),
   ).bracketParameterSyntax;
-  context.logger.alert('Creating route: $routeFileName');
-
+  context.logger.info('Creating route file: $routeFileName');
   context.vars['dirname'] = p.dirname(routeFileName);
   context.vars['filename'] = p.withoutExtension(p.basename(routeFileName));
+  context.vars['params'] = routeFileName.parameters;
 }
 
 extension on RouteConfiguration {
@@ -141,4 +141,13 @@ extension on String {
   // replaces <> for []
   String get bracketParameterSyntax =>
       replaceAll('<', '[').replaceAll('>', ']');
+
+  List<String?> get parameters {
+    final regexp = RegExp(r'\[(.*?)\]');
+    final matches = regexp.allMatches(bracketParameterSyntax);
+    return matches
+        .map((m) => m[0]?.replaceAll(RegExp(r'[\[\]]'), ''))
+        .where((el) => el != null)
+        .toList();
+  }
 }
