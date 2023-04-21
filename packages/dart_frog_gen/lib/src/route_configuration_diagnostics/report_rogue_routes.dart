@@ -1,5 +1,4 @@
 import 'package:dart_frog_gen/dart_frog_gen.dart';
-import 'package:dart_frog_gen/src/route_configuration_diagnostics/route_configuration_diagnostics.dart';
 import 'package:path/path.dart' as path;
 
 typedef OnRogueRoute = void Function(String filePath, String idealPath);
@@ -7,7 +6,7 @@ typedef OnRogueRoute = void Function(String filePath, String idealPath);
 void reportRogueRoutes(
   RouteConfiguration configuration, {
   required OnRogueRoute onRogueRoute,
-      void Function()? onViolation,
+  void Function()? onViolation,
   void Function()? onExit,
 }) {
   if (configuration.rogueRoutes.isNotEmpty) {

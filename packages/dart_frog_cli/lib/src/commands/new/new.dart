@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:args/command_runner.dart';
 import 'package:dart_frog_cli/src/command.dart';
 import 'package:dart_frog_cli/src/commands/commands.dart';
@@ -31,7 +29,7 @@ class NewRouteCommand extends DartFrogCommand {
   String get name => 'route';
 
   @override
-  NewCommand get parent => super.parent as NewCommand;
+  NewCommand get parent => super.parent! as NewCommand;
 
   String get _routeName {
     final routeName = argResults!.rest.first;

@@ -1,6 +1,6 @@
 import 'package:dart_frog_gen/src/path_to_route.dart';
-import 'package:test/test.dart';
 import 'package:path/path.dart' as p;
+import 'package:test/test.dart';
 
 void main() {
   group('pathToRoute', () {

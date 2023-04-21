@@ -1,9 +1,7 @@
 import 'dart:io' as io;
 
-import 'package:pubspec_parse/pubspec_parse.dart';
-import 'package:dart_frog_gen/dart_frog_gen.dart';
-import 'package:dart_frog_gen/src/route_configuration_diagnostics/route_configuration_diagnostics.dart';
 import 'package:path/path.dart' as path;
+import 'package:pubspec_parse/pubspec_parse.dart';
 
 typedef OnExternalPathDependency = void Function(
   String dependencyName,

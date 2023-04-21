@@ -1,0 +1,21 @@
+name: dart_frog_new
+description: Create a new dart frog route or middleware
+version: 0.0.0+never
+
+environment:
+  mason: ">=0.1.0-dev <0.1.0"
+
+vars:
+  route:
+    type: string
+    description: The path for the desired route
+    prompt: What is the path for the desired route?
+
+  type:
+    type: enum
+    description: the type of hing to be created
+    prompt: What type of thing do you want to create?
+    default: route
+    values:
+      - route
+      - middleware
