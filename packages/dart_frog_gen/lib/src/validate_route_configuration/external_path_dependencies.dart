@@ -9,7 +9,7 @@ typedef OnExternalPathDependency = void Function(
   String dependencyPath,
 );
 
-/// Reports existence of external path dependencies on a [Directory].
+/// Reports existence of external path dependencies on a [io.Directory].
 Future<void> reportExternalPathDependencies(
   io.Directory directory, {
   /// Callback called when any external path dependency is found.
