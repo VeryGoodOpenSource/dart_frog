@@ -1,6 +1,6 @@
 import 'package:dart_frog_gen/dart_frog_gen.dart';
-
 import 'package:mocktail/mocktail.dart';
+import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
 class _MockRouteConfiguration extends Mock implements RouteConfiguration {}
@@ -69,7 +69,7 @@ void main() {
 
       expect(violationStartCalled, isTrue);
       expect(violationEndCalled, isTrue);
-      expect(rogueRoutes, ['routes/hello.dart']);
+      expect(rogueRoutes, [p.join('routes', 'hello.dart')]);
     });
 
     test('reports multiple rogue routes', () {
@@ -106,8 +106,8 @@ void main() {
       expect(violationStartCalled, isTrue);
       expect(violationEndCalled, isTrue);
       expect(rogueRoutes, [
-        'routes/hello.dart',
-        'routes/hi.dart',
+        p.join('routes', 'hello.dart'),
+        p.join('routes', 'hi.dart'),
       ]);
     });
   });

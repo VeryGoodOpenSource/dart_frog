@@ -120,8 +120,8 @@ void main() {
         },
       );
 
-      expect(violationStartCalled, isFalse);
-      expect(violationEndCalled, isFalse);
+      expect(violationStartCalled, isTrue);
+      expect(violationEndCalled, isTrue);
       expect(conflicts, ['/hello']);
     });
 
@@ -180,8 +180,8 @@ void main() {
         },
       );
 
-      expect(violationStartCalled, isFalse);
-      expect(violationEndCalled, isFalse);
+      expect(violationStartCalled, isTrue);
+      expect(violationEndCalled, isTrue);
       expect(conflicts, ['/hello', '/echo']);
     });
   });

@@ -41,8 +41,8 @@ dev_dependencies:
           onViolationEnd: () {
             violationEndCalled = true;
           },
-          onExternalPathDependency: (_, dependencyPath) {
-            externalPathDependencies.add(dependencyPath);
+          onExternalPathDependency: (dependencyName, _) {
+            externalPathDependencies.add(dependencyName);
           },
         ),
         completes,
@@ -79,8 +79,8 @@ dev_dependencies:
           onViolationEnd: () {
             violationEndCalled = true;
           },
-          onExternalPathDependency: (_, dependencyPath) {
-            externalPathDependencies.add(dependencyPath);
+          onExternalPathDependency: (dependencyName, _) {
+            externalPathDependencies.add(dependencyName);
           },
         ),
         completes,
@@ -88,7 +88,7 @@ dev_dependencies:
 
       expect(violationStartCalled, isTrue);
       expect(violationEndCalled, isTrue);
-      expect(externalPathDependencies, ['../../foo']);
+      expect(externalPathDependencies, ['foo']);
 
       directory.delete(recursive: true).ignore();
     });
@@ -121,8 +121,8 @@ dev_dependencies:
           onViolationEnd: () {
             violationEndCalled = true;
           },
-          onExternalPathDependency: (_, dependencyPath) {
-            externalPathDependencies.add(dependencyPath);
+          onExternalPathDependency: (dependencyName, _) {
+            externalPathDependencies.add(dependencyName);
           },
         ),
         completes,
@@ -130,7 +130,7 @@ dev_dependencies:
 
       expect(violationStartCalled, isTrue);
       expect(violationEndCalled, isTrue);
-      expect(externalPathDependencies, ['../../foo', '../../bar']);
+      expect(externalPathDependencies, ['foo', 'bar']);
 
       directory.delete(recursive: true).ignore();
     });
