@@ -5,5 +5,5 @@ Future<void> run(HookContext context) async {
   final dirname = context.vars['dirname'] as String;
   final filename = context.vars['filename'] as String;
   io.Directory(dirname).createSync(recursive: true);
-  io.File('$filename.dart').renameSync('$dirname/$filename.dart');
+  io.File(filename).renameSync('$dirname/$filename');
 }

@@ -6,7 +6,7 @@ environment:
   mason: ">=0.1.0-dev <0.1.0"
 
 vars:
-  route:
+  route_path:
     type: string
     description: The path for the desired route
     prompt: What is the path for the desired route?

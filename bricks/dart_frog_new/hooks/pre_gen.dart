@@ -17,10 +17,9 @@ Future<void> preGen(
 }) {
   final type = context.vars['type'] as String;
 
-  final routeRaw = (context.vars['route'] as String).replaceAll(r'\', '/');
+  final routePathRaw = context.vars['route_path'] as String;
 
-  final route = (routeRaw.startsWith('/') ? routeRaw : '/$routeRaw')
-      .diamondParameterSyntax;
+  final routePath = routePathRaw.normalizedRoutePath;
 
   final projectDirectory = directory ?? io.Directory.current;
 
@@ -40,7 +39,7 @@ Future<void> preGen(
     return _preGenRoute(
       context,
       buildConfiguration: buildConfiguration,
-      route: route,
+      routePath: routePath,
       configuration: configuration,
       projectDirectory: projectDirectory,
     );
@@ -48,7 +47,7 @@ Future<void> preGen(
   return _preGenMiddleware(
     context,
     buildConfiguration: buildConfiguration,
-    route: route,
+    routePath: routePath,
     configuration: configuration,
     projectDirectory: projectDirectory,
   );
@@ -57,7 +56,7 @@ Future<void> preGen(
 Future<void> _preGenRoute(
   HookContext context, {
   required RouteConfigurationBuilder buildConfiguration,
-  required String route,
+  required String routePath,
   required RouteConfiguration configuration,
   required io.Directory projectDirectory,
 }) async {
@@ -66,10 +65,10 @@ Future<void> _preGenRoute(
   );
 
   // verify if the endpoint does already exist
-  final endpointExists = configuration.endpoints.containsKey(route);
+  final endpointExists = configuration.endpoints.containsKey(routePath);
 
   if (endpointExists) {
-    context.logger.err('Failed to create route: $route already exists.');
+    context.logger.err('Failed to create route: $routePath already exists.');
     io.exit(1);
   }
 
@@ -85,7 +84,7 @@ Future<void> _preGenRoute(
   final existsAsDirectory = io.Directory(
     p.withoutExtension(
       routeToPath(
-        route,
+        routePath,
         preamble: routesDirectoryPath,
       ).bracketParameterSyntax,
     ),
@@ -95,7 +94,7 @@ Future<void> _preGenRoute(
   // ancestor routes exists as file routes to avoid rogues
   if (!existsAsDirectory) {
     final containingFileRoute = configuration.checkForContainingFileRoute(
-      route,
+      routePath,
     );
     if (containingFileRoute != null) {
       final filepath = p.normalize(
@@ -112,29 +111,29 @@ Future<void> _preGenRoute(
       io.File(filepath)
           .renameSync(filepath.replaceFirst('.dart', '/index.dart'));
 
-      context.logger.info(
+      context.logger.detail(
         'Renamed $filepath to $newFilepath to avoid rogue routes',
       );
     }
   }
 
   final routeFileName = routeToPath(
-    route,
+    routePath,
     preferIndex: existsAsDirectory,
     preamble: routesDirectoryPath,
   ).bracketParameterSyntax;
 
-  context.logger.info('Creating route file: $routeFileName');
+  context.logger.detail('Creating route file: $routeFileName');
 
   context.vars['dirname'] = p.dirname(routeFileName);
-  context.vars['filename'] = p.withoutExtension(p.basename(routeFileName));
-  context.vars['params'] = routeFileName.parameters;
+  context.vars['filename'] = p.basename(routeFileName);
+  context.vars['params'] = routeFileName.bracketParameters;
 }
 
 Future<void> _preGenMiddleware(
   HookContext context, {
   required RouteConfigurationBuilder buildConfiguration,
-  required String route,
+  required String routePath,
   required RouteConfiguration configuration,
   required io.Directory projectDirectory,
 }) async {
@@ -145,12 +144,12 @@ Future<void> _preGenMiddleware(
   const middlewareFilename = '_middleware.dart';
 
   final String middlewareContainingDir;
-  if (route == '/') {
+  if (routePath == '/') {
     middlewareContainingDir = routesDirectoryPath;
   } else {
     middlewareContainingDir = p.withoutExtension(
       routeToPath(
-        route,
+        routePath,
         preamble: routesDirectoryPath,
       ),
     );
@@ -169,15 +168,13 @@ Future<void> _preGenMiddleware(
       ),
     );
 
-    context.logger
-        .alert('$middlewareFilePath - e: $existingMiddlewareFilePath');
-
     return middlewareFilePath == existingMiddlewareFilePath;
   });
 
   if (middlewareExists) {
-    context.logger.err('Failed to create middleware: '
-        'middleware on $middlewareFilePath already exists');
+    context.logger.err(
+      'Failed to create middleware: $middlewareFilePath already exists',
+    );
     io.exit(1);
   }
 
@@ -197,7 +194,7 @@ Future<void> _preGenMiddleware(
   // ancestor routes exists as file routes to avoid rogues
   if (!existsAsDirectory) {
     final containingFileRoute = configuration.checkForContainingFileRoute(
-      route,
+      routePath,
       includeSelf: true,
     );
     if (containingFileRoute != null) {
@@ -215,19 +212,18 @@ Future<void> _preGenMiddleware(
       io.File(filepath)
           .renameSync(filepath.replaceFirst('.dart', '/index.dart'));
 
-      context.logger.info(
+      context.logger.detail(
         'Renamed $filepath to $newFilepath to avoid rogue routes',
       );
     }
   }
 
-  context.logger.info(
+  context.logger.detail(
     'Creating middleware file: ${middlewareFilePath.bracketParameterSyntax}',
   );
 
   context.vars['dirname'] = middlewareContainingDir.bracketParameterSyntax;
-  context.vars['filename'] =
-      p.withoutExtension(middlewareFilename).bracketParameterSyntax;
+  context.vars['filename'] = middlewareFilename;
 }
 
 extension on RouteConfiguration {
@@ -287,6 +283,40 @@ extension on RouteConfiguration {
 }
 
 extension on String {
+  String get normalizedRoutePath {
+    final replaced = diamondParameterSyntax.replaceAll(r'\', '/');
+
+    final segments = replaced.split('/');
+
+    final normalizedSegments =
+        segments.fold(<String>[''], (previousValue, segment) {
+      if (segment == '..') {
+        if (previousValue.length > 2) {
+          previousValue.removeLast();
+        }
+      } else if (segment.isNotEmpty && segment != '.') {
+        previousValue.add(segment.encodeSegment());
+      }
+      return previousValue;
+    });
+
+    return normalizedSegments.join('/');
+  }
+
+  String encodeSegment() {
+    final encoded = Uri.encodeComponent(this);
+    if (isDiamondParameterSegment) {
+      return encoded.replaceAll('%3C', '<').replaceAll('%3E', '>');
+    }
+    return encoded;
+  }
+
+  /// detects if the given string has a < and a > after it
+  bool get isDiamondParameterSegment {
+    final regexp = RegExp('<.*?>');
+    return regexp.hasMatch(this);
+  }
+
   // replaces [] for <>
   String get diamondParameterSyntax =>
       replaceAll('[', '<').replaceAll(']', '>');
@@ -295,7 +325,7 @@ extension on String {
   String get bracketParameterSyntax =>
       replaceAll('<', '[').replaceAll('>', ']');
 
-  List<String?> get parameters {
+  List<String?> get bracketParameters {
     final regexp = RegExp(r'\[(.*?)\]');
     final matches = regexp.allMatches(bracketParameterSyntax);
     return matches
