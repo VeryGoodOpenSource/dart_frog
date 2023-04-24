@@ -25,12 +25,7 @@ package_version=$(dart pub deps --json | pcregrep -o1 -i '"version": "(.*?)"' | 
 package_name=$(dart pub deps --json | pcregrep -o1 -i '"name": "(.*?)"' | head -1)
 
 # Get new version
-new_version="";
-if [ "$1" != "" ]; then
-  new_version="$1";
-else
-  new_version="$(dart pub deps --json | pcregrep -o1 -i '"version": "(.*?)"' | head -1)";
-fi
+new_version="$1";
 
 if [[ "$new_version" == "$package_version" ]]; then
   echo "Current version is $package_version, can't update."
