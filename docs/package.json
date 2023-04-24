@@ -30,7 +30,7 @@
     "@docusaurus/eslint-plugin": "^2.4.0",
     "@docusaurus/module-type-aliases": "^2.4.0",
     "eslint": "^8.38.0",
-    "prettier": "^2.8.7"
+    "prettier": "^2.8.8"
   },
   "browserslist": {
     "production": [
