@@ -2,10 +2,7 @@
 # 
 # Will update the version.dart file and update the CHANGELOG.md.
 #
-# Run in the current directory with existing version
-# `./release_ready.sh`
-#
-# Try and run with new version
+# Set it up for a new version:
 # `./release_ready.sh <version>
 
 # Check if current directory has a pubspec.yaml, if so we assume it is correctly set up.
