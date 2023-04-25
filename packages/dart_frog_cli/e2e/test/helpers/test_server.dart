@@ -6,10 +6,10 @@ void testServer(
   String name,
   Future<void> Function(String host) func, {
   String? port = '8080',
-}) {
+}) async {
   test(
     name,
-    () async => func('http://localhost:$port'),
+    () async => await func('http://localhost:$port'),
     timeout: _defaultTimeout,
   );
 }
