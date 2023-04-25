@@ -18,23 +18,27 @@ void main() {
     final tempDirectory = Directory.systemTemp.createTempSync();
 
     const port1 = '7100';
+    late Process process1;
     const port2 = '7200';
+    late Process process2;
 
     setUpAll(() async {
       await dartFrogCreate(projectName: projectName, directory: tempDirectory);
-      await dartFrogDev(
+      process1 = await dartFrogDev(
         directory: Directory(path.join(tempDirectory.path, projectName)),
         port: port1,
       );
-      await dartFrogDev(
+      process2 = await dartFrogDev(
         directory: Directory(path.join(tempDirectory.path, projectName)),
         port: port2,
       );
     });
 
     tearDownAll(() async {
-      // await killDartFrogServer(process1.pid, port: port1);
-      // await killDartFrogServer(process2.pid, port: port2);
+      if (Platform.isWindows) {
+        await killDartFrogServer(process1.pid, port: port1);
+        await killDartFrogServer(process2.pid, port: port2);
+      }
       tempDirectory.deleteSync(recursive: true);
     });
 
