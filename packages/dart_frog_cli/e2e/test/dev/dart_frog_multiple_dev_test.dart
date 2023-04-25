@@ -9,8 +9,8 @@ import '../helpers/helpers.dart';
 /// Objectives:
 ///
 /// * Generate a new Dart Frog project via `dart_frog create`
-/// * Run a dev server via `dart_frog dev -p 8080`
-/// * Run another dev server via `dart_frog dev -p 8081`
+/// * Run a dev server via `dart_frog dev -p 7100`
+/// * Run another dev server via `dart_frog dev -p 7200`
 /// * Ensure the servers responds accordingly for built-in endpoints
 void main() {
   group('dart_frog multiple dev', () {
