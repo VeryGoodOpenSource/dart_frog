@@ -140,11 +140,12 @@ class DevCommand extends DartFrogCommand {
       logger.detail(
         '''[process] dart --enable-vm-service $serverPath}''',
       );
+      final vmServicesPort = (int.parse(port) + 1).toString();
       final process = await _startProcess(
         'dart',
         [
           'run',
-          '--enable-vm-service=$port',
+          '--enable-vm-service=$vmServicesPort',
           serverPath,
         ],
         runInShell: true,
