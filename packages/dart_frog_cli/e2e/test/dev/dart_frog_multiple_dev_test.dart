@@ -22,7 +22,7 @@ void main() {
     const port2 = '7200';
     late Process process2;
 
-    setUpAll(() async {
+    setUp(() async {
       await dartFrogCreate(projectName: projectName, directory: tempDirectory);
       process1 = await dartFrogDev(
         directory: Directory(path.join(tempDirectory.path, projectName)),
@@ -34,10 +34,10 @@ void main() {
       );
     });
 
-    tearDownAll(() async {
+    tearDown(() async {
       if (Platform.isWindows) {
-        process1.kill();
-        process2.kill();
+        killDartFrogServer(process1.pid, port: port1);
+        killDartFrogServer(process2.pid, port: port2);
       }
       tempDirectory.deleteSync(recursive: true);
     });
