@@ -22,7 +22,7 @@ void main() {
     const port2 = '7200';
     late Process process2;
 
-    setUp(() async {
+    setUpAll(() async {
       await dartFrogCreate(projectName: projectName, directory: tempDirectory);
       process1 = await dartFrogDev(
         directory: Directory(path.join(tempDirectory.path, projectName)),
@@ -34,7 +34,7 @@ void main() {
       );
     });
 
-    tearDown(() async {
+    tearDownAll(() async {
       if (Platform.isWindows) {
         await killDartFrogServer(process1.pid, port: port1);
         await killDartFrogServer(process2.pid, port: port2);
