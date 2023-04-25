@@ -9,7 +9,7 @@ import '../helpers/helpers.dart';
 /// Objectives:
 ///
 /// * Generate a new Dart Frog project via `dart_frog create`
-/// * Run a dev server via `dart_frog dev -p 7100`
+/// * Run a dev server via `dart_frog dev -p 7180`
 /// * Run another dev server via `dart_frog dev -p 7200`
 /// * Ensure the servers responds accordingly for built-in endpoints
 void main() {
@@ -17,7 +17,7 @@ void main() {
     const projectName = 'example';
     final tempDirectory = Directory.systemTemp.createTempSync();
 
-    const port1 = '7100';
+    const port1 = '7180';
     late Process process1;
     const port2 = '7200';
     late Process process2;
