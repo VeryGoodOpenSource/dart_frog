@@ -36,8 +36,8 @@ void main() {
 
     tearDownAll(() async {
       if (Platform.isWindows) {
-        await killDartFrogServer(process1.pid, port: port1);
-        await killDartFrogServer(process2.pid, port: port2);
+        process1.kill();
+        process2.kill();
       }
       tempDirectory.deleteSync(recursive: true);
     });
