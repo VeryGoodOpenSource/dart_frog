@@ -36,7 +36,8 @@ void main() {
 
     tearDownAll(() async {
       await killDartFrogServer(process1.pid, port: port1);
-      await killDartFrogServer(process2.pid, port: port2);
+      if (!Platform.isMacOS)
+        await killDartFrogServer(process2.pid, port: port2);
       tempDirectory.delete(recursive: true).ignore();
     });
 
