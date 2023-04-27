@@ -1,0 +1,47 @@
+import 'package:dart_frog_new_hooks/src/route_to_path.dart';
+import 'package:path/path.dart' as path;
+import 'package:test/test.dart';
+
+void main() {
+  group('routeToPath', () {
+    group('preferIndex false', () {
+      final expectedRouteToPathMappings = <String, String>{
+        '/': '../routes/index.dart',
+        '/hello': '../routes/hello.dart',
+        '/hello/world': '../routes/hello/world.dart',
+        '/hello/[name]': '../routes/hello/[name].dart',
+        '/[id]/item': '../routes/[id]/item.dart',
+        '/[id]/part/item': '../routes/[id]/part/item.dart',
+      };
+
+      for (final entry in expectedRouteToPathMappings.entries) {
+        test('maps ${entry.key} -> ${entry.value}', () {
+          expect(
+            routeToPath(entry.key, preamble: '../routes'),
+            equals(path.posix.normalize(entry.value)),
+          );
+        });
+      }
+    });
+
+    group('preferIndex true', () {
+      final expectedRouteToPathMappings = <String, String>{
+        '/': '../routes/index.dart',
+        '/hello': '../routes/hello/index.dart',
+        '/hello/world': '../routes/hello/world/index.dart',
+        '/hello/[name]': '../routes/hello/[name]/index.dart',
+        '/[id]/item': '../routes/[id]/item/index.dart',
+        '/[id]/part/item': '../routes/[id]/part/item/index.dart',
+      };
+
+      for (final entry in expectedRouteToPathMappings.entries) {
+        test('maps ${entry.key} -> ${entry.value}', () {
+          expect(
+            routeToPath(entry.key, preferIndex: true, preamble: '../routes'),
+            equals(path.posix.normalize(entry.value)),
+          );
+        });
+      }
+    });
+  });
+}
