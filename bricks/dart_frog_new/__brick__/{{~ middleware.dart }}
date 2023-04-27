@@ -1,0 +1,3 @@
+Handler middleware(Handler handler) {
+  return handler.use(requestLogger());
+}
