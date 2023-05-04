@@ -1,3 +1,7 @@
+# 0.4.0
+
+- feat!: re-land "add route configuration validation to gen" ([#614](https://github.com/VeryGoodOpenSource/dart_frog/pull/614))
+
 # 0.3.4
 
 - fix: revert "add route configuration validation to gen" ([#628](https://github.com/VeryGoodOpenSource/dart_frog/pull/628))
