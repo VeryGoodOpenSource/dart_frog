@@ -179,6 +179,24 @@ void main() {
       expect(exitCalls, equals([1]));
     });
 
+    test('exit(1) for invalid type', () {
+      final exitCalls = <int>[];
+
+      context.vars['type'] = 'invalid';
+      context.vars['route_path'] = '/[id]/existing_as_dir';
+      preGen(
+        context,
+        buildConfiguration: (_) => validRouteConfiguration,
+        exit: exitCalls.add,
+      );
+      verify(
+        () => logger.err(
+          '''Unrecognized type: invalid''',
+        ),
+      );
+      expect(exitCalls, equals([1]));
+    });
+
     group('Type: route', () {
       late io.Directory directory;
       late List<int> exitCalls;
@@ -191,16 +209,6 @@ void main() {
       });
       tearDown(() {
         directory.deleteSync(recursive: true);
-      });
-
-      test('Sets up is_route to true', () {
-        context.vars['route_path'] = '/';
-        preGen(
-          context,
-          buildConfiguration: (_) => validRouteConfiguration,
-          exit: (_) {},
-        );
-        expect(context.vars['is_route'], isTrue);
       });
 
       test('exit(1) if route already exists as dir endpoint', () {
@@ -296,6 +304,7 @@ void main() {
         );
         expect(context.vars['filename'], 'new_route.dart');
         expect(context.vars['params'], ['id']);
+        expect(context.vars['is_route'], true);
 
         expect(exitCalls, isEmpty);
       });
@@ -322,6 +331,7 @@ void main() {
           );
           expect(context.vars['filename'], 'index.dart');
           expect(context.vars['params'], ['id']);
+          expect(context.vars['is_route'], true);
 
           expect(exitCalls, isEmpty);
         },
@@ -346,22 +356,15 @@ void main() {
 
         expect(context.vars['filename'], 'new_route.dart');
         expect(context.vars['params'], ['id', 'a']);
+        expect(context.vars['is_route'], true);
+
+        expect(exitCalls, isEmpty);
       });
     });
 
     group('Type: middleware', () {
       setUp(() {
         context.vars['type'] = 'middleware';
-      });
-
-      test('Sets up is_route to false', () {
-        context.vars['route_path'] = '/';
-        preGen(
-          context,
-          buildConfiguration: (_) => validRouteConfiguration,
-          exit: (_) {},
-        );
-        expect(context.vars['is_route'], isFalse);
       });
 
       test('exit(1) if middleware already exists (global)', () {
@@ -501,6 +504,9 @@ void main() {
           ),
         );
         expect(context.vars['filename'], '_middleware.dart');
+        expect(context.vars['is_middleware'], true);
+
+        expect(exitCalls, isEmpty);
       });
 
       test('Sets up a middleware path correctly', () {
@@ -528,6 +534,9 @@ void main() {
           ),
         );
         expect(context.vars['filename'], '_middleware.dart');
+        expect(context.vars['is_middleware'], true);
+
+        expect(exitCalls, isEmpty);
       });
     });
   });

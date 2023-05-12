@@ -48,6 +48,12 @@ void main() {
       );
     });
 
+    test('exit(1) if dir_path is not defined', () {
+      final exitCalls = <int>[];
+      postGen(context, exit: exitCalls.add);
+      expect(exitCalls, equals([1]));
+    });
+
     test('moves file to supposed directory', () {
       final directory = io.Directory.systemTemp.createTempSync(
         'dart_frog_new_hooks_test',

@@ -11,6 +11,11 @@ Future<void> postGen(
   io.Directory? directory,
   void Function(int exitCode) exit = _defaultExit,
 }) async {
+  final succeeded = context.vars.containsKey('dir_path');
+  if (!succeeded) {
+    return exit(1);
+  }
+
   final dirPath = context.vars['dir_path'] as String;
   final currentDirectory = directory ?? io.Directory.current;
 

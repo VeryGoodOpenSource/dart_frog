@@ -1,7 +1,6 @@
 import 'package:dart_frog/dart_frog.dart';
-
 {{#is_route}}
 {{> route.dart}}
-{{/is_route}}{{^is_route}}
+{{/is_route}}{{#is_middleware}}
 {{> middleware.dart}}
-{{/is_route}}
+{{/is_middleware}}

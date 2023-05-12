@@ -1,7 +1,8 @@
 {{^params}}Response onRequest(RequestContext context) {
 {{/params}}{{#params.0}}Response onRequest(
   RequestContext context,{{#params}}
-  String {{.}},{{/params}}
+  String {{#camelCase}}{{.}}{{/camelCase}},{{/params}}
 ) {
-{{/params.0}}  return Response(body: 'Welcome to Dart Frog!');
+{{/params.0}}  // TODO: implement route handler
+  return Response(body: 'This is a new route!');
 }

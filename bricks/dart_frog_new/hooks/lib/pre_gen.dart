@@ -49,11 +49,7 @@ void preGen(
   // The path in which the route or middleware will be created
   final routePath = normalizeRoutePath(context.vars['route_path'] as String);
 
-  final isRoute = type == 'route';
-
-  context.vars['is_route'] = isRoute;
-
-  if (isRoute) {
+  if (type == 'route') {
     return _preGenRoute(
       context,
       routePath: routePath,
@@ -62,13 +58,19 @@ void preGen(
       exit: exit,
     );
   }
-  return _preGenMiddleware(
-    context,
-    routePath: routePath,
-    routeConfiguration: routeConfiguration,
-    projectDirectory: projectDirectory,
-    exit: exit,
-  );
+
+  if (type == 'middleware') {
+    return _preGenMiddleware(
+      context,
+      routePath: routePath,
+      routeConfiguration: routeConfiguration,
+      projectDirectory: projectDirectory,
+      exit: exit,
+    );
+  }
+
+  context.logger.err('Unrecognized type: $type');
+  return exit(1);
 }
 
 void _preGenRoute(
@@ -138,6 +140,7 @@ void _preGenRoute(
     return exit(1);
   }
 
+  context.vars['is_route'] = true;
   context.vars['dir_path'] = path.dirname(routeFileName);
   context.vars['filename'] = path.basename(routeFileName);
   context.vars['params'] = parameterNames;
@@ -216,6 +219,7 @@ void _preGenMiddleware(
     'Creating middleware file: ${middlewareFilePath.toBracketParameterSyntax}',
   );
 
+  context.vars['is_middleware'] = true;
   context.vars['dir_path'] = middlewareContainingDir.toBracketParameterSyntax;
   context.vars['filename'] = middlewareFilename;
 }
