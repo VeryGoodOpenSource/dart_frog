@@ -1,3 +1,4 @@
 Handler middleware(Handler handler) {
-  return handler.use(requestLogger());
+  // TODO: implement middleware
+  return handler;
 }
