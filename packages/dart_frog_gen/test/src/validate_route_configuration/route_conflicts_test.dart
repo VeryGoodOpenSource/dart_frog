@@ -1,34 +1,45 @@
 import 'package:dart_frog_gen/dart_frog_gen.dart';
-import 'package:mason/mason.dart';
+
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
-
-import '../../src/report_route_conflicts.dart';
-
-class _MockHookContext extends Mock implements HookContext {}
-
-class _MockLogger extends Mock implements Logger {}
 
 class _MockRouteConfiguration extends Mock implements RouteConfiguration {}
 
 void main() {
   group('reportRouteConflicts', () {
-    late HookContext context;
-    late Logger logger;
     late RouteConfiguration configuration;
 
+    late bool violationStartCalled;
+    late bool violationEndCalled;
+    late List<String> conflicts;
+
     setUp(() {
-      context = _MockHookContext();
-      logger = _MockLogger();
       configuration = _MockRouteConfiguration();
 
-      when(() => context.logger).thenReturn(logger);
+      violationStartCalled = false;
+      violationEndCalled = false;
+      conflicts = [];
     });
 
     test('reports nothing when there are no endpoints', () {
       when(() => configuration.endpoints).thenReturn({});
-      reportRouteConflicts(context, configuration);
-      verifyNever(() => logger.err(any()));
+
+      reportRouteConflicts(
+        configuration,
+        onViolationStart: () {
+          violationStartCalled = true;
+        },
+        onRouteConflict: (_, __, conflictingEndpoint) {
+          conflicts.add(conflictingEndpoint);
+        },
+        onViolationEnd: () {
+          violationEndCalled = true;
+        },
+      );
+
+      expect(violationStartCalled, isFalse);
+      expect(violationEndCalled, isFalse);
+      expect(conflicts, isEmpty);
     });
 
     test('reports nothing when there are endpoints and no conflicts', () {
@@ -50,8 +61,23 @@ void main() {
           )
         ]
       });
-      reportRouteConflicts(context, configuration);
-      verifyNever(() => logger.err(any()));
+
+      reportRouteConflicts(
+        configuration,
+        onViolationStart: () {
+          violationStartCalled = true;
+        },
+        onRouteConflict: (_, __, conflictingEndpoint) {
+          conflicts.add(conflictingEndpoint);
+        },
+        onViolationEnd: () {
+          violationEndCalled = true;
+        },
+      );
+
+      expect(violationStartCalled, isFalse);
+      expect(violationEndCalled, isFalse);
+      expect(conflicts, isEmpty);
     });
 
     test('reports single conflict when there is one endpoint with conflicts',
@@ -80,12 +106,23 @@ void main() {
           )
         ]
       });
-      reportRouteConflicts(context, configuration);
-      verify(
-        () => logger.err(
-          '''Route conflict detected. ${lightCyan.wrap('routes/hello.dart')} and ${lightCyan.wrap('routes/hello/index.dart')} both resolve to ${lightCyan.wrap('/hello')}.''',
-        ),
+
+      reportRouteConflicts(
+        configuration,
+        onViolationStart: () {
+          violationStartCalled = true;
+        },
+        onRouteConflict: (_, __, conflictingEndpoint) {
+          conflicts.add(conflictingEndpoint);
+        },
+        onViolationEnd: () {
+          violationEndCalled = true;
+        },
       );
+
+      expect(violationStartCalled, isTrue);
+      expect(violationEndCalled, isTrue);
+      expect(conflicts, ['/hello']);
     });
 
     test(
@@ -129,17 +166,23 @@ void main() {
           )
         ]
       });
-      reportRouteConflicts(context, configuration);
-      verify(
-        () => logger.err(
-          '''Route conflict detected. ${lightCyan.wrap('routes/hello.dart')} and ${lightCyan.wrap('routes/hello/index.dart')} both resolve to ${lightCyan.wrap('/hello')}.''',
-        ),
+
+      reportRouteConflicts(
+        configuration,
+        onViolationStart: () {
+          violationStartCalled = true;
+        },
+        onRouteConflict: (_, __, conflictingEndpoint) {
+          conflicts.add(conflictingEndpoint);
+        },
+        onViolationEnd: () {
+          violationEndCalled = true;
+        },
       );
-      verify(
-        () => logger.err(
-          '''Route conflict detected. ${lightCyan.wrap('routes/echo.dart')} and ${lightCyan.wrap('routes/echo/index.dart')} both resolve to ${lightCyan.wrap('/echo')}.''',
-        ),
-      );
+
+      expect(violationStartCalled, isTrue);
+      expect(violationEndCalled, isTrue);
+      expect(conflicts, ['/hello', '/echo']);
     });
   });
 }

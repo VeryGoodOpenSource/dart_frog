@@ -2,12 +2,10 @@ import 'dart:async';
 import 'dart:io' as io;
 
 import 'package:dart_frog_gen/dart_frog_gen.dart';
-import 'package:mason/mason.dart' show HookContext;
+import 'package:mason/mason.dart'
+    show HookContext, defaultForeground, lightCyan;
 
 import 'src/exit_overrides.dart';
-import 'src/report_external_path_dependencies.dart';
-import 'src/report_rogue_routes.dart';
-import 'src/report_route_conflicts.dart';
 
 typedef RouteConfigurationBuilder = RouteConfiguration Function(
   io.Directory directory,
@@ -19,9 +17,12 @@ Future<void> run(HookContext context) async => preGen(context);
 
 Future<void> preGen(
   HookContext context, {
+  io.Directory? directory,
   RouteConfigurationBuilder buildConfiguration = buildRouteConfiguration,
   void Function(int exitCode) exit = _defaultExit,
 }) async {
+  final projectDirectory = directory ?? io.Directory.current;
+
   final RouteConfiguration configuration;
   try {
     configuration = buildConfiguration(io.Directory.current);
@@ -30,9 +31,44 @@ Future<void> preGen(
     return exit(1);
   }
 
-  reportRouteConflicts(context, configuration);
-  reportRogueRoutes(context, configuration);
-  await reportExternalPathDependencies(context, io.Directory.current);
+  reportRouteConflicts(
+    configuration,
+    onViolationStart: () {
+      context.logger.info('');
+    },
+    onRouteConflict: (
+      originalFilePath,
+      conflictingFilePath,
+      conflictingEndpoint,
+    ) {
+      context.logger.err(
+        '''Route conflict detected. ${lightCyan.wrap(originalFilePath)} and ${lightCyan.wrap(conflictingFilePath)} both resolve to ${lightCyan.wrap(conflictingEndpoint)}.''',
+      );
+    },
+  );
+  reportRogueRoutes(
+    configuration,
+    onViolationStart: () {
+      context.logger.info('');
+    },
+    onRogueRoute: (filePath, idealPath) {
+      context.logger.err(
+        '''Rogue route detected.${defaultForeground.wrap(' ')}Rename ${lightCyan.wrap(filePath)} to ${lightCyan.wrap(idealPath)}.''',
+      );
+    },
+  );
+  await reportExternalPathDependencies(
+    projectDirectory,
+    onViolationStart: () {
+      context.logger
+        ..info('')
+        ..err('All path dependencies must be within the project.')
+        ..err('External path dependencies detected:');
+    },
+    onExternalPathDependency: (dependencyName, dependencyPath) {
+      context.logger.err('  \u{2022} $dependencyName from $dependencyPath');
+    },
+  );
 
   context.vars = {
     'port': context.vars['port'] ?? '8080',
