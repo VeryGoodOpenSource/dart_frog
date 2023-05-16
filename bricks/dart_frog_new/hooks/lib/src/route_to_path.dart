@@ -1,3 +1,5 @@
+import 'package:path/path.dart' as path;
+
 /// Convert a route to a file path.
 ///
 /// If [preferIndex] is true, the path will be converted to a directory path
@@ -14,19 +16,23 @@ String routeToPath(
   String route, {
   bool preferIndex = false,
   String preamble = 'routes',
+  path.Context? pathContext,
 }) {
+  final context = pathContext ?? path.context;
+  final separator = context.separator;
+
   if (route == '/') {
-    return '$preamble/index.dart';
+    return '$preamble${separator}index.dart';
   }
 
-  final path =
-      route.split('/').where((element) => element.isNotEmpty).join('/');
+  final p =
+      route.split('/').where((element) => element.isNotEmpty).join(separator);
 
   if (preferIndex) {
-    final pathWithIndex = '$path/index.dart';
-    return '$preamble/$pathWithIndex';
+    final pathWithIndex = context.join(p, 'index.dart');
+    return context.join(preamble, pathWithIndex);
   }
 
-  final pathWithExtension = '$path.dart';
-  return '$preamble/$pathWithExtension';
+  final pathWithExtension = '$p.dart';
+  return context.join(preamble, pathWithExtension);
 }
