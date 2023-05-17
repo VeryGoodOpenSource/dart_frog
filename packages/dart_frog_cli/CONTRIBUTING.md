@@ -27,7 +27,14 @@ To develop for Dart Frog CLI you will need to become familiar with Very Good Ven
 
 1. Install a valid [Dart SDK](https://dart.dev/get-dart) in your local environment. Compatible Dart SDK versions with test optimizer can be found [here](https://github.com/VeryGoodOpenSource/very_good_cli/blob/main/pubspec.yaml). If you have Flutter installed, you likely have a valid Dart SDK version already installed.
 
-2. Install all Dart Frog CLI's dependencies:
+2. Install Very Good CLI:
+
+```sh
+# 💻 Install Very Good CLI globally:
+dart pub global activate very_good_cli
+```
+
+3. Install all Dart Frog CLI's dependencies:
 
 ```sh
 # 📂 Get project dependencies recursively with Dart Frog CLI's
@@ -78,7 +85,7 @@ Where `<branch-name>` is an appropriate name describing your change.
 
 ```sh
 # 📂 Get project dependencies recursively with Dart Frog CLI
-very_good packages get -r
+very_good packages get -r --ignore="bricks/**"
 ```
 
 3. Ensure you have a meaningful [semantic][conventional_commits_link] commit message.
