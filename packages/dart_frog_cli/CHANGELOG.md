@@ -1,3 +1,7 @@
+# 0.3.6
+
+- feat: add "new middleware" and "new route" commands
+
 # 0.3.5
 
 - fix: filter out error messages from killing the server process ([#592](https://github.com/VeryGoodOpenSource/dart_frog/pull/592))
