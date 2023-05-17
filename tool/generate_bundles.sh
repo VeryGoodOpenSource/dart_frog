@@ -11,7 +11,6 @@ mason bundle -s git https://github.com/verygoodopensource/dart_frog --git-path b
 mason bundle -s git https://github.com/verygoodopensource/dart_frog --git-path bricks/dart_frog_prod_server -t dart -o packages/dart_frog_cli/lib/src/commands/build/templates
 
 # Create dart frog routes and middlewares
-# mason bundle -s git https://github.com/verygoodopensource/dart_frog --git-path bricks/dart_frog_new -t dart -o packages/dart_frog_cli/lib/src/commands/new/templates
-mason bundle -s git https://github.com/verygoodopensource/dart_frog --git-path bricks/dart_frog_new -t dart -o packages/dart_frog_cli/lib/src/commands/new/templates --git-ref renan/dart_frog_cli_new_command_e2e
+mason bundle -s git https://github.com/verygoodopensource/dart_frog --git-path bricks/dart_frog_new -t dart -o packages/dart_frog_cli/lib/src/commands/new/templates
 
 dart format ./packages/dart_frog_cli
