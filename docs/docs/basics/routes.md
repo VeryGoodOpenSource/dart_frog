@@ -24,7 +24,8 @@ Response onRequest(RequestContext context) {
 Managing routes in Dart Frog is essentially as simple as managing the file structure under `/routes`. To help on the creation of routes, Dart Frog provides a CLI command to generate a new route.
 
 ```shell
-dart_frog new route "/hello" # will create routes/hello.dart
+# will create routes/hello.dart
+dart_frog new route "/hello"
 ```
 
 ## Requests 📥
