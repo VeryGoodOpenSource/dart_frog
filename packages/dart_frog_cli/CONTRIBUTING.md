@@ -44,7 +44,7 @@ If some tests do not pass out of the box, please submit an [issue](https://githu
 dart pub global activate --source path .
 ```
 
-5. If you are modifying any templates, then make sure to bundle them before activating:
+5. If you are modifying any templates, make sure to bundle them before activating:
 
 ```sh
 # 📦 Bundle templates (from root)
