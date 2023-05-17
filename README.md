@@ -66,7 +66,7 @@ Create a production build which includes a `DockerFile` so that you can deploy a
 dart_frog build
 ```
 
-### Create new routes and middleware 🛣️
+### Create New Routes and Middleware 🛣️
 
 To add new routes and middleware to your project, use the `dart_frog new` command.
 
