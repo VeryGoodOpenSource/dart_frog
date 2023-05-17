@@ -22,14 +22,17 @@ To develop for Dart Frog CLI you will need to become familiar with Very Good Ven
 
 ```sh
 # 📂 Get project dependencies recursively with Dart Frog CLI's
-very_good packages get -r
+very_good packages get -r --ignore="bricks/**"
 ```
 
 3. Run all Dart Frog CLI's tests:
 
 ```sh
-# 💻 Run Dart Frog CLI's unit tests (from packages/dart_frog_cli)
-very_good test -r
+# 🧪 Run Dart Frog CLI's unit tests (from packages/dart_frog_cli)
+dart test
+
+# 🧪💻 Run Dart Frog CLI's end to end test (from packages/dart_frog_cli/e2e)
+dart test
 ```
 
 If some tests do not pass out of the box, please submit an [issue](https://github.com/VeryGoodOpenSource/dart_frog/issues/new/choose).
@@ -76,8 +79,8 @@ very_good packages get -r
 5. Ensure the existing test suite passes locally:
 
 ```sh
-# 🧪 Run Dart Frog CLI's unit test
-very_good test -r
+# 🧪 Run Dart Frog CLI's unit test (from packages/dart_frog_cli)
+dart test
 ```
 
 6. Format your code:
