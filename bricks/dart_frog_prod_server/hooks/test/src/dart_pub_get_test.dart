@@ -27,12 +27,18 @@ class _MockLogger extends Mock implements Logger {}
 
 class _MockProgress extends Mock implements Progress {}
 
-class _MockProcessResult extends Mock implements ProcessResult {}
-
 void main() {
   group('dartPubGet', () {
     late HookContext context;
     late Logger logger;
+
+    const processId = 42;
+    final processResult = ProcessResult(
+      processId,
+      ExitCode.success.code,
+      '',
+      '',
+    );
 
     setUp(() {
       logger = _MockLogger();
@@ -43,8 +49,7 @@ void main() {
 
     test('completes when process succeeds', () async {
       final exitCalls = <int>[];
-      final result = _MockProcessResult();
-      when(() => result.exitCode).thenReturn(ExitCode.success.code);
+
       await dartPubGet(
         context,
         workingDirectory: '.',
@@ -58,7 +63,7 @@ void main() {
           expect(args, equals(['pub', 'get']));
           expect(workingDirectory, equals('.'));
           expect(runInShell, isTrue);
-          return result;
+          return processResult;
         },
         exit: exitCalls.add,
       );
@@ -69,10 +74,14 @@ void main() {
     test('exits when process fails', () async {
       const error = 'oops something went wrong';
       final exitCalls = <int>[];
-      final result = _MockProcessResult();
-      final code = ExitCode.software.code;
-      when(() => result.exitCode).thenReturn(code);
-      when(() => result.stderr).thenReturn(error);
+
+      final processResult = ProcessResult(
+        processId,
+        ExitCode.software.code,
+        '',
+        error,
+      );
+
       await dartPubGet(
         context,
         workingDirectory: '.',
@@ -82,21 +91,17 @@ void main() {
           String? workingDirectory,
           bool? runInShell,
         }) async {
-          return result;
+          return processResult;
         },
         exit: exitCalls.add,
       );
-      expect(exitCalls, equals([code]));
+      expect(exitCalls, equals([ExitCode.software.code]));
       verify(() => logger.err(error)).called(1);
     });
 
     test('exits when ProcessException occurs', () async {
       const error = 'oops something went wrong';
       final exitCalls = <int>[];
-      final result = _MockProcessResult();
-      final code = ExitCode.software.code;
-      when(() => result.exitCode).thenReturn(code);
-      when(() => result.stderr).thenReturn(error);
       await dartPubGet(
         context,
         workingDirectory: '.',
@@ -106,11 +111,16 @@ void main() {
           String? workingDirectory,
           bool? runInShell,
         }) async {
-          throw ProcessException('dart', ['pub', 'get'], error, code);
+          throw ProcessException(
+            'dart',
+            ['pub', 'get'],
+            error,
+            ExitCode.software.code,
+          );
         },
         exit: exitCalls.add,
       );
-      expect(exitCalls, equals([code]));
+      expect(exitCalls, equals([ExitCode.software.code]));
       verify(() => logger.err(error)).called(1);
     });
   });
