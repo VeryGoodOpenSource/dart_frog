@@ -12,19 +12,19 @@ FutureOr<Response> onRequest(RequestContext context, String id) async {
     return Response(statusCode: HttpStatus.notFound, body: 'Not found');
   }
 
-  switch (context.request.method) {
-    case HttpMethod.get:
-      return _get(context, todo);
-    case HttpMethod.put:
-      return _put(context, id, todo);
-    case HttpMethod.delete:
-      return _delete(context, id);
-    case HttpMethod.head:
-    case HttpMethod.options:
-    case HttpMethod.patch:
-    case HttpMethod.post:
-      return Response(statusCode: HttpStatus.methodNotAllowed);
+  if (context.request.method case HttpMethod.get) {
+    return _get(context, todo);
   }
+
+  if (context.request.method case HttpMethod.put) {
+    return _put(context, id, todo);
+  }
+
+  if (context.request.method case HttpMethod.delete) {
+    return _delete(context, id);
+  }
+
+  return Response(statusCode: HttpStatus.methodNotAllowed);
 }
 
 Future<Response> _get(RequestContext context, Todo todo) async {
