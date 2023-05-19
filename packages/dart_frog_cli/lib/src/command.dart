@@ -20,6 +20,9 @@ abstract class DartFrogCommand extends Command<int> {
   @visibleForTesting
   String? testUsage;
 
+  /// Current working directory used for testing purposes only.
+  Directory? testCwd;
+
   /// [ArgResults] for the current command.
   ArgResults get results => testArgResults ?? argResults!;
 
@@ -32,5 +35,5 @@ abstract class DartFrogCommand extends Command<int> {
   Logger? _logger;
 
   /// Return the current working directory.
-  Directory get cwd => Directory.current;
+  Directory get cwd => testCwd ?? Directory.current;
 }

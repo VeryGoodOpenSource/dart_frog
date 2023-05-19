@@ -1,14 +1,26 @@
 import 'dart:io' as io;
 
-import 'package:mason/mason.dart';
 import 'package:path/path.dart' as path;
 import 'package:pubspec_parse/pubspec_parse.dart';
 
+/// Type definition for callbacks that report external path dependencies.
+typedef OnExternalPathDependency = void Function(
+  String dependencyName,
+  String dependencyPath,
+);
+
+/// Reports existence of external path dependencies on a [io.Directory].
 Future<void> reportExternalPathDependencies(
-  HookContext context,
-  io.Directory directory,
-  void Function(int exitCode) exit,
-) async {
+  io.Directory directory, {
+  /// Callback called when any external path dependency is found.
+  void Function()? onViolationStart,
+
+  /// Callback called for each external path dependency found.
+  OnExternalPathDependency? onExternalPathDependency,
+
+  /// Callback called when any external path dependency is found.
+  void Function()? onViolationEnd,
+}) async {
   final pubspec = Pubspec.parse(
     await io.File(path.join(directory.path, 'pubspec.yaml')).readAsString(),
   );
@@ -26,14 +38,12 @@ Future<void> reportExternalPathDependencies(
   );
 
   if (externalDependencies.isNotEmpty) {
-    context.logger
-      ..err('All path dependencies must be within the project.')
-      ..err('External path dependencies detected:');
+    onViolationStart?.call();
     for (final dependency in externalDependencies) {
       final dependencyName = dependency.first;
       final dependencyPath = path.normalize(dependency.last);
-      context.logger.err('  \u{2022} $dependencyName from $dependencyPath');
+      onExternalPathDependency?.call(dependencyName, dependencyPath);
     }
-    exit(1);
+    onViolationEnd?.call();
   }
 }
