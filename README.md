@@ -66,6 +66,18 @@ Create a production build which includes a `DockerFile` so that you can deploy a
 dart_frog build
 ```
 
+### Create New Routes and Middleware 🛣️
+
+To add new routes and middleware to your project, use the `dart_frog new` command.
+
+```sh
+# 🛣️ Create a new route "/hello/world"
+dart_frog new route "/hello/world"
+
+# 🛣️ Create a new middleware for the route "/hello/world"
+dart_frog new middleware "/hello/world"
+```
+
 ## Goals 🎯
 
 Dart Frog is built on top of [shelf](https://pub.dev/packages/shelf) and [mason](https://pub.dev/packages/mason) and is inspired by many tools including [remix.run](https://remix.run), [next.js](https://nextjs.org), and [express.js](https://expressjs.com).
