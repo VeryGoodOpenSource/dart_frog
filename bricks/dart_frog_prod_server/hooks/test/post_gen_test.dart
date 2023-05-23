@@ -30,12 +30,18 @@ class _MockLogger extends Mock implements Logger {}
 
 class _MockProgress extends Mock implements Progress {}
 
-class _MockProcessResult extends Mock implements ProcessResult {}
-
 void main() {
   group('postGen', () {
     late HookContext context;
     late Logger logger;
+
+    const processId = 42;
+    final processResult = ProcessResult(
+      processId,
+      ExitCode.success.code,
+      '',
+      '',
+    );
 
     setUp(() {
       logger = _MockLogger();
@@ -57,8 +63,7 @@ void main() {
     test('runs dart pub get and outputs next steps', () async {
       var processRunnerCallCount = 0;
       final exitCalls = <int>[];
-      final result = _MockProcessResult();
-      when(() => result.exitCode).thenReturn(ExitCode.success.code);
+
       await postGen(
         context,
         runProcess: (
@@ -75,7 +80,7 @@ void main() {
             equals(path.join(Directory.current.path, 'build')),
           );
           expect(runInShell, isTrue);
-          return result;
+          return processResult;
         },
         exit: exitCalls.add,
       );
