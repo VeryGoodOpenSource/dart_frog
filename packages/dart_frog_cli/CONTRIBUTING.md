@@ -4,7 +4,7 @@ First of all, thank you for taking the time to contribute! 🎉👍 Before you d
 
 ## Understanding Dart Frog CLI
 
-The Dart Frog CLI is a [`CommandRunner`](https://pub.dev/documentation/args/latest/command_runner/CommandRunner-class.html) that exposes four visible commands:
+The Dart Frog CLI is a [`CommandRunner`](https://pub.dev/documentation/args/latest/command_runner/CommandRunner-class.html) that exposes some commands such as:
 
 - `build`: Creates a production build by using the [`dart_frog_prod_server`](../../bricks/dart_frog_prod_server/) mason template to generate files.
 - `create`: Creates a new Dart Frog app by using the [`dart_frog_new`](../../bricks/dart_frog_new/) mason template to generate the files.
