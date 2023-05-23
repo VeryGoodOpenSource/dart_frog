@@ -14,10 +14,8 @@ Future<Response> onRequest(RequestContext context) async {
           switch ('$event'.toMessage()) {
             case Message.increment:
               cubit.increment();
-              break;
             case Message.decrement:
               cubit.decrement();
-              break;
             case null:
               break;
           }
