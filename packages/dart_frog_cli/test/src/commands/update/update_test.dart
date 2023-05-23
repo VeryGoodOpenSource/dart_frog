@@ -12,23 +12,22 @@ class MockLogger extends Mock implements Logger {}
 
 class MockPubUpdater extends Mock implements PubUpdater {}
 
-class MockProcessResult extends Mock implements ProcessResult {}
-
 class MockProgress extends Mock implements Progress {}
 
 void main() {
   const latestVersion = '0.0.0';
 
   group('dart_frog update', () {
+    const processId = 42;
+    final processResult = ProcessResult(processId, 0, '', '');
+
     late Logger logger;
     late PubUpdater pubUpdater;
     late UpdateCommand command;
-    late ProcessResult processResult;
 
     setUp(() {
       logger = MockLogger();
       pubUpdater = MockPubUpdater();
-      processResult = MockProcessResult();
 
       when(() => logger.progress(any())).thenReturn(MockProgress());
       when(
@@ -84,8 +83,9 @@ void main() {
 
     test('handles pub update process errors', () async {
       const error = 'Oh no! Installing this is not possible right now!';
-      when(() => processResult.exitCode).thenReturn(1);
-      when<dynamic>(() => processResult.stderr).thenReturn(error);
+
+      final processResult = ProcessResult(processId, 1, '', error);
+
       when(
         () => pubUpdater.getLatestVersion(any()),
       ).thenAnswer((_) async => latestVersion);
@@ -118,7 +118,7 @@ void main() {
           versionConstraint: any(named: 'versionConstraint'),
         ),
       ).thenAnswer((_) => Future.value(processResult));
-      when(() => processResult.exitCode).thenReturn(0);
+
       when(() => logger.progress(any())).thenReturn(MockProgress());
       final result = await command.run();
       expect(result, equals(ExitCode.success.code));
