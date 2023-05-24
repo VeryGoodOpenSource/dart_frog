@@ -30,24 +30,24 @@ To develop for Dart Frog CLI you will need to become familiar with Very Good Ven
 2. Install [Very Good CLI](https://github.com/VeryGoodOpenSource/very_good_cli):
 
 ```sh
-# 💻 Install Very Good CLI globally:
+# 💻 Install Very Good CLI globally
 dart pub global activate very_good_cli
 ```
 
 3. Install all Dart Frog CLI's dependencies:
 
 ```sh
-# 📂 Get project dependencies recursively with Dart Frog CLI's (from project root):
+# 📂 Get project dependencies recursively with Dart Frog CLI's (from project root)
 very_good packages get -r --ignore="bricks/**"
 ```
 
 3. Run all Dart Frog CLI's tests:
 
 ```sh
-# 🧪 Run Dart Frog CLI's unit tests (from packages/dart_frog_cli):
+# 🧪 Run Dart Frog CLI's unit tests (from packages/dart_frog_cli)
 dart test
 
-# 🧪💻 Run Dart Frog CLI's end to end test (from packages/dart_frog_cli/e2e):
+# 🧪💻 Run Dart Frog CLI's end to end test (from packages/dart_frog_cli/e2e)
 dart test
 ```
 
@@ -56,14 +56,14 @@ If some tests do not pass out of the box, please submit an [issue](https://githu
 4. Install your own version of Dart Frog CLI in your local environment:
 
 ```sh
-# 🚀 Activate your own local version of Dart Frog CLI (from packages/dart_frog_cli):
+# 🚀 Activate your own local version of Dart Frog CLI (from packages/dart_frog_cli)
 dart pub global activate --source path .
 ```
 
 5. If you are modifying any [templates](../../bricks), make sure to bundle them before activating:
 
 ```sh
-# 📦 Bundle templates (from root):
+# 📦 Bundle templates (from root)
 tool/generate_bundles.sh
 ```
 
@@ -84,7 +84,7 @@ Where `<branch-name>` is an appropriate name describing your change.
 2. Install dependencies:
 
 ```sh
-# 📂 Get project dependencies recursively with Dart Frog CLI:
+# 📂 Get project dependencies recursively with Dart Frog CLI
 very_good packages get -r --ignore="bricks/**"
 ```
 
@@ -95,28 +95,28 @@ very_good packages get -r --ignore="bricks/**"
 5. Ensure the existing test suite passes locally:
 
 ```sh
-# 🧪 Run Dart Frog CLI's unit test (from packages/dart_frog_cli):
+# 🧪 Run Dart Frog CLI's unit test (from packages/dart_frog_cli)
 dart test
 ```
 
 6. Format your code:
 
 ```sh
-# 🧼 Run Dart's formatter:
+# 🧼 Run Dart's formatter
 dart format .
 ```
 
 7. Analyze your code:
 
 ```sh
-# 🔍 Run Dart's analyzer:
+# 🔍 Run Dart's analyzer
 dart analyze --fatal-infos --fatal-warnings .
 ```
 
 Some analysis issues may be fixed automatically with:
 
 ```sh
-# Automatically fix analysis issues that have associated automated fixes:
+# Automatically fix analysis issues that have associated automated fixes
 dart fix --apply
 ```
 
