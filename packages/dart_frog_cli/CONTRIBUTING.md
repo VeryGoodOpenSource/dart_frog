@@ -6,10 +6,10 @@ First of all, thank you for taking the time to contribute! 🎉👍 Before you d
 
 The Dart Frog CLI is a [`CommandRunner`](https://pub.dev/documentation/args/latest/command_runner/CommandRunner-class.html) that exposes some commands such as:
 
-- `build`: Creates a production build by using the [`dart_frog_prod_server`](../../bricks/dart_frog_prod_server/) mason template to generate files.
-- `create`: Creates a new Dart Frog app by using the [`dart_frog_new`](../../bricks/dart_frog_new/) mason template to generate the files.
-- `dev`: Runs a local development server at a given port and listens to file changes, generating new files using the [`dart_frog_dev_server`](../../bricks/dart_frog_dev_server/) mason template on updates.
-- `update`: Updates the Dart Frog CLI's if possible.
+- `build`: Creates a production build by using the [`dart_frog_prod_server`](../../bricks/dart_frog_prod_server/) brick to generate the files; see [`BuildCommand`](lib/src/commands/build/build.dart).
+- `create`: Creates a new Dart Frog app by using the [`dart_frog_new`](../../bricks/dart_frog_new/) brick to generate the files; see [`CreateCommand`](lib/src/commands/create/create.dart).
+- `dev`: Runs a local development server at a given port and listens to file changes, generating new files using the [`dart_frog_dev_server`](../../bricks/dart_frog_dev_server/) brick on updates; see [`DevCommand`](lib/src/commands/dev/dev.dart).
+- `update`: Updates the Dart Frog CLI's if possible; see [`UpdateCommand`](lib/src/commands/update/update.dart).
 
 💡 **Note**: Dart Frog CLI's completion functionality is powered by [CLI Completion](https://github.com/VeryGoodOpenSource/cli_completion).
 
