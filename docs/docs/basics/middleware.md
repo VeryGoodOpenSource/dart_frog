@@ -36,3 +36,12 @@ Handler middleware(Handler handler) {
   return handler.use(requestLogger());
 }
 ```
+
+## Creating Middleware
+
+To create new middleware on a Dart Frog project, run the following command:
+
+```bash
+# Creates routes/hello/_middleware.dart
+dart_frog new middleware "/hello"
+```

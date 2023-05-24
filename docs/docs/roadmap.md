@@ -42,7 +42,7 @@ In the interest of transparency, we want to share high-level details of our road
 - [ ] Dart API Client Generation
 - [ ] Open API Documentation Generation
 - [ ] DartFrog Testing Library (utilities for unit and e2e testing)
-- [ ] CLI `new` command to generate new `routes` and `middleware`
+- [x] CLI `new` command to generate new `routes` and `middleware`
 - [ ] Health Check endpoint for monitoring
 - [ ] Logger which can be configured to adhere to standard log formats (https://cloud.google.com/run/docs/logging)
 - [x] WebSocket support
