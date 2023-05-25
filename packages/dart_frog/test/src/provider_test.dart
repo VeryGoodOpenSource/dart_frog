@@ -1,10 +1,8 @@
 import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
-import 'package:mocktail/mocktail.dart';
+import 'package:http/http.dart' as http;
 import 'package:test/test.dart';
-
-class _MockRequestContext extends Mock implements RequestContext {}
 
 void main() {
   test('values can be provided and read via middleware', () async {
@@ -21,13 +19,14 @@ void main() {
     final handler =
         const Pipeline().addMiddleware(middleware).addHandler(onRequest);
 
-    final request = Request.get(Uri.parse('http://localhost/'));
-    final context = _MockRequestContext();
-    when(() => context.request).thenReturn(request);
-    final response = await handler(context);
+    final server = await serve(handler, 'localhost', 3010);
+    final client = http.Client();
+    final response = await client.get(Uri.parse('http://localhost:3010/'));
 
     await expectLater(response.statusCode, equals(HttpStatus.ok));
-    await expectLater(await response.body(), equals(value));
+    await expectLater(response.body, equals(value));
+
+    await server.close();
   });
 
   test('descendant providers can access provided values', () async {
@@ -46,18 +45,24 @@ void main() {
     final handler =
         const Pipeline().addMiddleware(middleware).addHandler(onRequest);
 
-    final request = Request.get(Uri.parse('http://localhost/'));
-    final context = _MockRequestContext();
-    when(() => context.request).thenReturn(request);
-    final response = await handler(context);
+    final server = await serve(handler, 'localhost', 3011);
+    final client = http.Client();
+    final response = await client.get(Uri.parse('http://localhost:3011/'));
 
     await expectLater(response.statusCode, equals(HttpStatus.ok));
-    await expectLater(await response.body(), equals(url));
+    await expectLater(response.body, equals(url));
+
+    await server.close();
   });
 
   test('A StateError is thrown when reading an un-provided value', () async {
+    Object? exception;
     Response onRequest(RequestContext context) {
-      context.read<Uri>();
+      try {
+        context.read<Uri>();
+      } catch (e) {
+        exception = e;
+      }
       return Response();
     }
 
@@ -65,10 +70,13 @@ void main() {
         .addMiddleware((handler) => handler)
         .addHandler(onRequest);
 
-    final request = Request.get(Uri.parse('http://localhost/'));
-    final context = _MockRequestContext();
-    when(() => context.request).thenReturn(request);
+    final server = await serve(handler, 'localhost', 3012);
+    final client = http.Client();
+    final response = await client.get(Uri.parse('http://localhost:3012/'));
 
-    await expectLater(() => handler(context), throwsStateError);
+    await expectLater(response.statusCode, equals(HttpStatus.ok));
+    expect(exception, isA<StateError>());
+
+    await server.close();
   });
 }

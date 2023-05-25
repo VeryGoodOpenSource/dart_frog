@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
+import 'package:http/http.dart' as http;
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
@@ -31,16 +32,14 @@ void main() {
     final handler =
         const Pipeline().addMiddleware(middleware).addHandler(onRequest);
 
-    final request = Request.get(Uri.parse('http://localhost/'));
-    final context = _MockRequestContext();
-    when(() => context.request).thenReturn(request);
-    final response = await handler(context);
+    final server = await serve(handler, 'localhost', 3020);
+    final client = http.Client();
+    final response = await client.get(Uri.parse('http://localhost:3020/'));
 
     await expectLater(response.statusCode, equals(HttpStatus.ok));
-    await expectLater(
-      await response.body(),
-      equals('$stringValue $intValue'),
-    );
+    await expectLater(response.body, equals('$stringValue $intValue'));
+
+    await server.close();
   });
 
   test('middleware can be used to read the request body', () async {
@@ -118,5 +117,28 @@ void main() {
 
     expect(response.statusCode, equals(HttpStatus.ok));
     expect(response.body(), completion(equals(body)));
+  });
+
+  test('chaining middleware retains request context', () async {
+    const value = 'test-value';
+    Middleware noop() => (handler) => (context) => handler(context);
+
+    Future<Response> onRequest(RequestContext context) async {
+      final value = context.read<String>();
+      return Response(body: value);
+    }
+
+    final handler =
+        const Pipeline().addMiddleware(noop()).addHandler(onRequest);
+    final request = Request.get(Uri.parse('http://localhost/'));
+    final context = _MockRequestContext();
+
+    when(() => context.read<String>()).thenReturn(value);
+    when(() => context.request).thenReturn(request);
+
+    final response = await handler(context);
+
+    expect(response.statusCode, equals(HttpStatus.ok));
+    expect(response.body(), completion(equals(value)));
   });
 }

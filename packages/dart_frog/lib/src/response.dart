@@ -19,6 +19,19 @@ inline class Response {
           ),
         );
 
+  /// Create a [Response] with a stream of bytes.
+  Response.stream({
+    int statusCode = 200,
+    Stream<List<int>>? body,
+    Map<String, Object>? headers,
+  }) : this._(
+          shelf.Response(
+            statusCode,
+            body: body,
+            headers: headers,
+          ),
+        );
+
   /// Create a [Response] with a byte array body.
   Response.bytes({
     int statusCode = 200,
@@ -42,7 +55,8 @@ inline class Response {
           body: body != null ? jsonEncode(body) : null,
           headers: {
             ...headers,
-            HttpHeaders.contentTypeHeader: ContentType.json.value,
+            if (!headers.containsKey(HttpHeaders.contentTypeHeader))
+              HttpHeaders.contentTypeHeader: ContentType.json.value,
           },
         );
 
@@ -81,8 +95,8 @@ inline class Response {
   }
 
   /// Returns a [Future] containing the form data as a [Map].
-  Future<Map<String, String>> formData() {
-    return parseFormData(headers: headers, body: body);
+  Future<FormData> formData() {
+    return parseFormData(headers: headers, body: body, bytes: bytes);
   }
 
   /// Returns a [Future] containing the body text parsed as a json object.

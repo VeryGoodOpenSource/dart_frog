@@ -8,11 +8,14 @@ part of '_internal.dart';
 /// By default, the header will be:
 ///
 /// `"X-Powered-By": "Dart with package:dart_frog"`
+///
+///  If a [securityContext] is provided an HTTPS server will be started
 Future<HttpServer> serve(
   Handler handler,
   Object address,
   int port, {
   String? poweredByHeader = 'Dart with package:dart_frog',
+  SecurityContext? securityContext,
 }) {
   return shelf_io.serve(
     (shelf.Request request) async {
@@ -22,5 +25,6 @@ Future<HttpServer> serve(
     address,
     port,
     poweredByHeader: poweredByHeader,
+    securityContext: securityContext,
   );
 }

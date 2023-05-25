@@ -1,3 +1,17 @@
+# 0.3.6
+
+- feat: add "new middleware" and "new route" commands
+
+# 0.3.5
+
+- fix: filter out error messages from killing the server process ([#592](https://github.com/VeryGoodOpenSource/dart_frog/pull/592))
+
+# 0.3.4
+
+- refactor: remove duplicate `dart:io` import ([#556](https://github.com/VeryGoodOpenSource/dart_frog/pull/556))
+- chore: bump cli_completion from 0.2.0 to 0.3.0 in /packages/dart_frog_cli ([#553](https://github.com/VeryGoodOpenSource/dart_frog/pull/553))
+- feat: support custom init method ([#587](https://github.com/VeryGoodOpenSource/dart_frog/pull/587))
+
 # 0.3.3
 
 - fix: adjust `InternetAddress` to `anyIPv6`

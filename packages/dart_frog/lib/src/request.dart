@@ -139,8 +139,8 @@ inline class Request {
   }
 
   /// Returns a [Future] containing the form data as a [Map].
-  Future<Map<String, String>> formData() {
-    return parseFormData(headers: headers, body: body);
+  Future<FormData> formData() {
+    return parseFormData(headers: headers, body: body, bytes: bytes);
   }
 
   /// Returns a [Future] containing the body text parsed as a json object.

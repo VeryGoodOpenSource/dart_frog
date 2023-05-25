@@ -100,6 +100,15 @@ void main() {
       });
     });
 
+    group('stream', () {
+      test('has correct body', () {
+        final bytes = utf8.encode('hello');
+        final stream = Stream.value(bytes);
+        final response = Response.stream(body: stream);
+        expect(response.bytes(), emits(equals(bytes)));
+      });
+    });
+
     group('formData', () {
       final contentTypeFormUrlEncoded = {
         HttpHeaders.contentTypeHeader: formUrlEncodedContentType.mimeType
@@ -174,6 +183,17 @@ void main() {
       test('has correct body (empty)', () {
         final response = Response.json();
         expect(response.json(), completion(isEmpty));
+      });
+
+      test('has correct content-type when overriden in headers', () {
+        final headers = <String, String>{
+          HttpHeaders.contentTypeHeader: ContentType.html.value,
+        };
+        final response = Response.json(headers: headers);
+        expect(
+          response.headers[HttpHeaders.contentTypeHeader],
+          equals(ContentType.html.value),
+        );
       });
     });
   });

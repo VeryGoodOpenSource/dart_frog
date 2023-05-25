@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:dart_frog_gen/dart_frog_gen.dart';
 import 'package:mason/mason.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
 import '../pre_gen.dart';
@@ -57,6 +60,131 @@ void main() {
       verify(() => logger.err(exception.toString())).called(1);
     });
 
+    test('complains about route conflicts', () async {
+      const configuration = RouteConfiguration(
+        middleware: [],
+        directories: [],
+        routes: [],
+        rogueRoutes: [],
+        endpoints: {
+          '/': [
+            RouteFile(
+              name: 'index',
+              path: 'index.dart',
+              route: '/',
+              params: [],
+            ),
+          ],
+          '/hello': [
+            RouteFile(
+              name: 'hello',
+              path: 'hello.dart',
+              route: '/hello',
+              params: [],
+            ),
+            RouteFile(
+              name: 'hello_index',
+              path: 'hello/index.dart',
+              route: '/',
+              params: [],
+            )
+          ]
+        },
+      );
+
+      final exitCalls = <int>[];
+      await preGen(
+        context,
+        buildConfiguration: (_) => configuration,
+        exit: exitCalls.add,
+      );
+
+      verify(
+        () => logger.err(
+          '''Route conflict detected. ${lightCyan.wrap('routes/hello.dart')} and ${lightCyan.wrap('routes/hello/index.dart')} both resolve to ${lightCyan.wrap('/hello')}.''',
+        ),
+      );
+      expect(exitCalls, isEmpty);
+    });
+
+    test('complains about rogue routes', () async {
+      const configuration = RouteConfiguration(
+        middleware: [],
+        directories: [],
+        routes: [],
+        rogueRoutes: [
+          RouteFile(
+            name: 'hello',
+            path: 'hello.dart',
+            route: '/hello',
+            params: [],
+          ),
+        ],
+        endpoints: {},
+      );
+
+      final exitCalls = <int>[];
+      await preGen(
+        context,
+        buildConfiguration: (_) => configuration,
+        exit: exitCalls.add,
+      );
+
+      verify(
+        () => logger.err(
+          '''Rogue route detected.${defaultForeground.wrap(' ')}Rename ${lightCyan.wrap('routes/hello.dart')} to ${lightCyan.wrap('routes/hello/index.dart')}.''',
+        ),
+      );
+      expect(exitCalls, isEmpty);
+    });
+
+    test('complains about r external dependencies', () async {
+      const configuration = RouteConfiguration(
+        middleware: [],
+        directories: [],
+        routes: [],
+        rogueRoutes: [],
+        endpoints: {},
+      );
+
+      final directory = Directory.systemTemp.createTempSync();
+      File(path.join(directory.path, 'pubspec.yaml')).writeAsStringSync(
+        '''
+name: example
+version: 0.1.0
+environment:
+  sdk: ^2.17.0
+dependencies:
+  mason: any
+  foo:
+    path: ../../foo
+dev_dependencies:
+  test: any
+''',
+      );
+
+      final exitCalls = <int>[];
+      await preGen(
+        context,
+        buildConfiguration: (_) => configuration,
+        exit: exitCalls.add,
+        directory: directory,
+      );
+
+      verify(
+        () => logger.err('All path dependencies must be within the project.'),
+      ).called(1);
+      verify(
+        () => logger.err('External path dependencies detected:'),
+      ).called(1);
+      verify(
+        () => logger.err('  \u{2022} foo from ../../foo'),
+      ).called(1);
+      expect(exitCalls, isEmpty);
+
+      directory.delete(recursive: true).ignore();
+    });
+
     test('retains custom port if specified', () async {
       const customPort = '8081';
       context.vars['port'] = customPort;
@@ -84,7 +212,8 @@ void main() {
           'middleware': <MiddlewareFile>[],
           'globalMiddleware': false,
           'serveStaticFiles': false,
-          'invokeCustomEntrypoint': false
+          'invokeCustomEntrypoint': false,
+          'invokeCustomInit': false
         }),
       );
     });
@@ -118,6 +247,41 @@ void main() {
           'globalMiddleware': false,
           'serveStaticFiles': false,
           'invokeCustomEntrypoint': true,
+          'invokeCustomInit': false
+        }),
+      );
+    });
+
+    test('retains invokeCustomInit (true)', () async {
+      const customPort = '8081';
+      context.vars['port'] = customPort;
+      const configuration = RouteConfiguration(
+        middleware: [],
+        directories: [],
+        routes: [],
+        rogueRoutes: [],
+        endpoints: {},
+        invokeCustomInit: true,
+      );
+      final exitCalls = <int>[];
+      await preGen(
+        context,
+        buildConfiguration: (_) => configuration,
+        exit: exitCalls.add,
+      );
+      expect(exitCalls, isEmpty);
+      verifyNever(() => logger.err(any()));
+      expect(
+        context.vars,
+        equals({
+          'port': customPort,
+          'directories': <RouteDirectory>[],
+          'routes': <RouteFile>[],
+          'middleware': <MiddlewareFile>[],
+          'globalMiddleware': false,
+          'serveStaticFiles': false,
+          'invokeCustomEntrypoint': false,
+          'invokeCustomInit': true
         }),
       );
     });
@@ -246,6 +410,7 @@ void main() {
           'globalMiddleware': {'name': 'middleware', 'path': 'middleware.dart'},
           'serveStaticFiles': true,
           'invokeCustomEntrypoint': false,
+          'invokeCustomInit': false
         }),
       );
     });

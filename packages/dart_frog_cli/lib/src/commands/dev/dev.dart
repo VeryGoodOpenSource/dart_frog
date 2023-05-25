@@ -1,7 +1,6 @@
 import 'dart:collection';
 import 'dart:convert';
 import 'dart:io' as io;
-import 'dart:io';
 
 import 'package:dart_frog_cli/src/command.dart';
 import 'package:dart_frog_cli/src/commands/commands.dart';
@@ -9,6 +8,7 @@ import 'package:dart_frog_cli/src/commands/dev/templates/dart_frog_dev_server_bu
 import 'package:dart_frog_cli/src/runtime_compatibility.dart'
     as runtime_compatibility;
 import 'package:mason/mason.dart';
+import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
 import 'package:stream_transform/stream_transform.dart';
 import 'package:watcher/watcher.dart';
@@ -38,6 +38,9 @@ typedef RestorableDirectoryGeneratorTargetBuilder
 /// Typedef for [io.exit].
 typedef Exit = dynamic Function(int exitCode);
 
+/// Regex for detecting warnings in the output of `dart run`.
+final _warningRegex = RegExp(r'^.*:\d+:\d+: Warning: .*', multiLine: true);
+
 RestorableDirectoryGeneratorTarget _defaultGeneratorTarget(Logger? logger) {
   return RestorableDirectoryGeneratorTarget(
     io.Directory(
@@ -54,13 +57,12 @@ class DevCommand extends DartFrogCommand {
   /// {@macro dev_command}
   DevCommand({
     super.logger,
-    void Function(Directory)? ensureRuntimeCompatibility,
+    void Function(io.Directory)? ensureRuntimeCompatibility,
     DirectoryWatcherBuilder? directoryWatcher,
     GeneratorBuilder? generator,
     RestorableDirectoryGeneratorTargetBuilder? generatorTarget,
     Exit? exit,
     bool? isWindows,
-    ProcessRun? runProcess,
     io.ProcessSignal? sigint,
     ProcessStart? startProcess,
   })  : _ensureRuntimeCompatibility = ensureRuntimeCompatibility ??
@@ -69,7 +71,6 @@ class DevCommand extends DartFrogCommand {
         _generator = generator ?? MasonGenerator.fromBundle,
         _exit = exit ?? io.exit,
         _isWindows = isWindows ?? io.Platform.isWindows,
-        _runProcess = runProcess ?? io.Process.run,
         _sigint = sigint ?? io.ProcessSignal.sigint,
         _startProcess = startProcess ?? io.Process.start,
         _generatorTarget = generatorTarget ?? _defaultGeneratorTarget {
@@ -81,12 +82,18 @@ class DevCommand extends DartFrogCommand {
     );
   }
 
-  final void Function(Directory) _ensureRuntimeCompatibility;
+  final void Function(io.Directory) _ensureRuntimeCompatibility;
   final DirectoryWatcherBuilder _directoryWatcher;
   final GeneratorBuilder _generator;
   final Exit _exit;
   final bool _isWindows;
-  final ProcessRun _runProcess;
+
+  /// Function used to start a process used for testing purposes only.
+  @visibleForTesting
+  ProcessRun? testRunProcess;
+
+  ProcessRun get _runProcess => testRunProcess ?? io.Process.run;
+
   final io.ProcessSignal _sigint;
   final ProcessStart _startProcess;
   final RestorableDirectoryGeneratorTargetBuilder _generatorTarget;
@@ -157,9 +164,16 @@ class DevCommand extends DartFrogCommand {
         final message = utf8.decode(_).trim();
         if (message.isEmpty) return;
 
-        logger.err(message);
+        /// Do not kill the process if the error is a warning from the SDK.
+        final isSDKWarning = _warningRegex.hasMatch(message);
 
-        if (!hotReloadEnabled) {
+        if (isSDKWarning) {
+          logger.warn(message);
+        } else {
+          logger.err(message);
+        }
+
+        if (!hotReloadEnabled && !isSDKWarning) {
           await _killProcess(process);
           logger.detail('[process] exit(1)');
           _exit(1);
@@ -261,6 +275,7 @@ class RestorableDirectoryGeneratorTarget extends DirectoryGeneratorTarget {
   final CreateFile? _createFile;
   final Logger? _logger;
   final Queue<CachedFile> _cachedSnapshots;
+
   CachedFile? get _cachedSnapshot {
     return _cachedSnapshots.isNotEmpty ? _cachedSnapshots.last : null;
   }
