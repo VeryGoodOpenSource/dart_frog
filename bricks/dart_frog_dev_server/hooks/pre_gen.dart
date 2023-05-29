@@ -72,11 +72,8 @@ Future<void> preGen(
 
   context.vars = {
     'port': context.vars['port'] ?? '8080',
-    'directories': configuration.directories
-        .map((c) => c.toJson())
-        .toList()
-        .reversed
-        .toList(),
+    'directories':
+        configuration.orderedDirectories().map((c) => c.toJson()).toList(),
     'routes': configuration.routes.map((r) => r.toJson()).toList(),
     'middleware': configuration.middleware.map((m) => m.toJson()).toList(),
     'globalMiddleware': configuration.globalMiddleware != null

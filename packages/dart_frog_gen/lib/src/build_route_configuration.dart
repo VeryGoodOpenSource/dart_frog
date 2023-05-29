@@ -319,6 +319,16 @@ class RouteConfiguration {
   /// │   │   └── index.dart
   /// ```
   final List<RouteFile> rogueRoutes;
+
+  /// Returns the directories in the order that they should be mounted.
+  List<RouteDirectory> orderedDirectories() {
+    return List.of(directories)
+      ..sort((a, b) {
+        if (a.params.length > b.params.length) return 1;
+        if (a.params.length < b.params.length) return -1;
+        return a.name.compareTo(b.name);
+      });
+  }
 }
 
 /// {@template route_directory}

@@ -1193,6 +1193,36 @@ Future<void>init(InternetAddress ip,int port)async{}
       );
       expect(configuration.rogueRoutes, isEmpty);
     });
+
+    test('non-dynamic routes should have precedence', () {
+      final configuration = buildRouteConfiguration(
+        createTempDir(
+          files: [
+            'routes/users/[id]/index.dart',
+            'routes/users/random.dart',
+            'routes/turtles/random.dart',
+            'routes/turtles/[id]/index.dart',
+          ],
+        ),
+      );
+
+      final orderedDirectories = configuration
+          .orderedDirectories()
+          .map(
+            (d) => d.name,
+          )
+          .toList();
+
+      expect(
+        orderedDirectories,
+        equals([
+          '_turtles',
+          '_users',
+          r'_turtles_$id',
+          r'_users_$id',
+        ]),
+      );
+    });
   });
 }
 
