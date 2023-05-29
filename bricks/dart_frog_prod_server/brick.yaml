@@ -4,3 +4,10 @@ version: 0.1.0+1
 
 environment:
   mason: ">=0.1.0-dev <0.1.0"
+
+vars:
+  dartVersion:
+    type: string
+    description: Dart version to be used in the generated Dockerfile.
+    default: stable
+    prompt: Dart version?
