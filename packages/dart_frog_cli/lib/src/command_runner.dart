@@ -43,6 +43,7 @@ class DartFrogCommandRunner extends CompletionCommandRunner<int> {
     addCommand(DevCommand(logger: _logger));
     addCommand(UpdateCommand(logger: _logger));
     addCommand(NewCommand(logger: _logger));
+    addCommand(ListCommand(logger: _logger));
   }
 
   final Logger _logger;
