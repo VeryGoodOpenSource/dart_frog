@@ -23,8 +23,6 @@ class _MockGeneratorHooks extends Mock implements GeneratorHooks {}
 
 class _MockProcess extends Mock implements Process {}
 
-class _MockProcessResult extends Mock implements ProcessResult {}
-
 class _MockProcessSignal extends Mock implements ProcessSignal {}
 
 class _MockProgress extends Mock implements Progress {}
@@ -43,6 +41,9 @@ void main() {
       registerFallbackValue(_FakeDirectoryGeneratorTarget());
     });
 
+    const processId = 42;
+    final processResult = ProcessResult(processId, 0, '', '');
+
     late ArgResults argResults;
     late DirectoryWatcher directoryWatcher;
     late MasonGenerator generator;
@@ -50,7 +51,7 @@ void main() {
     late Progress progress;
     late Logger logger;
     late Process process;
-    late ProcessResult processResult;
+
     late ProcessSignal sigint;
     late RestorableDirectoryGeneratorTarget generatorTarget;
     late DevCommand command;
@@ -65,7 +66,6 @@ void main() {
       progress = _MockProgress();
       when(() => logger.progress(any())).thenReturn(progress);
       process = _MockProcess();
-      processResult = _MockProcessResult();
       sigint = _MockProcessSignal();
       when(() => sigint.watch()).thenAnswer((_) => const Stream.empty());
       generatorTarget = _MockRestorableDirectoryGeneratorTarget();
@@ -76,9 +76,6 @@ void main() {
         generator: (_) async => generator,
         generatorTarget: (_) => generatorTarget,
         isWindows: isWindows,
-        runProcess: (String executable, List<String> arguments) async {
-          return processResult;
-        },
         startProcess: (
           String executable,
           List<String> arguments, {
@@ -87,7 +84,9 @@ void main() {
           return process;
         },
         sigint: sigint,
-      )..testArgResults = argResults;
+      )
+        ..testArgResults = argResults
+        ..testRunProcess = (_, __) async => processResult;
     });
 
     test('throws if ensureRuntimeCompatibility fails', () {
@@ -586,9 +585,9 @@ void main() {
     });
 
     test('kills all child processes when sigint received on windows', () async {
-      const processId = 42;
       final generatorHooks = _MockGeneratorHooks();
       final processRunCalls = <List<String>>[];
+
       when(
         () => generatorHooks.preGen(
           vars: any(named: 'vars'),
@@ -622,10 +621,6 @@ void main() {
         generator: (_) async => generator,
         exit: (code) => exitCode = code,
         isWindows: true,
-        runProcess: (String executable, List<String> arguments) async {
-          processRunCalls.add([executable, ...arguments]);
-          return processResult;
-        },
         startProcess: (
           String executable,
           List<String> arguments, {
@@ -634,7 +629,12 @@ void main() {
           return process;
         },
         sigint: sigint,
-      )..testArgResults = argResults;
+      )
+        ..testArgResults = argResults
+        ..testRunProcess = (String executable, List<String> arguments) async {
+          processRunCalls.add([executable, ...arguments]);
+          return processResult;
+        };
       command.run().ignore();
       await untilCalled(() => process.pid);
       expect(
@@ -649,7 +649,6 @@ void main() {
     test(
         'kills process if error occurs before '
         'hotreload is enabled on windows', () async {
-      const processId = 42;
       final generatorHooks = _MockGeneratorHooks();
       final processRunCalls = <List<String>>[];
       int? exitCode;
@@ -677,7 +676,6 @@ void main() {
         (_) => Stream.value(utf8.encode('oops')),
       );
       when(() => process.pid).thenReturn(processId);
-      when(() => processResult.exitCode).thenReturn(ExitCode.success.code);
       when(
         () => directoryWatcher.events,
       ).thenAnswer((_) => StreamController<WatchEvent>().stream);
@@ -689,10 +687,6 @@ void main() {
         generator: (_) async => generator,
         exit: (code) => exitCode = code,
         isWindows: true,
-        runProcess: (String executable, List<String> arguments) async {
-          processRunCalls.add([executable, ...arguments]);
-          return processResult;
-        },
         startProcess: (
           String executable,
           List<String> arguments, {
@@ -701,7 +695,12 @@ void main() {
           return process;
         },
         sigint: sigint,
-      )..testArgResults = argResults;
+      )
+        ..testArgResults = argResults
+        ..testRunProcess = (String executable, List<String> arguments) async {
+          processRunCalls.add([executable, ...arguments]);
+          return processResult;
+        };
       command.run().ignore();
       await untilCalled(() => process.pid);
       expect(exitCode, equals(1));
@@ -821,10 +820,6 @@ lib/my_model.g.dart:53:20: Warning: Operand of null-aware operation '!' has type
         directoryWatcher: (_) => directoryWatcher,
         generator: (_) async => generator,
         exit: (code) => exitCode = code,
-        runProcess: (String executable, List<String> arguments) async {
-          processRunCalls.add([executable, ...arguments]);
-          return processResult;
-        },
         startProcess: (
           String executable,
           List<String> arguments, {
@@ -833,7 +828,12 @@ lib/my_model.g.dart:53:20: Warning: Operand of null-aware operation '!' has type
           return process;
         },
         sigint: sigint,
-      )..testArgResults = argResults;
+      )
+        ..testArgResults = argResults
+        ..testRunProcess = (String executable, List<String> arguments) async {
+          processRunCalls.add([executable, ...arguments]);
+          return processResult;
+        };
       command.run().ignore();
       await untilCalled(() => process.kill());
       expect(exitCode, equals(1));

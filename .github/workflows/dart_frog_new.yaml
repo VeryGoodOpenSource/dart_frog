@@ -1,0 +1,21 @@
+name: dart_frog_new
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/dart_frog_new.yaml"
+      - "bricks/dart_frog_new/hooks/**"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/dart_frog_new.yaml"
+      - "bricks/dart_frog_new/hooks/**"
+
+jobs:
+  build:
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@v1
+    with:
+      runs_on: macos-latest
+      working_directory: bricks/dart_frog_new/hooks
+      analyze_directories: .

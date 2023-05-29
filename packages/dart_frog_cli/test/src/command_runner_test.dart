@@ -9,6 +9,8 @@ import 'package:mocktail/mocktail.dart';
 import 'package:pub_updater/pub_updater.dart';
 import 'package:test/test.dart';
 
+import '../helpers/helpers.dart';
+
 class _MockLogger extends Mock implements Logger {}
 
 class _MockPubUpdater extends Mock implements PubUpdater {}
@@ -29,6 +31,7 @@ const expectedUsage = [
       '  build    Create a production build.\n'
       '  create   Creates a new Dart Frog app.\n'
       '  dev      Run a local development server.\n'
+      '  new      Create a new route or middleware for dart_frog\n'
       '  update   Update the Dart Frog CLI.\n'
       '\n'
       'Run "dart_frog help <command>" for more information about a command.'
@@ -57,7 +60,6 @@ void main() {
     late ProcessSignal sigint;
 
     setUp(() {
-      printLogs = [];
       logger = _MockLogger();
       pubUpdater = _MockPubUpdater();
       sigint = _MockProcessSignal();
@@ -151,7 +153,7 @@ void main() {
 
       test(
         'handles no command',
-        overridePrint(() async {
+        overridePrint((printLogs) async {
           final result = await commandRunner.run([]);
           expect(printLogs, equals(expectedUsage));
           expect(result, equals(ExitCode.success.code));
@@ -175,7 +177,7 @@ void main() {
       group('--help', () {
         test(
           'outputs usage',
-          overridePrint(() async {
+          overridePrint((printLogs) async {
             final result = await commandRunner.run(['--help']);
             expect(printLogs, equals(expectedUsage));
             expect(result, equals(ExitCode.success.code));
@@ -192,7 +194,7 @@ void main() {
       group('--verbose', () {
         test(
           'sets correct log level.',
-          overridePrint(() async {
+          overridePrint((printLogs) async {
             await commandRunner.run(['--verbose']);
             verify(() => logger.level = Level.verbose).called(1);
           }),
@@ -200,7 +202,7 @@ void main() {
 
         test(
           'outputs correct meta info',
-          overridePrint(() async {
+          overridePrint((printLogs) async {
             await commandRunner.run(['--verbose']);
             verify(
               () => logger.detail('[meta] dart_frog_cli $packageVersion'),
@@ -218,17 +220,4 @@ void main() {
       });
     });
   });
-}
-
-List<String> printLogs = <String>[];
-
-void Function() overridePrint(void Function() fn) {
-  return () {
-    final spec = ZoneSpecification(
-      print: (_, __, ___, String msg) {
-        printLogs.add(msg);
-      },
-    );
-    return Zone.current.fork(specification: spec).run<void>(fn);
-  };
 }
