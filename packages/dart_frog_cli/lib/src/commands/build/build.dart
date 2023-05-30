@@ -18,7 +18,14 @@ class BuildCommand extends DartFrogCommand {
     GeneratorBuilder? generator,
   })  : _ensureRuntimeCompatibility = ensureRuntimeCompatibility ??
             runtime_compatibility.ensureRuntimeCompatibility,
-        _generator = generator ?? MasonGenerator.fromBundle;
+        _generator = generator ?? MasonGenerator.fromBundle {
+    argParser.addOption(
+      'dart-version',
+      defaultsTo: 'stable',
+      help: 'The Dart SDK version used to build the Dockerfile, defaulst to'
+          ' stable.',
+    );
+  }
 
   final void Function(Directory) _ensureRuntimeCompatibility;
   final GeneratorBuilder _generator;
@@ -34,7 +41,9 @@ class BuildCommand extends DartFrogCommand {
     _ensureRuntimeCompatibility(cwd);
 
     final generator = await _generator(dartFrogProdServerBundle);
-    var vars = <String, dynamic>{};
+    var vars = <String, dynamic>{
+      'dartVersion': results['dart-version'],
+    };
 
     logger.detail('[codegen] running pre-gen...');
     await generator.hooks.preGen(
