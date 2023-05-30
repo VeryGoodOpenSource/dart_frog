@@ -47,4 +47,69 @@ void main() {
       expect(response.body, 'Route not found');
     });
   });
+
+  group('dart_frog dev when ran multiple times', () {
+    const projectName1 = 'example1';
+    const projectName2 = 'example2';
+
+    final tempDirectory = Directory.systemTemp.createTempSync();
+
+    Process? process1;
+    Process? process2;
+
+    setUp(() async {
+      await dartFrogCreate(projectName: projectName1, directory: tempDirectory);
+      await dartFrogCreate(projectName: projectName2, directory: tempDirectory);
+    });
+
+    tearDown(() async {
+      if (process1 != null) {
+        killDartFrogServer(process1!.pid).ignore();
+      }
+      if (process2 != null) {
+        killDartFrogServer(process2!.pid).ignore();
+      }
+
+      // await tempDirectory1.delete(recursive: true);
+    });
+
+    test(
+      'Running 2 different dart_frog dev command will fail '
+      'when different dart vm port is not set',
+      () async {
+        process1 = await dartFrogDev(
+          directory: Directory(path.join(tempDirectory.path, projectName1)),
+        );
+
+        try {
+          await dartFrogDev(
+            directory: Directory(path.join(tempDirectory.path, projectName2)),
+            exitOnError: false,
+          );
+          fail('exception not thrown');
+        } catch (e) {
+          expect(
+            e,
+            contains('Could not start the VM service: '
+                'localhost:8181 is already in use.'),
+          );
+        }
+      },
+    );
+
+    test(
+      'Should Run 2 different dart_frog dev servers without any problem',
+      () async {
+        process1 = await dartFrogDev(
+          directory: Directory(path.join(tempDirectory.path, projectName1)),
+        );
+
+        process2 = await dartFrogDev(
+          directory: Directory(path.join(tempDirectory.path, projectName2)),
+          exitOnError: false,
+          args: ['--dart-vm-port', '9191'],
+        );
+      },
+    );
+  });
 }
