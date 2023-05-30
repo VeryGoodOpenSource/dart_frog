@@ -1,3 +1,9 @@
+# 0.3.7
+
+- feat: Update to dart 3.0.0 and vg analysis to 5.0.0
+- feat: adding list command
+- feat: adding dart version flag to build command
+
 # 0.3.6
 
 - feat: add "new middleware" and "new route" commands
