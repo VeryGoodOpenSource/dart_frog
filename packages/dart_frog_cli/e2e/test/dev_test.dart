@@ -77,7 +77,7 @@ void main() {
     });
 
     test(
-      'Running 2 different dart_frog dev command will fail '
+      'running two different dart_frog dev command will fail '
       'when different dart vm port is not set',
       () async {
         process1 = await dartFrogDev(
@@ -103,7 +103,7 @@ void main() {
     );
 
     test(
-      'Should Run 2 different dart_frog dev servers without any problem',
+      'runs two different dart_frog dev servers without any issues',
       () async {
         expect(
           dartFrogDev(
