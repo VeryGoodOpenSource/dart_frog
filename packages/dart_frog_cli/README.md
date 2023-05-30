@@ -27,7 +27,7 @@ Available commands:
   build    Create a production build.
   create   Creates a new Dart Frog app.
   dev      Run a local development server.
-  list     Lists the routes on a Dart Frog project.
+  list     Lists all the routes on a Dart Frog project.
   new      Create a new route or middleware for dart_frog.
   update   Update the Dart Frog CLI.
 
