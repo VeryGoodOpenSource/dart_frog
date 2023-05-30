@@ -66,11 +66,14 @@ void main() {
       if (process1 != null) {
         killDartFrogServer(process1!.pid).ignore();
       }
+
       if (process2 != null) {
         killDartFrogServer(process2!.pid).ignore();
       }
+    });
 
-      // await tempDirectory1.delete(recursive: true);
+    tearDownAll(() {
+      tempDirectory.delete(recursive: true).ignore();
     });
 
     test(
@@ -85,13 +88,15 @@ void main() {
           await dartFrogDev(
             directory: Directory(path.join(tempDirectory.path, projectName2)),
             exitOnError: false,
-          );
+          ).then((process) => process2 = process);
+
           fail('exception not thrown');
         } catch (e) {
           expect(
             e,
-            contains('Could not start the VM service: '
-                'localhost:8181 is already in use.'),
+            contains(
+              '''Could not start the VM service: localhost:8181 is already in use.''',
+            ),
           );
         }
       },
@@ -100,14 +105,20 @@ void main() {
     test(
       'Should Run 2 different dart_frog dev servers without any problem',
       () async {
-        process1 = await dartFrogDev(
-          directory: Directory(path.join(tempDirectory.path, projectName1)),
+        expect(
+          dartFrogDev(
+            directory: Directory(path.join(tempDirectory.path, projectName1)),
+          ).then((process) => process1 = process),
+          completes,
         );
 
-        process2 = await dartFrogDev(
-          directory: Directory(path.join(tempDirectory.path, projectName2)),
-          exitOnError: false,
-          args: ['--dart-vm-port', '9191'],
+        expect(
+          dartFrogDev(
+            directory: Directory(path.join(tempDirectory.path, projectName2)),
+            exitOnError: false,
+            args: ['--dart-vm-port', '9191'],
+          ).then((process) => process2 = process),
+          completes,
         );
       },
     );
