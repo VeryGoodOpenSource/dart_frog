@@ -21,7 +21,15 @@ class ListCommand extends DartFrogCommand {
   ListCommand({
     super.logger,
     RouteConfigurationBuilder buildConfiguration = buildRouteConfiguration,
-  }) : _buildConfiguration = buildConfiguration;
+  }) : _buildConfiguration = buildConfiguration {
+    argParser.addFlag(
+      'plain',
+      abbr: 'p',
+      help: 'Return the output in a plain format, printing each route on a new '
+          'line.',
+      negatable: false,
+    );
+  }
 
   final RouteConfigurationBuilder _buildConfiguration;
 
@@ -40,9 +48,13 @@ class ListCommand extends DartFrogCommand {
 
     final configuration = _buildConfiguration(projectDir);
 
-    logger
-      ..info('Route list 🐸:')
-      ..info('==============\n');
+    final plain = results['plain'] as bool;
+
+    if (!plain) {
+      logger
+        ..info('Route list 🐸:')
+        ..info('==============\n');
+    }
 
     for (final endpoint in configuration.endpoints.keys) {
       logger.info(endpoint);
@@ -54,17 +66,12 @@ class ListCommand extends DartFrogCommand {
   Directory get _projectDirectory {
     final rest = results.rest;
     _validateProjectDirectoryArg(rest);
-    return Directory(rest.first);
+    return Directory(
+      rest.isEmpty ? Directory.current.path : rest.first,
+    );
   }
 
   void _validateProjectDirectoryArg(List<String> args) {
-    if (args.isEmpty) {
-      throw UsageException(
-        'No project directory specified.',
-        usageString,
-      );
-    }
-
     if (args.length > 1) {
       throw UsageException(
         'Multiple project directories specified.',

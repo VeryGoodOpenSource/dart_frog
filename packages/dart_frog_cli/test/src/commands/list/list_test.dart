@@ -32,7 +32,9 @@ const expectedUsage = [
   'Lists the routes on a Dart Frog project.\n'
       '\n'
       'Usage: dart_frog list "path/to/project"\n'
-      '-h, --help    Print this usage information.\n'
+      '-h, --help     Print this usage information.\n'
+      '-p, --plain    Return the output in a plain format, printing each route '
+      'on a new line.\n'
       '\n'
       'Run "dart_frog help" to see global options.'
 ];
@@ -62,6 +64,8 @@ void main() {
       )
         ..testArgResults = argResults
         ..testUsage = 'test usage';
+
+      when(() => argResults['plain']).thenReturn(false);
 
       final sigint = _MockProcessSignal();
 
@@ -107,24 +111,54 @@ void main() {
       verify(() => logger.info('/turles/random')).called(1);
     });
 
-    test('fails when the project path is not specified', () async {
+    test('logs all the endpoints in plain mode', () async {
+      when(() => argResults['plain']).thenReturn(true);
+
+      when(() => routeConfiguration.endpoints).thenReturn({
+        '/turles/<id>': [],
+        '/turles/random': [],
+      });
       final directory = Directory.systemTemp.createTempSync();
 
       command.testCwd = directory;
 
-      when(() => argResults.rest).thenReturn([]);
+      when(() => argResults.rest).thenReturn(['my_project']);
 
       await expectLater(
-        () async => command.run(),
-        throwsA(
-          isA<UsageException>().having(
-            (p) => p.message,
-            'error message',
-            'No project directory specified.',
-          ),
-        ),
+        await command.run(),
+        equals(ExitCode.success.code),
       );
+
+      verifyNever(() => logger.info('Route list 🐸:'));
+      verifyNever(() => logger.info('==============\n'));
+      verify(() => logger.info('/turles/<id>')).called(1);
+      verify(() => logger.info('/turles/random')).called(1);
     });
+
+    test(
+      'logs all the endpoints of the current dir when a project is ommited',
+      () async {
+        when(() => routeConfiguration.endpoints).thenReturn({
+          '/turles/<id>': [],
+          '/turles/random': [],
+        });
+        final directory = Directory.systemTemp.createTempSync();
+
+        command.testCwd = directory;
+
+        when(() => argResults.rest).thenReturn([]);
+
+        await expectLater(
+          await command.run(),
+          equals(ExitCode.success.code),
+        );
+
+        verify(() => logger.info('Route list 🐸:')).called(1);
+        verify(() => logger.info('==============\n')).called(1);
+        verify(() => logger.info('/turles/<id>')).called(1);
+        verify(() => logger.info('/turles/random')).called(1);
+      },
+    );
 
     test('fails when multiple directories are specified', () async {
       final directory = Directory.systemTemp.createTempSync();
