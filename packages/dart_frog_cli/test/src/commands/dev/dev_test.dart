@@ -573,7 +573,7 @@ void main() {
       )..testArgResults = argResults;
       final exitCode = await command.run();
       expect(exitCode, equals(ExitCode.success.code));
-      expect(receivedArgs[0], '--enable-vm-service=1372');
+      expect(receivedArgs[0], equals('--enable-vm-service=1372'));
       verify(
         () => generatorHooks.preGen(
           vars: <String, dynamic>{'port': '8080'},
@@ -581,7 +581,7 @@ void main() {
           onVarsChanged: any(named: 'onVarsChanged'),
         ),
       ).called(1);
-      verifyNever(() => process.kill());
+      verifyNever(process.kill);
     });
 
     test('kills all child processes when sigint received on windows', () async {
