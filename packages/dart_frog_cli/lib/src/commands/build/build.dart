@@ -22,7 +22,7 @@ class BuildCommand extends DartFrogCommand {
     argParser.addOption(
       'dart-version',
       defaultsTo: 'stable',
-      help: 'The Dart SDK version used to build the Dockerfile, defaulst to'
+      help: 'The Dart SDK version used to build the Dockerfile, defaults to'
           ' stable.',
     );
   }
