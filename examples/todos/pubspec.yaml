@@ -14,7 +14,7 @@ dependencies:
     path: packages/todos_data_source
 
 dev_dependencies:
-  http: ^0.13.5
+  http: ^1.0.0
   mocktail: ^0.3.0
   test: ^1.19.2
   very_good_analysis: ^5.0.0
