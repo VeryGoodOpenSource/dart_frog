@@ -82,7 +82,7 @@ class DevCommand extends DartFrogCommand {
         help: 'Which port number the server should start on.',
       )
       ..addOption(
-        'dart-vm-port',
+        'dart-vm-service-port',
         abbr: 'd',
         help: 'Which port number the dart vm service should listen on.',
       );
@@ -117,7 +117,7 @@ class DevCommand extends DartFrogCommand {
     var reloading = false;
     var hotReloadEnabled = false;
     final port = io.Platform.environment['PORT'] ?? results['port'] as String;
-    final dartVmPort = results['dart-vm-port'] as String?;
+    final dartVmServicePort = results['dart-vm-service-port'] as String?;
     final target = _generatorTarget(logger);
     final generator = await _generator(dartFrogDevServerBundle);
 
@@ -148,7 +148,7 @@ class DevCommand extends DartFrogCommand {
     }
 
     final enableVmServiceFlag = '--enable-vm-service'
-        '${dartVmPort == null ? "" : "=$dartVmPort"}';
+        '${dartVmServicePort == null ? "" : "=$dartVmServicePort"}';
 
     Future<void> serve() async {
       logger.detail(

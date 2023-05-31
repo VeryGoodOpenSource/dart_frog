@@ -527,9 +527,11 @@ void main() {
       ).called(1);
     });
 
-    test('dart vm port can be specified using --dart-vm-port', () async {
+    test('dart vm port can be specified using --dart-vm-service-port',
+        () async {
       late List<String> receivedArgs;
-      when<dynamic>(() => argResults['dart-vm-port']).thenReturn('1372');
+      when<dynamic>(() => argResults['dart-vm-service-port'])
+          .thenReturn('1372');
       command.testArgResults = argResults;
       final generatorHooks = _MockGeneratorHooks();
       when(

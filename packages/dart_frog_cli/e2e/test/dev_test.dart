@@ -52,10 +52,14 @@ void main() {
     const projectName1 = 'example1';
     const projectName2 = 'example2';
 
-    final tempDirectory = Directory.systemTemp.createTempSync();
+    late Directory tempDirectory;
 
     Process? process1;
     Process? process2;
+
+    setUpAll(() {
+      tempDirectory = Directory.systemTemp.createTempSync();
+    });
 
     setUp(() async {
       await dartFrogCreate(projectName: projectName1, directory: tempDirectory);
@@ -72,8 +76,8 @@ void main() {
       }
     });
 
-    tearDownAll(() {
-      tempDirectory.delete(recursive: true).ignore();
+    tearDownAll(() async {
+      await tempDirectory.delete(recursive: true);
     });
 
     test(
@@ -116,7 +120,7 @@ void main() {
           dartFrogDev(
             directory: Directory(path.join(tempDirectory.path, projectName2)),
             exitOnError: false,
-            args: ['--dart-vm-port', '9191'],
+            args: ['--dart-vm-service-port', '9191'],
           ).then((process) => process2 = process),
           completes,
         );
