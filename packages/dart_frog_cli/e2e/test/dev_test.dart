@@ -52,14 +52,10 @@ void main() {
     const projectName1 = 'example1';
     const projectName2 = 'example2';
 
-    late Directory tempDirectory;
+    final tempDirectory = Directory.systemTemp.createTempSync();
 
     Process? process1;
     Process? process2;
-
-    setUpAll(() {
-      tempDirectory = Directory.systemTemp.createTempSync();
-    });
 
     setUp(() async {
       await dartFrogCreate(projectName: projectName1, directory: tempDirectory);
@@ -76,8 +72,8 @@ void main() {
       }
     });
 
-    tearDownAll(() async {
-      await tempDirectory.delete(recursive: true);
+    tearDownAll(() {
+      tempDirectory.delete(recursive: true).ignore();
     });
 
     test(
