@@ -4,6 +4,7 @@ title: 🌱 Environments
 ---
 
 # Environments 🌱
+
 ---
 
 The ability of configuring different environments is necessary for any real world applications.
@@ -39,11 +40,13 @@ Then, when running the server, those variables can be passed along directly on t
 commands, like:
 
 For development server:
+
 ```bash
 DB_URL=... DB_USER=... DB_PASSWORD=... dart_frog server
 ```
 
 For production server
+
 ```bash
 DB_URL=... DB_USER=... DB_PASSWORD=... dart build/server.dart
 ```
