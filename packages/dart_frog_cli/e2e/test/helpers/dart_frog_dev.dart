@@ -2,12 +2,16 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-Future<Process> dartFrogDev({required Directory directory}) async {
+Future<Process> dartFrogDev({
+  required Directory directory,
+  List<String> args = const [],
+  bool exitOnError = true,
+}) async {
   final completer = Completer<Process>();
 
   final process = await Process.start(
     'dart_frog',
-    ['dev'],
+    ['dev', ...args],
     workingDirectory: directory.path,
     runInShell: true,
   );
@@ -29,7 +33,7 @@ Future<Process> dartFrogDev({required Directory directory}) async {
     stdoutSubscription.cancel();
     stderrSubscription.cancel();
     completer.completeError(message);
-    exit(1);
+    if (exitOnError) exit(1);
   });
 
   return completer.future;
