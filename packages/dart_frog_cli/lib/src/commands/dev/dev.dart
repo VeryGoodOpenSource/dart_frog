@@ -74,12 +74,18 @@ class DevCommand extends DartFrogCommand {
         _sigint = sigint ?? io.ProcessSignal.sigint,
         _startProcess = startProcess ?? io.Process.start,
         _generatorTarget = generatorTarget ?? _defaultGeneratorTarget {
-    argParser.addOption(
-      'port',
-      abbr: 'p',
-      defaultsTo: '8080',
-      help: 'Which port number the server should start on.',
-    );
+    argParser
+      ..addOption(
+        'port',
+        abbr: 'p',
+        defaultsTo: '8080',
+        help: 'Which port number the server should start on.',
+      )
+      ..addOption(
+        'dart-vm-service-port',
+        abbr: 'd',
+        help: 'Which port number the dart vm service should listen on.',
+      );
   }
 
   final void Function(io.Directory) _ensureRuntimeCompatibility;
@@ -111,6 +117,7 @@ class DevCommand extends DartFrogCommand {
     var reloading = false;
     var hotReloadEnabled = false;
     final port = io.Platform.environment['PORT'] ?? results['port'] as String;
+    final dartVmServicePort = results['dart-vm-service-port'] as String?;
     final target = _generatorTarget(logger);
     final generator = await _generator(dartFrogDevServerBundle);
 
@@ -140,13 +147,16 @@ class DevCommand extends DartFrogCommand {
       logger.detail('[codegen] reload complete.');
     }
 
+    final enableVmServiceFlag = '--enable-vm-service'
+        '${dartVmServicePort == null ? "" : "=$dartVmServicePort"}';
+
     Future<void> serve() async {
       logger.detail(
-        '''[process] dart --enable-vm-service ${path.join('.dart_frog', 'server.dart')}''',
+        '''[process] dart $enableVmServiceFlag ${path.join('.dart_frog', 'server.dart')}''',
       );
       final process = await _startProcess(
         'dart',
-        ['--enable-vm-service', path.join('.dart_frog', 'server.dart')],
+        [enableVmServiceFlag, path.join('.dart_frog', 'server.dart')],
         runInShell: true,
       );
 
