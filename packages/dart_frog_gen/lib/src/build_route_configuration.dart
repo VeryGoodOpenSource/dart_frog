@@ -5,6 +5,7 @@ import 'package:path/path.dart' as path;
 
 /// Build a [RouteConfiguration] based on the provided root project [directory].
 RouteConfiguration buildRouteConfiguration(Directory directory) {
+  print('AAAAAAA');
   final routesDirectory = Directory(path.join(directory.path, 'routes'));
 
   if (!routesDirectory.existsSync()) {

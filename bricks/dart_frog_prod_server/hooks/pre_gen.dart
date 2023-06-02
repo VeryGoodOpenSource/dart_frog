@@ -23,6 +23,7 @@ Future<void> preGen(
   RouteConfigurationBuilder buildConfiguration = buildRouteConfiguration,
   void Function(int exitCode) exit = _defaultExit,
 }) async {
+  print('BBABBWTASDB');
   final projectDirectory = directory ?? io.Directory.current;
 
   await createBundle(context, projectDirectory, exit);
