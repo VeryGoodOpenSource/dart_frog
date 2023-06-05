@@ -38,7 +38,8 @@ void main() {
 
     setUp(() {
       logger = _MockLogger();
-      context = _FakeHookContext(logger: logger);
+      context = _FakeHookContext(logger: logger)
+        ..vars['dartVersion'] = 'stable';
 
       when(() => logger.progress(any())).thenReturn(_MockProgress());
     });
@@ -217,7 +218,8 @@ dev_dependencies:
           'serveStaticFiles': false,
           'invokeCustomEntrypoint': true,
           'invokeCustomInit': false,
-          'pathDependencies': <String>[]
+          'pathDependencies': <String>[],
+          'dartVersion': 'stable',
         }),
       );
     });
@@ -249,7 +251,8 @@ dev_dependencies:
           'serveStaticFiles': false,
           'invokeCustomEntrypoint': false,
           'invokeCustomInit': true,
-          'pathDependencies': <String>[]
+          'pathDependencies': <String>[],
+          'dartVersion': 'stable',
         }),
       );
     });
@@ -383,6 +386,7 @@ dev_dependencies:
             'invokeCustomEntrypoint': false,
             'invokeCustomInit': false,
             'pathDependencies': <String>[],
+            'dartVersion': 'stable',
           }),
         );
       },

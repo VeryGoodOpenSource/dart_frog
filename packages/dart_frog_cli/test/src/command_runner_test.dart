@@ -31,6 +31,7 @@ const expectedUsage = [
       '  build    Create a production build.\n'
       '  create   Creates a new Dart Frog app.\n'
       '  dev      Run a local development server.\n'
+      '  list     Lists the routes on a Dart Frog project.\n'
       '  new      Create a new route or middleware for dart_frog\n'
       '  update   Update the Dart Frog CLI.\n'
       '\n'

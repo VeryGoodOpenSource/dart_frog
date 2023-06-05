@@ -23,8 +23,6 @@ class _MockGeneratorHooks extends Mock implements GeneratorHooks {}
 
 class _MockProcess extends Mock implements Process {}
 
-class _MockProcessResult extends Mock implements ProcessResult {}
-
 class _MockProcessSignal extends Mock implements ProcessSignal {}
 
 class _MockProgress extends Mock implements Progress {}
@@ -43,6 +41,9 @@ void main() {
       registerFallbackValue(_FakeDirectoryGeneratorTarget());
     });
 
+    const processId = 42;
+    final processResult = ProcessResult(processId, 0, '', '');
+
     late ArgResults argResults;
     late DirectoryWatcher directoryWatcher;
     late MasonGenerator generator;
@@ -50,7 +51,7 @@ void main() {
     late Progress progress;
     late Logger logger;
     late Process process;
-    late ProcessResult processResult;
+
     late ProcessSignal sigint;
     late RestorableDirectoryGeneratorTarget generatorTarget;
     late DevCommand command;
@@ -65,7 +66,6 @@ void main() {
       progress = _MockProgress();
       when(() => logger.progress(any())).thenReturn(progress);
       process = _MockProcess();
-      processResult = _MockProcessResult();
       sigint = _MockProcessSignal();
       when(() => sigint.watch()).thenAnswer((_) => const Stream.empty());
       generatorTarget = _MockRestorableDirectoryGeneratorTarget();
@@ -76,9 +76,6 @@ void main() {
         generator: (_) async => generator,
         generatorTarget: (_) => generatorTarget,
         isWindows: isWindows,
-        runProcess: (String executable, List<String> arguments) async {
-          return processResult;
-        },
         startProcess: (
           String executable,
           List<String> arguments, {
@@ -87,7 +84,9 @@ void main() {
           return process;
         },
         sigint: sigint,
-      )..testArgResults = argResults;
+      )
+        ..testArgResults = argResults
+        ..testRunProcess = (_, __) async => processResult;
     });
 
     test('throws if ensureRuntimeCompatibility fails', () {
@@ -528,10 +527,129 @@ void main() {
       ).called(1);
     });
 
+    test('dart vm port can be specified using --dart-vm-service-port',
+        () async {
+      late List<String> receivedArgs;
+      when<dynamic>(() => argResults['dart-vm-service-port'])
+          .thenReturn('1372');
+      command.testArgResults = argResults;
+      final generatorHooks = _MockGeneratorHooks();
+      when(
+        () => generatorHooks.preGen(
+          vars: any(named: 'vars'),
+          workingDirectory: any(named: 'workingDirectory'),
+          onVarsChanged: any(named: 'onVarsChanged'),
+        ),
+      ).thenAnswer((invocation) async {
+        (invocation.namedArguments[const Symbol('onVarsChanged')] as void
+                Function(Map<String, dynamic> vars))
+            .call(<String, dynamic>{});
+      });
+      when(
+        () => generator.generate(
+          any(),
+          vars: any(named: 'vars'),
+          fileConflictResolution: FileConflictResolution.overwrite,
+        ),
+      ).thenAnswer((_) async => []);
+      when(() => generator.hooks).thenReturn(generatorHooks);
+      when(() => process.stdout).thenAnswer((_) => const Stream.empty());
+      when(() => process.stderr).thenAnswer((_) => const Stream.empty());
+      when(() => directoryWatcher.events)
+          .thenAnswer((_) => const Stream.empty());
+
+      command = DevCommand(
+        logger: logger,
+        ensureRuntimeCompatibility: (_) {},
+        directoryWatcher: (_) => directoryWatcher,
+        generator: (_) async => generator,
+        startProcess: (
+          String executable,
+          List<String> arguments, {
+          bool runInShell = false,
+        }) async {
+          receivedArgs = arguments;
+          return process;
+        },
+        sigint: sigint,
+      )..testArgResults = argResults;
+      final exitCode = await command.run();
+      expect(exitCode, equals(ExitCode.success.code));
+      expect(receivedArgs[0], equals('--enable-vm-service=1372'));
+      verify(
+        () => generatorHooks.preGen(
+          vars: <String, dynamic>{'port': '8080'},
+          workingDirectory: any(named: 'workingDirectory'),
+          onVarsChanged: any(named: 'onVarsChanged'),
+        ),
+      ).called(1);
+      verifyNever(process.kill);
+    });
+
+    test(
+      'when dart vm port not specified, --enable-vm-service option should '
+      'be called without any port number value',
+      () async {
+        late List<String> receivedArgs;
+        command.testArgResults = argResults;
+        final generatorHooks = _MockGeneratorHooks();
+        when(
+          () => generatorHooks.preGen(
+            vars: any(named: 'vars'),
+            workingDirectory: any(named: 'workingDirectory'),
+            onVarsChanged: any(named: 'onVarsChanged'),
+          ),
+        ).thenAnswer((invocation) async {
+          (invocation.namedArguments[const Symbol('onVarsChanged')] as void
+                  Function(Map<String, dynamic> vars))
+              .call(<String, dynamic>{});
+        });
+        when(
+          () => generator.generate(
+            any(),
+            vars: any(named: 'vars'),
+            fileConflictResolution: FileConflictResolution.overwrite,
+          ),
+        ).thenAnswer((_) async => []);
+        when(() => generator.hooks).thenReturn(generatorHooks);
+        when(() => process.stdout).thenAnswer((_) => const Stream.empty());
+        when(() => process.stderr).thenAnswer((_) => const Stream.empty());
+        when(() => directoryWatcher.events)
+            .thenAnswer((_) => const Stream.empty());
+
+        command = DevCommand(
+          logger: logger,
+          ensureRuntimeCompatibility: (_) {},
+          directoryWatcher: (_) => directoryWatcher,
+          generator: (_) async => generator,
+          startProcess: (
+            String executable,
+            List<String> arguments, {
+            bool runInShell = false,
+          }) async {
+            receivedArgs = arguments;
+            return process;
+          },
+          sigint: sigint,
+        )..testArgResults = argResults;
+        final exitCode = await command.run();
+        expect(exitCode, equals(ExitCode.success.code));
+        expect(receivedArgs[0], equals('--enable-vm-service'));
+        verify(
+          () => generatorHooks.preGen(
+            vars: <String, dynamic>{'port': '8080'},
+            workingDirectory: any(named: 'workingDirectory'),
+            onVarsChanged: any(named: 'onVarsChanged'),
+          ),
+        ).called(1);
+        verifyNever(process.kill);
+      },
+    );
+
     test('kills all child processes when sigint received on windows', () async {
-      const processId = 42;
       final generatorHooks = _MockGeneratorHooks();
       final processRunCalls = <List<String>>[];
+
       when(
         () => generatorHooks.preGen(
           vars: any(named: 'vars'),
@@ -565,10 +683,6 @@ void main() {
         generator: (_) async => generator,
         exit: (code) => exitCode = code,
         isWindows: true,
-        runProcess: (String executable, List<String> arguments) async {
-          processRunCalls.add([executable, ...arguments]);
-          return processResult;
-        },
         startProcess: (
           String executable,
           List<String> arguments, {
@@ -577,7 +691,12 @@ void main() {
           return process;
         },
         sigint: sigint,
-      )..testArgResults = argResults;
+      )
+        ..testArgResults = argResults
+        ..testRunProcess = (String executable, List<String> arguments) async {
+          processRunCalls.add([executable, ...arguments]);
+          return processResult;
+        };
       command.run().ignore();
       await untilCalled(() => process.pid);
       expect(
@@ -592,7 +711,6 @@ void main() {
     test(
         'kills process if error occurs before '
         'hotreload is enabled on windows', () async {
-      const processId = 42;
       final generatorHooks = _MockGeneratorHooks();
       final processRunCalls = <List<String>>[];
       int? exitCode;
@@ -620,7 +738,6 @@ void main() {
         (_) => Stream.value(utf8.encode('oops')),
       );
       when(() => process.pid).thenReturn(processId);
-      when(() => processResult.exitCode).thenReturn(ExitCode.success.code);
       when(
         () => directoryWatcher.events,
       ).thenAnswer((_) => StreamController<WatchEvent>().stream);
@@ -632,10 +749,6 @@ void main() {
         generator: (_) async => generator,
         exit: (code) => exitCode = code,
         isWindows: true,
-        runProcess: (String executable, List<String> arguments) async {
-          processRunCalls.add([executable, ...arguments]);
-          return processResult;
-        },
         startProcess: (
           String executable,
           List<String> arguments, {
@@ -644,7 +757,12 @@ void main() {
           return process;
         },
         sigint: sigint,
-      )..testArgResults = argResults;
+      )
+        ..testArgResults = argResults
+        ..testRunProcess = (String executable, List<String> arguments) async {
+          processRunCalls.add([executable, ...arguments]);
+          return processResult;
+        };
       command.run().ignore();
       await untilCalled(() => process.pid);
       expect(exitCode, equals(1));
@@ -764,10 +882,6 @@ lib/my_model.g.dart:53:20: Warning: Operand of null-aware operation '!' has type
         directoryWatcher: (_) => directoryWatcher,
         generator: (_) async => generator,
         exit: (code) => exitCode = code,
-        runProcess: (String executable, List<String> arguments) async {
-          processRunCalls.add([executable, ...arguments]);
-          return processResult;
-        },
         startProcess: (
           String executable,
           List<String> arguments, {
@@ -776,7 +890,12 @@ lib/my_model.g.dart:53:20: Warning: Operand of null-aware operation '!' has type
           return process;
         },
         sigint: sigint,
-      )..testArgResults = argResults;
+      )
+        ..testArgResults = argResults
+        ..testRunProcess = (String executable, List<String> arguments) async {
+          processRunCalls.add([executable, ...arguments]);
+          return processResult;
+        };
       command.run().ignore();
       await untilCalled(() => process.kill());
       expect(exitCode, equals(1));

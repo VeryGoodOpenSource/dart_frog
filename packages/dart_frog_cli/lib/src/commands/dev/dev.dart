@@ -8,6 +8,7 @@ import 'package:dart_frog_cli/src/commands/dev/templates/dart_frog_dev_server_bu
 import 'package:dart_frog_cli/src/runtime_compatibility.dart'
     as runtime_compatibility;
 import 'package:mason/mason.dart';
+import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
 import 'package:stream_transform/stream_transform.dart';
 import 'package:watcher/watcher.dart';
@@ -62,7 +63,6 @@ class DevCommand extends DartFrogCommand {
     RestorableDirectoryGeneratorTargetBuilder? generatorTarget,
     Exit? exit,
     bool? isWindows,
-    ProcessRun? runProcess,
     io.ProcessSignal? sigint,
     ProcessStart? startProcess,
   })  : _ensureRuntimeCompatibility = ensureRuntimeCompatibility ??
@@ -71,16 +71,21 @@ class DevCommand extends DartFrogCommand {
         _generator = generator ?? MasonGenerator.fromBundle,
         _exit = exit ?? io.exit,
         _isWindows = isWindows ?? io.Platform.isWindows,
-        _runProcess = runProcess ?? io.Process.run,
         _sigint = sigint ?? io.ProcessSignal.sigint,
         _startProcess = startProcess ?? io.Process.start,
         _generatorTarget = generatorTarget ?? _defaultGeneratorTarget {
-    argParser.addOption(
-      'port',
-      abbr: 'p',
-      defaultsTo: '8080',
-      help: 'Which port number the server should start on.',
-    );
+    argParser
+      ..addOption(
+        'port',
+        abbr: 'p',
+        defaultsTo: '8080',
+        help: 'Which port number the server should start on.',
+      )
+      ..addOption(
+        'dart-vm-service-port',
+        abbr: 'd',
+        help: 'Which port number the dart vm service should listen on.',
+      );
   }
 
   final void Function(io.Directory) _ensureRuntimeCompatibility;
@@ -88,7 +93,13 @@ class DevCommand extends DartFrogCommand {
   final GeneratorBuilder _generator;
   final Exit _exit;
   final bool _isWindows;
-  final ProcessRun _runProcess;
+
+  /// Function used to start a process used for testing purposes only.
+  @visibleForTesting
+  ProcessRun? testRunProcess;
+
+  ProcessRun get _runProcess => testRunProcess ?? io.Process.run;
+
   final io.ProcessSignal _sigint;
   final ProcessStart _startProcess;
   final RestorableDirectoryGeneratorTargetBuilder _generatorTarget;
@@ -106,6 +117,7 @@ class DevCommand extends DartFrogCommand {
     var reloading = false;
     var hotReloadEnabled = false;
     final port = io.Platform.environment['PORT'] ?? results['port'] as String;
+    final dartVmServicePort = results['dart-vm-service-port'] as String?;
     final target = _generatorTarget(logger);
     final generator = await _generator(dartFrogDevServerBundle);
 
@@ -135,13 +147,16 @@ class DevCommand extends DartFrogCommand {
       logger.detail('[codegen] reload complete.');
     }
 
+    final enableVmServiceFlag = '--enable-vm-service'
+        '${dartVmServicePort == null ? "" : "=$dartVmServicePort"}';
+
     Future<void> serve() async {
       logger.detail(
-        '''[process] dart --enable-vm-service ${path.join('.dart_frog', 'server.dart')}''',
+        '''[process] dart $enableVmServiceFlag ${path.join('.dart_frog', 'server.dart')}''',
       );
       final process = await _startProcess(
         'dart',
-        ['--enable-vm-service', path.join('.dart_frog', 'server.dart')],
+        [enableVmServiceFlag, path.join('.dart_frog', 'server.dart')],
         runInShell: true,
       );
 
