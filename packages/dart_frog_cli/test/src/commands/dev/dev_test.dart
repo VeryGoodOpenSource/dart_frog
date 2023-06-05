@@ -527,6 +527,125 @@ void main() {
       ).called(1);
     });
 
+    test('dart vm port can be specified using --dart-vm-service-port',
+        () async {
+      late List<String> receivedArgs;
+      when<dynamic>(() => argResults['dart-vm-service-port'])
+          .thenReturn('1372');
+      command.testArgResults = argResults;
+      final generatorHooks = _MockGeneratorHooks();
+      when(
+        () => generatorHooks.preGen(
+          vars: any(named: 'vars'),
+          workingDirectory: any(named: 'workingDirectory'),
+          onVarsChanged: any(named: 'onVarsChanged'),
+        ),
+      ).thenAnswer((invocation) async {
+        (invocation.namedArguments[const Symbol('onVarsChanged')] as void
+                Function(Map<String, dynamic> vars))
+            .call(<String, dynamic>{});
+      });
+      when(
+        () => generator.generate(
+          any(),
+          vars: any(named: 'vars'),
+          fileConflictResolution: FileConflictResolution.overwrite,
+        ),
+      ).thenAnswer((_) async => []);
+      when(() => generator.hooks).thenReturn(generatorHooks);
+      when(() => process.stdout).thenAnswer((_) => const Stream.empty());
+      when(() => process.stderr).thenAnswer((_) => const Stream.empty());
+      when(() => directoryWatcher.events)
+          .thenAnswer((_) => const Stream.empty());
+
+      command = DevCommand(
+        logger: logger,
+        ensureRuntimeCompatibility: (_) {},
+        directoryWatcher: (_) => directoryWatcher,
+        generator: (_) async => generator,
+        startProcess: (
+          String executable,
+          List<String> arguments, {
+          bool runInShell = false,
+        }) async {
+          receivedArgs = arguments;
+          return process;
+        },
+        sigint: sigint,
+      )..testArgResults = argResults;
+      final exitCode = await command.run();
+      expect(exitCode, equals(ExitCode.success.code));
+      expect(receivedArgs[0], equals('--enable-vm-service=1372'));
+      verify(
+        () => generatorHooks.preGen(
+          vars: <String, dynamic>{'port': '8080'},
+          workingDirectory: any(named: 'workingDirectory'),
+          onVarsChanged: any(named: 'onVarsChanged'),
+        ),
+      ).called(1);
+      verifyNever(process.kill);
+    });
+
+    test(
+      'when dart vm port not specified, --enable-vm-service option should '
+      'be called without any port number value',
+      () async {
+        late List<String> receivedArgs;
+        command.testArgResults = argResults;
+        final generatorHooks = _MockGeneratorHooks();
+        when(
+          () => generatorHooks.preGen(
+            vars: any(named: 'vars'),
+            workingDirectory: any(named: 'workingDirectory'),
+            onVarsChanged: any(named: 'onVarsChanged'),
+          ),
+        ).thenAnswer((invocation) async {
+          (invocation.namedArguments[const Symbol('onVarsChanged')] as void
+                  Function(Map<String, dynamic> vars))
+              .call(<String, dynamic>{});
+        });
+        when(
+          () => generator.generate(
+            any(),
+            vars: any(named: 'vars'),
+            fileConflictResolution: FileConflictResolution.overwrite,
+          ),
+        ).thenAnswer((_) async => []);
+        when(() => generator.hooks).thenReturn(generatorHooks);
+        when(() => process.stdout).thenAnswer((_) => const Stream.empty());
+        when(() => process.stderr).thenAnswer((_) => const Stream.empty());
+        when(() => directoryWatcher.events)
+            .thenAnswer((_) => const Stream.empty());
+
+        command = DevCommand(
+          logger: logger,
+          ensureRuntimeCompatibility: (_) {},
+          directoryWatcher: (_) => directoryWatcher,
+          generator: (_) async => generator,
+          startProcess: (
+            String executable,
+            List<String> arguments, {
+            bool runInShell = false,
+          }) async {
+            receivedArgs = arguments;
+            return process;
+          },
+          sigint: sigint,
+        )..testArgResults = argResults;
+        final exitCode = await command.run();
+        expect(exitCode, equals(ExitCode.success.code));
+        expect(receivedArgs[0], equals('--enable-vm-service'));
+        verify(
+          () => generatorHooks.preGen(
+            vars: <String, dynamic>{'port': '8080'},
+            workingDirectory: any(named: 'workingDirectory'),
+            onVarsChanged: any(named: 'onVarsChanged'),
+          ),
+        ).called(1);
+        verifyNever(process.kill);
+      },
+    );
+
     test('kills all child processes when sigint received on windows', () async {
       final generatorHooks = _MockGeneratorHooks();
       final processRunCalls = <List<String>>[];
