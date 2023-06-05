@@ -416,6 +416,24 @@ Response onRequest(RequestContext context, String userId, String postId) {
 }
 ```
 
+## Wildcard Routes ♾
+
+Dart Frog supports wildcard routes. For example, if you create a file called `routes/posts/[...page].dart`, then it will be accessible at any path that starts with `/posts/`, with any number of levels, allowing it to called from `/posts/today`, `/posts/features/stared` and so on and so forth.
+
+Routing parameters are forwarded to the `onRequest` method as seen below.
+
+```dart
+import 'package:dart_frog/dart_frog.dart';
+
+Response onRequest(RequestContext context, String page) {
+  return Response(body: 'post page: $page');
+}
+```
+
+```warning
+Given its nature, wildcard routes **must** be unique leaf routes on their route node, meaning that they need to be a file, and they need to be the only route on their folder.
+```
+
 ## Route Conflicts 💥
 
 When defining routes, it's possible to encounter route conflicts.
