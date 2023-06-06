@@ -1,5 +1,6 @@
 // ignore_for_file: inference_failure_on_collection_literal
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dart_frog_gen/src/build_route_configuration.dart';

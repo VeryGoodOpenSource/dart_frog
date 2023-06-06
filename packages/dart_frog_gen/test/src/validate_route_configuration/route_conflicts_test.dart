@@ -184,5 +184,120 @@ void main() {
       expect(violationEndCalled, isTrue);
       expect(conflicts, ['/hello', '/echo']);
     });
+
+    test(
+      'reports error when dynamic directories conflict with non dynamic files',
+      () {
+        when(() => configuration.endpoints).thenReturn({
+          '/cars/<id>': const [
+            RouteFile(
+              name: r'cars_$id_index',
+              path: '../routes/cars/[id]/index.dart',
+              route: '/',
+              params: [],
+            ),
+          ],
+          '/cars/mine': const [
+            RouteFile(
+              name: 'cars_mine',
+              path: '../routes/cars/mine.dart',
+              route: '/mine',
+              params: [],
+            ),
+          ],
+        });
+
+        reportRouteConflicts(
+          configuration,
+          onViolationStart: () {
+            violationStartCalled = true;
+          },
+          onRouteConflict: (_, __, conflictingEndpoint) {
+            conflicts.add(conflictingEndpoint);
+          },
+          onViolationEnd: () {
+            violationEndCalled = true;
+          },
+        );
+
+        expect(violationStartCalled, isTrue);
+        expect(violationEndCalled, isTrue);
+        expect(conflicts, ['/cars/<id>', '/cars/mine']);
+      },
+    );
+
+    test(
+      'reports error when dynamic directories conflict with non dynamic files, '
+      'with multiple folders',
+      () {
+        when(() => configuration.endpoints).thenReturn({
+          '/turtles/random': const [
+            RouteFile(
+              name: 'turtles_random',
+              path: '../routes/turtles/random.dart',
+              route: '/',
+              params: [],
+            ),
+          ],
+          '/turtles/<id>': const [
+            RouteFile(
+              name: r'turtles_$id_index',
+              path: '../routes/turtles/[id]/index.dart',
+              route: '/turtles/<id>',
+              params: [],
+            ),
+          ],
+          '/turtles/<id>/bla': const [
+            RouteFile(
+              name: r'turtles_$id_bla',
+              path: '../routes/turtles/[id]/bla.dart',
+              route: '/turtles/<id>/bla.dart',
+              params: [],
+            ),
+          ],
+          '/turtles/<id>/<name>': const [
+            RouteFile(
+              name: r'turtles_$id_$name_index',
+              path: '../routes/turtles/[id]/[name]/index.dart',
+              route: '/turtles/<id>/<name>/index.dart',
+              params: [],
+            ),
+          ],
+          '/turtles/<id>/<name>/ble.dart': const [
+            RouteFile(
+              name: r'turtles_$id_$name_ble.dart',
+              path: '../routes/turtles/[id]/[name]/ble.dart',
+              route: '/turtles/<id>/<name>/ble.dart',
+              params: [],
+            ),
+          ],
+        });
+
+        reportRouteConflicts(
+          configuration,
+          onViolationStart: () {
+            violationStartCalled = true;
+          },
+          onRouteConflict: (_, __, conflictingEndpoint) {
+            conflicts.add(conflictingEndpoint);
+          },
+          onViolationEnd: () {
+            violationEndCalled = true;
+          },
+        );
+
+        expect(violationStartCalled, isTrue);
+        expect(violationEndCalled, isTrue);
+        expect(
+          conflicts,
+          [
+            '/turtles/random',
+            '/turtles/<id>',
+            '/turtles/<id>/bla',
+            '/turtles/<id>/<name>',
+          ],
+        );
+      },
+    );
   });
 }

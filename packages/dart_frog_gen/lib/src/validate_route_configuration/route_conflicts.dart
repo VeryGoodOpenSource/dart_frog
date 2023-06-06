@@ -20,8 +20,40 @@ void reportRouteConflicts(
   /// Callback called when any route conflict is found.
   void Function()? onViolationEnd,
 }) {
-  final conflictingEndpoints =
+  final directConflicts =
       configuration.endpoints.entries.where((entry) => entry.value.length > 1);
+
+  final indirectConflicts = configuration.endpoints.entries.where((entry) {
+    final match = configuration.endpoints.keys.where((other) {
+      final keyParts = entry.key.split('/');
+      if (other == entry.key) {
+        return false;
+      }
+
+      final otherParts = other.split('/');
+
+      var match = false;
+
+      if (keyParts.length == otherParts.length) {
+        for (var i = 0; i < keyParts.length; i++) {
+          if ((keyParts[i] == otherParts[i]) ||
+              (keyParts[i].startsWith('<') || otherParts[i].startsWith('<'))) {
+            match = true;
+          } else {
+            match = false;
+            break;
+          }
+        }
+      }
+
+      return match;
+    }).isNotEmpty;
+
+    return match;
+  });
+
+  final conflictingEndpoints = [...directConflicts, ...indirectConflicts];
+
   if (conflictingEndpoints.isNotEmpty) {
     onViolationStart?.call();
     for (final conflict in conflictingEndpoints) {
