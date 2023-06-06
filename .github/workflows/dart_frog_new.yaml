@@ -16,6 +16,5 @@ jobs:
   build:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@v1
     with:
-      runs_on: macos-latest
       working_directory: bricks/dart_frog_new/hooks
       analyze_directories: .
