@@ -11,6 +11,7 @@ part of '_internal.dart';
 ///
 /// If [logger] is not passed, the message is just passed to [print].
 Middleware requestLogger({
+  // ignore: avoid_positional_boolean_parameters
   void Function(String message, bool isError)? logger,
 }) {
   return fromShelfMiddleware(shelf.logRequests(logger: logger));
