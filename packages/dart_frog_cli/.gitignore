@@ -7,3 +7,8 @@ pubspec.lock
 
 # Test related files
 coverage/
+
+build
+
+!lib/src/commands/build/
+!test/src/commands/build/

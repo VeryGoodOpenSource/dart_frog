@@ -93,5 +93,6 @@ Future<void> preGen(
     'invokeCustomEntrypoint': configuration.invokeCustomEntrypoint,
     'invokeCustomInit': configuration.invokeCustomInit,
     'pathDependencies': await getPathDependencies(projectDirectory),
+    'dartVersion': context.vars['dartVersion'],
   };
 }
