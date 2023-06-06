@@ -5,8 +5,6 @@ title: 🌱 Environments
 
 # Environments 🌱
 
----
-
 There are many ways that environments can be configured in a Dart Frog application. The
 easiest way is to use environment variables via the Dart SDK.
 
