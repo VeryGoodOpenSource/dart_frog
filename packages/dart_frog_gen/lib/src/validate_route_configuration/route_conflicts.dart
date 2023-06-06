@@ -1,6 +1,18 @@
 import 'package:dart_frog_gen/dart_frog_gen.dart';
 import 'package:path/path.dart' as path;
 
+class _RouteConflict {
+  const _RouteConflict(
+    this.originalFilePath,
+    this.conflictingFilePath,
+    this.conflictingEndpoint,
+  );
+
+  final String originalFilePath;
+  final String conflictingFilePath;
+  final String conflictingEndpoint;
+}
+
 /// Type definition for callbacks that report route conflicts.
 typedef OnRouteConflict = void Function(
   String originalFilePath,
@@ -20,9 +32,9 @@ void reportRouteConflicts(
   /// Callback called when any route conflict is found.
   void Function()? onViolationEnd,
 }) {
-  final directConflicts =
-      configuration.endpoints.entries.where((entry) => entry.value.length > 1)
-      .map((e) => (e.value.first.path, e.value.last.path, e.key));
+  final directConflicts = configuration.endpoints.entries
+      .where((entry) => entry.value.length > 1)
+      .map((e) => _RouteConflict(e.value.first.path, e.value.last.path, e.key));
 
   final indirectConflicts = configuration.endpoints.entries.map((entry) {
     final matches = configuration.endpoints.keys.where((other) {
@@ -51,11 +63,11 @@ void reportRouteConflicts(
     });
 
     if (matches.isNotEmpty) {
-      return ( entry.key, matches.first, entry.key);
+      return _RouteConflict(entry.key, matches.first, entry.key);
     }
 
     return null;
-  }).whereType<(String, String, String)>();
+  }).whereType<_RouteConflict>();
 
   final conflictingEndpoints = [...directConflicts, ...indirectConflicts];
 
@@ -63,15 +75,15 @@ void reportRouteConflicts(
     onViolationStart?.call();
     for (final conflict in conflictingEndpoints) {
       final originalFilePath = path.normalize(
-        path.join('routes', conflict.$1),
+        path.join('routes', conflict.originalFilePath),
       );
       final conflictingFilePath = path.normalize(
-        path.join('routes', conflict.$2),
+        path.join('routes', conflict.conflictingFilePath),
       );
       onRouteConflict?.call(
         originalFilePath,
         conflictingFilePath,
-        conflict.$3,
+        conflict.conflictingEndpoint,
       );
     }
     onViolationEnd?.call();
