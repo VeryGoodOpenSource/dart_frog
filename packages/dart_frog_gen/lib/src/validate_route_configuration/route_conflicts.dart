@@ -21,10 +21,11 @@ void reportRouteConflicts(
   void Function()? onViolationEnd,
 }) {
   final directConflicts =
-      configuration.endpoints.entries.where((entry) => entry.value.length > 1);
+      configuration.endpoints.entries.where((entry) => entry.value.length > 1)
+      .map((e) => (e.value.first.path, e.value.last.path, e.key));
 
-  final indirectConflicts = configuration.endpoints.entries.where((entry) {
-    final match = configuration.endpoints.keys.where((other) {
+  final indirectConflicts = configuration.endpoints.entries.map((entry) {
+    final matches = configuration.endpoints.keys.where((other) {
       final keyParts = entry.key.split('/');
       if (other == entry.key) {
         return false;
@@ -47,10 +48,14 @@ void reportRouteConflicts(
       }
 
       return match;
-    }).isNotEmpty;
+    });
 
-    return match;
-  });
+    if (matches.isNotEmpty) {
+      return ( entry.key, matches.first, entry.key);
+    }
+
+    return null;
+  }).whereType<(String, String, String)>();
 
   final conflictingEndpoints = [...directConflicts, ...indirectConflicts];
 
@@ -58,15 +63,15 @@ void reportRouteConflicts(
     onViolationStart?.call();
     for (final conflict in conflictingEndpoints) {
       final originalFilePath = path.normalize(
-        path.join('routes', conflict.value.first.path),
+        path.join('routes', conflict.$1),
       );
       final conflictingFilePath = path.normalize(
-        path.join('routes', conflict.value.last.path),
+        path.join('routes', conflict.$2),
       );
       onRouteConflict?.call(
         originalFilePath,
         conflictingFilePath,
-        conflict.key,
+        conflict.$3,
       );
     }
     onViolationEnd?.call();
