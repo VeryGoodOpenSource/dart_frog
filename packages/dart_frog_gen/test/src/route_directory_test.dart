@@ -54,6 +54,7 @@ void main() {
             path: '/path',
             route: '/route/<name>',
             params: ['name'],
+            wildcard: false,
           )
         ],
         params: ['id'],
@@ -70,6 +71,7 @@ void main() {
               'path': '/path',
               'route': '/route/<name>',
               'file_params': ['name'],
+              'wildcard': false,
             }
           ],
           'directory_params': <String>['id'],

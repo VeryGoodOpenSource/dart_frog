@@ -11,12 +11,14 @@ void main() {
         route: '/',
         path: '/path',
         params: <String>[],
+        wildcard: false,
       );
       final copy = original.copyWith();
       expect(copy.name, equals(original.name));
       expect(copy.route, equals(original.route));
       expect(copy.path, equals(original.path));
       expect(copy.params, equals(original.params));
+      expect(copy.wildcard, equals(original.wildcard));
     });
 
     test('copyWith creates a copy (updates)', () {
@@ -25,17 +27,20 @@ void main() {
         route: '/',
         path: '/path',
         params: <String>[],
+        wildcard: false,
       );
       final copy = original.copyWith(
         name: 'copy',
         route: '/copy',
         path: '/copy',
         params: ['copy'],
+        wildcard: true,
       );
       expect(copy.name, equals('copy'));
       expect(copy.route, equals('/copy'));
       expect(copy.path, equals('/copy'));
       expect(copy.params, equals(['copy']));
+      expect(copy.wildcard, isTrue);
     });
 
     test('toJson returns correct map', () {
@@ -44,6 +49,7 @@ void main() {
         route: '/<id>',
         path: '/path',
         params: <String>['id'],
+        wildcard: false,
       );
       expect(
         routeFile.toJson(),
@@ -52,7 +58,8 @@ void main() {
             'name': 'index',
             'path': '/path',
             'route': '/<id>',
-            'file_params': ['id']
+            'file_params': ['id'],
+            'wildcard': false,
           },
         ),
       );

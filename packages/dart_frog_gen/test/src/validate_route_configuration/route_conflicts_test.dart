@@ -50,6 +50,7 @@ void main() {
             path: 'index.dart',
             route: '/',
             params: [],
+            wildcard: false,
           ),
         ],
         '/hello': const [
@@ -58,6 +59,7 @@ void main() {
             path: 'hello.dart',
             route: '/hello',
             params: [],
+            wildcard: false,
           )
         ]
       });
@@ -89,6 +91,7 @@ void main() {
             path: 'index.dart',
             route: '/',
             params: [],
+            wildcard: false,
           ),
         ],
         '/hello': const [
@@ -97,12 +100,14 @@ void main() {
             path: 'hello.dart',
             route: '/hello',
             params: [],
+            wildcard: false,
           ),
           RouteFile(
             name: 'hello_index',
             path: 'hello/index.dart',
             route: '/',
             params: [],
+            wildcard: false,
           )
         ]
       });
@@ -135,6 +140,7 @@ void main() {
             path: 'index.dart',
             route: '/',
             params: [],
+            wildcard: false,
           ),
         ],
         '/hello': const [
@@ -143,12 +149,14 @@ void main() {
             path: 'hello.dart',
             route: '/hello',
             params: [],
+            wildcard: false,
           ),
           RouteFile(
             name: 'hello_index',
             path: 'hello/index.dart',
             route: '/',
             params: [],
+            wildcard: false,
           )
         ],
         '/echo': const [
@@ -157,12 +165,14 @@ void main() {
             path: 'echo.dart',
             route: '/echo',
             params: [],
+            wildcard: false,
           ),
           RouteFile(
             name: 'echo_index',
             path: 'echo/index.dart',
             route: '/',
             params: [],
+            wildcard: false,
           )
         ]
       });
