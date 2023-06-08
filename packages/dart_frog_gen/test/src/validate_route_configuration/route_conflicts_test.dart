@@ -1,6 +1,7 @@
 import 'package:dart_frog_gen/dart_frog_gen.dart';
 
 import 'package:mocktail/mocktail.dart';
+import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
 class _MockRouteConfiguration extends Mock implements RouteConfiguration {}
@@ -240,7 +241,14 @@ void main() {
 
         expect(violationStartCalled, isTrue);
         expect(violationEndCalled, isTrue);
-        expect(conflicts, equals(['/cars/<id> and /cars/mine -> /cars/<id>']));
+        expect(
+          conflicts,
+          equals(
+            [
+              '${path.normalize('/cars/<id>')} and ${path.normalize('//cars/mine')} -> /cars/<id>',
+            ],
+          ),
+        );
       },
     );
 
@@ -322,8 +330,8 @@ void main() {
         expect(
           conflicts,
           [
-            '/turtles/<id> and /turtles/random -> /turtles/<id>',
-            '/turtles/<id>/<name> and /turtles/<id>/bla -> /turtles/<id>/<name>'
+            '${path.normalize('/turtles/<id>')} and ${path.normalize('/turtles/random')} -> /turtles/<id>',
+            '${path.normalize('/turtles/<id>/<name>')} and ${path.normalize('/turtles/<id>/bla')} -> /turtles/<id>/<name>'
           ],
         );
       },
