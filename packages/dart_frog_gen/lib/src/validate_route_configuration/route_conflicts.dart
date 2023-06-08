@@ -1,7 +1,8 @@
 import 'package:dart_frog_gen/dart_frog_gen.dart';
+import 'package:equatable/equatable.dart';
 import 'package:path/path.dart' as path;
 
-class _RouteConflict {
+class _RouteConflict extends Equatable {
   const _RouteConflict(
     this.originalFilePath,
     this.conflictingFilePath,
@@ -11,6 +12,13 @@ class _RouteConflict {
   final String originalFilePath;
   final String conflictingFilePath;
   final String conflictingEndpoint;
+
+  @override
+  List<Object> get props => [
+        originalFilePath,
+        conflictingFilePath,
+        conflictingEndpoint,
+      ];
 }
 
 /// Type definition for callbacks that report route conflicts.
@@ -36,38 +44,52 @@ void reportRouteConflicts(
       .where((entry) => entry.value.length > 1)
       .map((e) => _RouteConflict(e.value.first.path, e.value.last.path, e.key));
 
-  final indirectConflicts = configuration.endpoints.entries.map((entry) {
-    final matches = configuration.endpoints.keys.where((other) {
-      final keyParts = entry.key.split('/');
-      if (other == entry.key) {
-        return false;
-      }
-
-      final otherParts = other.split('/');
-
-      var match = false;
-
-      if (keyParts.length == otherParts.length) {
-        for (var i = 0; i < keyParts.length; i++) {
-          if ((keyParts[i] == otherParts[i]) ||
-              (keyParts[i].startsWith('<') || otherParts[i].startsWith('<'))) {
-            match = true;
-          } else {
-            match = false;
-            break;
+  final indirectConflicts = configuration.endpoints.entries
+      .map((entry) {
+        final matches = configuration.endpoints.keys.where((other) {
+          final keyParts = entry.key.split('/');
+          if (other == entry.key) {
+            return false;
           }
+
+          final otherParts = other.split('/');
+
+          var match = false;
+
+          if (keyParts.length == otherParts.length) {
+            for (var i = 0; i < keyParts.length; i++) {
+              if ((keyParts[i] == otherParts[i]) ||
+                  (keyParts[i].startsWith('<') ||
+                      otherParts[i].startsWith('<'))) {
+                match = true;
+              } else {
+                match = false;
+                break;
+              }
+            }
+          }
+
+          return match;
+        });
+
+        if (matches.isNotEmpty) {
+          final originalFilePath =
+              matches.first.endsWith('>') ? matches.first : entry.key;
+
+          final conflictingFilePath =
+              entry.key == originalFilePath ? matches.first : entry.key;
+
+          return _RouteConflict(
+            originalFilePath,
+            conflictingFilePath,
+            originalFilePath,
+          );
         }
-      }
 
-      return match;
-    });
-
-    if (matches.isNotEmpty) {
-      return _RouteConflict(entry.key, matches.first, entry.key);
-    }
-
-    return null;
-  }).whereType<_RouteConflict>();
+        return null;
+      })
+      .whereType<_RouteConflict>()
+      .toSet();
 
   final conflictingEndpoints = [...directConflicts, ...indirectConflicts];
 

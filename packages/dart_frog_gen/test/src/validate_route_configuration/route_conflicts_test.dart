@@ -205,6 +205,7 @@ void main() {
               path: '../routes/cars/[id]/index.dart',
               route: '/',
               params: [],
+              wildcard: false,
             ),
           ],
           '/cars/mine': const [
@@ -213,6 +214,7 @@ void main() {
               path: '../routes/cars/mine.dart',
               route: '/mine',
               params: [],
+              wildcard: false,
             ),
           ],
         });
@@ -222,8 +224,14 @@ void main() {
           onViolationStart: () {
             violationStartCalled = true;
           },
-          onRouteConflict: (_, __, conflictingEndpoint) {
-            conflicts.add(conflictingEndpoint);
+          onRouteConflict: (
+            originalFilePath,
+            conflictingFilePath,
+            conflictingEndpoint,
+          ) {
+            conflicts.add('$originalFilePath and '
+                '$conflictingFilePath -> '
+                '$conflictingEndpoint');
           },
           onViolationEnd: () {
             violationEndCalled = true;
@@ -232,7 +240,7 @@ void main() {
 
         expect(violationStartCalled, isTrue);
         expect(violationEndCalled, isTrue);
-        expect(conflicts, ['/cars/<id>', '/cars/mine']);
+        expect(conflicts, equals(['/cars/<id> and /cars/mine -> /cars/<id>']));
       },
     );
 
@@ -247,6 +255,7 @@ void main() {
               path: '../routes/turtles/random.dart',
               route: '/',
               params: [],
+              wildcard: false,
             ),
           ],
           '/turtles/<id>': const [
@@ -255,6 +264,7 @@ void main() {
               path: '../routes/turtles/[id]/index.dart',
               route: '/turtles/<id>',
               params: [],
+              wildcard: false,
             ),
           ],
           '/turtles/<id>/bla': const [
@@ -263,6 +273,7 @@ void main() {
               path: '../routes/turtles/[id]/bla.dart',
               route: '/turtles/<id>/bla.dart',
               params: [],
+              wildcard: false,
             ),
           ],
           '/turtles/<id>/<name>': const [
@@ -271,6 +282,7 @@ void main() {
               path: '../routes/turtles/[id]/[name]/index.dart',
               route: '/turtles/<id>/<name>/index.dart',
               params: [],
+              wildcard: false,
             ),
           ],
           '/turtles/<id>/<name>/ble.dart': const [
@@ -279,6 +291,7 @@ void main() {
               path: '../routes/turtles/[id]/[name]/ble.dart',
               route: '/turtles/<id>/<name>/ble.dart',
               params: [],
+              wildcard: false,
             ),
           ],
         });
@@ -288,8 +301,16 @@ void main() {
           onViolationStart: () {
             violationStartCalled = true;
           },
-          onRouteConflict: (_, __, conflictingEndpoint) {
-            conflicts.add(conflictingEndpoint);
+          onRouteConflict: (
+            originalFilePath,
+            conflictingFilePath,
+            conflictingEndpoint,
+          ) {
+            conflicts.add(
+              '$originalFilePath and '
+              '$conflictingFilePath -> '
+              '$conflictingEndpoint',
+            );
           },
           onViolationEnd: () {
             violationEndCalled = true;
@@ -301,10 +322,8 @@ void main() {
         expect(
           conflicts,
           [
-            '/turtles/random',
-            '/turtles/<id>',
-            '/turtles/<id>/bla',
-            '/turtles/<id>/<name>',
+            '/turtles/<id> and /turtles/random -> /turtles/<id>',
+            '/turtles/<id>/<name> and /turtles/<id>/bla -> /turtles/<id>/<name>'
           ],
         );
       },
