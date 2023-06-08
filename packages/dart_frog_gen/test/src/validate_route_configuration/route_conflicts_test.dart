@@ -1,6 +1,7 @@
 import 'package:dart_frog_gen/dart_frog_gen.dart';
 
 import 'package:mocktail/mocktail.dart';
+import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
 class _MockRouteConfiguration extends Mock implements RouteConfiguration {}
@@ -194,5 +195,146 @@ void main() {
       expect(violationEndCalled, isTrue);
       expect(conflicts, ['/hello', '/echo']);
     });
+
+    test(
+      'reports error when dynamic directories conflict with non dynamic files',
+      () {
+        when(() => configuration.endpoints).thenReturn({
+          '/cars/<id>': const [
+            RouteFile(
+              name: r'cars_$id_index',
+              path: '../routes/cars/[id]/index.dart',
+              route: '/',
+              params: [],
+              wildcard: false,
+            ),
+          ],
+          '/cars/mine': const [
+            RouteFile(
+              name: 'cars_mine',
+              path: '../routes/cars/mine.dart',
+              route: '/mine',
+              params: [],
+              wildcard: false,
+            ),
+          ],
+        });
+
+        reportRouteConflicts(
+          configuration,
+          onViolationStart: () {
+            violationStartCalled = true;
+          },
+          onRouteConflict: (
+            originalFilePath,
+            conflictingFilePath,
+            conflictingEndpoint,
+          ) {
+            conflicts.add('$originalFilePath and '
+                '$conflictingFilePath -> '
+                '$conflictingEndpoint');
+          },
+          onViolationEnd: () {
+            violationEndCalled = true;
+          },
+        );
+
+        expect(violationStartCalled, isTrue);
+        expect(violationEndCalled, isTrue);
+        expect(
+          conflicts,
+          equals(
+            [
+              '${path.normalize('/cars/<id>')} and ${path.normalize('//cars/mine')} -> /cars/<id>',
+            ],
+          ),
+        );
+      },
+    );
+
+    test(
+      'reports error when dynamic directories conflict with non dynamic files, '
+      'with multiple folders',
+      () {
+        when(() => configuration.endpoints).thenReturn({
+          '/turtles/random': const [
+            RouteFile(
+              name: 'turtles_random',
+              path: '../routes/turtles/random.dart',
+              route: '/',
+              params: [],
+              wildcard: false,
+            ),
+          ],
+          '/turtles/<id>': const [
+            RouteFile(
+              name: r'turtles_$id_index',
+              path: '../routes/turtles/[id]/index.dart',
+              route: '/turtles/<id>',
+              params: [],
+              wildcard: false,
+            ),
+          ],
+          '/turtles/<id>/bla': const [
+            RouteFile(
+              name: r'turtles_$id_bla',
+              path: '../routes/turtles/[id]/bla.dart',
+              route: '/turtles/<id>/bla.dart',
+              params: [],
+              wildcard: false,
+            ),
+          ],
+          '/turtles/<id>/<name>': const [
+            RouteFile(
+              name: r'turtles_$id_$name_index',
+              path: '../routes/turtles/[id]/[name]/index.dart',
+              route: '/turtles/<id>/<name>/index.dart',
+              params: [],
+              wildcard: false,
+            ),
+          ],
+          '/turtles/<id>/<name>/ble.dart': const [
+            RouteFile(
+              name: r'turtles_$id_$name_ble.dart',
+              path: '../routes/turtles/[id]/[name]/ble.dart',
+              route: '/turtles/<id>/<name>/ble.dart',
+              params: [],
+              wildcard: false,
+            ),
+          ],
+        });
+
+        reportRouteConflicts(
+          configuration,
+          onViolationStart: () {
+            violationStartCalled = true;
+          },
+          onRouteConflict: (
+            originalFilePath,
+            conflictingFilePath,
+            conflictingEndpoint,
+          ) {
+            conflicts.add(
+              '$originalFilePath and '
+              '$conflictingFilePath -> '
+              '$conflictingEndpoint',
+            );
+          },
+          onViolationEnd: () {
+            violationEndCalled = true;
+          },
+        );
+
+        expect(violationStartCalled, isTrue);
+        expect(violationEndCalled, isTrue);
+        expect(
+          conflicts,
+          [
+            '${path.normalize('/turtles/<id>')} and ${path.normalize('/turtles/random')} -> /turtles/<id>',
+            '${path.normalize('/turtles/<id>/<name>')} and ${path.normalize('/turtles/<id>/bla')} -> /turtles/<id>/<name>'
+          ],
+        );
+      },
+    );
   });
 }
