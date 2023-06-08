@@ -416,6 +416,23 @@ Response onRequest(RequestContext context, String userId, String postId) {
 }
 ```
 
+## Wildcard Routes ♾
+
+Dart Frog supports wildcard routes. For example, if you create a file called `routes/posts/[...page].dart`, then it will be accessible at any path that starts with `/posts/`, with any number of levels, allowing it to called from `/posts/today`, `/posts/features/stared`, and so forth.
+
+Routing parameters are forwarded to the `onRequest` method as seen below:
+
+```dart
+import 'package:dart_frog/dart_frog.dart';
+
+Response onRequest(RequestContext context, String page) {
+  return Response(body: 'post page: $page');
+}
+```
+
+```warning
+Wildcard routes **must** be unique leaf routes on their route node, meaning that they need to be a file, and they need to be the only route in their folder.
+
 ## Route Conflicts 💥
 
 When defining routes, it's possible to encounter route conflicts.
@@ -425,11 +442,13 @@ A route conflict occurs when more than one route handler resolves to the same en
 For example, given the following file structure:
 
 ```
+
 ├── routes
 │   ├── api
 │   │   └── index.dart
 │   └── api.dart
-```
+
+````
 
 Both `routes/api/index.dart` and `routes/api.dart` resolve the the `/api` endpoint.
 
@@ -439,7 +458,7 @@ When running the development server via `dart_frog dev`, Dart Frog will report r
 [hotreload] - Application reloaded.
 
 Route conflict detected. `routes/api.dart` and `routes/api/index.dart` both resolve to `/api`.
-```
+````
 
 When generating a production build via `dart_frog build`, Dart Frog will report all detected route conflicts and fail the build if one or more route conflicts are detected.
 
