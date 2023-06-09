@@ -43,13 +43,6 @@ final _warningRegex = RegExp(r'^.*:\d+:\d+: Warning: .*', multiLine: true);
 
 /// Regex for detecting when the `dart_frog dev` fails to run for using a
 /// Dart VM Service with an already used port.
-///
-/// Example:
-/// ```sh
-/// dart_frog dev # Runs the dev server, successfully using default ports
-/// dart_frog dev --port=8085 # Fails to run the dev server
-/// >>> Could not start the VM service: localhost:8181 is already in use.
-/// ```
 final _dartVmServiceAlreadyInUseErrorRegex = RegExp(
   '^Could not start the VM service: localhost:.* is already in use.',
   multiLine: true,
