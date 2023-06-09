@@ -587,7 +587,7 @@ void main() {
     });
 
     test(
-      '''when dart vm port not specified, --enable-vm-service option should be called with 8181''',
+      '''when --dart-vm-service-port is not specified, calls --enable-vm-service with port 8181''',
       () async {
         late List<String> receivedArgs;
         command.testArgResults = argResults;
