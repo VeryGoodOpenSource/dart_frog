@@ -234,7 +234,7 @@ class DevCommand extends DartFrogCommand {
     if (served) {
       progress.complete('Running on $localhost');
     } else {
-      progress.cancel();
+      progress.fail('Failed to start server on $localhost');
     }
 
     final entrypoint = path.join(cwd.path, 'main.dart');
