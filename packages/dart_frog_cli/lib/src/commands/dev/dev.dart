@@ -231,10 +231,14 @@ class DevCommand extends DartFrogCommand {
     await codegen();
     final served = await serve();
     final localhost = link(uri: Uri.parse('http://localhost:$port'));
+    final debugger =
+        link(uri: Uri.parse('http://localhost:$dartVmServicePort'));
     if (served) {
       progress.complete('Running on $localhost');
     } else {
-      progress.fail('Failed to start server on $localhost');
+      progress.fail(
+        'Failed to start server on $localhost with debugger on $debugger',
+      );
     }
 
     final entrypoint = path.join(cwd.path, 'main.dart');
