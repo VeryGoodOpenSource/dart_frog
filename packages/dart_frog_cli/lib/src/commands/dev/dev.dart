@@ -184,10 +184,8 @@ class DevCommand extends DartFrogCommand {
         final message = utf8.decode(_).trim();
         if (message.isEmpty) return;
 
-        /// Suggest running `dart_frog ` if the error is a warning from
         final isDartVMServiceAlreadyInUseError =
             _dartVmServiceAlreadyInUseErrorRegex.hasMatch(message);
-
         if (isDartVMServiceAlreadyInUseError) {
           logger.err(
             '$message '
