@@ -198,7 +198,7 @@ class DevCommand extends DartFrogCommand {
         if (isDartVMServiceAlreadyInUseError) {
           logger.err(
             '$message '
-            '''Please, specify a different port using the `--dart-vm-service-port` arguement when running `dart_frog dev`.''',
+            '''Please, specify a different port using the `--dart-vm-service-port` argument when running `dart_frog dev`.''',
           );
 
           await _killProcess(process);
