@@ -120,7 +120,8 @@ class DevCommand extends DartFrogCommand {
     var reloading = false;
     var hotReloadEnabled = false;
     final port = io.Platform.environment['PORT'] ?? results['port'] as String;
-    final dartVmServicePort = results['dart-vm-service-port'] as String?;
+    final dartVmServicePort = (results['dart-vm-service-port'] as String?) ??
+        _defaultDartVmServicePort;
     final target = _generatorTarget(logger);
     final generator = await _generator(dartFrogDevServerBundle);
 
@@ -150,9 +151,7 @@ class DevCommand extends DartFrogCommand {
       logger.detail('[codegen] reload complete.');
     }
 
-    final enableVmServiceFlag =
-        '--enable-vm-service=${dartVmServicePort ?? _defaultDartVmServicePort}';
-
+    final enableVmServiceFlag = '--enable-vm-service=$dartVmServicePort';
     Future<void> serve() async {
       logger.detail(
         '''[process] dart $enableVmServiceFlag ${path.join('.dart_frog', 'server.dart')}''',
