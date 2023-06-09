@@ -84,9 +84,12 @@ class DevCommand extends DartFrogCommand {
       ..addOption(
         'dart-vm-service-port',
         abbr: 'd',
+        defaultsTo: _defaultDartVmServicePort,
         help: 'Which port number the dart vm service should listen on.',
       );
   }
+
+  static const _defaultDartVmServicePort = '8181';
 
   final void Function(io.Directory) _ensureRuntimeCompatibility;
   final DirectoryWatcherBuilder _directoryWatcher;
@@ -147,8 +150,8 @@ class DevCommand extends DartFrogCommand {
       logger.detail('[codegen] reload complete.');
     }
 
-    final enableVmServiceFlag = '--enable-vm-service'
-        '${dartVmServicePort == null ? "" : "=$dartVmServicePort"}';
+    final enableVmServiceFlag =
+        '--enable-vm-service=${dartVmServicePort ?? _defaultDartVmServicePort}';
 
     Future<void> serve() async {
       logger.detail(

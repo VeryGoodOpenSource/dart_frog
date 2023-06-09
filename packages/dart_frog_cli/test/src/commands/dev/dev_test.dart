@@ -587,8 +587,7 @@ void main() {
     });
 
     test(
-      'when dart vm port not specified, --enable-vm-service option should '
-      'be called without any port number value',
+      '''when dart vm port not specified, --enable-vm-service option should be called with 8181''',
       () async {
         late List<String> receivedArgs;
         command.testArgResults = argResults;
@@ -634,7 +633,7 @@ void main() {
         )..testArgResults = argResults;
         final exitCode = await command.run();
         expect(exitCode, equals(ExitCode.success.code));
-        expect(receivedArgs[0], equals('--enable-vm-service'));
+        expect(receivedArgs[0], equals('--enable-vm-service=8181'));
         verify(
           () => generatorHooks.preGen(
             vars: <String, dynamic>{'port': '8080'},
