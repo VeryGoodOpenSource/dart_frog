@@ -21,7 +21,7 @@ export const newRoute = async (uri: Uri) => {
   // outside Dart Frog directory, and remove this workaround.
   let dartProjectDirectory = path.parse(workingDirectory);
 
-  runDartFrogNewCommand(routeName, workingDirectory);
+  executeDartFrogNewCommand(routeName, workingDirectory);
 };
 
 /**
@@ -41,9 +41,11 @@ function getRouteName(): Thenable<string | undefined> {
  * Runs the `dart_frog new` command with the given route name.
  * @param {string} routeName
  * @param {String} workingDirectory
- * @returns {void}
  */
-function runDartFrogNewCommand(routeName: String, workingDirectory: String) {
+function executeDartFrogNewCommand(
+  routeName: String,
+  workingDirectory: String
+) {
   const command = `dart_frog new route ${routeName}`;
 
   cp.exec(
