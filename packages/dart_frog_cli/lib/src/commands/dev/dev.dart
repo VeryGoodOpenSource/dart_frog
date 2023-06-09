@@ -41,6 +41,20 @@ typedef Exit = dynamic Function(int exitCode);
 /// Regex for detecting warnings in the output of `dart run`.
 final _warningRegex = RegExp(r'^.*:\d+:\d+: Warning: .*', multiLine: true);
 
+/// Regex for detecting when the `dart_frog dev` fails to run for using a
+/// Dart VM Service with an already used port.
+///
+/// Example:
+/// ```sh
+/// dart_frog dev # Runs the dev server, successfully using default ports
+/// dart_frog dev --port=8085 # Fails to run the dev server
+/// >>> Could not start the VM service: localhost:8181 is already in use.
+/// ```
+final _dartVmServiceAlreadyInUseErrorRegex = RegExp(
+  '^Could not start the VM service: localhost:.* is already in use.',
+  multiLine: true,
+);
+
 RestorableDirectoryGeneratorTarget _defaultGeneratorTarget(Logger? logger) {
   return RestorableDirectoryGeneratorTarget(
     io.Directory(
@@ -120,7 +134,8 @@ class DevCommand extends DartFrogCommand {
     var reloading = false;
     var hotReloadEnabled = false;
     final port = io.Platform.environment['PORT'] ?? results['port'] as String;
-    final dartVmServicePort = results['dart-vm-service-port'] as String?;
+    final dartVmServicePort = (results['dart-vm-service-port'] as String?) ??
+        _defaultDartVmServicePort;
     final target = _generatorTarget(logger);
     final generator = await _generator(dartFrogDevServerBundle);
 
@@ -150,10 +165,9 @@ class DevCommand extends DartFrogCommand {
       logger.detail('[codegen] reload complete.');
     }
 
-    final enableVmServiceFlag =
-        '--enable-vm-service=${dartVmServicePort ?? _defaultDartVmServicePort}';
+    final enableVmServiceFlag = '--enable-vm-service=$dartVmServicePort';
 
-    Future<void> serve() async {
+    Future<bool> serve() async {
       logger.detail(
         '''[process] dart $enableVmServiceFlag ${path.join('.dart_frog', 'server.dart')}''',
       );
@@ -176,6 +190,21 @@ class DevCommand extends DartFrogCommand {
 
         final message = utf8.decode(_).trim();
         if (message.isEmpty) return;
+
+        /// Suggest running `dart_frog ` if the error is a warning from
+        final isDartVMServiceAlreadyInUseError =
+            _dartVmServiceAlreadyInUseErrorRegex.hasMatch(message);
+
+        if (isDartVMServiceAlreadyInUseError) {
+          logger.err(
+            '$message '
+            '''Please, specify a different port using the `--dart-vm-service-port` arguement when running `dart_frog dev`.''',
+          );
+
+          await _killProcess(process);
+          logger.detail('[process] exit(1)');
+          _exit(1);
+        }
 
         /// Do not kill the process if the error is a warning from the SDK.
         final isSDKWarning = _warningRegex.hasMatch(message);
@@ -204,13 +233,19 @@ class DevCommand extends DartFrogCommand {
         if (shouldCacheSnapshot) target.cacheLatestSnapshot();
         hasError = false;
       });
+
+      return hasError;
     }
 
     final progress = logger.progress('Serving');
     await codegen();
-    await serve();
+    final served = await serve();
     final localhost = link(uri: Uri.parse('http://localhost:$port'));
-    progress.complete('Running on $localhost');
+    if (served) {
+      progress.complete('Running on $localhost');
+    } else {
+      progress.cancel();
+    }
 
     final entrypoint = path.join(cwd.path, 'main.dart');
     final pubspec = path.join(cwd.path, 'pubspec.yaml');
