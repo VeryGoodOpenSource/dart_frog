@@ -159,7 +159,6 @@ class DevCommand extends DartFrogCommand {
     }
 
     final enableVmServiceFlag = '--enable-vm-service=$dartVmServicePort';
-
     Future<bool> serve() async {
       logger.detail(
         '''[process] dart $enableVmServiceFlag ${path.join('.dart_frog', 'server.dart')}''',
