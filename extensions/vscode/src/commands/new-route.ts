@@ -17,10 +17,6 @@ export const newRoute = async (uri: Uri) => {
 
   const workingDirectory = uri.fsPath;
 
-  // TODO(alestiago): Create issue in dart_frog new to allow creating a new route
-  // outside Dart Frog directory, and remove this workaround.
-  let dartProjectDirectory = path.parse(workingDirectory);
-
   executeDartFrogNewCommand(routeName, workingDirectory);
 };
 
@@ -46,12 +42,24 @@ function executeDartFrogNewCommand(
   routeName: String,
   workingDirectory: String
 ) {
-  const command = `dart_frog new route ${routeName}`;
+  // TODO(alestiago): Create issue in dart_frog new to allow creating a new route
+  // outside Dart Frog directory, and remove this workaround.
+  let workingDirectorySplits = workingDirectory.split(path.sep);
+  const routesIndex = workingDirectorySplits.findIndex((e) => e === "routes");
+  const dartProjectDirectory = workingDirectorySplits
+    .slice(0, routesIndex)
+    .join(path.sep);
+  const normalizedRouteName = path.join(
+    workingDirectorySplits.slice(routesIndex + 1).join(path.sep),
+    routeName
+  );
+
+  const command = `dart_frog new route ${normalizedRouteName}`;
 
   cp.exec(
     command,
     {
-      cwd: workingDirectory,
+      cwd: dartProjectDirectory,
     },
     function (error: Error, stdout: String, stderr: String) {
       if (error) {

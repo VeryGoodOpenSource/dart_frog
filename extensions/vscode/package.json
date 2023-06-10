@@ -23,7 +23,7 @@
         {
           "command": "extension.new-route",
           "group": "dartFrogGroup@1",
-          "when": "explorerResourceIsFolder"
+          "when": "(explorerResourceIsFolder) || (resourceExtname == .dart)"
         }
       ]
     }
