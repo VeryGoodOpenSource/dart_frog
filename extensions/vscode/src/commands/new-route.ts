@@ -9,6 +9,7 @@ import {
   workspace,
 } from "vscode";
 
+// TODO(alestiago): Support running from command palette.
 export const newRoute = async (uri: Uri) => {
   const routeName = await getRouteName();
   if (routeName === undefined || routeName.trim() === "") {
@@ -42,9 +43,21 @@ function executeDartFrogNewCommand(
   routeName: String,
   workingDirectory: String
 ) {
-  // TODO(alestiago): Create issue in dart_frog new to allow creating a new route
-  // outside Dart Frog directory, and remove this workaround.
   let workingDirectorySplits = workingDirectory.split(path.sep);
+
+  const lastWorkingDirectoryElement =
+    workingDirectorySplits[workingDirectorySplits.length - 1];
+  const isFile = lastWorkingDirectoryElement.includes(".");
+  if (isFile) {
+    const lastDotIndex = lastWorkingDirectoryElement.lastIndexOf(".");
+    workingDirectorySplits[workingDirectorySplits.length - 1] =
+      lastWorkingDirectoryElement.substring(0, lastDotIndex);
+
+    if (workingDirectorySplits[workingDirectorySplits.length - 1] === "index") {
+      workingDirectorySplits.pop();
+    }
+  }
+
   const routesIndex = workingDirectorySplits.findIndex((e) => e === "routes");
   const dartProjectDirectory = workingDirectorySplits
     .slice(0, routesIndex)
