@@ -31,6 +31,17 @@ To develop for Very Good CLI you will need to become familiar with Visual Studio
 2.
 3.
 
+### Creating a Pull Request
+
+Before creating a Pull Request please:
+
+1. [Fork](https://docs.github.com/en/get-started/quickstart/contributing-to-projects) the [GitHub repository](https://github.com/VeryGoodOpenSource/dart_frog) and create your branch from `main`:
+
+```sh
+# 🪵 Branch from `main`
+git branch <branch-name>
+git checkout <branch-name>
+```
+
 [conventional_commits_link]: https://www.conventionalcommits.org/en/v1.0.0
 [bug_report_link]: https://github.com/VeryGoodOpenSource/dart_frog/issues/new?assignees=&labels=bug&template=bug_report.md&title=fix%3A+
-[very_good_ventures_link]: https://verygood.ventures/?utm_source=github&utm_medium=banner&utm_campaign=CLI
