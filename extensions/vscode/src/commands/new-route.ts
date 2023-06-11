@@ -1,13 +1,7 @@
 const cp = require("child_process");
 const path = require("node:path");
 
-import {
-  InputBoxOptions,
-  OpenDialogOptions,
-  Uri,
-  window,
-  workspace,
-} from "vscode";
+import { InputBoxOptions, Uri, window } from "vscode";
 
 // TODO(alestiago): Support running from command palette.
 export const newRoute = async (uri: Uri) => {
