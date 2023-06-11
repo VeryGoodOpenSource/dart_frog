@@ -39,7 +39,6 @@ void main() {
   group('dart_frog dev', () {
     setUpAll(() {
       registerFallbackValue(_FakeDirectoryGeneratorTarget());
-      registerFallbackValue('');
     });
 
     const processId = 42;
