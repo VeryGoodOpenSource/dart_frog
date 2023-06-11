@@ -901,6 +901,83 @@ lib/my_model.g.dart:53:20: Warning: Operand of null-aware operation '!' has type
       expect(processRunCalls, isEmpty);
       verify(() => process.kill()).called(1);
     });
+
+    test('''kills process with message when Dart VM is already in use''',
+        () async {
+      final generatorHooks = _MockGeneratorHooks();
+      final processRunCalls = <List<String>>[];
+      int? exitCode;
+      when(
+        () => generatorHooks.preGen(
+          vars: any(named: 'vars'),
+          workingDirectory: any(named: 'workingDirectory'),
+          onVarsChanged: any(named: 'onVarsChanged'),
+        ),
+      ).thenAnswer((invocation) async {
+        (invocation.namedArguments[const Symbol('onVarsChanged')] as void
+                Function(Map<String, dynamic> vars))
+            .call(<String, dynamic>{});
+      });
+      when(
+        () => generator.generate(
+          any(),
+          vars: any(named: 'vars'),
+          fileConflictResolution: FileConflictResolution.overwrite,
+        ),
+      ).thenAnswer((_) async => []);
+      when(() => generator.hooks).thenReturn(generatorHooks);
+      when(() => process.stdout).thenAnswer((_) => const Stream.empty());
+      const errorMessage =
+          'Could not start the VM service: localhost:8181 is already in use.';
+      when(() => process.stderr).thenAnswer(
+        (_) => Stream.value(utf8.encode(errorMessage)),
+      );
+      when(() => process.kill()).thenReturn(true);
+      when(
+        () => directoryWatcher.events,
+      ).thenAnswer((_) => StreamController<WatchEvent>().stream);
+      when(() => sigint.watch()).thenAnswer((_) => const Stream.empty());
+      command = DevCommand(
+        logger: logger,
+        ensureRuntimeCompatibility: (_) {},
+        directoryWatcher: (_) => directoryWatcher,
+        generator: (_) async => generator,
+        exit: (code) => exitCode = code,
+        startProcess: (
+          String executable,
+          List<String> arguments, {
+          bool runInShell = false,
+        }) async {
+          return process;
+        },
+        sigint: sigint,
+      )
+        ..testArgResults = argResults
+        ..testRunProcess = (String executable, List<String> arguments) async {
+          processRunCalls.add([executable, ...arguments]);
+          return processResult;
+        };
+      command.run().ignore();
+
+      await untilCalled(() => process.kill());
+      expect(
+        exitCode,
+        equals(1),
+        reason: 'Should exti when VM service is already in use.',
+      );
+      expect(
+        processRunCalls,
+        isEmpty,
+        reason: 'Should not run the serve process.',
+      );
+      verify(() => process.kill()).called(1);
+      verify(
+        () => logger.err(
+          '$errorMessage '
+          '''Please, try specifying a different port using the `--dart-vm-service-port` argument when running `dart_frog dev`.''',
+        ),
+      ).called(1);
+    });
   });
 
   group('CachedFile', () {

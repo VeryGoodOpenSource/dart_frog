@@ -185,27 +185,26 @@ class DevCommand extends DartFrogCommand {
 
         final isDartVMServiceAlreadyInUseError =
             _dartVmServiceAlreadyInUseErrorRegex.hasMatch(message);
+        final isSDKWarning = _warningRegex.hasMatch(message);
+
         if (isDartVMServiceAlreadyInUseError) {
           logger.err(
             '$message '
             '''Please, try specifying a different port using the `--dart-vm-service-port` argument when running `dart_frog dev`.''',
           );
-
           await _killProcess(process);
           logger.detail('[process] exit(1)');
           _exit(1);
-        }
-
-        /// Do not kill the process if the error is a warning from the SDK.
-        final isSDKWarning = _warningRegex.hasMatch(message);
-
-        if (isSDKWarning) {
+        } else if (isSDKWarning) {
+          /// Do not kill the process if the error is a warning from the SDK.
           logger.warn(message);
         } else {
           logger.err(message);
         }
 
-        if (!hotReloadEnabled && !isSDKWarning) {
+        if (!hotReloadEnabled &&
+            !isSDKWarning &&
+            !isDartVMServiceAlreadyInUseError) {
           await _killProcess(process);
           logger.detail('[process] exit(1)');
           _exit(1);
