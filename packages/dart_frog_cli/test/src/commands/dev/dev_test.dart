@@ -964,7 +964,7 @@ lib/my_model.g.dart:53:20: Warning: Operand of null-aware operation '!' has type
       expect(
         exitCode,
         equals(1),
-        reason: 'Should exti when VM service is already in use.',
+        reason: 'Should exit when VM service is already in use.',
       );
       expect(
         processRunCalls,
