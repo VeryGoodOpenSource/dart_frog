@@ -902,7 +902,8 @@ lib/my_model.g.dart:53:20: Warning: Operand of null-aware operation '!' has type
       verify(() => process.kill()).called(1);
     });
 
-    test('''kills process with message when Dart VM is already in use''',
+    test(
+        '''kills process with helpful message when Dart VM is already in use''',
         () async {
       final generatorHooks = _MockGeneratorHooks();
       final processRunCalls = <List<String>>[];
