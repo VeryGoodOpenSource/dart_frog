@@ -39,6 +39,7 @@ void main() {
   group('dart_frog dev', () {
     setUpAll(() {
       registerFallbackValue(_FakeDirectoryGeneratorTarget());
+      registerFallbackValue('');
     });
 
     const processId = 42;
@@ -975,14 +976,6 @@ lib/my_model.g.dart:53:20: Warning: Operand of null-aware operation '!' has type
         () => logger.err(
           '$errorMessage '
           '''Please, try specifying a different port using the `--dart-vm-service-port` argument when running `dart_frog dev`.''',
-        ),
-      ).called(1);
-
-      final localhost = link(uri: Uri.parse('http://localhost:8080'));
-      final debugger = link(uri: Uri.parse('http://localhost:8181'));
-      verify(
-        () => progress.fail(
-          'Failed to start server on $localhost with debugger on $debugger',
         ),
       ).called(1);
     });

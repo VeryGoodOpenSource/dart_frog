@@ -159,7 +159,7 @@ class DevCommand extends DartFrogCommand {
     }
 
     final enableVmServiceFlag = '--enable-vm-service=$dartVmServicePort';
-    Future<bool> serve() async {
+    Future<void> serve() async {
       logger.detail(
         '''[process] dart $enableVmServiceFlag ${path.join('.dart_frog', 'server.dart')}''',
       );
@@ -222,23 +222,13 @@ class DevCommand extends DartFrogCommand {
         if (shouldCacheSnapshot) target.cacheLatestSnapshot();
         hasError = false;
       });
-
-      return hasError;
     }
 
     final progress = logger.progress('Serving');
     await codegen();
-    final served = await serve();
+    await serve();
     final localhost = link(uri: Uri.parse('http://localhost:$port'));
-    final debugger =
-        link(uri: Uri.parse('http://localhost:$dartVmServicePort'));
-    if (served) {
-      progress.complete('Running on $localhost');
-    } else {
-      progress.fail(
-        'Failed to start server on $localhost with debugger on $debugger',
-      );
-    }
+    progress.complete('Running on $localhost');
 
     final entrypoint = path.join(cwd.path, 'main.dart');
     final pubspec = path.join(cwd.path, 'pubspec.yaml');
