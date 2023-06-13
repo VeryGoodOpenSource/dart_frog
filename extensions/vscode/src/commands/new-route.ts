@@ -3,7 +3,6 @@ const path = require("node:path");
 
 import { InputBoxOptions, Uri, window, OpenDialogOptions } from "vscode";
 
-// TODO(alestiago): Support running from command palette.
 export const newRoute = async (uri: Uri) => {
   const routeName = await promptRouteName();
   if (routeName === undefined || routeName.trim() === "") {
@@ -130,8 +129,7 @@ function executeDartFrogNewCommand(
     },
     function (error: Error, stdout: String, stderr: String) {
       if (error) {
-        // TODO(alestiago): Parse error message and show it in a more user-friendly way.
-        window.showErrorMessage(stderr.toString());
+        window.showErrorMessage(error.message);
       }
     }
   );
