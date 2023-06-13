@@ -41,6 +41,13 @@ typedef Exit = dynamic Function(int exitCode);
 /// Regex for detecting warnings in the output of `dart run`.
 final _warningRegex = RegExp(r'^.*:\d+:\d+: Warning: .*', multiLine: true);
 
+/// Regex for detecting when the `dart_frog dev` fails to run for using a
+/// Dart VM Service with an already used port.
+final _dartVmServiceAlreadyInUseErrorRegex = RegExp(
+  '^Could not start the VM service: localhost:.* is already in use.',
+  multiLine: true,
+);
+
 RestorableDirectoryGeneratorTarget _defaultGeneratorTarget(Logger? logger) {
   return RestorableDirectoryGeneratorTarget(
     io.Directory(
@@ -176,16 +183,24 @@ class DevCommand extends DartFrogCommand {
         final message = utf8.decode(_).trim();
         if (message.isEmpty) return;
 
-        /// Do not kill the process if the error is a warning from the SDK.
+        final isDartVMServiceAlreadyInUseError =
+            _dartVmServiceAlreadyInUseErrorRegex.hasMatch(message);
         final isSDKWarning = _warningRegex.hasMatch(message);
 
-        if (isSDKWarning) {
+        if (isDartVMServiceAlreadyInUseError) {
+          logger.err(
+            '$message '
+            '''Try specifying a different port using the `--dart-vm-service-port` argument when running `dart_frog dev`.''',
+          );
+        } else if (isSDKWarning) {
+          /// Do not kill the process if the error is a warning from the SDK.
           logger.warn(message);
         } else {
           logger.err(message);
         }
 
-        if (!hotReloadEnabled && !isSDKWarning) {
+        if ((!hotReloadEnabled && !isSDKWarning) ||
+            isDartVMServiceAlreadyInUseError) {
           await _killProcess(process);
           logger.detail('[process] exit(1)');
           _exit(1);
