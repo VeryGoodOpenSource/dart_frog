@@ -14,13 +14,13 @@ final createDartFrogBundle = MasonBundle.fromJson(<String, dynamic>{
     {
       "path": "analysis_options.yaml",
       "data":
-          "aW5jbHVkZTogcGFja2FnZTp2ZXJ5X2dvb2RfYW5hbHlzaXMvYW5hbHlzaXNfb3B0aW9ucy40LjAuMC55YW1sCmFuYWx5emVyOgogIGV4Y2x1ZGU6CiAgICAtIGJ1aWxkLyoqCmxpbnRlcjoKICBydWxlczoKICAgIGZpbGVfbmFtZXM6IGZhbHNlCg==",
+          "aW5jbHVkZTogcGFja2FnZTp2ZXJ5X2dvb2RfYW5hbHlzaXMvYW5hbHlzaXNfb3B0aW9ucy41LjAuMC55YW1sCmFuYWx5emVyOgogIGV4Y2x1ZGU6CiAgICAtIGJ1aWxkLyoqCmxpbnRlcjoKICBydWxlczoKICAgIGZpbGVfbmFtZXM6IGZhbHNlCg==",
       "type": "text"
     },
     {
       "path": "pubspec.yaml",
       "data":
-          "bmFtZToge3tuYW1lLnNuYWtlQ2FzZSgpfX0KZGVzY3JpcHRpb246IEFuIG5ldyBEYXJ0IEZyb2cgYXBwbGljYXRpb24KdmVyc2lvbjogMS4wLjArMQpwdWJsaXNoX3RvOiBub25lCgplbnZpcm9ubWVudDoKICBzZGs6ICI+PTIuMTkuMCA8My4wLjAiCgpkZXBlbmRlbmNpZXM6CiAgZGFydF9mcm9nOiBeMC4zLjAKCmRldl9kZXBlbmRlbmNpZXM6CiAgbW9ja3RhaWw6IF4wLjMuMAogIHRlc3Q6IF4xLjE5LjIKICB2ZXJ5X2dvb2RfYW5hbHlzaXM6IF40LjAuMAo=",
+          "bmFtZToge3tuYW1lLnNuYWtlQ2FzZSgpfX0KZGVzY3JpcHRpb246IEFuIG5ldyBEYXJ0IEZyb2cgYXBwbGljYXRpb24KdmVyc2lvbjogMS4wLjArMQpwdWJsaXNoX3RvOiBub25lCgplbnZpcm9ubWVudDoKICBzZGs6ICI+PTMuMC4wIDw0LjAuMCIKCmRlcGVuZGVuY2llczoKICBkYXJ0X2Zyb2c6IF4wLjMuMAoKZGV2X2RlcGVuZGVuY2llczoKICBtb2NrdGFpbDogXjAuMy4wCiAgdGVzdDogXjEuMTkuMgogIHZlcnlfZ29vZF9hbmFseXNpczogXjUuMC4wCg==",
       "type": "text"
     },
     {
@@ -52,7 +52,7 @@ final createDartFrogBundle = MasonBundle.fromJson(<String, dynamic>{
     {
       "path": "pubspec.yaml",
       "data":
-          "bmFtZTogY3JlYXRlX2RhcnRfZnJvZ19ob29rcwoKZW52aXJvbm1lbnQ6CiAgc2RrOiAiPj0yLjE5LjAgPDMuMC4wIgoKZGVwZW5kZW5jaWVzOgogIG1hc29uOiBeMC4xLjAtZGV2LjM5CiAgcGF0aDogXjEuOC4xCgpkZXZfZGVwZW5kZW5jaWVzOgogIG1vY2t0YWlsOiBeMC4zLjAKICB0ZXN0OiBeMS4xOS4yCiAgdmVyeV9nb29kX2FuYWx5c2lzOiBeNC4wLjAK",
+          "bmFtZTogY3JlYXRlX2RhcnRfZnJvZ19ob29rcwoKZW52aXJvbm1lbnQ6CiAgc2RrOiAiPj0zLjAuMCA8NC4wLjAiCgpkZXBlbmRlbmNpZXM6CiAgbWFzb246IF4wLjEuMC1kZXYuMzkKICBwYXRoOiBeMS44LjEKCmRldl9kZXBlbmRlbmNpZXM6CiAgbW9ja3RhaWw6IF4wLjMuMAogIHRlc3Q6IF4xLjE5LjIKICB2ZXJ5X2dvb2RfYW5hbHlzaXM6IF41LjAuMAo=",
       "type": "text"
     },
     {

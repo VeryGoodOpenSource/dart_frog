@@ -1,5 +1,25 @@
 import 'package:dart_frog_gen/dart_frog_gen.dart';
+import 'package:equatable/equatable.dart';
 import 'package:path/path.dart' as path;
+
+class _RouteConflict extends Equatable {
+  const _RouteConflict(
+    this.originalFilePath,
+    this.conflictingFilePath,
+    this.conflictingEndpoint,
+  );
+
+  final String originalFilePath;
+  final String conflictingFilePath;
+  final String conflictingEndpoint;
+
+  @override
+  List<Object> get props => [
+        originalFilePath,
+        conflictingFilePath,
+        conflictingEndpoint,
+      ];
+}
 
 /// Type definition for callbacks that report route conflicts.
 typedef OnRouteConflict = void Function(
@@ -20,21 +40,72 @@ void reportRouteConflicts(
   /// Callback called when any route conflict is found.
   void Function()? onViolationEnd,
 }) {
-  final conflictingEndpoints =
-      configuration.endpoints.entries.where((entry) => entry.value.length > 1);
+  final directConflicts = configuration.endpoints.entries
+      .where((entry) => entry.value.length > 1)
+      .map((e) => _RouteConflict(e.value.first.path, e.value.last.path, e.key));
+
+  final indirectConflicts = configuration.endpoints.entries
+      .map((entry) {
+        final matches = configuration.endpoints.keys.where((other) {
+          final keyParts = entry.key.split('/');
+          if (other == entry.key) {
+            return false;
+          }
+
+          final otherParts = other.split('/');
+
+          var match = false;
+
+          if (keyParts.length == otherParts.length) {
+            for (var i = 0; i < keyParts.length; i++) {
+              if ((keyParts[i] == otherParts[i]) ||
+                  (keyParts[i].startsWith('<') ||
+                      otherParts[i].startsWith('<'))) {
+                match = true;
+              } else {
+                match = false;
+                break;
+              }
+            }
+          }
+
+          return match;
+        });
+
+        if (matches.isNotEmpty) {
+          final originalFilePath =
+              matches.first.endsWith('>') ? matches.first : entry.key;
+
+          final conflictingFilePath =
+              entry.key == originalFilePath ? matches.first : entry.key;
+
+          return _RouteConflict(
+            originalFilePath,
+            conflictingFilePath,
+            originalFilePath,
+          );
+        }
+
+        return null;
+      })
+      .whereType<_RouteConflict>()
+      .toSet();
+
+  final conflictingEndpoints = [...directConflicts, ...indirectConflicts];
+
   if (conflictingEndpoints.isNotEmpty) {
     onViolationStart?.call();
     for (final conflict in conflictingEndpoints) {
       final originalFilePath = path.normalize(
-        path.join('routes', conflict.value.first.path),
+        path.join('routes', conflict.originalFilePath),
       );
       final conflictingFilePath = path.normalize(
-        path.join('routes', conflict.value.last.path),
+        path.join('routes', conflict.conflictingFilePath),
       );
       onRouteConflict?.call(
         originalFilePath,
         conflictingFilePath,
-        conflict.key,
+        conflict.conflictingEndpoint,
       );
     }
     onViolationEnd?.call();
