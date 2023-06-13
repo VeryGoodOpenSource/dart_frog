@@ -975,7 +975,7 @@ lib/my_model.g.dart:53:20: Warning: Operand of null-aware operation '!' has type
       verify(
         () => logger.err(
           '$errorMessage '
-          '''Please, try specifying a different port using the `--dart-vm-service-port` argument when running `dart_frog dev`.''',
+          '''Try specifying a different port using the `--dart-vm-service-port` argument when running `dart_frog dev`.''',
         ),
       ).called(1);
     });
