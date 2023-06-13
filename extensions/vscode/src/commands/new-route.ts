@@ -6,6 +6,7 @@ import { InputBoxOptions, Uri, window, OpenDialogOptions } from "vscode";
 export const newRoute = async (uri: Uri) => {
   const routeName = await promptRouteName();
   if (routeName === undefined || routeName.trim() === "") {
+    window.showErrorMessage("Please enter a valid route name");
     return;
   }
 

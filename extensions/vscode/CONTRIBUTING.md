@@ -16,6 +16,7 @@ To develop for Very Good CLI you will need to become familiar with Visual Studio
 
 1. Dart SDK
 2. Node
+3. npm run test
 
 ### Debugging Dart Frog's Visual Studio Code extension
 
@@ -24,12 +25,6 @@ To develop for Very Good CLI you will need to become familiar with Visual Studio
 2. Reload
 
 3. Use
-
-### Testing Dart Frog's Visual Studio Code extension
-
-1.
-2.
-3.
 
 ### Creating a Pull Request
 
