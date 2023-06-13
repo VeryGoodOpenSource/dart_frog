@@ -36,40 +36,89 @@ void main() {
   });
 
   group('dart_frog new route', () {
-    test('Creates route', () async {
+    test('Creates well formatted route', () async {
       await dartFrogNewRoute('/new_route', directory: projectDirectory);
 
-      expect(fileAt('new_route.dart', on: routesDirectory), exists);
-    });
-
-    test('Creates route without the leading slash', () async {
-      await dartFrogNewRoute('another_new_route', directory: projectDirectory);
-
-      expect(fileAt('another_new_route.dart', on: routesDirectory), exists);
-    });
-
-    test('Creates dynamic route', () async {
-      await dartFrogNewRoute('/[id]', directory: projectDirectory);
-
-      expect(fileAt('[id].dart', on: routesDirectory), exists);
-    });
-
-    test('Creates nested dynamic route', () async {
-      await dartFrogNewRoute('/inn/[id]/route', directory: projectDirectory);
-
-      expect(
-        fileAt('inn/[id]/route.dart', on: routesDirectory),
-        exists,
+      final file = fileAt('new_route.dart', on: routesDirectory);
+      expect(file, exists);
+      await expectSuccessfulProcessResult(
+        'dart',
+        [
+          'format',
+          path.relative(file.path, from: projectDirectory.path),
+          '--set-exit-if-changed',
+        ],
+        workingDirectory: projectDirectory.path,
       );
     });
 
-    test('Creates a index route for an existing directory', () async {
+    test('Creates well formatted route without the leading slash', () async {
+      await dartFrogNewRoute('another_new_route', directory: projectDirectory);
+
+      final file = fileAt('another_new_route.dart', on: routesDirectory);
+      expect(file, exists);
+      await expectSuccessfulProcessResult(
+        'dart',
+        [
+          'format',
+          path.relative(file.path, from: projectDirectory.path),
+          '--set-exit-if-changed',
+        ],
+        workingDirectory: projectDirectory.path,
+      );
+    });
+
+    test('Creates a well formatted dynamic route', () async {
+      await dartFrogNewRoute('/[id]', directory: projectDirectory);
+
+      final file = fileAt('[id].dart', on: routesDirectory);
+      expect(file, exists);
+
+      await expectSuccessfulProcessResult(
+        'dart',
+        [
+          'format',
+          path.relative(file.path, from: projectDirectory.path),
+          '--set-exit-if-changed',
+        ],
+        workingDirectory: projectDirectory.path,
+      );
+    });
+
+    test('Creates well formatted nested dynamic route', () async {
+      await dartFrogNewRoute('/inn/[id]/route', directory: projectDirectory);
+
+      final file = fileAt('inn/[id]/route.dart', on: routesDirectory);
+      expect(file, exists);
+      await expectSuccessfulProcessResult(
+        'dart',
+        [
+          'format',
+          path.relative(file.path, from: projectDirectory.path),
+          '--set-exit-if-changed',
+        ],
+        workingDirectory: projectDirectory.path,
+      );
+    });
+
+    test('Creates a well formatted index route for an existing directory',
+        () async {
       Directory(path.join(routesDirectory.path, 'nested'))
           .createSync(recursive: true);
 
       await dartFrogNewRoute('/nested', directory: projectDirectory);
 
-      expect(fileAt('nested/index.dart', on: routesDirectory), exists);
+      final file = fileAt('nested/index.dart', on: routesDirectory);
+      expect(file, exists);
+      await expectSuccessfulProcessResult(
+        'dart',
+        [
+          'format',
+          path.relative(file.path, from: projectDirectory.path),
+          '--set-exit-if-changed',
+        ],
+        workingDirectory: projectDirectory.path,
+      );
     });
 
     test('Avoid rogue routes', () async {

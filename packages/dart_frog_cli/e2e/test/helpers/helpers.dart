@@ -5,6 +5,7 @@ export 'dart_frog_create.dart';
 export 'dart_frog_dev.dart';
 export 'dart_frog_new.dart';
 export 'dart_tst.dart';
+export 'expect_successful_process_result.dart';
 export 'files.dart';
 export 'kill_dart_frog_server.dart';
 export 'test_server.dart';
