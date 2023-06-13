@@ -118,7 +118,7 @@ void main() {
           'localhost',
           0,
         );
-        url = Uri.http('localhost:${server.port}', '');
+        url = Uri.http('localhost:${server.port}');
       });
 
       tearDown(() => server.close());
@@ -164,7 +164,7 @@ void main() {
           'localhost',
           0,
         );
-        url = Uri.http('localhost:${server.port}', '');
+        url = Uri.http('localhost:${server.port}');
       });
 
       tearDown(() => server.close());

@@ -9,3 +9,6 @@ pubspec.lock
 coverage/
 
 build
+
+!lib/src/commands/build/
+!test/src/commands/build/
