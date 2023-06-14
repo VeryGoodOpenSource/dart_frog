@@ -15,11 +15,12 @@ const _dullLoggerTheme = LogTheme(
   success: _dullStyle,
 );
 
-class LoggerDomain extends Domain implements Logger {
-  LoggerDomain(super.daemon);
+class LoggerDomain implements Logger {
+  LoggerDomain(this.domain, this.params);
 
-  @override
-  String get name => 'logger';
+  final Domain domain;
+
+  final Map<String, dynamic> params;
 
   @override
   LogTheme get theme => _dullLoggerTheme;
@@ -34,11 +35,12 @@ class LoggerDomain extends Domain implements Logger {
 
   @override
   void alert(String? message, {LogStyle? style}) {
-    daemon.conenction.send(
+    domain.daemon.conenction.send(
       DaemonEvent(
-        domain: name,
-        event: 'message',
+        domain: domain.name,
+        event: 'loggerAlert',
         params: {
+          ...params,
           'message': message ?? '',
         },
       ),
@@ -77,11 +79,12 @@ class LoggerDomain extends Domain implements Logger {
 
   @override
   void detail(String? message, {LogStyle? style}) {
-    daemon.conenction.send(
+    domain.daemon.conenction.send(
       DaemonEvent(
-        domain: name,
-        event: 'detail',
+        domain: domain.name,
+        event: 'loggerDetail',
         params: {
+          ...params,
           'message': message ?? '',
         },
       ),
@@ -90,11 +93,12 @@ class LoggerDomain extends Domain implements Logger {
 
   @override
   void err(String? message, {LogStyle? style}) {
-    daemon.conenction.send(
+    domain.daemon.conenction.send(
       DaemonEvent(
-        domain: name,
-        event: 'error',
+        domain: domain.name,
+        event: 'loggerError',
         params: {
+          ...params,
           'message': message ?? '',
         },
       ),
@@ -108,11 +112,12 @@ class LoggerDomain extends Domain implements Logger {
 
   @override
   void info(String? message, {LogStyle? style}) {
-    daemon.conenction.send(
+    domain.daemon.conenction.send(
       DaemonEvent(
-        domain: name,
-        event: 'info',
+        domain: domain.name,
+        event: 'loggerInfo',
         params: {
+          ...params,
           'message': message ?? '',
         },
       ),
@@ -122,10 +127,11 @@ class LoggerDomain extends Domain implements Logger {
   @override
   Progress progress(String message, {ProgressOptions? options}) {
     return LoggerDomainProgress(
+      domain: domain.name,
       message: message,
-      sendEvent: daemon.conenction.send,
-      id: getId(),
-      domainName: name,
+      sendEvent: domain.daemon.conenction.send,
+      id: domain.getId(),
+      params: params,
     );
   }
 
@@ -136,11 +142,12 @@ class LoggerDomain extends Domain implements Logger {
 
   @override
   void success(String? message, {LogStyle? style}) {
-    daemon.conenction.send(
+    domain.daemon.conenction.send(
       DaemonEvent(
-        domain: name,
-        event: 'success',
+        domain: domain.name,
+        event: 'loggerSuccess',
         params: {
+          ...params,
           'message': message ?? '',
         },
       ),
@@ -149,11 +156,12 @@ class LoggerDomain extends Domain implements Logger {
 
   @override
   void warn(String? message, {String tag = 'WARN', LogStyle? style}) {
-    daemon.conenction.send(
+    domain.daemon.conenction.send(
       DaemonEvent(
-        domain: name,
-        event: 'success',
+        domain: domain.name,
+        event: 'loggerWarn',
         params: {
+          ...params,
           'message': message ?? '',
         },
       ),
@@ -171,25 +179,29 @@ class LoggerDomainProgress implements Progress {
     required this.message,
     required this.sendEvent,
     required this.id,
-    required this.domainName,
+    required this.domain,
+    required this.params,
   }) {
     sendEvent(
       DaemonEvent(
-        domain: domainName,
+        domain: domain,
         event: 'progressStart',
         params: {
-          'message': message ,
+          ...params,
+          'message': message,
           'progressId': id,
         },
       ),
     );
   }
 
-  final String domainName;
+  final String domain;
 
   final String message;
 
   final String id;
+
+  final Map<String, dynamic> params;
 
   final void Function(DaemonEvent event) sendEvent;
 
@@ -197,9 +209,10 @@ class LoggerDomainProgress implements Progress {
   void cancel() {
     sendEvent(
       DaemonEvent(
-        domain: domainName,
+        domain: domain,
         event: 'progressCancel',
         params: {
+          ...params,
           'message': message,
           'progressId': id,
         },
@@ -211,9 +224,10 @@ class LoggerDomainProgress implements Progress {
   void complete([String? update]) {
     sendEvent(
       DaemonEvent(
-        domain: domainName,
+        domain: domain,
         event: 'progressComplete',
         params: {
+          ...params,
           'message': message,
           'progressId': id,
         },
@@ -225,10 +239,11 @@ class LoggerDomainProgress implements Progress {
   void fail([String? update]) {
     sendEvent(
       DaemonEvent(
-        domain: domainName,
+        domain: domain,
         event: 'progressFail',
         params: {
-          'message': message ,
+          ...params,
+          'message': message,
           'progressId': id,
         },
       ),
@@ -239,9 +254,10 @@ class LoggerDomainProgress implements Progress {
   void update(String update) {
     sendEvent(
       DaemonEvent(
-        domain: domainName,
+        domain: domain,
         event: 'progressUpdate',
         params: {
+          ...params,
           'message': message,
           'progressId': id,
         },

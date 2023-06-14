@@ -1,9 +1,13 @@
+import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
 import 'dart:io' as io;
+import 'dart:io';
 
 import 'package:path/path.dart' as path;
 import 'package:mason/mason.dart';
+import 'package:stream_transform/stream_transform.dart';
+import 'package:watcher/watcher.dart';
 
 import '../commands/commands.dart';
 import '../commands/dev/templates/dart_frog_dev_server_bundle.dart';
@@ -42,28 +46,50 @@ class DevServerRunner {
   final bool _isWindows;
   final io.ProcessSignal _sigint;
 
-  Future<ExitCode> run() async {
-    final target = _generatorTargetBuilder(logger);
-    final generator = await _generatorBuilder(dartFrogDevServerBundle);
+  Future<MasonGenerator>? _generator;
+
+  Future<MasonGenerator> get masonGenerator =>
+      _generator ?? (() => _generatorBuilder(dartFrogDevServerBundle))();
+
+  late final target = _generatorTargetBuilder(logger);
+
+  /// parametrize this
+  Directory get cwd => Directory.current;
+
+  Future<void> codegen() async {
+    logger.detail('[codegen] running pre-gen...');
+    var vars = <String, dynamic>{'port': port};
+    final generator = await masonGenerator;
+    await generator.hooks.preGen(
+      vars: vars,
+      workingDirectory: io.Directory.current.path,
+      onVarsChanged: (v) => vars = v,
+    );
+
+    logger.detail('[codegen] running generate...');
+    final _ = await generator.generate(
+      target,
+      vars: vars,
+      fileConflictResolution: FileConflictResolution.overwrite,
+    );
+    logger.detail('[codegen] complete.');
+  }
+
+  Future<bool> reload() async {
+    // if (isRunning) {
+    //   return false;
+    // }
+    logger.detail('[codegen] reloading...');
+    _isReloading = true;
+    await codegen();
+    _isReloading = false;
+    logger.detail('[codegen] reload complete.');
+
+    return true;
+  }
+
+  Future<void> run() async {
     isRunning = true;
-
-    Future<void> codegen() async {
-      logger.detail('[codegen] running pre-gen...');
-      var vars = <String, dynamic>{'port': port};
-      await generator.hooks.preGen(
-        vars: vars,
-        workingDirectory: io.Directory.current.path,
-        onVarsChanged: (v) => vars = v,
-      );
-
-      logger.detail('[codegen] running generate...');
-      final _ = await generator.generate(
-        target,
-        vars: vars,
-        fileConflictResolution: FileConflictResolution.overwrite,
-      );
-      logger.detail('[codegen] complete.');
-    }
 
     Future<void> serve() async {
       final enableVmServiceFlag = '--enable-vm-service'
@@ -124,9 +150,38 @@ class DevServerRunner {
     final progress = logger.progress('Starting server on port $port');
     await codegen();
     await serve();
-    isRunning = false;
-    return ExitCode.success;
+    final localhost = link(uri: Uri.parse('http://localhost:$port'));
+    progress.complete('Running on $localhost');
+
+    final entrypoint = path.join(cwd.path, 'main.dart');
+    final pubspec = path.join(cwd.path, 'pubspec.yaml');
+    final public = path.join(cwd.path, 'public');
+    final routes = path.join(cwd.path, 'routes');
+
+    bool shouldReload(WatchEvent event) {
+      logger.detail('[watcher] $event');
+      return path.equals(entrypoint, event.path) ||
+          path.equals(pubspec, event.path) ||
+          path.isWithin(routes, event.path) ||
+          path.isWithin(public, event.path);
+    }
+
+    // todo: parametrize DirectoryWatcher.new
+    final watcher = DirectoryWatcher(path.join(cwd.path));
+    final subscription = watcher.events
+        .where(shouldReload)
+        .debounce(Duration.zero)
+        .listen((_) => reload());
+
+    unawaited(subscription.asFuture<void>().then((value) async {
+      await subscription.cancel();
+      _exitCodeCompleter.complete(ExitCode.success);
+    }));
   }
+
+  final Completer<ExitCode> _exitCodeCompleter = Completer<ExitCode>();
+
+  Future<ExitCode> get exitCode => _exitCodeCompleter.future;
 
   Future<void> _killProcess(io.Process process) async {
     logger.detail('[process] killing process...');

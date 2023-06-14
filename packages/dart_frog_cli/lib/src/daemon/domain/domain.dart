@@ -69,6 +69,3 @@ class DaemonDomain extends Domain {
     );
   }
 }
-
-
-final oi = [{"method": "application.run", "params": {"port": "9090"}, "id": "1" }];

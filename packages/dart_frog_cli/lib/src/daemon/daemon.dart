@@ -5,7 +5,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dart_frog_cli/src/daemon/domain/application.dart';
-import 'package:dart_frog_cli/src/daemon/domain/logger.dart';
 import 'package:dart_frog_cli/src/daemon/protocol.dart';
 import 'package:mason/mason.dart';
 
@@ -16,7 +15,6 @@ const daemonVersion = '0.0.1';
 class Daemon {
   Daemon(this.conenction) {
     conenction.inputStream.listen(_handleInput);
-    _addDomain(logger = LoggerDomain(this));
     _addDomain(DaemonDomain(this));
     _addDomain(ApplicationDomain(this));
   }
@@ -24,8 +22,6 @@ class Daemon {
   final String version = daemonVersion;
   final DaemonConnection conenction;
   final Completer<ExitCode> _exitCodeCompleter = Completer<ExitCode>();
-
-  late final Logger logger;
 
   Future<ExitCode> get exitCode => _exitCodeCompleter.future;
   Map<String, Domain> domains = {};
@@ -85,8 +81,7 @@ abstract class DaemonConnection {
 class DaemonStdioConnection extends DaemonConnection {
   DaemonStdioConnection() {
     _outputStreamController.stream.listen((message) {
-
-      try{
+      try {
         final json = jsonEncode(message.toJson());
         stdout.add(utf8.encode('[${json}]\n'));
       } catch (e) {
