@@ -1,9 +1,8 @@
 import 'package:dart_frog_cli/src/daemon/dev_server_runner.dart';
+import 'package:dart_frog_cli/src/daemon/domain/domain.dart';
+import 'package:dart_frog_cli/src/daemon/logger.dart';
+import 'package:dart_frog_cli/src/daemon/protocol.dart';
 import 'package:mason/mason.dart';
-
-import '../logger.dart';
-import '../protocol.dart';
-import 'domain.dart';
 
 class ApplicationDomain extends Domain {
   ApplicationDomain(super.daemon) {
@@ -19,11 +18,13 @@ class ApplicationDomain extends Domain {
   void run(DaemonRequest request) async {
     final port = request.params['port'] as String?;
     final dartVmServicePort = request.params['dartVmServicePort'] as String?;
+    final workingDirectory = request.params['workingDirectory'] as String;
 
     final applicationId = getId();
 
-    final Logger logger = LoggerDomain(this, {
+    final Logger logger = DaemonLogger(this, {
       'applicationId': applicationId,
+      'workingDirectory': workingDirectory,
     });
 
     final instance = instances[applicationId] = ApplicationInstance(
@@ -31,8 +32,9 @@ class ApplicationDomain extends Domain {
         port: port,
         dartVmServicePort: dartVmServicePort,
         logger: logger,
+        workingDirectory: workingDirectory
       ),
-      request.id,
+      applicationId,
     );
 
     await instance.runner.run();

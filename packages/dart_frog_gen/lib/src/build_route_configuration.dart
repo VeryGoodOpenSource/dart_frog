@@ -346,6 +346,21 @@ class RouteConfiguration {
   /// │   │   └── index.dart
   /// ```
   final List<RouteFile> rogueRoutes;
+
+  /// Transform into json
+  Map<String, dynamic> toJson() {
+    return {
+      'invokeCustomEntrypoint': invokeCustomEntrypoint,
+      'invokeCustomInit': invokeCustomInit,
+      'serveStaticFiles': serveStaticFiles,
+      'globalMiddleware': globalMiddleware?.toJson(),
+      'middleware': middleware.map((e) => e.toJson()).toList(),
+      'directories': directories.map((e) => e.toJson()).toList(),
+      'routes': routes.map((e) => e.toJson()).toList(),
+      'endpoints': endpoints.map((key, value) => MapEntry(key, value.map((e) => e.toJson()).toList())),
+      'rogueRoutes': rogueRoutes.map((e) => e.toJson()).toList(),
+    };
+  }
 }
 
 /// {@template route_directory}

@@ -15,8 +15,8 @@ const _dullLoggerTheme = LogTheme(
   success: _dullStyle,
 );
 
-class LoggerDomain implements Logger {
-  LoggerDomain(this.domain, this.params);
+class DaemonLogger implements Logger {
+  DaemonLogger(this.domain, this.params);
 
   final Domain domain;
 

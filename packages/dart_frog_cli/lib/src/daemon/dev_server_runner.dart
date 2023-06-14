@@ -2,21 +2,20 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
 import 'dart:io' as io;
-import 'dart:io';
 
-import 'package:path/path.dart' as path;
+import 'package:dart_frog_cli/src/commands/dev/templates/dart_frog_dev_server_bundle.dart';
 import 'package:mason/mason.dart';
+import 'package:path/path.dart' as path;
 import 'package:stream_transform/stream_transform.dart';
 import 'package:watcher/watcher.dart';
-
-import '../commands/commands.dart';
-import '../commands/dev/templates/dart_frog_dev_server_bundle.dart';
 
 /// Regex for detecting warnings in the output of `dart run`.
 final _warningRegex = RegExp(r'^.*:\d+:\d+: Warning: .*', multiLine: true);
 
+// todo: add a way to stop the server
 class DevServerRunner {
   DevServerRunner({
+    required this.workingDirectory,
     required this.dartVmServicePort,
     required this.logger,
     String? port,
@@ -33,10 +32,11 @@ class DevServerRunner {
         _sigint = sigint ?? io.ProcessSignal.sigint,
         _startProcess = startProcess ?? io.Process.start;
 
-  bool isRunning = false;
+  bool _isRunning = false;
   bool _isReloading = false;
   bool _hotReloadEnabled = false;
 
+  final String workingDirectory;
   final String port;
   final String? dartVmServicePort;
   final Logger logger;
@@ -51,10 +51,7 @@ class DevServerRunner {
   Future<MasonGenerator> get masonGenerator =>
       _generator ?? (() => _generatorBuilder(dartFrogDevServerBundle))();
 
-  late final target = _generatorTargetBuilder(logger);
-
-  /// parametrize this
-  Directory get cwd => Directory.current;
+  late final target = _generatorTargetBuilder(workingDirectory, logger);
 
   Future<void> codegen() async {
     logger.detail('[codegen] running pre-gen...');
@@ -62,7 +59,7 @@ class DevServerRunner {
     final generator = await masonGenerator;
     await generator.hooks.preGen(
       vars: vars,
-      workingDirectory: io.Directory.current.path,
+      workingDirectory: workingDirectory,
       onVarsChanged: (v) => vars = v,
     );
 
@@ -76,9 +73,9 @@ class DevServerRunner {
   }
 
   Future<bool> reload() async {
-    // if (isRunning) {
-    //   return false;
-    // }
+    if (_isRunning) {
+      return false;
+    }
     logger.detail('[codegen] reloading...');
     _isReloading = true;
     await codegen();
@@ -89,7 +86,12 @@ class DevServerRunner {
   }
 
   Future<void> run() async {
-    isRunning = true;
+
+    if (_isRunning) {
+      return;
+    }
+
+    _isRunning = true;
 
     Future<void> serve() async {
       final enableVmServiceFlag = '--enable-vm-service'
@@ -153,10 +155,10 @@ class DevServerRunner {
     final localhost = link(uri: Uri.parse('http://localhost:$port'));
     progress.complete('Running on $localhost');
 
-    final entrypoint = path.join(cwd.path, 'main.dart');
-    final pubspec = path.join(cwd.path, 'pubspec.yaml');
-    final public = path.join(cwd.path, 'public');
-    final routes = path.join(cwd.path, 'routes');
+    final entrypoint = path.join(workingDirectory, 'main.dart');
+    final pubspec = path.join(workingDirectory, 'pubspec.yaml');
+    final public = path.join(workingDirectory, 'public');
+    final routes = path.join(workingDirectory, 'routes');
 
     bool shouldReload(WatchEvent event) {
       logger.detail('[watcher] $event');
@@ -167,14 +169,15 @@ class DevServerRunner {
     }
 
     // todo: parametrize DirectoryWatcher.new
-    final watcher = DirectoryWatcher(path.join(cwd.path));
-    final subscription = watcher.events
+    final watcher = DirectoryWatcher(path.join(workingDirectory));
+    _subscription = watcher.events
         .where(shouldReload)
         .debounce(Duration.zero)
         .listen((_) => reload());
 
-    unawaited(subscription.asFuture<void>().then((value) async {
-      await subscription.cancel();
+    unawaited(_subscription!.asFuture<void>().then((value) async {
+      await _subscription?.cancel();
+      _isRunning = false;
       _exitCodeCompleter.complete(ExitCode.success);
     }));
   }
@@ -182,6 +185,14 @@ class DevServerRunner {
   final Completer<ExitCode> _exitCodeCompleter = Completer<ExitCode>();
 
   Future<ExitCode> get exitCode => _exitCodeCompleter.future;
+
+  StreamSubscription<WatchEvent>? _subscription;
+
+  void terminate() {
+    _subscription?.cancel();
+    _subscription = null;
+    _isRunning = false;
+  }
 
   Future<void> _killProcess(io.Process process) async {
     logger.detail('[process] killing process...');
@@ -193,18 +204,33 @@ class DevServerRunner {
       process.kill();
     }
     logger.detail('[process] killing process complete.');
+    terminate();
   }
 }
 
 /// Typedef for [RestorableDirectoryGeneratorTarget.new]
 typedef RestorableDirectoryGeneratorTargetBuilder
-    = RestorableDirectoryGeneratorTarget Function(Logger? logger);
+    = RestorableDirectoryGeneratorTarget Function(
+  String workingDirectory,
+  Logger? logger,
+);
 
-RestorableDirectoryGeneratorTarget _defaultGeneratorTarget(Logger? logger) {
+/// Typedef for [io.Process.start].
+typedef ProcessStart = Future<io.Process> Function(
+  String executable,
+  List<String> arguments, {
+  bool runInShell,
+});
+
+/// A method which returns a [Future<MasonGenerator>] given a [MasonBundle].
+typedef GeneratorBuilder = Future<MasonGenerator> Function(MasonBundle);
+
+RestorableDirectoryGeneratorTarget _defaultGeneratorTarget(
+  String workingDirectory,
+  Logger? logger,
+) {
   return RestorableDirectoryGeneratorTarget(
-    io.Directory(
-      path.join(io.Directory.current.path, '.dart_frog'),
-    ),
+    io.Directory(path.join(workingDirectory, '.dart_frog')),
     logger: logger,
   );
 }

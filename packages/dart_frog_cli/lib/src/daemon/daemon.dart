@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dart_frog_cli/src/daemon/domain/application.dart';
+import 'package:dart_frog_cli/src/daemon/domain/project.dart';
 import 'package:dart_frog_cli/src/daemon/protocol.dart';
 import 'package:mason/mason.dart';
 
@@ -17,6 +18,7 @@ class Daemon {
     conenction.inputStream.listen(_handleInput);
     _addDomain(DaemonDomain(this));
     _addDomain(ApplicationDomain(this));
+    _addDomain(ProjectAnalyzerDomain(this));
   }
 
   final String version = daemonVersion;

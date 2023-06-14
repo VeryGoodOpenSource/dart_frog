@@ -66,6 +66,7 @@ class DaemonResponse extends DaemonMessage {
     required Map<String, dynamic> result,
   }) : this._(id: id, result: result, error: null);
 
+  // todo: add message
   DaemonResponse.error({
     required String id,
     required Map<String, dynamic> error,
