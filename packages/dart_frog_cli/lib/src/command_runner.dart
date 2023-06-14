@@ -4,6 +4,7 @@ import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:cli_completion/cli_completion.dart';
 import 'package:dart_frog_cli/src/commands/commands.dart';
+import 'package:dart_frog_cli/src/commands/daemon/daemon.dart';
 import 'package:dart_frog_cli/src/commands/update/update.dart';
 import 'package:dart_frog_cli/src/version.dart';
 import 'package:mason/mason.dart' hide packageVersion;
@@ -44,6 +45,7 @@ class DartFrogCommandRunner extends CompletionCommandRunner<int> {
     addCommand(UpdateCommand(logger: _logger));
     addCommand(NewCommand(logger: _logger));
     addCommand(ListCommand(logger: _logger));
+    addCommand(DaemonCommand());
   }
 
   final Logger _logger;
