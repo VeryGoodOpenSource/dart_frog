@@ -3,6 +3,16 @@
   "displayName": "Dart Frog",
   "description": "Support for Dart Frog, a minimalistic backend framework.",
   "version": "0.0.1",
+  "publisher": "VeryGoodVentures",
+  "bugs": {
+    "url": "https://github.com/VeryGoodOpenSource/dart_frog/issues",
+    "email": "tools@verygood.ventures"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VeryGoodOpenSource/dart_frog"
+  },
+  "homepage": "https://dartfrog.vgv.dev/",
   "engines": {
     "vscode": "^1.79.0"
   },

@@ -1,9 +1,5 @@
-# Change Log
+# 0.1.0
 
-All notable changes to the "dart-frog" extension will be documented in this file.
+Initial Version of the Extension.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
-## [Unreleased]
-
-- Initial release
+- Includes the ability to create a Bloc snippet
