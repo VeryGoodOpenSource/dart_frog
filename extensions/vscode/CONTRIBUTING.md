@@ -14,17 +14,29 @@ To develop for Very Good CLI you will need to become familiar with Visual Studio
 
 ### Setting up your local development environment
 
-1. Dart SDK
-2. Node
-3. npm run test
+1. Install a valid [Dart SDK](https://dart.dev/get-dart) in your local environment. Compatible Dart SDK versions with test optimizer can be found [here](https://github.com/VeryGoodOpenSource/very_good_cli/blob/main/pubspec.yaml). If you have Flutter installed, you likely have a valid Dart SDK version already installed.
 
-### Debugging Dart Frog's Visual Studio Code extension
+2. Install a valid [Node.js](https://nodejs.org) in your local environment.
 
-1. F5
+3. Get all project dependencies:
 
-2. Reload
+```sh
+# Get project dependencies:
+npm i
+```
 
-3. Use
+3. Open the project in Visual Studio Code:
+
+```sh
+# Open Visual Studio Code (from /extensions/vscode)
+code .
+```
+
+4. Inside the editor, press F5. This will compile and run the extension in a new **Extension Development Host** window.
+
+5. After a change, make sure to **Run Developer: Reload Window** in the new window.
+
+💡 **Note**: For further information about debugging Visual Studio Code's extensions refer to the [official documentation](https://code.visualstudio.com/api/get-started/your-first-extension).
 
 ### Creating a Pull Request
 
