@@ -17,7 +17,6 @@ export const newRoute = async (uri: Uri) => {
       window.showErrorMessage("Please select a valid directory");
       return;
     }
-
     workingDirectory = selectedUri;
   } else {
     workingDirectory = uri.fsPath;
