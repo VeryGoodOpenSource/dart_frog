@@ -1,12 +1,11 @@
 import 'dart:async';
+import 'dart:io' as io;
 
 import 'package:dart_frog_gen/dart_frog_gen.dart';
 import 'package:mason/mason.dart';
+import 'package:path/path.dart' as path;
 import 'package:stream_transform/stream_transform.dart';
 import 'package:watcher/watcher.dart';
-import 'package:path/path.dart' as path;
-import 'dart:io' as io;
-
 
 // todo: sigint handling is not implemented fro ctrl+c on windows
 /// Monitors a dart frog project for changes on its route configuration.
@@ -59,11 +58,13 @@ class RouteConfigMonitor {
         .debounce(Duration.zero)
         .listen((_) => regenerateRouteConfig());
 
-    unawaited(_subscription!.asFuture<void>().then((value) async {
-      await _subscription?.cancel();
-      _isRunning = false;
-      _exitCodeCompleter.complete(ExitCode.success);
-    }));
+    unawaited(
+      _subscription!.asFuture<void>().then((value) async {
+        await _subscription?.cancel();
+        _isRunning = false;
+        _exitCodeCompleter.complete(ExitCode.success);
+      }),
+    );
   }
 
   void terminate() {

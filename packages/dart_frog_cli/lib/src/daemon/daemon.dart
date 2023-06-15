@@ -11,8 +11,8 @@ import 'package:mason/mason.dart';
 export 'dev_server_runner.dart';
 export 'domain/domain.dart';
 export 'logger.dart';
-export 'project_analyzer.dart';
 export 'protocol.dart';
+export 'route_config_monitor.dart';
 
 const daemonVersion = '0.0.1';
 

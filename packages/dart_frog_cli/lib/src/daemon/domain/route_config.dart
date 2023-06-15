@@ -1,32 +1,28 @@
 import 'dart:async';
 
-import 'package:dart_frog_cli/src/daemon/domain/domain.dart';
-
-import '../logger.dart';
-import '../project_analyzer.dart';
-import '../protocol.dart';
+import 'package:dart_frog_cli/src/daemon/daemon.dart';
 
 class RouteConfigDomain extends Domain {
   RouteConfigDomain(super.daemon) {
-    addHandler('analyzeStart', analyzeStart);
-    addHandler('analyzeStop', analyzeStop);
+    addHandler('monitorStart', monitorStart);
+    addHandler('monitorStop', monitorStop);
   }
 
   @override
-  String get name => 'projectAnalyzer';
+  String get name => 'routeConfig';
 
-  Map<String, ProjectAnalyzerInstance> _instances = {};
+  final _instances = <String, RouteConfigMonitorInstance>{};
 
-  Future<DaemonResponse> analyzeStart(DaemonRequest request) async {
+  Future<DaemonResponse> monitorStart(DaemonRequest request) async {
     final analyzeId = getId();
 
     final workingDirectory = request.params['workingDirectory'] as String;
-    final analyzerId = getId();
-    final instance = _instances[analyzerId] = ProjectAnalyzerInstance(
+    final monitorId = getId();
+    final instance = _instances[monitorId] = RouteConfigMonitorInstance(
       RouteConfigMonitor(
         workingDirectory: workingDirectory,
         logger: DaemonLogger(this, {
-          'analyzerId': analyzerId,
+          'monitorId': monitorId,
           'workingDirectory': workingDirectory,
         }),
         onRouteConfigurationChanged: (routeConfiguration) {
@@ -35,7 +31,7 @@ class RouteConfigDomain extends Domain {
               domain: name,
               event: 'routeConfigurationChanged',
               params: {
-                'analyzerId': analyzerId,
+                'monitorId': monitorId,
                 'routeConfiguration': routeConfiguration.toJson(),
               },
             ),
@@ -44,37 +40,46 @@ class RouteConfigDomain extends Domain {
       ),
       analyzeId,
     );
-    await instance.analyzer.start();
+    await instance.monitor.start();
 
-    Timer.run(instance.analyzer.regenerateRouteConfig);
+    Timer.run(instance.monitor.regenerateRouteConfig);
 
-    return DaemonResponse.success(id: request.id, result: {
-      'analyzerId': analyzerId,
-    });
+    return DaemonResponse.success(
+      id: request.id,
+      result: {
+        'monitorId': monitorId,
+      },
+    );
   }
 
-  Future<DaemonResponse> analyzeStop(DaemonRequest request) async {
+  Future<DaemonResponse> monitorStop(DaemonRequest request) async {
     // todo: handle malformed params
-    final analyzerId = request.params['analyzerId'] as String;
-    final instance = _instances[analyzerId];
+    final monitorId = request.params['monitorId'] as String;
+    final instance = _instances[monitorId];
     if (instance == null) {
-      return DaemonResponse.error(id: request.id, error: {
-        'analyzerId': analyzerId,
-        'message': 'Analyzer not found',
-      });
+      return DaemonResponse.error(
+        id: request.id,
+        error: {
+          'monitorId': monitorId,
+          'message': 'Analyzer not found',
+        },
+      );
     }
-    instance.analyzer.terminate();
-    _instances.remove(analyzerId);
+    instance.monitor.terminate();
+    _instances.remove(monitorId);
 
-    return DaemonResponse.success(id: request.id, result: {
-      'analyzerId': analyzerId,
-    });
+    return DaemonResponse.success(
+      id: request.id,
+      result: {
+        'monitorId': monitorId,
+      },
+    );
   }
 }
 
-class ProjectAnalyzerInstance {
-  ProjectAnalyzerInstance(this.analyzer, this.id);
+class RouteConfigMonitorInstance {
+  RouteConfigMonitorInstance(this.monitor, this.id);
 
-  final RouteConfigMonitor analyzer;
+  final RouteConfigMonitor monitor;
   final String id;
 }

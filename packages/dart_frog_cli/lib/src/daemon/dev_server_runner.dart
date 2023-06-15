@@ -86,7 +86,6 @@ class DevServerRunner {
   }
 
   Future<void> run() async {
-
     if (_isRunning) {
       return;
     }
@@ -176,11 +175,13 @@ class DevServerRunner {
         .debounce(Duration.zero)
         .listen((_) => reload());
 
-    unawaited(_subscription!.asFuture<void>().then((value) async {
-      await _subscription?.cancel();
-      _isRunning = false;
-      _exitCodeCompleter.complete(ExitCode.success);
-    }));
+    unawaited(
+      _subscription!.asFuture<void>().then((value) async {
+        await _subscription?.cancel();
+        _isRunning = false;
+        _exitCodeCompleter.complete(ExitCode.success);
+      }),
+    );
   }
 
   final Completer<ExitCode> _exitCodeCompleter = Completer<ExitCode>();

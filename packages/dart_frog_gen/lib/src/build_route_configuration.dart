@@ -357,7 +357,9 @@ class RouteConfiguration {
       'middleware': middleware.map((e) => e.toJson()).toList(),
       'directories': directories.map((e) => e.toJson()).toList(),
       'routes': routes.map((e) => e.toJson()).toList(),
-      'endpoints': endpoints.map((key, value) => MapEntry(key, value.map((e) => e.toJson()).toList())),
+      'endpoints': endpoints.map(
+        (key, value) => MapEntry(key, value.map((e) => e.toJson()).toList()),
+      ),
       'rogueRoutes': rogueRoutes.map((e) => e.toJson()).toList(),
     };
   }
