@@ -50,5 +50,20 @@ git branch <branch-name>
 git checkout <branch-name>
 ```
 
+2. Ensure you have a meaningful [semantic][conventional_commits_link] commit message.
+
+3. Analyze your code:
+
+```sh
+# 🔍 Run ESLint linter
+eslint src --ext ts
+```
+
+4. Create the Pull Request with a meaningful description, linking to the original issue where possible.
+
+5. Verify that all [status checks](https://github.com/VeryGoodOpenSource/dart_frog/actions/) are passing for your Pull Request once they have been approved to run by a maintainer.
+
+💡 **Note**: While the prerequisites above must be satisfied prior to having your pull request reviewed, the reviewer(s) may ask you to complete additional work, tests, or other changes before your pull request can be accepted.
+
 [conventional_commits_link]: https://www.conventionalcommits.org/en/v1.0.0
 [bug_report_link]: https://github.com/VeryGoodOpenSource/dart_frog/issues/new?assignees=&labels=bug&template=bug_report.md&title=fix%3A+
