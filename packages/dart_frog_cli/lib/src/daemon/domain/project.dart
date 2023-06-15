@@ -44,12 +44,14 @@ class ProjectAnalyzerDomain extends Domain {
       analyzeId,
     );
     await instance.analyzer.start();
-    instance.analyzer.regenerateRouteConfig();
+
     daemon.conenction.send(
       DaemonResponse.success(id: request.id, result: {
         'analyzerId': analyzerId,
       }),
     );
+
+    instance.analyzer.regenerateRouteConfig();
   }
 
   void analyzeStop(DaemonRequest request) async {

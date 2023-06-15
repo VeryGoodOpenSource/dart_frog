@@ -66,7 +66,6 @@ class DaemonResponse extends DaemonMessage {
     required Map<String, dynamic> result,
   }) : this._(id: id, result: result, error: null);
 
-  // todo: add message
   DaemonResponse.error({
     required String id,
     required Map<String, dynamic> error,
@@ -79,6 +78,8 @@ class DaemonResponse extends DaemonMessage {
       error: rawMessage['error'] as Map<String, dynamic>?,
     );
   }
+
+  bool get isSuccess => error == null;
 
   final String id;
   final Map<String, dynamic>? result;
@@ -103,9 +104,10 @@ class DaemonEvent extends DaemonMessage {
   });
 
   factory DaemonEvent.fromJson(Map<String, dynamic> rawMessage) {
+    final event = rawMessage['event'] as String;
     return DaemonEvent(
-      domain: rawMessage['domain'] as String,
-      event: rawMessage['event'] as String,
+      event: event.substring(event.indexOf('.') + 1),
+      domain: event.substring(0, event.indexOf('.')),
       params: rawMessage['params'] as Map<String, dynamic>,
     );
   }
