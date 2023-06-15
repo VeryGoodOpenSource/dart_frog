@@ -170,6 +170,7 @@ class DevServerRunner {
 
     // todo: parametrize DirectoryWatcher.new
     final watcher = DirectoryWatcher(path.join(workingDirectory));
+
     _subscription = watcher.events
         .where(shouldReload)
         .debounce(Duration.zero)

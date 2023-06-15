@@ -4,32 +4,35 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dart_frog_cli/src/daemon/domain/application.dart';
-import 'package:dart_frog_cli/src/daemon/domain/project.dart';
+import 'package:dart_frog_cli/src/daemon/domain/domain.dart';
 import 'package:dart_frog_cli/src/daemon/protocol.dart';
 import 'package:mason/mason.dart';
 
-import 'domain/domain.dart';
+export 'dev_server_runner.dart';
+export 'domain/domain.dart';
+export 'logger.dart';
+export 'project_analyzer.dart';
+export 'protocol.dart';
 
 const daemonVersion = '0.0.1';
 
 class Daemon {
-  Daemon(this.conenction) {
-    conenction.inputStream.listen(_handleInput);
+  Daemon(DaemonConnection conenction) : _conenction = conenction {
+    _conenction.inputStream.listen(_handleInput);
     _addDomain(DaemonDomain(this));
     _addDomain(ApplicationDomain(this));
-    _addDomain(ProjectAnalyzerDomain(this));
+    _addDomain(RouteConfigDomain(this));
   }
 
   final String version = daemonVersion;
-  final DaemonConnection conenction;
+  final DaemonConnection _conenction;
   final Completer<ExitCode> _exitCodeCompleter = Completer<ExitCode>();
 
   Future<ExitCode> get exitCode => _exitCodeCompleter.future;
   Map<String, Domain> domains = {};
 
   Future<void> kill(ExitCode exitCode) async {
-    await conenction.dispose();
+    await _conenction.dispose();
     _exitCodeCompleter.complete(exitCode);
   }
 
@@ -48,9 +51,22 @@ class Daemon {
   }
 
   void _handleRequest(DaemonRequest request) {
-    // todo: handle invalid domain
-    final domain = request.method.split('.').first;
-    domains[domain]!.handleRequest(request);
+    final domainName = request.method.split('.').first;
+
+    final domain = domains[domainName];
+
+    if (domain == null) {
+      return send(
+        DaemonResponse.error(
+          id: request.id,
+          error: {
+            'message': 'Invalid domain: $domainName',
+          },
+        ),
+      );
+    }
+
+    domain.handleRequest(request);
   }
 
   void _handleResponse(DaemonResponse message) {
@@ -59,6 +75,10 @@ class Daemon {
 
   void _handleEvent(DaemonEvent message) {
     // todo: handle event
+  }
+
+  void send(DaemonMessage message) {
+    _conenction.send(message);
   }
 }
 
@@ -85,29 +105,34 @@ class DaemonStdioConnection extends DaemonConnection {
     _outputStreamController.stream.listen((message) {
       try {
         final json = jsonEncode(message.toJson());
-        stdout.add(utf8.encode('[${json}]\n'));
+        stdout.add(utf8.encode('[$json]\n'));
       } catch (e) {
-        stdout.writeln('ops: ${message}');
+        stdout.writeln('ops: $message');
       }
     });
 
-    StreamSubscription<String>? _stdinSubscription;
+    StreamSubscription<String>? stdinSubscription;
     _inputStreamController
       ..onListen = () {
-        _stdinSubscription = stdin.transform(utf8.decoder).listen((event) {
-          try {
-            // todo: this is a hack, fix this please
-            final json = jsonDecode(event);
-            _inputStreamController.add(DaemonMessage.fromJson(json));
-          } catch (e) {
-            // todo: handle invalid json
-            print('ops');
-            print(e);
-          }
+        // todo: this is a hack, fix this please
+        stdinSubscription = stdin.transform(utf8.decoder).listen((chunk) {
+          chunk
+              .split('\n')
+              .where((element) => element.isNotEmpty)
+              .forEach((event) {
+            try {
+              final json = jsonDecode(event);
+              _inputStreamController.add(DaemonMessage.fromJson(json));
+            } catch (e) {
+              // todo: handle invalid json
+              print('ops');
+              print(e);
+            }
+          });
         });
       }
       ..onCancel = () {
-        _stdinSubscription?.cancel();
+        stdinSubscription?.cancel();
       };
   }
 
@@ -157,7 +182,7 @@ class DaemonProgramaticConnection extends DaemonConnection {
     _inputStreamController.add(request);
     responses
         .firstWhere((element) => element.id == callId)
-        .then((value) => completer.complete(value));
+        .then(completer.complete);
 
     return completer.future;
   }

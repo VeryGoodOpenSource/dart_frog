@@ -9,10 +9,9 @@ import 'dart:io' as io;
 
 
 // todo: sigint handling is not implemented fro ctrl+c on windows
-/// Monitors a project for changes and tells the clienat about the project's
-/// route configuration accordingly
-class ProjectAnalyzer {
-  ProjectAnalyzer({
+/// Monitors a dart frog project for changes on its route configuration.
+class RouteConfigMonitor {
+  RouteConfigMonitor({
     required this.workingDirectory,
     required this.logger,
     required this.onRouteConfigurationChanged,

@@ -1,38 +1,39 @@
+import 'dart:async';
+
 import 'package:dart_frog_cli/src/daemon/domain/domain.dart';
 
 import '../logger.dart';
 import '../project_analyzer.dart';
 import '../protocol.dart';
 
-// todo: didnt have a better name for this
-class ProjectAnalyzerDomain extends Domain {
-  ProjectAnalyzerDomain(super.daemon) {
-    addHandler('analyze', analyze);
+class RouteConfigDomain extends Domain {
+  RouteConfigDomain(super.daemon) {
+    addHandler('analyzeStart', analyzeStart);
     addHandler('analyzeStop', analyzeStop);
   }
 
   @override
   String get name => 'projectAnalyzer';
 
-  Map<String, ProjectAnalyzerInstance> instances = {};
+  Map<String, ProjectAnalyzerInstance> _instances = {};
 
-  void analyze(DaemonRequest request) async {
+  Future<DaemonResponse> analyzeStart(DaemonRequest request) async {
     final analyzeId = getId();
 
     final workingDirectory = request.params['workingDirectory'] as String;
     final analyzerId = getId();
-    final instance = instances[analyzerId] = ProjectAnalyzerInstance(
-      ProjectAnalyzer(
+    final instance = _instances[analyzerId] = ProjectAnalyzerInstance(
+      RouteConfigMonitor(
         workingDirectory: workingDirectory,
         logger: DaemonLogger(this, {
           'analyzerId': analyzerId,
           'workingDirectory': workingDirectory,
         }),
         onRouteConfigurationChanged: (routeConfiguration) {
-          daemon.conenction.send(
+          daemon.send(
             DaemonEvent(
               domain: name,
-              event: 'routeConfigurationChangeChanged',
+              event: 'routeConfigurationChanged',
               params: {
                 'analyzerId': analyzerId,
                 'routeConfiguration': routeConfiguration.toJson(),
@@ -45,41 +46,35 @@ class ProjectAnalyzerDomain extends Domain {
     );
     await instance.analyzer.start();
 
-    daemon.conenction.send(
-      DaemonResponse.success(id: request.id, result: {
-        'analyzerId': analyzerId,
-      }),
-    );
+    Timer.run(instance.analyzer.regenerateRouteConfig);
 
-    instance.analyzer.regenerateRouteConfig();
+    return DaemonResponse.success(id: request.id, result: {
+      'analyzerId': analyzerId,
+    });
   }
 
-  void analyzeStop(DaemonRequest request) async {
+  Future<DaemonResponse> analyzeStop(DaemonRequest request) async {
+    // todo: handle malformed params
     final analyzerId = request.params['analyzerId'] as String;
-    final instance = instances[analyzerId];
-    if (instance != null) {
-      instance.analyzer.terminate();
-      instances.remove(analyzerId);
-
-      return daemon.conenction.send(
-        DaemonResponse.success(id: request.id, result: {
-          'analyzerId': analyzerId,
-        }),
-      );
-    }
-    daemon.conenction.send(
-      DaemonResponse.error(id: request.id, error: {
+    final instance = _instances[analyzerId];
+    if (instance == null) {
+      return DaemonResponse.error(id: request.id, error: {
         'analyzerId': analyzerId,
         'message': 'Analyzer not found',
-      }),
-    );
+      });
+    }
+    instance.analyzer.terminate();
+    _instances.remove(analyzerId);
 
+    return DaemonResponse.success(id: request.id, result: {
+      'analyzerId': analyzerId,
+    });
   }
 }
 
 class ProjectAnalyzerInstance {
   ProjectAnalyzerInstance(this.analyzer, this.id);
 
-  final ProjectAnalyzer analyzer;
+  final RouteConfigMonitor analyzer;
   final String id;
 }

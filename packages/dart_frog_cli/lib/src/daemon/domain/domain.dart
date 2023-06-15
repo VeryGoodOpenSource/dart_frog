@@ -1,12 +1,17 @@
-// ignore_for_file: public_member_api_docs
-
+import 'dart:async';
 import 'dart:io';
 
+import 'package:dart_frog_cli/src/daemon/daemon.dart';
 import 'package:dart_frog_cli/src/daemon/protocol.dart';
 import 'package:mason/mason.dart';
 import 'package:uuid/uuid.dart';
 
-import '../daemon.dart';
+export 'application.dart';
+export 'route_config.dart';
+
+typedef DomaonRequestHandler = Future<DaemonResponse> Function(
+  DaemonRequest request,
+);
 
 abstract class Domain {
   Domain(this.daemon);
@@ -17,20 +22,20 @@ abstract class Domain {
 
   String get name;
 
-  final Map<String, Function> handlers = {};
+  final Map<String, DomaonRequestHandler> _handlers = {};
 
   final String Function() getId = () => _uuidGenerator.v4();
 
-  void addHandler(String method, Function handler) {
-    handlers[method] = handler;
+  void addHandler(String method, DomaonRequestHandler handler) {
+    _handlers[method] = handler;
   }
 
-  void handleRequest(DaemonRequest request) {
-    final handler = handlers[request.method.split('.').last];
+  void handleRequest(DaemonRequest request) async {
+    final handler = _handlers[request.method.split('.').last];
     if (handler != null) {
-      handler(request);
+      final response = await handler(request);
+      daemon.send(response);
     }
-    // todo: handle unkown method
   }
 }
 
@@ -39,7 +44,7 @@ class DaemonDomain extends Domain {
     addHandler('kill', kill);
     addHandler('requestVersion', requestVersion);
 
-    daemon.conenction.send(
+    daemon.send(
       DaemonEvent(
         domain: name,
         event: 'ready',
@@ -54,18 +59,21 @@ class DaemonDomain extends Domain {
   @override
   String get name => 'daemon';
 
-  void kill(DaemonRequest request) {
-    daemon.kill(ExitCode.success);
+  Future<DaemonResponse> kill(DaemonRequest request) async {
+   scheduleMicrotask(() {
+     daemon.kill(ExitCode.success);
+   });
+    return DaemonResponse.success(id: request.id, result: {
+      'message': 'Hogarth. You stay, I go. No following.',
+    });
   }
 
-  void requestVersion(DaemonRequest request) {
-    daemon.conenction.send(
-      DaemonResponse.success(
-        id: request.id,
-        result: {
-          'version': daemon.version,
-        },
-      ),
+  Future<DaemonResponse> requestVersion(DaemonRequest request) async {
+    return DaemonResponse.success(
+      id: request.id,
+      result: {
+        'version': daemon.version,
+      },
     );
   }
 }

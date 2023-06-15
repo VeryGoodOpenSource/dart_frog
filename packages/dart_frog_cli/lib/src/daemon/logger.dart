@@ -1,20 +1,22 @@
-// ignore_for_file: public_member_api_docs
-
 import 'package:dart_frog_cli/src/daemon/domain/domain.dart';
 import 'package:dart_frog_cli/src/daemon/protocol.dart';
 import 'package:mason/mason.dart';
 
-String? _dullStyle(String? m) => m;
+String? _boringStyle(String? m) => m;
 
-const _dullLoggerTheme = LogTheme(
-  detail: _dullStyle,
-  info: _dullStyle,
-  err: _dullStyle,
-  warn: _dullStyle,
-  alert: _dullStyle,
-  success: _dullStyle,
+const _boringLoggerTheme = LogTheme(
+  detail: _boringStyle,
+  info: _boringStyle,
+  err: _boringStyle,
+  warn: _boringStyle,
+  alert: _boringStyle,
+  success: _boringStyle,
 );
 
+/// A [Logger] that sends messages to the daemon instead of
+/// printing them to the console.
+///
+/// Does not support any user interaction.
 class DaemonLogger implements Logger {
   DaemonLogger(this.domain, this.params);
 
@@ -23,7 +25,7 @@ class DaemonLogger implements Logger {
   final Map<String, dynamic> params;
 
   @override
-  LogTheme get theme => _dullLoggerTheme;
+  LogTheme get theme => _boringLoggerTheme;
 
   @override
   Level level = Level.info;
@@ -35,7 +37,7 @@ class DaemonLogger implements Logger {
 
   @override
   void alert(String? message, {LogStyle? style}) {
-    domain.daemon.conenction.send(
+    domain.daemon.send(
       DaemonEvent(
         domain: domain.name,
         event: 'loggerAlert',
@@ -79,7 +81,7 @@ class DaemonLogger implements Logger {
 
   @override
   void detail(String? message, {LogStyle? style}) {
-    domain.daemon.conenction.send(
+    domain.daemon.send(
       DaemonEvent(
         domain: domain.name,
         event: 'loggerDetail',
@@ -93,7 +95,7 @@ class DaemonLogger implements Logger {
 
   @override
   void err(String? message, {LogStyle? style}) {
-    domain.daemon.conenction.send(
+    domain.daemon.send(
       DaemonEvent(
         domain: domain.name,
         event: 'loggerError',
@@ -112,7 +114,7 @@ class DaemonLogger implements Logger {
 
   @override
   void info(String? message, {LogStyle? style}) {
-    domain.daemon.conenction.send(
+    domain.daemon.send(
       DaemonEvent(
         domain: domain.name,
         event: 'loggerInfo',
@@ -129,7 +131,7 @@ class DaemonLogger implements Logger {
     return LoggerDomainProgress(
       domain: domain.name,
       message: message,
-      sendEvent: domain.daemon.conenction.send,
+      sendEvent: domain.daemon.send,
       id: domain.getId(),
       params: params,
     );
@@ -142,7 +144,7 @@ class DaemonLogger implements Logger {
 
   @override
   void success(String? message, {LogStyle? style}) {
-    domain.daemon.conenction.send(
+    domain.daemon.send(
       DaemonEvent(
         domain: domain.name,
         event: 'loggerSuccess',
@@ -156,7 +158,7 @@ class DaemonLogger implements Logger {
 
   @override
   void warn(String? message, {String tag = 'WARN', LogStyle? style}) {
-    domain.daemon.conenction.send(
+    domain.daemon.send(
       DaemonEvent(
         domain: domain.name,
         event: 'loggerWarn',
