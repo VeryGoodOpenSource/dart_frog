@@ -2,4 +2,4 @@
 
 Initial Version of the Extension.
 
-- Includes the ability to create a Bloc snippet
+- Includes the ability to create a Route snippet
