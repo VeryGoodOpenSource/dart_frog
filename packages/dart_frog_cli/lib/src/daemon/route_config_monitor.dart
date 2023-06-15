@@ -7,7 +7,6 @@ import 'package:path/path.dart' as path;
 import 'package:stream_transform/stream_transform.dart';
 import 'package:watcher/watcher.dart';
 
-// todo: sigint handling is not implemented fro ctrl+c on windows
 /// Monitors a dart frog project for changes on its route configuration.
 class RouteConfigMonitor {
   RouteConfigMonitor({
@@ -73,16 +72,17 @@ class RouteConfigMonitor {
     _isRunning = false;
   }
 
-  void regenerateRouteConfig() {
+  RouteConfiguration? regenerateRouteConfig() {
     final RouteConfiguration routeConfiguration;
     final projectDirectory = io.Directory(workingDirectory);
     try {
       routeConfiguration = buildRouteConfiguration(projectDirectory);
     } catch (error) {
       logger.err('$error');
-      return;
+      return null;
     }
 
     onRouteConfigurationChanged(routeConfiguration);
+    return routeConfiguration;
   }
 }

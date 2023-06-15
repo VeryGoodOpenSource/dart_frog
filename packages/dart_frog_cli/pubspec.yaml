@@ -14,6 +14,7 @@ dependencies:
   cli_completion: ^0.3.0
   dart_frog_gen: ^0.4.0
   mason: ^0.1.0-dev.39
+  mason_logger: ^0.2.6
   meta: ^1.7.0
   path: ^1.8.1
   pub_updater: ">=0.2.4 <0.4.0"

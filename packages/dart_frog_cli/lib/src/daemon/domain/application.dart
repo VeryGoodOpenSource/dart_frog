@@ -10,6 +10,7 @@ class ApplicationDomain extends Domain {
   ApplicationDomain(super.daemon) {
     addHandler('start', start);
     addHandler('reload', reload);
+    addHandler('stop', stop);
   }
 
   @override
@@ -24,6 +25,17 @@ class ApplicationDomain extends Domain {
     final workingDirectory = request.params['workingDirectory'] as String;
 
     final applicationId = getId();
+
+    daemon.send(
+      DaemonEvent(
+        domain: name,
+        event: 'applicationStarting',
+        params: {
+          'applicationId': applicationId,
+          'requestId': request.id,
+        },
+      ),
+    );
 
     final Logger logger = DaemonLogger(this, {
       'applicationId': applicationId,

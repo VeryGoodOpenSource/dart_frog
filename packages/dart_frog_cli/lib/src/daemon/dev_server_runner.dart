@@ -73,9 +73,9 @@ class DevServerRunner {
   }
 
   Future<bool> reload() async {
-    if (_isRunning) {
-      return false;
-    }
+    // if (_isRunning) {
+    //   return false;
+    // }
     logger.detail('[codegen] reloading...');
     _isReloading = true;
     await codegen();
@@ -84,6 +84,8 @@ class DevServerRunner {
 
     return true;
   }
+
+  io.Process? process;
 
   Future<void> run() async {
     if (_isRunning) {
@@ -97,18 +99,21 @@ class DevServerRunner {
           '${dartVmServicePort == null ? "" : "=$dartVmServicePort"}';
 
       logger.detail(
-        '''[process] dart $enableVmServiceFlag ${path.join('.dart_frog', 'server.dart')}''',
+        '''[process] dart $enableVmServiceFlag ${path.join(workingDirectory, '.dart_frog', 'server.dart')}''',
       );
-      final process = await _startProcess(
+      final process = this.process = await _startProcess(
         'dart',
-        [enableVmServiceFlag, path.join('.dart_frog', 'server.dart')],
+        [
+          enableVmServiceFlag,
+          path.join(workingDirectory, '.dart_frog', 'server.dart')
+        ],
         runInShell: true,
       );
 
       // On Windows listen for CTRL-C and use taskkill to kill
       // the spawned process along with any child processes.
       // https://github.com/dart-lang/sdk/issues/22470
-      if (_isWindows) _sigint.watch().listen((_) => _killProcess(process));
+      if (_isWindows) _sigint.watch().listen((_) => terminate());
 
       var hasError = false;
       process.stderr.listen((_) async {
@@ -128,10 +133,13 @@ class DevServerRunner {
           logger.err(message);
         }
 
+        logger
+            .detail('[process] will exit: !_hotReloadEnabled && !isSDKWarning');
         if (!_hotReloadEnabled && !isSDKWarning) {
-          await _killProcess(process);
+          await terminate();
+
           logger.detail('[process] exit(1)');
-          io.exit(1);
+          _exitCodeCompleter.complete(ExitCode.unavailable);
         }
 
         await target.rollback();
@@ -190,13 +198,13 @@ class DevServerRunner {
 
   StreamSubscription<WatchEvent>? _subscription;
 
-  void terminate() {
-    _subscription?.cancel();
-    _subscription = null;
-    _isRunning = false;
-  }
+  Future<void> terminate() async {
+    final process = this.process;
 
-  Future<void> _killProcess(io.Process process) async {
+    if (process == null) {
+      return;
+    }
+
     logger.detail('[process] killing process...');
     if (_isWindows) {
       logger.detail('[process] taskkill /F /T /PID ${process.pid}');
@@ -206,7 +214,10 @@ class DevServerRunner {
       process.kill();
     }
     logger.detail('[process] killing process complete.');
-    terminate();
+
+    await _subscription?.cancel();
+    _subscription = null;
+    _isRunning = false;
   }
 }
 

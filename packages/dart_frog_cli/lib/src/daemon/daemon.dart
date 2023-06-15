@@ -13,6 +13,7 @@ export 'domain/domain.dart';
 export 'logger.dart';
 export 'protocol.dart';
 export 'route_config_monitor.dart';
+export 'new_route_generator.dart';
 
 const daemonVersion = '0.0.1';
 
