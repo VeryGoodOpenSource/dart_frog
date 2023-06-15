@@ -56,7 +56,7 @@ git checkout <branch-name>
 
 ```sh
 # 🔍 Run ESLint linter
-eslint src --ext ts
+npm run lint
 ```
 
 4. Create the Pull Request with a meaningful description, linking to the original issue where possible.
