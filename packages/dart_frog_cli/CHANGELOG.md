@@ -1,3 +1,9 @@
+# 0.3.8
+
+- feat: update brick bundles to dart 3.0.0
+- feat: Add dart-vm-port option to dev command
+- feat: added default port number for --dart-vm-service-port
+
 # 0.3.7
 
 - feat: Update to dart 3.0.0 and vg analysis to 5.0.0
