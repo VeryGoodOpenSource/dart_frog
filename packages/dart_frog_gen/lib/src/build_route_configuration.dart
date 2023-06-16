@@ -123,6 +123,10 @@ List<RouteDirectory> _getRouteDirectories({
       onEndpoint(endpoint, file);
     }
 
+    if (directoryPath.isWildcard()) {
+      throw ArgumentError('Only files can be named with a wildcard alias.');
+    }
+
     directories.add(
       RouteDirectory(
         name: directoryPath.toAlias(),
@@ -191,11 +195,15 @@ List<RouteFile> _getRouteFiles({
 
     final fileRoute = getFileRoute();
     final relativeFilePath = path.join('..', 'routes', filePath);
+
+    final isWildcard = filePath.isWildcard();
+
     final route = RouteFile(
       name: filePath.toAlias(),
       path: relativeFilePath.replaceAll(r'\', '/'),
       route: fileRoute.toRoute(),
       params: fileRoute.toParams(),
+      wildcard: isWildcard,
     );
     onRoute(route);
     files.add(route);
@@ -212,25 +220,44 @@ List<RouteFile> _getRouteFiles({
   return files;
 }
 
-extension on String {
+/// Extension on [String] with helper methods regarding
+/// Dart Frog routes.
+extension RouteStringX on String {
+  /// Parses the stirng into a route alias.
   String toAlias() {
     final alias = path
         .withoutExtension(this)
         .replaceAll('[', r'$')
         .replaceAll(']', '')
-        .replaceAll('/', '_');
+        .replaceAll('/', '_')
+        .replaceAll('...', 'wildcard_');
     if (alias == '') return 'index';
     return alias;
   }
 
+  /// Returns if this value matches a wildcard route.
+  bool isWildcard() {
+    final value = endsWith('.dart')
+        ? path.basenameWithoutExtension(this)
+        : path.basename(this);
+
+    return RegExp(r'\[\.\.\.(.*?)\]').hasMatch(value);
+  }
+
+  /// Parses the string into a route path.
   String toRoute() {
+    if (isWildcard()) return '/';
     return replaceAll('[', '<').replaceAll(']', '>').replaceAll(r'\', '/');
   }
 
+  /// Parses the string into a list of route parameters.
   List<String> toParams() {
     final regexp = RegExp(r'\[(.*?)\]');
     final matches = regexp.allMatches(this);
-    return matches.map((m) => m[0]!.replaceAll(RegExp(r'\[|\]'), '')).toList();
+    return matches.map((m) {
+      final match = m[0]!;
+      return match.replaceAll(RegExp(r'\[|\]'), '').replaceFirst('...', '');
+    }).toList();
   }
 }
 
@@ -388,6 +415,7 @@ class RouteFile {
     required this.path,
     required this.route,
     required this.params,
+    required this.wildcard,
   });
 
   /// The alias for the current file.
@@ -402,18 +430,23 @@ class RouteFile {
   /// The dynamic route params associated with the file.
   final List<String> params;
 
+  /// Whether the route is a wildcard route.
+  final bool wildcard;
+
   /// Create a copy of the current instance and override zero or more values.
   RouteFile copyWith({
     String? name,
     String? path,
     String? route,
     List<String>? params,
+    bool? wildcard,
   }) {
     return RouteFile(
       name: name ?? this.name,
       path: path ?? this.path,
       route: route ?? this.route,
       params: params ?? this.params,
+      wildcard: wildcard ?? this.wildcard,
     );
   }
 
@@ -424,6 +457,7 @@ class RouteFile {
       'path': path,
       'route': route,
       'file_params': params,
+      'wildcard': wildcard,
     };
   }
 }
