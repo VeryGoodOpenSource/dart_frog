@@ -17,7 +17,14 @@
     "vscode": "^1.79.0"
   },
   "categories": [
-    "Other"
+    "Snippets",
+    "Programming Languages"
+  ],
+  "keywords": [
+    "dart",
+    "flutter",
+    "dartfrog",
+    "backend"
   ],
   "icon": "assets/logo.png",
   "activationEvents": [],
