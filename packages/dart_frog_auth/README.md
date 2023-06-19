@@ -52,7 +52,7 @@ Authorization: Bearer TOKEN
 ## How to use
 
 Both authentication methods described above can be applied to a dart frog server by adding their
-respectives middleware to the routes that needs to be secured.
+respective middleware to the routes that needs to be secured.
 
 Consider the following application:
 ```
