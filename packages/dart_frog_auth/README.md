@@ -86,9 +86,9 @@ Handler middleware(Handler handler) {
   return handler
       .use(requestLogger())
       .use(
-        BasicAuth<User>(
+        basicAuthentication<User>(
           userFromCredentials: userRepository.fetchFromCredentials,
-        ).build(),
+        ),
       );
 }
 ```
@@ -127,7 +127,7 @@ Handler middleware(Handler handler) {
   return handler
       .use(requestLogger())
       .use(
-        BearerAuth<User>(
+        bearerTokenAuthentication<User>(
           userFromToken: userRepository.fetchFromAccessToken,
         ).build(),
       );

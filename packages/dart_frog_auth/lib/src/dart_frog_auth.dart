@@ -37,31 +37,24 @@ extension on Map<String, String> {
 /// If the given function returns null for the given username and password,
 /// the middleware will return a `401 Unauthorized` response.
 /// {@endtemplate}
-class BasicAuth<T extends Object> {
+/// Builds the middleware to be used on the dart frog server.
+Middleware basicAuthentication<T extends Object>({
+  required Future<T?> Function(String, String) userFromCredentials,
+}) =>
+    (handler) => (context) async {
+          final authorization = context.request.headers.basic();
+          if (authorization != null) {
+            final [username, password] =
+                String.fromCharCodes(base64Decode(authorization)).split(':');
 
-  /// {@macro basic_auth}
-  BasicAuth({
-    required Future<T?> Function(String, String) userFromCredentials,
-  }) : _userFromCredentials = userFromCredentials;
-
-  final Future<T?> Function(String, String) _userFromCredentials;
-
-  /// Builds the middleware to be used on the dart frog server.
-  Middleware build() => (handler) => (context) async {
-        final authorization = context.request.headers.basic();
-        if (authorization != null) {
-          final [username, password] =
-              String.fromCharCodes(base64Decode(authorization)).split(':');
-
-          final user = await _userFromCredentials(username, password);
-          if (user != null) {
-            return handler(context.provide(() => user));
+            final user = await userFromCredentials(username, password);
+            if (user != null) {
+              return handler(context.provide(() => user));
+            }
           }
-        }
 
-        return Response(statusCode: HttpStatus.unauthorized);
-      };
-}
+          return Response(statusCode: HttpStatus.unauthorized);
+        };
 
 /// {@template basic_auth}
 /// Authentication that uses the `Authorization` header with the `Bearer`
@@ -80,25 +73,18 @@ class BasicAuth<T extends Object> {
 /// If the given function returns null for the given username and password,
 /// the middleware will return a `401 Unauthorized` response.
 /// {@endtemplate}
-class BearerAuth<T extends Object> {
-
-  /// {@macro basic_auth}
-  BearerAuth({
-    required Future<T?> Function(String) userFromToken,
-  }) : _userFromToken = userFromToken;
-
-  final Future<T?> Function(String) _userFromToken;
-
-  /// Builds the middleware to be used on the dart frog server.
-  Middleware build() => (handler) => (context) async {
-        final authorization = context.request.headers.bearer();
-        if (authorization != null) {
-          final user = await _userFromToken(authorization);
-          if (user != null) {
-            return handler(context.provide(() => user));
+/// Builds the middleware to be used on the dart frog server.
+Middleware bearerTokenAuthentication<T extends Object>({
+  required Future<T?> Function(String) userFromToken,
+}) =>
+    (handler) => (context) async {
+          final authorization = context.request.headers.bearer();
+          if (authorization != null) {
+            final user = await userFromToken(authorization);
+            if (user != null) {
+              return handler(context.provide(() => user));
+            }
           }
-        }
 
-        return Response(statusCode: HttpStatus.unauthorized);
-      };
-}
+          return Response(statusCode: HttpStatus.unauthorized);
+        };
