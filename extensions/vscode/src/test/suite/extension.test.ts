@@ -4,8 +4,13 @@ var proxyquire = require("proxyquire");
 import * as assert from "assert";
 import * as vscode from "vscode";
 import { newRoute } from "../../commands";
+import { afterEach } from "mocha";
 
 suite("activate", () => {
+  afterEach(() => {
+    sinon.restore();
+  });
+
   test("subcribes to one disposable", async () => {
     const extension = vscode.extensions.getExtension(
       "VeryGoodVentures.dart-frog"

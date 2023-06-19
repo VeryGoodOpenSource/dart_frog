@@ -23,7 +23,7 @@ export const newRoute = async (uri: Uri) => {
   }
 
   if (!isValidWorkingPath(workingDirectory)) {
-    window.showErrorMessage(
+    await window.showErrorMessage(
       "No 'routes' directory found in the selected directory"
     );
     return;
