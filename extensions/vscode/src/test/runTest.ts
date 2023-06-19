@@ -31,10 +31,9 @@ async function main() {
       launchArgs: ["--disable-extensions"],
     });
   } catch (err) {
-    console.error(err);
-    console.error("Failed to run tests");
+    console.error("❌ Failed to run tests");
     process.exit(1);
   }
 }
 
-main();
+main().catch((err) => console.error(err));
