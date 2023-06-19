@@ -11,9 +11,7 @@ export function activate(context: vscode.ExtensionContext) {
   installCLI();
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("extension.new-route", newRoute)
-  );
-  context.subscriptions.push(
+    vscode.commands.registerCommand("extension.new-route", newRoute),
     vscode.commands.registerCommand("extension.install-cli", installCLI)
   );
 }

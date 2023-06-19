@@ -26,12 +26,12 @@ export const installCLI = async () => {
 /**
  * Whether the user has dart_frog_cli installed in their system.
  *
- * @returns {boolean} Whether the user has dart_frog_cli installed in their system.
+ * @returns {boolean} True if the user has dart_frog_cli installed in their system,
+ * false otherwise.
  */
 function hasDartFrogCliInstalled(): boolean {
-  const command = `dart_frog --version`;
   try {
-    cp.execSync(command);
+    cp.execSync(`dart_frog --version`);
     return true;
   } catch (error) {
     return false;
@@ -40,11 +40,12 @@ function hasDartFrogCliInstalled(): boolean {
 
 /**
  * Installs the latest version of dart_frog_cli available in the pub.dev repository.
+ *
+ * @returns {Promise<void>} A promise that resolves when the installation is complete.
  */
-async function installDartFrogCliVersion() {
-  const command = `dart pub global activate dart_frog_cli`;
+async function installDartFrogCliVersion(): Promise<void> {
   await cp.exec(
-    command,
+    `dart pub global activate dart_frog_cli`,
     function (error: Error, stdout: String, stderr: String) {
       if (error) {
         window.showErrorMessage(error.message);
@@ -55,13 +56,14 @@ async function installDartFrogCliVersion() {
 
 /**
  * Updates the latest version of dart_frog_cli available in the pub.dev repository.
+ *
+ * @returns {Promise<void>} A promise that resolves when the update is complete.
  */
-async function updateDartFrogCliVersion() {
+async function updateDartFrogCliVersion(): Promise<void> {
   // TODO(alestiago): Allow the user to opt-out of updating dart_frog_cli.
   // https://github.com/VeryGoodOpenSource/dart_frog/issues/707
-  const command = `dart_frog update`;
   await cp.exec(
-    command,
+    `dart_frog update`,
     function (error: Error, stdout: String, stderr: String) {
       if (error) {
         window.showErrorMessage(error.message);
