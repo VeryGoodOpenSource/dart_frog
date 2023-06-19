@@ -15,7 +15,9 @@ async function main() {
       resolveCliArgsFromVSCodeExecutablePath(vscodeExecutablePath);
 
     // Package extension
-    cp.spawnSync("vsce package --out extension.vsix");
+    cp.spawnSync("vsce package --out extension.vsix", {
+      cwd: extensionDevelopmentPath,
+    });
     const vsixPath = path.resolve(__dirname, "../../", "extension.vsix");
 
     // Install extension

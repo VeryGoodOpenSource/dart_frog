@@ -14,6 +14,8 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand("extension.new-route", newRoute)
   );
+
+  return context;
 }
 
 export function deactivate() {}
