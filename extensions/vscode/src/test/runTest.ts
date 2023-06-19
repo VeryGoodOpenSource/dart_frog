@@ -1,3 +1,13 @@
+/**
+ * This file downloads, unzipping, and launches VS Code with extension test parameters.
+ *
+ * It has been modified to package and install the extension before running the tests.
+ *
+ * @see https://code.visualstudio.com/api/working-with-extensions/testing-extension#the-test-script
+ * @see https://code.visualstudio.com/api/working-with-extensions/testing-extension#custom-setup-with-vscodetestelectron
+ * @see https://github.com/prettier/prettier-vscode/blob/main/src/test/runTests.ts
+ */
+
 import * as cp from "child_process";
 import * as path from "path";
 import {

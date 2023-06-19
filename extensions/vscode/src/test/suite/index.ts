@@ -1,3 +1,9 @@
+/**
+ * This file is used to configure and programmatically runs the test suite.
+ *
+ * @see https://code.visualstudio.com/api/working-with-extensions/testing-extension#the-test-runner-script
+ */
+
 import * as path from "path";
 import * as Mocha from "mocha";
 import * as glob from "glob";
