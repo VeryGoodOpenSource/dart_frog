@@ -50,6 +50,7 @@ void main() {
             path: 'hello.dart',
             route: '/hello',
             params: [],
+            wildcard: false,
           ),
         ],
       );
@@ -80,12 +81,14 @@ void main() {
             path: 'hello.dart',
             route: '/hello',
             params: [],
+            wildcard: false,
           ),
           RouteFile(
             name: 'hi',
             path: 'hi.dart',
             route: '/hi',
             params: [],
+            wildcard: false,
           ),
         ],
       );

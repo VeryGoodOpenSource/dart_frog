@@ -32,7 +32,7 @@ Handler buildRootHandler() {
 Handler build{{#pascalCase}}{{{name}}}{{/pascalCase}}Handler({{#directory_params}}String {{.}},{{/directory_params}}) {
   final pipeline = const Pipeline(){{#middleware.0}}{{#middleware}}.addMiddleware({{#snakeCase}}{{{name}}}{{/snakeCase}}.middleware){{/middleware}}{{/middleware.0}};
   final router = Router()
-    {{#files}}..all('{{{route}}}', (context{{#file_params.0}},{{#file_params}}{{.}},{{/file_params}}{{/file_params.0}}) => {{#snakeCase}}{{{name}}}{{/snakeCase}}.onRequest(context,{{#directory_params}}{{.}},{{/directory_params}}{{#file_params}}{{.}},{{/file_params}})){{/files}};
+    {{#files}}{{#wildcard}}..mount('{{{route}}}', (context) => {{#snakeCase}}{{{name}}}{{/snakeCase}}.onRequest(context,context.request.url.path)){{/wildcard}}{{^wildcard}}..all('{{{route}}}', (context{{#file_params.0}},{{#file_params}}{{.}},{{/file_params}}{{/file_params.0}}) => {{#snakeCase}}{{{name}}}{{/snakeCase}}.onRequest(context,{{#directory_params}}{{.}},{{/directory_params}}{{#file_params}}{{.}},{{/file_params}})){{/wildcard}}{{/files}};
   return pipeline.addHandler(router);
 }
 {{/directories}}
