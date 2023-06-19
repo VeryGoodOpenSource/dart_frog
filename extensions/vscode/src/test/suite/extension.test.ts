@@ -1,15 +1,34 @@
-import * as assert from "assert";
+const sinon = require("sinon");
+var proxyquire = require("proxyquire");
 
+import * as assert from "assert";
 import * as vscode from "vscode";
+import { newRoute } from "../../commands";
 
 suite("activate", () => {
   test("subcribes to one disposable", async () => {
-    const ext = vscode.extensions.getExtension(
+    const extension = vscode.extensions.getExtension(
       "VeryGoodVentures.dart-frog"
     ) as vscode.Extension<any>;
 
-    const context = await ext.activate();
+    const context = await extension.activate();
 
     assert.strictEqual(context.subscriptions.length, 1);
+  });
+
+  test("registers new-route command", async () => {
+    const vscodeStub = {
+      commands: {
+        registerCommand: sinon.stub().returns({}),
+      },
+    };
+    var extension = proxyquire("../../extension", { vscode: vscodeStub });
+    extension.activate({ subscriptions: [] });
+
+    sinon.assert.calledWith(
+      vscodeStub.commands.registerCommand,
+      "extension.new-route",
+      newRoute
+    );
   });
 });
