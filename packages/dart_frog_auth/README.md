@@ -24,7 +24,7 @@ for `Basic` and `Bearer` authentications, which are common methods used around t
 ## Basic Authentication
 
 Like its name infers, it is a basic authentication method, that consists on the client sending
-the user's credentials in the `Authorization` header. The credentials should be sent concated by a
+the user's credentials in the `Authorization` header. The credentials should be sent concatenated by a
 colon and encoded in a base64 string, the encoded credentials are then set in the header as
 follows:
 
@@ -52,7 +52,7 @@ Authorization: Bearer TOKEN
 ## How to use
 
 Both authentication methods described above can be applied to a dart frog server by adding their
-respectives middlewares to the routes that needs to be secured.
+respectives middleware to the routes that needs to be secured.
 
 Consider the following application:
 ```
