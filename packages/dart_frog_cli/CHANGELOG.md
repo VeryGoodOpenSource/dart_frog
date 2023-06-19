@@ -3,6 +3,7 @@
 - feat: update brick bundles to dart 3.0.0
 - feat: Add dart-vm-port option to dev command
 - feat: added default port number for --dart-vm-service-port
+- feat: recommend using --dart-vm-service-port on VM port failure
 
 # 0.3.7
 
