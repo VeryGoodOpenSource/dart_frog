@@ -7,7 +7,7 @@ Developed with 💙 by [Very Good Ventures][very_good_ventures_link] 🦄
 
 ## Installation
 
-Dart Frog can be installed from the [VS Code Marketplace]() or by [searching within VS Code](https://code.visualstudio.com/docs/editor/extension-gallery#_search-for-an-extension).
+Dart Frog can be installed from the [VS Code Marketplace](https://marketplace.visualstudio.com/vscode) or by [searching within VS Code](https://code.visualstudio.com/docs/editor/extension-gallery#_search-for-an-extension).
 
 [ci_link]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/main.yaml
 [dart_frog_link_dark]: https://github.com/verygoodopensource/dart_frog#gh-dark-mode-only
