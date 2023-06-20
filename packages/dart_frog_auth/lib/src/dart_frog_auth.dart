@@ -18,7 +18,6 @@ extension on Map<String, String> {
   String? basic() => authorization('Basic');
 }
 
-/// {@template basic_auth}
 /// Authentication that uses the `Authorization` header with the `Basic` scheme.
 ///
 /// `Basic` scheme expects the header to be in the format:
@@ -36,8 +35,6 @@ extension on Map<String, String> {
 ///
 /// If the given function returns null for the given username and password,
 /// the middleware will return a `401 Unauthorized` response.
-/// {@endtemplate}
-/// Builds the middleware to be used on the dart frog server.
 Middleware basicAuthentication<T extends Object>({
   required Future<T?> Function(String, String) userFromCredentials,
 }) =>
@@ -56,7 +53,6 @@ Middleware basicAuthentication<T extends Object>({
           return Response(statusCode: HttpStatus.unauthorized);
         };
 
-/// {@template basic_auth}
 /// Authentication that uses the `Authorization` header with the `Bearer`
 /// scheme.
 ///
@@ -72,9 +68,7 @@ Middleware basicAuthentication<T extends Object>({
 ///
 /// If the given function returns null for the given username and password,
 /// the middleware will return a `401 Unauthorized` response.
-/// {@endtemplate}
-/// Builds the middleware to be used on the dart frog server.
-Middleware bearerTokenAuthentication<T extends Object>({
+Middleware bearerAuthentication<T extends Object>({
   required Future<T?> Function(String) userFromToken,
 }) =>
     (handler) => (context) async {

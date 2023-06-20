@@ -124,7 +124,7 @@ void main() {
     });
 
     test('returns 401 when Authorization header is not present', () async {
-      final middleware = bearerTokenAuthentication<_User>(
+      final middleware = bearerAuthentication<_User>(
         userFromToken: (_) async => user,
       );
       expect(
@@ -141,7 +141,7 @@ void main() {
       'returns 401 when Authorization header is present but invalid',
       () async {
         when(() => request.headers).thenReturn({'Authorization': 'not valid'});
-        final middleware = bearerTokenAuthentication<_User>(
+        final middleware = bearerAuthentication<_User>(
           userFromToken: (_) async => user,
         );
         expect(
@@ -162,7 +162,7 @@ void main() {
         when(() => request.headers).thenReturn({
           'Authorization': 'Bearer 1234',
         });
-        final middleware = bearerTokenAuthentication<_User>(
+        final middleware = bearerAuthentication<_User>(
           userFromToken: (_) async => null,
         );
         expect(
@@ -183,7 +183,7 @@ void main() {
         when(() => request.headers).thenReturn({
           'Authorization': 'Bearer 1234',
         });
-        final middleware = bearerTokenAuthentication<_User>(
+        final middleware = bearerAuthentication<_User>(
           userFromToken: (_) async => user,
         );
         expect(

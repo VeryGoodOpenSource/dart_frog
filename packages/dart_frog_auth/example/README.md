@@ -20,7 +20,7 @@ Handler middleware(Handler handler) {
 }
 ```
 
-User `bearerTokenAuthentication` to add bearer token authentication to your routes:
+User `bearerAuthentication` to add bearer token authentication to your routes:
 
 ```dart
 // routes/admin/_middleware.dart
@@ -33,7 +33,7 @@ Handler middleware(Handler handler) {
   return handler
       .use(requestLogger())
       .use(
-        bearerTokenAuthentication<User>(
+        bearerAuthentication<User>(
           userFromToken: userRepository.fetchFromAccessToken,
         ),
       );
