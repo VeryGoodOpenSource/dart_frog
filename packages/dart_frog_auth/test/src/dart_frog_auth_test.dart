@@ -16,7 +16,7 @@ class _User {
 }
 
 void main() {
-  group('BasicAuth', () {
+  group('basicAuthentication', () {
     late RequestContext context;
     late Request request;
     _User? user;
@@ -29,7 +29,7 @@ void main() {
       when(() => context.request).thenReturn(request);
     });
 
-    test('returns 401 when no Authorization header is not present', () async {
+    test('returns 401 when Authorization header is not present', () async {
       final middleware = basicAuthentication<_User>(
         userFromCredentials: (_, __) async => user,
       );
@@ -110,7 +110,7 @@ void main() {
     );
   });
 
-  group('BearerAuth', () {
+  group('bearerAuthentication', () {
     late RequestContext context;
     late Request request;
     _User? user;
@@ -123,7 +123,7 @@ void main() {
       when(() => context.request).thenReturn(request);
     });
 
-    test('returns 401 when no Authorization header is not present', () async {
+    test('returns 401 when Authorization header is not present', () async {
       final middleware = bearerTokenAuthentication<_User>(
         userFromToken: (_) async => user,
       );

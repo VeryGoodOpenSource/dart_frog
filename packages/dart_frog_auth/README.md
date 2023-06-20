@@ -18,12 +18,12 @@ focus on providing the foundations where more complex authentication methods can
 of.
 
 The authentication methods provided in `dart_frog_auth` are based on `Authorization` specification,
-which consist in a framework defined by [`General HTTP`][general_http], here you will find support
-for `Basic` and `Bearer` authentications, which are common methods used around the world.
+which consist in a framework defined by [`General HTTP`][general_http]. Here you will find support
+for `Basic` and `Bearer` authentications, which are common authentication methods used by many developers.
 
 ## Basic Authentication
 
-Like its name infers, it is a basic authentication method, that consists on the client sending
+Like its name infers, it is a basic authentication scheme, that consists on the client sending
 the user's credentials in the `Authorization` header. The credentials should be sent concatenated by a
 colon and encoded in a base64 string, the encoded credentials are then set in the header as
 follows:
@@ -37,11 +37,10 @@ to have lessen security levels, specially with used out of a HTTPS/TLS context.
 
 ## Bearer Authentication
 
-Similar in its format to the Basic authentication, but with the difference that instead of
-sending the users credentials on the header, a token is sent instead.
+Similarly to the basic authentication scheme, the bearer authentication scheme sends the users credentials on the header. Whereas a single token is sent instead of a username and password.
 
-This token format is up to the authority server to issued it to define, but most of the times
-it will an access token with encrypted information that the server can validate.
+The bearer token format is up to the issuing authority server to define, but commonly
+it consists of an access token with encrypted information that the server can validate.
 
 The header is defined as follows:
 
@@ -51,8 +50,7 @@ Authorization: Bearer TOKEN
 
 ## How to use
 
-Both authentication methods described above can be applied to a dart frog server by adding their
-respective middleware to the routes that needs to be secured.
+Both authentication schemes described above can be applied in a Dart Frog server by adding middleware to the routes that needs to be secured.
 
 Consider the following application:
 ```
@@ -67,12 +65,11 @@ routes/
 
 Routes under `posts` are public, so they don't require any kind of authentication, while on
 `admin`, only authenticated users can access their endpoints. Also worth noting that the
-`user_repository.dart` file under the `lib` folder offers methods to find users by different
-methods.
+`user_repository.dart` file under the `lib` folder offers methods to authenticate users.
 
 ### Basic method
 
-To implement authentication via the `Basic` method on `admin` routes, a middleware file should
+To implement the basic authentication scheme on `admin` routes, a middleware file should
 be created under the admin folder with the following content:
 
 ```dart
@@ -94,9 +91,9 @@ Handler middleware(Handler handler) {
 ```
 
 `userFromCredentials` parameter must be a method that receives two positional arguments (username
-and password) and returns a user if any is found for those credentials or null.
+and password) and returns a user if any is found for those credentials, otherwise it should return null.
 
-If a user is returned, it will be set in the request context and can be read on request handlers,
+If a user is returned (authenticated), it will be set in the request context and can be read by request handlers,
 for example:
 
 ```dart
@@ -109,11 +106,11 @@ Response onRequest(RequestContext context) {
 }
 ```
 
-In the case of `null` be returned, the middleware will automatically send a `401` in the response.
+In the case of `null` be returned (unauthenticated), the middleware will automatically send an unauthorized `401` in the response.
 
 ### Bearer method
 
-To implement authentication via the `Bearer` method on `admin` routes, the same logic used for the
+To implement the bearer authentication scheme on `admin` routes, the same logic used for the
 basic method can be applied:
 
 ```dart
@@ -134,10 +131,10 @@ Handler middleware(Handler handler) {
 }
 ```
 
-`userFromToken` parameter must be a method that receives one positional argument (which is the
+`userFromToken` parameter must be a function that receives one positional argument (which is the
 token sent on the authorization header) and returns a user if any is found for that token.
 
-Again, just like in the basic method, If a user is returned, it will be set in the request
+Again, just like in the basic method, if a user is returned, it will be set in the request
 context and can be read on request handlers, for example:
 
 ```dart
@@ -150,7 +147,7 @@ Response onRequest(RequestContext context) {
 }
 ```
 
-In the case of `null` be returned, the middleware will automatically send a `401` in the response.
+In the case of `null` be returned (unauthenticated), the middleware will automatically send an unauthorized `401` in the response.
 
 [ci_badge]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog_web_socket.yaml/badge.svg
 [ci_link]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog_web_socket.yaml
@@ -162,8 +159,8 @@ In the case of `null` be returned, the middleware will automatically send a `401
 [license_link]: https://opensource.org/licenses/MIT
 [logo_black]: https://raw.githubusercontent.com/VeryGoodOpenSource/dart_frog/main/assets/dart_frog_logo_black.png#gh-light-mode-only
 [logo_white]: https://raw.githubusercontent.com/VeryGoodOpenSource/dart_frog/main/assets/dart_frog_logo_white.png#gh-dark-mode-only
-[pub_badge]: https://img.shields.io/pub/v/dart_frog_web_socket.svg
-[pub_link]: https://pub.dartlang.org/packages/dart_frog_web_socket
+[pub_badge]: https://img.shields.io/pub/v/dart_frog_auth.svg
+[pub_link]: https://pub.dartlang.org/packages/dart_frog_auth
 [very_good_analysis_badge]: https://img.shields.io/badge/style-very_good_analysis-B22C89.svg
 [very_good_analysis_link]: https://pub.dev/packages/very_good_analysis
 [very_good_ventures_link]: https://verygood.ventures
