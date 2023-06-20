@@ -47,7 +47,7 @@ void main() {
       );
     });
 
-    test('should instantiate adn run with default value', () async {
+    test('should instantiate and run with default value', () async {
       final DaemonCommand command;
       expect(command = DaemonCommand(), isNotNull);
 
