@@ -1,7 +1,7 @@
 [![Dart Frog Logo][logo_white]][dart_frog_link_dark]
 [![Dart Frog Logo][logo_black]][dart_frog_link_light]
 
-[VSCode](https://code.visualstudio.com/) support for [Dart Frog](https://dartfrog.vgv.dev/) and provides tools for effectively creating Routes.
+This is the [Dart Frog](https://dartfrog.vgv.dev/) [VS Code](https://code.visualstudio.com/) extension, which provides tools for effectively creating routes.
 
 Developed with 💙 by [Very Good Ventures][very_good_ventures_link] 🦄
 
