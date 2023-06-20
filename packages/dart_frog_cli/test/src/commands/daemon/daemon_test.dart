@@ -18,22 +18,15 @@ void main() {
       'starts a daemon, waits for it to be completed and returns exit code',
       () async {
         final daemon = MockDaemon();
-
         final completer = Completer<ExitCode>();
-
         when(() => daemon.exitCode).thenAnswer(
           (_) => completer.future,
         );
-
         final command = DaemonCommand(daemonBuilder: () => daemon);
         final future = command.run();
-
         verify(() => daemon.exitCode).called(1);
-
         completer.complete(ExitCode.success);
-
         final result = await future;
-
         expect(result, ExitCode.success.code);
       },
     );
