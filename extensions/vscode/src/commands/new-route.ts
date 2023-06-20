@@ -120,10 +120,8 @@ function executeDartFrogNewCommand(
     routeName
   );
 
-  const command = `dart_frog new route ${normalizedRouteName}`;
-
   cp.exec(
-    command,
+    `dart_frog new route '${normalizedRouteName}'`,
     {
       cwd: dartProjectDirectory,
     },
