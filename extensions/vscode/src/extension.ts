@@ -8,9 +8,6 @@ import { newRoute } from "./commands";
  * @param context
  */
 export function activate(context: vscode.ExtensionContext) {
-  // TODO(alestiago): Try installing dart_frog_cli if it's not installed.
-  // TODO(alestiago): Update dart_frog_cli if it's not up to date.
-
   context.subscriptions.push(
     vscode.commands.registerCommand("extension.new-route", newRoute)
   );
