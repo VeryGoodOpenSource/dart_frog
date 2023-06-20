@@ -30,7 +30,6 @@ class DaemonCommand extends DartFrogCommand {
   // TODO(renancaraujo): unhide this command when it's ready
   bool get hidden => true;
 
-
   /// The [Daemon] instance used by this command.
   ///
   /// Visible for testing purposes only.
