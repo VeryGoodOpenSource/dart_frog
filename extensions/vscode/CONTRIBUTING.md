@@ -18,13 +18,6 @@ To develop for Very Good CLI you will need to become familiar with Visual Studio
 
 2. Install a valid [Node.js](https://nodejs.org) in your local environment.
 
-3. Get all project dependencies:
-
-```sh
-# Get project dependencies:
-npm i
-```
-
 3. Open the project in Visual Studio Code:
 
 ```sh
@@ -32,9 +25,25 @@ npm i
 code .
 ```
 
-4. Inside the editor, press F5. This will compile and run the extension in a new **Extension Development Host** window.
+3. Get all project dependencies:
 
-5. After a change, make sure to **Run Developer: Reload Window** in the new window.
+```sh
+# Get project dependencies (from /extensions/vscode)
+npm i
+```
+
+4. Run all the extensions tests:
+
+```sh
+# 💻 Run Dart Frog's Visual Studio Code extension tests (from /extensions/vscode)
+npm test
+```
+
+If some tests do not pass out of the box, please submit an [issue](https://github.com/VeryGoodOpenSource/dart_frog/issues/new/choose).
+
+5. Inside the editor, press F5. This will compile and run the extension in a new **Extension Development Host** window.
+
+6. After a change, make sure to **Run Developer: Reload Window** in the new window.
 
 💡 **Note**: For further information about debugging Visual Studio Code's extensions refer to the [official documentation](https://code.visualstudio.com/api/get-started/your-first-extension).
 
@@ -59,9 +68,16 @@ git checkout <branch-name>
 npm run lint
 ```
 
-4. Create the Pull Request with a meaningful description, linking to the original issue where possible.
+4. Ensure all tests are passing and that coverage is 100%:
 
-5. Verify that all [status checks](https://github.com/VeryGoodOpenSource/dart_frog/actions/) are passing for your Pull Request once they have been approved to run by a maintainer.
+```sh
+# 💻 Run Dart Frog's Visual Studio Code extension tests (from /extensions/vscode)
+npm test
+```
+
+5. Create the Pull Request with a meaningful description, linking to the original issue where possible.
+
+6. Verify that all [status checks](https://github.com/VeryGoodOpenSource/dart_frog/actions/) are passing for your Pull Request once they have been approved to run by a maintainer.
 
 💡 **Note**: While the prerequisites above must be satisfied prior to having your pull request reviewed, the reviewer(s) may ask you to complete additional work, tests, or other changes before your pull request can be accepted.
 
