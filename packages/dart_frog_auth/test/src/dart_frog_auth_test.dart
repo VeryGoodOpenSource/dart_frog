@@ -10,8 +10,8 @@ class _MockRequestContext extends Mock implements RequestContext {}
 
 class _MockRequest extends Mock implements Request {}
 
-class User {
-  const User(this.id);
+class _User {
+  const _User(this.id);
   final String id;
 }
 
@@ -19,18 +19,18 @@ void main() {
   group('BasicAuth', () {
     late RequestContext context;
     late Request request;
-    User? user;
+    _User? user;
 
     setUp(() {
       context = _MockRequestContext();
       request = _MockRequest();
-      when(() => context.provide<User>(any())).thenReturn(context);
+      when(() => context.provide<_User>(any())).thenReturn(context);
       when(() => request.headers).thenReturn({});
       when(() => context.request).thenReturn(request);
     });
 
     test('returns 401 when no Authorization header is not present', () async {
-      final middleware = basicAuthentication<User>(
+      final middleware = basicAuthentication<_User>(
         userFromCredentials: (_, __) async => user,
       );
       expect(
@@ -47,7 +47,7 @@ void main() {
       'returns 401 when Authorization header is present but invalid',
       () async {
         when(() => request.headers).thenReturn({'Authorization': 'not valid'});
-        final middleware = basicAuthentication<User>(
+        final middleware = basicAuthentication<_User>(
           userFromCredentials: (_, __) async => user,
         );
         expect(
@@ -68,7 +68,7 @@ void main() {
         when(() => request.headers).thenReturn({
           'Authorization': 'Basic dXNlcjpwYXNz',
         });
-        final middleware = basicAuthentication<User>(
+        final middleware = basicAuthentication<_User>(
           userFromCredentials: (_, __) async => null,
         );
         expect(
@@ -85,11 +85,11 @@ void main() {
     test(
       'sets the user when everything is valid',
       () async {
-        user = User('');
+        user = _User('');
         when(() => request.headers).thenReturn({
           'Authorization': 'Basic dXNlcjpwYXNz',
         });
-        final middleware = basicAuthentication<User>(
+        final middleware = basicAuthentication<_User>(
           userFromCredentials: (_, __) async => user,
         );
         expect(
@@ -101,9 +101,9 @@ void main() {
           ),
         );
         final captured =
-            verify(() => context.provide<User>(captureAny())).captured.single;
+            verify(() => context.provide<_User>(captureAny())).captured.single;
         expect(
-          (captured as User Function()).call(),
+          (captured as _User Function()).call(),
           equals(user),
         );
       },
@@ -113,18 +113,18 @@ void main() {
   group('BearerAuth', () {
     late RequestContext context;
     late Request request;
-    User? user;
+    _User? user;
 
     setUp(() {
       context = _MockRequestContext();
       request = _MockRequest();
-      when(() => context.provide<User>(any())).thenReturn(context);
+      when(() => context.provide<_User>(any())).thenReturn(context);
       when(() => request.headers).thenReturn({});
       when(() => context.request).thenReturn(request);
     });
 
     test('returns 401 when no Authorization header is not present', () async {
-      final middleware = bearerTokenAuthentication<User>(
+      final middleware = bearerTokenAuthentication<_User>(
         userFromToken: (_) async => user,
       );
       expect(
@@ -141,7 +141,7 @@ void main() {
       'returns 401 when Authorization header is present but invalid',
       () async {
         when(() => request.headers).thenReturn({'Authorization': 'not valid'});
-        final middleware = bearerTokenAuthentication<User>(
+        final middleware = bearerTokenAuthentication<_User>(
           userFromToken: (_) async => user,
         );
         expect(
@@ -162,7 +162,7 @@ void main() {
         when(() => request.headers).thenReturn({
           'Authorization': 'Bearer 1234',
         });
-        final middleware = bearerTokenAuthentication<User>(
+        final middleware = bearerTokenAuthentication<_User>(
           userFromToken: (_) async => null,
         );
         expect(
@@ -179,11 +179,11 @@ void main() {
     test(
       'sets the user when everything is valid',
       () async {
-        user = User('');
+        user = _User('');
         when(() => request.headers).thenReturn({
           'Authorization': 'Bearer 1234',
         });
-        final middleware = bearerTokenAuthentication<User>(
+        final middleware = bearerTokenAuthentication<_User>(
           userFromToken: (_) async => user,
         );
         expect(
@@ -195,9 +195,9 @@ void main() {
           ),
         );
         final captured =
-            verify(() => context.provide<User>(captureAny())).captured.single;
+            verify(() => context.provide<_User>(captureAny())).captured.single;
         expect(
-          (captured as User Function()).call(),
+          (captured as _User Function()).call(),
           equals(user),
         );
       },

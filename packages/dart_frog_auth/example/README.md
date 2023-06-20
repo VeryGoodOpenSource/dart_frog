@@ -35,7 +35,7 @@ Handler middleware(Handler handler) {
       .use(
         bearerTokenAuthentication<User>(
           userFromToken: userRepository.fetchFromAccessToken,
-        ).build(),
+        ),
       );
 }
 ```
