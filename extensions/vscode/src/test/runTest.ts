@@ -1,5 +1,5 @@
 /**
- * This file downloads, unzipping, and launches VS Code with extension test parameters.
+ * This file downloads, unzipps, and launches VS Code with extension test parameters.
  *
  * It has been modified to package and install the extension before running the tests.
  *
