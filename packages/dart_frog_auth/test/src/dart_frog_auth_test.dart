@@ -108,6 +108,22 @@ void main() {
         );
       },
     );
+
+    test("skips routes that doesn't match the custom predicate", () async {
+      var called = false;
+
+      final middleware = basicAuthentication<_User>(
+        userFromCredentials: (_, __) async {
+          called = true;
+          return user;
+        },
+        applyToRoute: (_) async => false,
+      );
+
+      await middleware((_) async => Response())(context);
+
+      expect(called, isFalse);
+    });
   });
 
   group('bearerAuthentication', () {
@@ -202,5 +218,21 @@ void main() {
         );
       },
     );
+
+    test("skips routes that doesn't match the custom predicate", () async {
+      var called = false;
+
+      final middleware = bearerAuthentication<_User>(
+        userFromToken: (_) async {
+          called = true;
+          return user;
+        },
+        applyToRoute: (_) async => false,
+      );
+
+      await middleware((_) async => Response())(context);
+
+      expect(called, isFalse);
+    });
   });
 }
