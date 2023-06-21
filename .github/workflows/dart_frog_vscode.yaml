@@ -45,5 +45,3 @@ jobs:
 
       - name: 📊 Check Code Coverage
         uses: VeryGoodOpenSource/very_good_coverage@v2.1.0
-        with:
-          path: extensions/vscode/coverage/lcov.info
