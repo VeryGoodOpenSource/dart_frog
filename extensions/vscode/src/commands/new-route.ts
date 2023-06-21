@@ -12,9 +12,10 @@ import { InputBoxOptions, Uri, window, OpenDialogOptions } from "vscode";
  * and the user is prompted to select a valid directory or file to create the
  * route in.
  *
- * When launching the command from the context menu, the Uri is corresponds to
- * the selected file or directory. Therefore the user does not need to select
- * a directory or file via the open dialog.
+ * When launching the command from the context menu, the Uri corresponds to the
+ * selected file or directory. Only those directories or dart files under a
+ * `routes` directory show the command in the context menu. Therefore the user
+ * does not need to select a directory or file via the open dialog.
  *
  * All the logic associated with creating a new route is handled by the
  * `dart_frog new route` command, from the Dart Frog CLI.
@@ -53,8 +54,8 @@ export const newRoute = async (uri: Uri | undefined) => {
 };
 
 /**
- * Shows an input box to the user and returns a Thenable that resolves to a string
- * the user provided.
+ * Shows an input box to the user and returns a Thenable that resolves to
+ * a string the user provided.
  *
  * @returns { Thenable<string | undefined>} routeName
  */
@@ -67,11 +68,11 @@ function promptRouteName(): Thenable<string | undefined> {
 }
 
 /**
- * Shows an open dialog to the user and returns a Promise that resolves to a string
- * when the user selects a folder or file.
+ * Shows an open dialog to the user and returns a Promise that resolves
+ * to a string when the user selects a folder or file.
  *
- * This is used when the user activates the command from the command palette instead
- * of the context menu.
+ * This is used when the user activates the command from the command palette
+ * instead of the context menu.
  *
  * @returns { Promise<string | undefined>} targetDirectory
  */
