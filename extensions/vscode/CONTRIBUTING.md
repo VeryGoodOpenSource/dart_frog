@@ -1,4 +1,4 @@
-# 🦄 Contributing to Dart Frog's Visual Studio Code extension
+# 🦄 Contributing to the Dart Frog Visual Studio Code extension
 
 First of all, thank you for taking the time to contribute! 🎉👍 Before you do, please carefully read this guide.
 
@@ -10,7 +10,7 @@ When reporting a bug, please use the built-in [Bug Report][bug_report_link] temp
 
 ## Developing for Dart Frog's Visual Studio Code extension
 
-To develop for Very Good CLI you will need to become familiar with Visual Studio Code extensions development and Very Good Ventures' processes and conventions:
+To develop for the Dart Frog Visual Studio Code extension you will need to become familiar with VS Code extension development and the Very Good Ventures processes and conventions:
 
 ### Setting up your local development environment
 
