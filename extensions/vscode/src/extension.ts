@@ -4,8 +4,12 @@ import * as vscode from "vscode";
  * This method is called when the extension is activated.
  *
  * The extension is activated the very first time the command is executed.
- * @param context
+ *
+ * @param {vscode.ExtensionContext} context
+ * @returns {vscode.ExtensionContext}
  */
-export function activate(context: vscode.ExtensionContext) {}
+export function activate(context: vscode.ExtensionContext) {
+  return context;
+}
 
 export function deactivate() {}
