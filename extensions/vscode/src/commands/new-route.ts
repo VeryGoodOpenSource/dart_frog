@@ -12,9 +12,9 @@ import { InputBoxOptions, Uri, window, OpenDialogOptions } from "vscode";
  * and the user is prompted to select a valid directory or file to create the
  * route in.
  *
- * When launching the command from the context menu, the Uri is the Uri of the
- * selected file or directory. Therefore the user does not need to select a
- * directory or file via the open dialog.
+ * When launching the command from the context menu, the Uri is corresponds to
+ * the selected file or directory. Therefore the user does not need to select
+ * a directory or file via the open dialog.
  *
  * All the logic associated with creating a new route is handled by the
  * `dart_frog new route` command, from the Dart Frog CLI.
