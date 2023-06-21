@@ -72,3 +72,7 @@ updates:
     directory: "/packages/dart_frog_web_socket"
     schedule:
       interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/packages/dart_frog_auth"
+    schedule:
+      interval: "daily"
