@@ -11,11 +11,11 @@ Dart Frog can be installed from the [VS Code Marketplace]() or by [searching wit
 
 ## Commands
 
-| Command            | Description          |
-| ------------------ | -------------------- |
-| `Route: New Route` | Generate a new Route |
+| Command            | Description           |
+| ------------------ | --------------------- |
+| `Route: New Route` | Generates a new route |
 
-You can activate the commands by launching the command palette (View -> Command Palette) and running entering the command name or you can right click on the directory or file in which you'd like to create the route and select the command from the context menu.
+You can activate the commands by launching the command palette (View -> Command Palette) and entering the command name or you can right click on the directory or file in which you'd like to create the route and select the command from the context menu.
 
 [ci_link]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/main.yaml
 [dart_frog_link_dark]: https://github.com/verygoodopensource/dart_frog#gh-dark-mode-only
