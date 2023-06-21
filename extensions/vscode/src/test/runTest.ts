@@ -18,23 +18,21 @@ import {
 
 async function main() {
   try {
-    const extensionDevelopmentPath = path.resolve(__dirname, "../../../");
+    const extensionDevelopmentPath = path.resolve(__dirname, "../../");
     const extensionTestsPath = path.resolve(__dirname, "./suite/index");
     const vscodeExecutablePath = await downloadAndUnzipVSCode("1.79.2");
     const [cliPath, ...args] =
       resolveCliArgsFromVSCodeExecutablePath(vscodeExecutablePath);
 
-    // Package extension
-    cp.spawnSync("vsce package --out extension.vsix", {
-      cwd: extensionDevelopmentPath,
-    });
-    const vsixPath = path.resolve(__dirname, "../../", "extension.vsix");
-
     // Install extension
-    cp.spawnSync(cliPath, [...args, "--install-extension", vsixPath], {
-      encoding: "utf-8",
-      stdio: "inherit",
-    });
+    cp.spawnSync(
+      cliPath,
+      [...args, "--install-extension", "VeryGoodVentures.dart-frog"],
+      {
+        encoding: "utf-8",
+        stdio: "inherit",
+      }
+    );
 
     // Download VS Code, unzip it and run the integration test
     await runTests({
