@@ -116,8 +116,6 @@ function executeDartFrogNewCommand(
 ) {
   let workingDirectorySplits = workingDirectory.split(path.sep);
 
-  // TODO(alestiago): Simplify logic, to avoid duplication, once the following
-  // issue is resolved: https://github.com/VeryGoodOpenSource/dart_frog/issues/701
   const lastWorkingDirectoryElement =
     workingDirectorySplits[workingDirectorySplits.length - 1];
   const isFile = lastWorkingDirectoryElement.includes(".");
