@@ -30,7 +30,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
-          cache: npm
+          cache: "npm"
           cache-dependency-path: extensions/vscode/package-lock.json
 
       - name: 📦 Install dependencies
