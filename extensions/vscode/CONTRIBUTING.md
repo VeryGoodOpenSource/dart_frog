@@ -32,7 +32,7 @@ code .
 npm i
 ```
 
-4. Run all the extensions tests:
+4. Run all the extension tests:
 
 ```sh
 # 💻 Run Dart Frog's Visual Studio Code extension tests (from /extensions/vscode)
