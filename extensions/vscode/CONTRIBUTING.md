@@ -43,7 +43,7 @@ If some tests do not pass out of the box, please submit an [issue](https://githu
 
 5. Inside the VS Code editor, press F5. This will compile and run the extension in a new **Extension Development Host** window.
 
-6. After a change, make sure to **Run Developer: Reload Window** in the new window.
+6. After a change, make sure to **Run Developer: Reload Window** from the command palette in the new window.
 
 💡 **Note**: For further information about debugging Visual Studio Code's extensions refer to the [official documentation](https://code.visualstudio.com/api/get-started/your-first-extension).
 
