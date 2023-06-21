@@ -16,7 +16,7 @@ To develop for Very Good CLI you will need to become familiar with Visual Studio
 
 1. Install a valid [Dart SDK](https://dart.dev/get-dart) in your local environment. If you have Flutter installed, you likely have a valid Dart SDK version already installed.
 
-2. Install a valid [Node.js](https://nodejs.org) in your local environment.
+2. Install a valid [Node.js](https://nodejs.org) runtime in your local environment.
 
 3. Open the project in Visual Studio Code:
 
