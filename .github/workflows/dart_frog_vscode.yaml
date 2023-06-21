@@ -40,6 +40,9 @@ jobs:
       - name: 🧪 Run tests
         run: npm test
 
+      - name: 👀 View Coverage
+        run: cat coverage/lcov.info
+
       - name: 📊 Check Code Coverage
         uses: VeryGoodOpenSource/very_good_coverage@v2.1.0
         with:
