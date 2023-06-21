@@ -22,10 +22,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: 🎯 Setup Node.js (18.16.1)
+      - name: 🎯 Setup Node.js (18.x)
         uses: actions/setup-node@v3
         with:
-          node-version: 18.16.1
+          node-version: 18.x
 
       - name: 📦 Install dependencies
         run: npm ci
