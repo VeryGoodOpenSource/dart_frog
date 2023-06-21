@@ -3,7 +3,27 @@ const path = require("node:path");
 
 import { InputBoxOptions, Uri, window, OpenDialogOptions } from "vscode";
 
-export const newRoute = async (uri: Uri) => {
+/**
+ * Command to create a new route.
+ *
+ * This command is available from the command palette and the context menu.
+ *
+ * When launching the command from the command palette, the Uri is undefined
+ * and the user is prompted to select a valid directory or file to create the
+ * route in.
+ *
+ * When launching the command from the context menu, the Uri is the Uri of the
+ * selected file or directory. Therefore the user does not need to select a
+ * directory or file via the open dialog.
+ *
+ * All the logic associated with creating a new route is handled by the
+ * `dart_frog new route` command, from the Dart Frog CLI.
+ *
+ * @see [Dart Frog CLI `new` command implementation](https://github.com/VeryGoodOpenSource/dart_frog/tree/main/packages/dart_frog_cli/lib/src/commands/new)
+ * @param { Uri | undefined} uri
+ * @returns {Promise<void>}
+ */
+export const newRoute = async (uri: Uri | undefined) => {
   const routeName = await promptRouteName();
   if (routeName === undefined || routeName.trim() === "") {
     window.showErrorMessage("Please enter a valid route name");
@@ -120,10 +140,8 @@ function executeDartFrogNewCommand(
     routeName
   );
 
-  const command = `dart_frog new route ${normalizedRouteName}`;
-
   cp.exec(
-    command,
+    `dart_frog new route ${normalizedRouteName}`,
     {
       cwd: dartProjectDirectory,
     },
