@@ -22,7 +22,7 @@ jobs:
       run:
         working-directory: extensions/vscode
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v3
