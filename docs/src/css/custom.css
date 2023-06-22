@@ -4,39 +4,40 @@
  * work well for content-centric websites.
  */
 
+@import url('https://fonts.googleapis.com/css?family=Poppins&display=swap');
+
+:root {
+  --ifm-font-family-base: 'Poppins';
+}
+
 /* You can override the default Infima variables here. */
 :root {
   /* Color Palette */
   --colors-darker-grey: #27364a;
   --colors-dark-grey: #1d2939;
   --colors-light-grey: #314155;
-  --colors-green: #66fbd1;
-  --colors-blue: #2a48df;
-  --colors-dark-blue: #1d39c4;
   --colors-white: #ffffff;
   --colors-off-white: #fbfcff;
   --colors-off-white-dark: #f3f6ff;
+  --colors-dark-blue: #002891;
 
   /* Custom Variables */
-  --hero-image-background-color: var(--colors-white);
+  --hero-image-background-color: var(--colors-off-white);
+  --title-text-color: var(--colors-dark-blue);
 
-  /* Infirma Variables */
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
-  --ifm-background-color: var(--colors-off-white);
-  --ifm-button-font-weight: 700;
-  --ifm-button-padding-horizontal: 1.15rem;
-  --ifm-button-padding-vertical: 0.4rem;
-  --ifm-card-background-color: var(--colors-off-white);
-  --ifm-code-font-size: 95%;
+  /* Infima Variables */
+  --ifm-color-primary: #2a48df;
   --ifm-color-primary-dark: #1f3ccf;
-  --ifm-color-primary-darker: var(--colors-dark-blue);
+  --ifm-color-primary-darker: #1d39c4;
   --ifm-color-primary-darkest: #182fa1;
   --ifm-color-primary-light: #415ce2;
   --ifm-color-primary-lighter: #4d66e4;
   --ifm-color-primary-lightest: #6f83e9;
-  --ifm-color-primary: var(--colors-blue);
-  --ifm-footer-background-color: var(--colors-off-white);
-  --ifm-link-color: var(--colors-blue);
+  --ifm-code-font-size: 95%;
+  --ifm-footer-background-color: var(--colors-white);
+  --ifm-background-color: var(--colors-off-white) !important;
+  --ifm-card-background-color: var(--colors-off-white);
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
@@ -44,48 +45,45 @@
   /* Custom Variables */
   --hero-image-background-color: var(--colors-darker-grey);
 
-  /* Infirma Variables */
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
-  --ifm-background-color: var(--colors-dark-grey) !important;
-  --ifm-card-background-color: var(--colors-light-grey);
+  /* Infima Variables */
+  --ifm-color-primary: #66fbd1;
   --ifm-color-primary-dark: #44fac7;
   --ifm-color-primary-darker: #32fac1;
   --ifm-color-primary-darkest: #06f1af;
   --ifm-color-primary-light: #88fcdb;
   --ifm-color-primary-lighter: #9afce1;
   --ifm-color-primary-lightest: #cdfef0;
-  --ifm-color-primary: #66fbd1;
-  --ifm-color-secondary-dark: var(--colors-dark-grey);
-  --ifm-color-secondary: var(--colors-light-grey);
-  --ifm-footer-background-color: var(--colors-light-grey);
-  --ifm-link-color: var(--colors-green);
+  --ifm-footer-background-color: var(--colors-dark-grey);
+  --ifm-background-color: var(--colors-darker-grey) !important;
   --ifm-navbar-background-color: var(--colors-dark-grey);
+  --ifm-card-background-color: var(--colors-light-grey);
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
 
-html[data-theme='dark'] .button {
-  color: var(--colors-white);
-}
-
-html[data-theme='dark'] .button--primary {
-  --ifm-button-background-color: var(--colors-blue);
-  --ifm-button-border-color: var(--colors-blue);
-}
-
-html[data-theme='dark'] .button--primary:hover {
-  --ifm-button-background-color: var(--colors-dark-blue);
-  --ifm-button-border-color: var(--colors-dark-blue);
-}
-
-.button--lg {
-  --ifm-button-size-multiplier: 1.5;
-}
-
+/* Footer */
 html .footer {
   margin-top: 4rem;
 }
 
 html footer .footer__copyright {
   font-size: 0.75rem;
+}
+
+html[data-theme='dark'] .footer {
+  background-color: var(--ifm-footer-background-color);
+}
+
+/* Get Started button in Navbar */
+.nav-button {
+  background-color: var(--ifm-color-primary);
+  color: var(--ifm-button-color);
+  font-weight: 600;
+  padding: 8px 16px;
+}
+
+.nav-button:hover {
+  color: var(--ifm-button-color);
+  background-color: var(--ifm-color-primary-dark);
 }
 
 .navbar-github-icon:hover {
@@ -128,4 +126,28 @@ html[data-theme='dark'] .navbar-vgv-icon:before {
   aspect-ratio: 16 / 9;
   width: 100%;
   max-width: 720px;
+}
+
+@media screen and (max-width: 996px) {
+  .nav-button {
+    background-color: var(--colors-white);
+    color: var(--ifm-menu-color);
+    font-size: 1em;
+    font-weight: 300;
+    padding: 4px 12px;
+  }
+  .nav-button:hover {
+    color: var(--ifm-menu-color);
+    background-color: var(--ifm-menu-color-background-hover);
+  }
+
+  html[data-theme='dark'] .nav-button {
+    background-color: var(--ifm-navbar-background-color);
+    color: var(--ifm-menu-color);
+  }
+
+  html[data-theme='dark'] .nav-button:hover {
+    background-color: var(--ifm-menu-color-background-hover);
+    color: var(--ifm-menu-color);
+  }
 }
