@@ -6,14 +6,15 @@ import { newRoute } from "./commands";
  *
  * The extension is activated the very first time the command is executed.
  *
- * @param context
- * @returns {vscode.ExtensionContext}
+ * @param {vscode.ExtensionContext} context
+ * @returns The same instance of the extension context passed in.
  */
-export function activate(context: vscode.ExtensionContext) {
+export function activate(
+  context: vscode.ExtensionContext
+): vscode.ExtensionContext {
   context.subscriptions.push(
     vscode.commands.registerCommand("extension.new-route", newRoute)
   );
-
   return context;
 }
 
