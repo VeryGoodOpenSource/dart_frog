@@ -13,7 +13,15 @@
     "eqeqeq": "warn",
     "no-throw-literal": "warn",
     "semi": "off",
-    "max-len": ["error", { "code": 80, "ignoreUrls": true }]
+    "max-len": [
+      "error",
+      {
+        "code": 80,
+        "ignoreUrls": true,
+        "ignoreStrings": true,
+        "ignoreTemplateLiterals": true
+      }
+    ]
   },
   "ignorePatterns": ["out", "dist", "**/*.d.ts"]
 }
