@@ -10,7 +10,7 @@ When reporting a bug, please use the built-in [Bug Report][bug_report_link] temp
 
 ## Developing for Dart Frog's Visual Studio Code extension
 
-To develop for the Dart Frog Visual Studio Code extension you will need to become familiar with VS Code extension development and the Very Good Ventures processes and conventions:
+To develop for the Dart Frog Visual Studio Code (VS Code) extension you will need to become familiar with VS Code extension development and the Very Good Ventures processes and conventions:
 
 ### Setting up your local development environment
 
