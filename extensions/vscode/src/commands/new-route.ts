@@ -22,9 +22,8 @@ import { InputBoxOptions, Uri, window, OpenDialogOptions } from "vscode";
  *
  * @see [Dart Frog CLI `new` command implementation](https://github.com/VeryGoodOpenSource/dart_frog/tree/main/packages/dart_frog_cli/lib/src/commands/new)
  * @param { Uri | undefined} uri
- * @returns {Promise<void>}
  */
-export const newRoute = async (uri: Uri | undefined) => {
+export const newRoute = async (uri: Uri | undefined): Promise<void> => {
   const routeName = await promptRouteName();
   if (routeName === undefined || routeName.trim() === "") {
     window.showErrorMessage("Please enter a valid route name");
@@ -57,7 +56,7 @@ export const newRoute = async (uri: Uri | undefined) => {
  * Shows an input box to the user and returns a Thenable that resolves to
  * a string the user provided.
  *
- * @returns { Thenable<string | undefined>} routeName
+ * @returns The route name the user provided or undefined if the user canceled.
  */
 function promptRouteName(): Thenable<string | undefined> {
   const inputBoxOptions: InputBoxOptions = {
@@ -74,7 +73,8 @@ function promptRouteName(): Thenable<string | undefined> {
  * This is used when the user activates the command from the command palette
  * instead of the context menu.
  *
- * @returns { Promise<string | undefined>} targetDirectory
+ * @returns The path to the selected folder or file or undefined if the user
+ * canceled.
  */
 async function promptForTargetDirectory(): Promise<string | undefined> {
   const options: OpenDialogOptions = {
@@ -97,7 +97,7 @@ async function promptForTargetDirectory(): Promise<string | undefined> {
  * A valid working directory is a directory that contains a `routes` directory.
  *
  * @param {String} workingDirectory
- * @returns {Boolean} isValid
+ * @returns Whether or not the given path is a valid working directory.
  **/
 function isValidWorkingPath(workingDirectory: String) {
   const workingDirectorySplits = workingDirectory.split(path.sep);
@@ -114,7 +114,7 @@ function isValidWorkingPath(workingDirectory: String) {
 function executeDartFrogNewCommand(
   routeName: String,
   workingDirectory: String
-) {
+): void {
   let workingDirectorySplits = workingDirectory.split(path.sep);
 
   const lastWorkingDirectoryElement =
