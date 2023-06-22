@@ -6,9 +6,11 @@ import * as vscode from "vscode";
  * The extension is activated the very first time the command is executed.
  *
  * @param {vscode.ExtensionContext} context
- * @returns {vscode.ExtensionContext}
+ * @returns The same instance of the extension context passed in.
  */
-export function activate(context: vscode.ExtensionContext) {
+export function activate(
+  context: vscode.ExtensionContext
+): vscode.ExtensionContext {
   return context;
 }
 
