@@ -1,0 +1,7 @@
+{
+  "reporter": ["lcov"],
+  "all": true,
+  "include": ["src/**"],
+  "exclude": ["src/test/**"],
+  "exclude-after-remap": true
+}
