@@ -14,9 +14,9 @@ To develop for the Dart Frog Visual Studio Code extension you will need to becom
 
 ### Setting up your local development environment
 
-1. Install a valid [Dart SDK](https://dart.dev/get-dart) in your local environment. If you have Flutter installed, you likely have a valid Dart SDK version already installed.
+1. Install a valid [Dart SDK](https://dart.dev/get-dart) in your local environment, it should be compatible with the latest version of [Dart Frog CLI](https://github.com/VeryGoodOpenSource/dart_frog/blob/main/packages/dart_frog_cli/pubspec.yaml). If you have Flutter installed, you likely have a valid Dart SDK version already installed.
 
-2. Install a valid [Node.js](https://nodejs.org) runtime in your local environment.
+2. Install a valid [Node.js](https://nodejs.org) runtime in your local environment, it should be compatible with the [VS Code engine version](./package.json).
 
 3. Open the project in Visual Studio Code:
 
