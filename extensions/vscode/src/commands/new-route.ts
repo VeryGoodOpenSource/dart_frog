@@ -140,7 +140,7 @@ function executeDartFrogNewCommand(
   );
 
   cp.exec(
-    `dart_frog new route ${normalizedRouteName}`,
+    `dart_frog new route '${normalizedRouteName}'`,
     {
       cwd: dartProjectDirectory,
     },
