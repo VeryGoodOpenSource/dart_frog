@@ -149,7 +149,7 @@ Response onRequest(RequestContext context) {
 
 In the case of `null` be returned (unauthenticated), the middleware will automatically send an unauthorized `401` in the response.
 
-### Filtering routes
+### Filtering Routes
 
 In many instances, developers will want to apply authentication to some routes, while not to others.
 
