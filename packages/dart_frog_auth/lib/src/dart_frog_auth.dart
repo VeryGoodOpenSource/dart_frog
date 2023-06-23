@@ -88,7 +88,7 @@ Middleware basicAuthentication<T extends Object>({
 /// By default, this middleware will apply to all routes. You can change this
 /// behavior by providing a function that returns a boolean value based on the
 /// [RequestContext]. If the function returns false, the middleware will not
-/// apply to the route and the call will have authentication validation.
+/// apply to the route and the call will have no authentication validation.
 Middleware bearerAuthentication<T extends Object>({
   required Future<T?> Function(String) userFromToken,
   ApplyToRoute applyToRoute = _defaultApplyToRoute,
