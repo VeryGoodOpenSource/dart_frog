@@ -162,7 +162,7 @@ of routes will need to be created:
  - `DELETE /users/[id]`: Deletes the user with the given id.
  - `GET /users/[id]`: Returns the user with the given id.
 
-Those endpoints can be translated in the following structure in a Dart Frog backend:
+Those endpoints can be translated to the following structure in a Dart Frog backend:
 
 ```
 routes/
