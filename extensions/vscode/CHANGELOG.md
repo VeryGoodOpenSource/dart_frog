@@ -2,4 +2,4 @@
 
 Initial Version of the Extension.
 
-- Includes the ability to create a Route snippet
+- Includes the ability to create a New Route via command or context menu
