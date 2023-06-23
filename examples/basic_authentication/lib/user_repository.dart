@@ -41,7 +41,7 @@ class User extends Equatable {
   /// The user's username.
   final String username;
 
-  /// The user's password in a hashed form.
+  /// The user's password, in a hashed form.
   final String password;
 
   @override
