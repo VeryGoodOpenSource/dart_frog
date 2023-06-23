@@ -1,5 +1,6 @@
 /**
- * This file downloads, unzipps, and launches VS Code with extension test parameters.
+ * This file downloads, unzipps, and launches VS Code with extension test
+ * parameters.
  *
  * @see https://code.visualstudio.com/api/working-with-extensions/testing-extension#the-test-script
  * @see https://code.visualstudio.com/api/working-with-extensions/testing-extension#custom-setup-with-vscodetestelectron
