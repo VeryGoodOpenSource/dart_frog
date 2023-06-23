@@ -25,7 +25,7 @@ class Daemon {
 
   final Logger _logger;
 
-  final  _exitCodeCompleter = Completer<ExitCode>();
+  final _exitCodeCompleter = Completer<ExitCode>();
 
   /// A [Future] that completes when the daemon exits.
   Future<ExitCode> get exitCode => _exitCodeCompleter.future;
