@@ -207,9 +207,9 @@ Authentication is about WHO the user is, while authorization is about WHAT a use
 These concepts are related since we need to know who the user is in order to check if they can
 perform or not a given operation.
 
-`dart_frog_auth` tries only to solve the authentication part of the problem, in order to enforce
+`dart_frog_auth` only solves the authentication part of the problem. To enforce
 authorization, it is up to the developer to implement it manually, or use an authorization issue
-system, like OATH for example.
+system like OATH, for example.
 
 In technical terms, a request should return `401` (Unauthorized) when authentication fails and
 `403` (Forbidden) when authorization failed.
