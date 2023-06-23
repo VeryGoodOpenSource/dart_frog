@@ -87,6 +87,8 @@ async function promptForTargetDirectory(): Promise<string | undefined> {
     if (Array.isArray(uri) && uri.length > 0) {
       return uri[0].fsPath;
     }
+
+    return undefined;
   });
 }
 
