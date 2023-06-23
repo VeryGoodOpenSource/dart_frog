@@ -66,107 +66,157 @@ void main() {
       expect(response.statusCode, equals(HttpStatus.forbidden));
     });
 
-    test('PATCH updates the user', () async {
-      final user = User(
-        id: '1',
-        name: 'John Doe',
-        username: 'johndoe',
-        password: '',
-      );
-      when(() => context.read<User>()).thenReturn(user);
-
-      final userRepository = _MockUserRepository();
-      when(
-        () => userRepository.updateUser(
+    group('PATCH', () {
+      test('updates the user', () async {
+        final user = User(
           id: '1',
-          name: 'Jane Doe',
-          username: 'janedoe',
-          password: 'password',
-        ),
-      ).thenAnswer((_) async {});
+          name: 'John Doe',
+          username: 'johndoe',
+          password: '',
+        );
+        when(() => context.read<User>()).thenReturn(user);
 
-      when(() => context.read<UserRepository>()).thenReturn(userRepository);
+        final userRepository = _MockUserRepository();
+        when(
+          () => userRepository.updateUser(
+            id: '1',
+            name: 'Jane Doe',
+            username: 'janedoe',
+            password: 'password',
+          ),
+        ).thenAnswer((_) async {});
 
-      when(() => request.method).thenReturn(HttpMethod.patch);
-      when(() => request.json()).thenAnswer(
-        (_) async => {
-          'name': 'Jane Doe',
-          'username': 'janedoe',
-          'password': 'password',
+        when(() => context.read<UserRepository>()).thenReturn(userRepository);
+
+        when(() => request.method).thenReturn(HttpMethod.patch);
+        when(() => request.json()).thenAnswer(
+          (_) async => {
+            'name': 'Jane Doe',
+            'username': 'janedoe',
+            'password': 'password',
+          },
+        );
+
+        final response = await route.onRequest(context, '1');
+
+        expect(response.statusCode, equals(HttpStatus.noContent));
+        verify(
+          () => userRepository.updateUser(
+            id: '1',
+            name: 'Jane Doe',
+            username: 'janedoe',
+            password: 'password',
+          ),
+        ).called(1);
+      });
+
+      test('returns bad content if there is no information to update',
+          () async {
+        final user = User(
+          id: '1',
+          name: 'John Doe',
+          username: 'johndoe',
+          password: '',
+        );
+        when(() => context.read<User>()).thenReturn(user);
+
+        final userRepository = _MockUserRepository();
+        when(() => context.read<UserRepository>()).thenReturn(userRepository);
+
+        when(() => request.method).thenReturn(HttpMethod.patch);
+        when(() => request.json()).thenAnswer(
+          (_) async => <String, dynamic>{},
+        );
+
+        final response = await route.onRequest(context, '1');
+
+        expect(response.statusCode, equals(HttpStatus.badRequest));
+      });
+
+      test(
+        'returns forbidden when the logged user is not the requested one',
+        () async {
+          final user = User(
+            id: '1',
+            name: 'John Doe',
+            username: 'johndoe',
+            password: '',
+          );
+          when(() => context.read<User>()).thenReturn(user);
+
+          final userRepository = _MockUserRepository();
+          when(
+            () => userRepository.updateUser(
+              id: '1',
+              name: 'Jane Doe',
+              username: 'janedoe',
+              password: 'password',
+            ),
+          ).thenAnswer((_) async {});
+
+          when(() => context.read<UserRepository>()).thenReturn(userRepository);
+
+          when(() => request.method).thenReturn(HttpMethod.patch);
+          when(() => request.json()).thenAnswer(
+            (_) async => {
+              'name': 'Jane Doe',
+              'username': 'janedoe',
+              'password': 'password',
+            },
+          );
+
+          final response = await route.onRequest(context, '1');
+
+          expect(response.statusCode, equals(HttpStatus.noContent));
+          verify(
+            () => userRepository.updateUser(
+              id: '1',
+              name: 'Jane Doe',
+              username: 'janedoe',
+              password: 'password',
+            ),
+          ).called(1);
         },
       );
+    });
 
-      final response = await route.onRequest(context, '1');
-
-      expect(response.statusCode, equals(HttpStatus.noContent));
-      verify(
-        () => userRepository.updateUser(
+    group('DELETE', () {
+      test('deletes the user', () async {
+        final user = User(
           id: '1',
-          name: 'Jane Doe',
-          username: 'janedoe',
-          password: 'password',
-        ),
-      ).called(1);
-    });
+          name: 'John Doe',
+          username: 'johndoe',
+          password: '',
+        );
+        when(() => context.read<User>()).thenReturn(user);
 
-    test('PATCH returns bad content if there is no information to update',
-        () async {
-      final user = User(
-        id: '1',
-        name: 'John Doe',
-        username: 'johndoe',
-        password: '',
-      );
-      when(() => context.read<User>()).thenReturn(user);
+        final userRepository = _MockUserRepository();
+        when(() => userRepository.deleteUser('1')).thenAnswer((_) async {});
 
-      final userRepository = _MockUserRepository();
-      when(() => context.read<UserRepository>()).thenReturn(userRepository);
+        when(() => context.read<UserRepository>()).thenReturn(userRepository);
 
-      when(() => request.method).thenReturn(HttpMethod.patch);
-      when(() => request.json()).thenAnswer(
-        (_) async => <String, dynamic>{},
-      );
+        when(() => request.method).thenReturn(HttpMethod.delete);
 
-      final response = await route.onRequest(context, '1');
+        final response = await route.onRequest(context, '1');
 
-      expect(response.statusCode, equals(HttpStatus.badRequest));
-    });
+        expect(response.statusCode, equals(HttpStatus.noContent));
+        verify(() => userRepository.deleteUser('1')).called(1);
+      });
 
-    test('DELETE deletes the user', () async {
-      final user = User(
-        id: '1',
-        name: 'John Doe',
-        username: 'johndoe',
-        password: '',
-      );
-      when(() => context.read<User>()).thenReturn(user);
+      test('returns forbidden when deleting a different user', () async {
+        final user = User(
+          id: '1',
+          name: 'John Doe',
+          username: 'johndoe',
+          password: '',
+        );
+        when(() => context.read<User>()).thenReturn(user);
+        when(() => request.method).thenReturn(HttpMethod.delete);
 
-      final userRepository = _MockUserRepository();
-      when(() => userRepository.deleteUser('1')).thenAnswer((_) async {});
+        final response = await route.onRequest(context, '2');
 
-      when(() => context.read<UserRepository>()).thenReturn(userRepository);
-
-      when(() => request.method).thenReturn(HttpMethod.delete);
-
-      final response = await route.onRequest(context, '1');
-
-      expect(response.statusCode, equals(HttpStatus.noContent));
-      verify(() => userRepository.deleteUser('1')).called(1);
-    });
-
-    test('DELETE returns forbidden when deleting a different user', () async {
-      final user = User(
-        id: '1',
-        name: 'John Doe',
-        username: 'johndoe',
-        password: '',
-      );
-      when(() => context.read<User>()).thenReturn(user);
-      when(() => request.method).thenReturn(HttpMethod.delete);
-
-      final response = await route.onRequest(context, '2');
-
-      expect(response.statusCode, equals(HttpStatus.forbidden));
+        expect(response.statusCode, equals(HttpStatus.forbidden));
+      });
     });
 
     test(

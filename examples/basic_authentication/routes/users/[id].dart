@@ -27,6 +27,11 @@ Future<Response> _getUser(RequestContext context, String id) async {
 }
 
 Future<Response> _updateUser(RequestContext context, String id) async {
+  final user = context.read<User>();
+  if (user.id != id) {
+    return Response(statusCode: HttpStatus.forbidden);
+  }
+
   final body = await context.request.json() as Map<String, dynamic>;
   final name = body['name'] as String?;
   final username = body['username'] as String?;
