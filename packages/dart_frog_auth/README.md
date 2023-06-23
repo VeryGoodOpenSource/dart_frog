@@ -172,12 +172,12 @@ routes/
       |- _middleware.dart
 ```
 
-It would make sense for the `PATCH`, `DELETE` and `GET` routes to be authenticated ones, since
-only an authenticated user would be allowed to change those information.
+It would make sense for the `PATCH`, `DELETE`, and `GET` routes to be authenticated ones, since
+only an authenticated user would be allowed to change this information.
 
-To accomplish that, we need that the middleware apply authentication to all routes, except the `POST`.
+To accomplish that, we need the middleware to apply authentication to all routes except `POST`.
 
-Such behavior is possible with the use of `applyToRoute` optional predicate:
+Such behavior is possible with the use of the `applyToRoute` optional predicate:
 
 ```dart
 Handler middleware(Handler handler) {
