@@ -154,7 +154,7 @@ In the case of `null` be returned (unauthenticated), the middleware will automat
 In many instances, developers will want to apply authentication to some routes, while not to others.
 
 One of those can be described by looking at implementing a basic RESTful CRUD API. In order to make
-such an API that allows consumers to create, update, delete and get user information, the following list
+such an API that allows consumers to create, update, delete, and get user information, the following list
 of routes will need to be created:
 
  - `POST /users`: Creates an user
