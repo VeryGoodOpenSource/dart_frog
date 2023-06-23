@@ -2,8 +2,8 @@
 
 import 'dart:io';
 
+import 'package:basic_authentication/user_repository.dart';
 import 'package:dart_frog/dart_frog.dart';
-import 'package:example/user_repository.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 

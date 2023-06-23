@@ -48,10 +48,10 @@ Future<bool> _defaultApplyToRoute(RequestContext context) async => true;
 /// apply to the route and the call will have authentication validation.
 Middleware basicAuthentication<T extends Object>({
   required Future<T?> Function(String, String) userFromCredentials,
-  ApplyToRoute applyToRoute = _defaultApplyToRoute,
+  ApplyToRoute applies = _defaultApplyToRoute,
 }) =>
     (handler) => (context) async {
-          if (!await applyToRoute(context)) {
+          if (!await applies(context)) {
             return handler(context);
           }
 
@@ -91,10 +91,10 @@ Middleware basicAuthentication<T extends Object>({
 /// apply to the route and the call will have no authentication validation.
 Middleware bearerAuthentication<T extends Object>({
   required Future<T?> Function(String) userFromToken,
-  ApplyToRoute applyToRoute = _defaultApplyToRoute,
+  ApplyToRoute applies = _defaultApplyToRoute,
 }) =>
     (handler) => (context) async {
-          if (!await applyToRoute(context)) {
+          if (!await applies(context)) {
             return handler(context);
           }
 

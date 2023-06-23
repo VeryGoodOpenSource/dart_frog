@@ -177,7 +177,7 @@ only an authenticated user would be allowed to change this information.
 
 To accomplish that, we need the middleware to apply authentication to all routes except `POST`.
 
-Such behavior is possible with the use of the `applyToRoute` optional predicate:
+Such behavior is possible with the use of the `applies` optional predicate:
 
 ```dart
 Handler middleware(Handler handler) {
@@ -189,7 +189,7 @@ Handler middleware(Handler handler) {
       .use(
         basicAuthentication<User>(
           userFromCredentials: userFromCredentials(userRepository),
-          applyToRoute: (RequestContext context) async =>
+          applies: (RequestContext context) async =>
               context.request.method != HttpMethod.post,
         ),
       );

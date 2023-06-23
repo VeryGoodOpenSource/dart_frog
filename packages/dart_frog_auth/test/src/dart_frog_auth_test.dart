@@ -117,7 +117,7 @@ void main() {
           called = true;
           return user;
         },
-        applyToRoute: (_) async => false,
+        applies: (_) async => false,
       );
 
       await middleware((_) async => Response())(context);
@@ -227,7 +227,7 @@ void main() {
           called = true;
           return user;
         },
-        applyToRoute: (_) async => false,
+        applies: (_) async => false,
       );
 
       await middleware((_) async => Response())(context);

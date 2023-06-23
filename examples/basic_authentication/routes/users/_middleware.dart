@@ -1,6 +1,6 @@
+import 'package:basic_authentication/user_repository.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:dart_frog_auth/dart_frog_auth.dart';
-import 'package:example/user_repository.dart';
 
 Future<User?> Function(String, String) userFromCredentials(
   UserRepository repository,
@@ -17,7 +17,7 @@ Handler middleware(Handler handler) {
       .use(
         basicAuthentication<User>(
           userFromCredentials: userFromCredentials(userRepository),
-          applyToRoute: (RequestContext context) async =>
+          applies: (RequestContext context) async =>
               context.request.method != HttpMethod.post,
         ),
       );

@@ -1,7 +1,7 @@
 import 'dart:io';
 
+import 'package:basic_authentication/user_repository.dart';
 import 'package:dart_frog/dart_frog.dart';
-import 'package:example/user_repository.dart';
 
 Future<Response> onRequest(RequestContext context) async {
   return switch (context.request.method) {
