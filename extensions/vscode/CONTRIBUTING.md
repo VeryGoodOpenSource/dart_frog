@@ -18,10 +18,10 @@ To develop for the Dart Frog Visual Studio Code (VS Code) extension you will nee
 
 2. Install a valid [Node.js](https://nodejs.org) runtime in your local environment, it should be compatible with the [VS Code engine version](./package.json).
 
-3. Open the project in Visual Studio Code:
+3. Open the project in VS Code:
 
 ```sh
-# Open Visual Studio Code (from /extensions/vscode)
+# Open VS Code (from /extensions/vscode)
 code .
 ```
 
@@ -35,7 +35,7 @@ npm i
 4. Run all the extension tests:
 
 ```sh
-# 💻 Run Dart Frog's Visual Studio Code extension tests (from /extensions/vscode)
+# 💻 Run Dart Frog's VS Code extension tests (from /extensions/vscode)
 npm test
 ```
 
@@ -45,7 +45,7 @@ If some tests do not pass out of the box, please submit an [issue](https://githu
 
 6. After a change, make sure to **Run Developer: Reload Window** from the command palette in the new window.
 
-💡 **Note**: For further information about debugging Visual Studio Code's extensions refer to the [official documentation](https://code.visualstudio.com/api/get-started/your-first-extension).
+💡 **Note**: For further information about debugging VS Code's extensions refer to the [official documentation](https://code.visualstudio.com/api/get-started/your-first-extension).
 
 ### Creating a Pull Request
 
@@ -71,7 +71,7 @@ npm run lint
 4. Ensure all tests are passing and that coverage is 100%:
 
 ```sh
-# 💻 Run Dart Frog's Visual Studio Code extension tests (from /extensions/vscode)
+# 💻 Run Dart Frog's VS Code extension tests (from /extensions/vscode)
 npm test
 ```
 
