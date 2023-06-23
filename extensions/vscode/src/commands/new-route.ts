@@ -84,10 +84,9 @@ async function promptForTargetDirectory(): Promise<string | undefined> {
     canSelectFiles: true,
   };
   return window.showOpenDialog(options).then((uri) => {
-    if (uri === undefined) {
-      return undefined;
+    if (Array.isArray(uri) && url.length > 0) {
+      return uri[0].fsPath;
     }
-    return uri[0].fsPath;
   });
 }
 
