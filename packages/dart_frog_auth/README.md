@@ -198,13 +198,13 @@ Handler middleware(Handler handler) {
 
 In the above example, only routes that are not `POST` will have authentication checked.
 
-### Authentication vs Authorization
+### Authentication vs. Authorization
 
-Authentication and Authorization are two related, but different concepts that are often confused.
+Both Authentication and authorization are related, but are different concepts that are often confused.
 
 Authentication is about WHO the user is, while authorization is about WHAT a user can do.
 
-These concepts are related since we need to know who the user is, in order to check if they can
+These concepts are related since we need to know who the user is in order to check if they can
 perform or not a given operation.
 
 `dart_frog_auth` tries only to solve the authentication part of the problem, in order to enforce
