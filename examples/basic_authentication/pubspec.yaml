@@ -1,4 +1,4 @@
-name: example
+name: basic_authentication
 description: An example of dart_frog_auth using the bearer authentication scheme.
 version: 1.0.0+1
 publish_to: none
