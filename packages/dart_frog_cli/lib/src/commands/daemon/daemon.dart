@@ -37,5 +37,5 @@ class DaemonCommand extends DartFrogCommand {
   Daemon get daemon => _daemonBuilder(logger);
 
   @override
-  Future<int> run() => daemon.exitCode;
+  Future<int> run() async => (await daemon.exitCode).code;
 }
