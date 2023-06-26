@@ -5,11 +5,11 @@ import { afterEach, beforeEach } from "mocha";
 import * as assert from "assert";
 
 suite("install-cli command", () => {
+  const updateCommand = `dart pub global activate dart_frog_cli`;
+
   let vscodeStub: any;
   let childProcessStub: any;
   let command: any;
-
-  const updateCommand = `dart pub global activate dart_frog_cli`;
 
   beforeEach(() => {
     vscodeStub = {
