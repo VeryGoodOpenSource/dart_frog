@@ -45,14 +45,14 @@ suite("install-cli command", () => {
     assert.equal(wantedCalls.length, 0);
   });
 
-  suite("installing", () => {
+  suite("installs Dart Frog CLI", () => {
     beforeEach(() => {
       childProcessStub.execSync
         .withArgs("dart_frog --version")
         .throws("Command failed");
     });
 
-    test("installs Dart Frog CLI if not already installed", async () => {
+    test("when not already installed", async () => {
       await command.installCLI();
 
       let progressFunction = vscodeStub.window.withProgress.getCall(0).args[1];
@@ -65,11 +65,12 @@ suite("install-cli command", () => {
       await command.installCLI();
 
       const progressOptions = vscodeStub.window.withProgress.getCall(0).args[0];
+
       assert.strictEqual(progressOptions.title, "Installing Dart Frog CLI...");
       assert.strictEqual(progressOptions.location, 15);
     });
 
-    test("shows error message on installation failure", async () => {
+    test("shows error message on failure", async () => {
       const error = new Error("Command failed");
       childProcessStub.exec.withArgs(updateCommand).yields(error);
 
