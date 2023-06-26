@@ -50,6 +50,9 @@
       ]
     }
   },
+  "extensionDependencies": [
+    "Dart-Code.dart-code"
+  ],
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
