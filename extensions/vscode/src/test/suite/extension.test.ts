@@ -7,12 +7,7 @@ import { installCLI, newRoute } from "../../commands";
 import { afterEach, beforeEach } from "mocha";
 
 suite("activate", () => {
-  afterEach(() => {
-    sinon.restore();
-  });
-
   test("does not throw", async () => {
-    // TODO(alestiago): Try to mock cp.
     const extension = vscode.extensions.getExtension(
       "VeryGoodVentures.dart-frog"
     ) as vscode.Extension<any>;
@@ -33,6 +28,10 @@ suite("activate", () => {
       };
       extension = proxyquire("../../extension", { vscode: vscodeStub });
       context = { subscriptions: [] };
+    });
+
+    afterEach(() => {
+      sinon.restore();
     });
 
     test("new-route", async () => {
