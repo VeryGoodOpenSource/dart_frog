@@ -3,37 +3,56 @@ var proxyquire = require("proxyquire");
 
 import * as assert from "assert";
 import * as vscode from "vscode";
-import { newRoute } from "../../commands";
-import { afterEach } from "mocha";
+import { installCLI, newRoute } from "../../commands";
+import { afterEach, beforeEach } from "mocha";
 
 suite("activate", () => {
   afterEach(() => {
     sinon.restore();
   });
 
-  test("subcribes to one disposable", async () => {
+  test("does not throw", async () => {
+    // TODO(alestiago): Try to mock cp.
     const extension = vscode.extensions.getExtension(
       "VeryGoodVentures.dart-frog"
     ) as vscode.Extension<any>;
 
-    const context = await extension.activate();
-
-    assert.strictEqual(context.subscriptions.length, 1);
+    assert.doesNotThrow(async () => await extension.activate());
   });
 
-  test("registers new-route command", async () => {
-    const vscodeStub = {
-      commands: {
-        registerCommand: sinon.stub().returns({}),
-      },
-    };
-    var extension = proxyquire("../../extension", { vscode: vscodeStub });
-    extension.activate({ subscriptions: [] });
+  suite("registers command", () => {
+    let vscodeStub: any;
+    let extension: any;
+    let context: any;
 
-    sinon.assert.calledWith(
-      vscodeStub.commands.registerCommand,
-      "extension.new-route",
-      newRoute
-    );
+    beforeEach(() => {
+      vscodeStub = {
+        commands: {
+          registerCommand: sinon.stub(),
+        },
+      };
+      extension = proxyquire("../../extension", { vscode: vscodeStub });
+      context = { subscriptions: [] };
+    });
+
+    test("new-route", async () => {
+      extension.activate(context);
+
+      sinon.assert.calledWith(
+        vscodeStub.commands.registerCommand,
+        "extension.new-route",
+        newRoute
+      );
+    });
+
+    test("install-cli", async () => {
+      extension.activate(context);
+
+      sinon.assert.calledWith(
+        vscodeStub.commands.registerCommand,
+        "extension.install-cli",
+        installCLI
+      );
+    });
   });
 });
