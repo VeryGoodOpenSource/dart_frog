@@ -3,7 +3,7 @@ const cp = require("child_process");
 import { window, ProgressOptions } from "vscode";
 
 /**
- * Installs Dart Frog CLI in the user's system.
+ * Installs Dart Frog CLI in the user's system if not already installed.
  */
 export const installCLI = async (): Promise<void> => {
   if (!hasDartFrogCliInstalled()) {
