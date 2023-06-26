@@ -24,9 +24,9 @@ export const installCLI = async () => {
 };
 
 /**
- * Whether the user has dart_frog_cli installed in their system.
+ * Whether the user has Dart Frog CLI installed in their system.
  *
- * @returns {boolean} True if the user has dart_frog_cli installed in their
+ * @returns {boolean} True if the user has Dart Frog CLI installed in their
  * system, false otherwise.
  */
 function hasDartFrogCliInstalled(): boolean {
@@ -39,7 +39,7 @@ function hasDartFrogCliInstalled(): boolean {
 }
 
 /**
- * Installs the latest version of dart_frog_cli available in the pub.dev
+ * Installs the latest version of Dart Frog CLI available in the pub.dev
  * repository.
  *
  * @returns {Promise<void>} A promise that resolves when the installation is
@@ -57,7 +57,7 @@ async function installDartFrogCliVersion(): Promise<void> {
 }
 
 /**
- * Updates the latest version of dart_frog_cli available in the pub.dev
+ * Updates the latest version of Dart Frog CLI available in the pub.dev
  * repository.
  *
  * @returns {Promise<void>} A promise that resolves when the update is complete.
