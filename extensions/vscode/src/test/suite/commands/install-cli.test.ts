@@ -9,6 +9,8 @@ suite("install-cli command", () => {
   let childProcessStub: any;
   let command: any;
 
+  const updateCommand = `dart pub global activate dart_frog_cli`;
+
   beforeEach(() => {
     vscodeStub = {
       window: {
@@ -32,6 +34,17 @@ suite("install-cli command", () => {
     sinon.restore();
   });
 
+  test("does not install if Dart Frog CLI is already installed", async () => {
+    childProcessStub.execSync.withArgs("dart_frog --version").returns("0.0.0");
+
+    await command.installCLI();
+
+    const wantedCalls = childProcessStub.exec
+      .getCalls()
+      .filter((call: any) => call.args[0] === updateCommand);
+    assert.equal(wantedCalls.length, 0);
+  });
+
   suite("installing", () => {
     beforeEach(() => {
       childProcessStub.execSync
@@ -45,10 +58,7 @@ suite("install-cli command", () => {
       let progressFunction = vscodeStub.window.withProgress.getCall(0).args[1];
       await progressFunction();
 
-      sinon.assert.calledWith(
-        childProcessStub.exec,
-        `dart pub global activate dart_frog_cli`
-      );
+      sinon.assert.calledWith(childProcessStub.exec, updateCommand);
     });
 
     test("shows progress", async () => {
@@ -61,51 +71,7 @@ suite("install-cli command", () => {
 
     test("shows error message on installation failure", async () => {
       const error = new Error("Command failed");
-      childProcessStub.exec
-        .withArgs("dart pub global activate dart_frog_cli")
-        .yields(error);
-
-      await command.installCLI();
-
-      const progressFunction =
-        vscodeStub.window.withProgress.getCall(0).args[1];
-      await progressFunction();
-
-      sinon.assert.calledWith(
-        vscodeStub.window.showErrorMessage,
-        error.message
-      );
-    });
-  });
-
-  suite("updating", () => {
-    beforeEach(() => {
-      childProcessStub.execSync
-        .withArgs("dart_frog --version")
-        .returns("0.0.0");
-    });
-
-    test("updates Dart Frog CLI if already installed", async () => {
-      await command.installCLI();
-
-      let progressFunction = vscodeStub.window.withProgress.getCall(0).args[1];
-      await progressFunction();
-
-      sinon.assert.calledWith(childProcessStub.exec, `dart_frog update`);
-    });
-
-    test("shows progress", async () => {
-      await command.installCLI();
-
-      let progressOptions = vscodeStub.window.withProgress.getCall(0).args[0];
-
-      assert.strictEqual(progressOptions.title, "Updating Dart Frog CLI...");
-      assert.strictEqual(progressOptions.location, 15);
-    });
-
-    test("shows error message on updating failure", async () => {
-      const error = new Error("Command failed");
-      childProcessStub.exec.withArgs("dart_frog update").yields(error);
+      childProcessStub.exec.withArgs(updateCommand).yields(error);
 
       await command.installCLI();
 

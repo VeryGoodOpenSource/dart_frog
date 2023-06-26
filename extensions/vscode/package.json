@@ -37,7 +37,7 @@
       },
       {
         "command": "extension.install-cli",
-        "title": "Dart Frog: Install/Update CLI"
+        "title": "Dart Frog: Install CLI"
       }
     ],
     "menus": {

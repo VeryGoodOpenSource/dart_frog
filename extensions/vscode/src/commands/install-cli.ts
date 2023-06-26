@@ -4,22 +4,14 @@ import { window, ProgressOptions } from "vscode";
 
 /**
  * Installs Dart Frog CLI in the user's system.
- *
- * If already installed, it updates it to the latest version when possible.
  */
-export const installCLI = async () => {
+export const installCLI = async (): Promise<void> => {
   if (!hasDartFrogCliInstalled()) {
     const options: ProgressOptions = {
       location: 15,
       title: "Installing Dart Frog CLI...",
     };
     window.withProgress(options, installDartFrogCliVersion);
-  } else {
-    const options: ProgressOptions = {
-      location: 15,
-      title: "Updating Dart Frog CLI...",
-    };
-    window.withProgress(options, updateDartFrogCliVersion);
   }
 };
 
@@ -48,23 +40,6 @@ function hasDartFrogCliInstalled(): boolean {
 async function installDartFrogCliVersion(): Promise<void> {
   await cp.exec(
     `dart pub global activate dart_frog_cli`,
-    function (error: Error, stdout: String, stderr: String) {
-      if (error) {
-        window.showErrorMessage(error.message);
-      }
-    }
-  );
-}
-
-/**
- * Updates the latest version of Dart Frog CLI available in the pub.dev
- * repository.
- *
- * @returns {Promise<void>} A promise that resolves when the update is complete.
- */
-async function updateDartFrogCliVersion(): Promise<void> {
-  await cp.exec(
-    `dart_frog update`,
     function (error: Error, stdout: String, stderr: String) {
       if (error) {
         window.showErrorMessage(error.message);
