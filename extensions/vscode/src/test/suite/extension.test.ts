@@ -55,4 +55,23 @@ suite("activate", () => {
       );
     });
   });
+
+  test("calls installCLI", async () => {
+    const vscodeStub = {
+      commands: {
+        registerCommand: sinon.stub(),
+      },
+    };
+    const installCLIStub = sinon.stub();
+    const extension = proxyquire("../../extension", {
+      vscode: vscodeStub,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      "./commands": { installCLI: installCLIStub },
+    });
+    const context = { subscriptions: [] };
+
+    extension.activate(context);
+
+    sinon.assert.calledOnce(installCLIStub);
+  });
 });
