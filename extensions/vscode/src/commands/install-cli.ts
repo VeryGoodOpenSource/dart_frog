@@ -31,7 +31,7 @@ function hasDartFrogCliInstalled(): boolean {
 }
 
 /**
- * Installs Dart Frog CLI fro pub.dev.
+ * Installs Dart Frog CLI from pub.dev.
  *
  * @returns {Promise<void>} A promise that resolves when the installation is
  * complete.
