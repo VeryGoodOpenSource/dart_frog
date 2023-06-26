@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { newRoute } from "./commands";
+import { installCLI, newRoute } from "./commands";
 
 /**
  * This method is called when the extension is activated.
@@ -12,8 +12,11 @@ import { newRoute } from "./commands";
 export function activate(
   context: vscode.ExtensionContext
 ): vscode.ExtensionContext {
+  installCLI();
+
   context.subscriptions.push(
-    vscode.commands.registerCommand("extension.new-route", newRoute)
+    vscode.commands.registerCommand("extension.new-route", newRoute),
+    vscode.commands.registerCommand("extension.install-cli", installCLI)
   );
   return context;
 }

@@ -11,9 +11,10 @@ Dart Frog can be installed from the [VS Code Marketplace](https://marketplace.vi
 
 ## Commands
 
-| Command            | Description           |
-| ------------------ | --------------------- |
-| `Route: New Route` | Generates a new route |
+| Command                         | Description                         |
+| ------------------------------- | ----------------------------------- |
+| `Dart Frog: New Route`          | Generates a new route               |
+| `Dart Frog: Install/Update CLI` | Installs or updates Dart Frog's CLI |
 
 You can activate the commands by launching the command palette (View -> Command Palette) and entering the command name or you can right click on the directory or file in which you'd like to create the route and select the command from the context menu.
 

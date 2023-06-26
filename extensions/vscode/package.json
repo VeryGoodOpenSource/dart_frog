@@ -34,6 +34,10 @@
       {
         "command": "extension.new-route",
         "title": "Dart Frog: New Route"
+      },
+      {
+        "command": "extension.install-cli",
+        "title": "Dart Frog: Install/Update CLI"
       }
     ],
     "menus": {
