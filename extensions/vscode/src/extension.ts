@@ -20,5 +20,3 @@ export function activate(
   );
   return context;
 }
-
-export function deactivate() {}
