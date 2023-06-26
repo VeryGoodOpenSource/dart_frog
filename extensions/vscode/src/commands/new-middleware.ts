@@ -88,7 +88,7 @@ function isValidWorkingPath(workingDirectory: String) {
 
 /**
  * Runs the `dart_frog new middleware` command with the route path segment being
- * the working directory.
+ * the path relative to working directory from the routes directory.
  *
  * @param {String} workingDirectory
  */
