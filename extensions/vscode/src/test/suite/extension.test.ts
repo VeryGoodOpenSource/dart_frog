@@ -18,7 +18,7 @@ suite("activate", () => {
 
     const context = await extension.activate();
 
-    assert.strictEqual(context.subscriptions.length, 1);
+    assert.strictEqual(context.subscriptions.length, 2);
   });
 
   test("registers new-route command", async () => {

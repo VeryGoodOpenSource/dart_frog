@@ -112,9 +112,12 @@ function executeDartFrogNewMiddlewareCommand(workingDirectory: String): void {
   const dartProjectDirectory = workingDirectorySplits
     .slice(0, routesIndex)
     .join(path.sep);
-  const normalizedRouteName = workingDirectorySplits
+  let normalizedRouteName = workingDirectorySplits
     .slice(routesIndex + 1)
     .join(path.sep);
+  if (normalizedRouteName === "") {
+    normalizedRouteName = "/";
+  }
 
   cp.exec(
     `dart_frog new middleware '${normalizedRouteName}'`,
