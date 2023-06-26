@@ -4,6 +4,8 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:dart_frog_cli/src/commands/commands.dart';
+import 'package:dart_frog_cli/src/dev_server_runner/dev_server_runner.dart';
+import 'package:dart_frog_cli/src/dev_server_runner/restorable_directory_generator_target.dart';
 import 'package:dart_frog_cli/src/runtime_compatibility.dart';
 import 'package:mason/mason.dart';
 import 'package:mocktail/mocktail.dart';
@@ -71,31 +73,67 @@ void main() {
       generatorTarget = _MockRestorableDirectoryGeneratorTarget();
       command = DevCommand(
         logger: logger,
-        ensureRuntimeCompatibility: (_) {},
-        directoryWatcher: (_) => directoryWatcher,
         generator: (_) async => generator,
-        generatorTarget: (_) => generatorTarget,
-        isWindows: isWindows,
-        startProcess: (
-          String executable,
-          List<String> arguments, {
-          bool runInShell = false,
-        }) async {
-          return process;
+        devServerRunnerBuilder: ({
+          required Logger logger,
+          required String port,
+          required MasonGenerator devServerBundleGenerator,
+          required String dartVmServicePort,
+          required Directory workingDirectory,
+        }) {
+          return DevServerRunner(
+            logger: logger,
+            port: port,
+            devServerBundleGenerator: devServerBundleGenerator,
+            dartVmServicePort: dartVmServicePort,
+            workingDirectory: workingDirectory,
+            // test stuff
+            ensureRuntimeCompatibility: (_) {},
+            directoryWatcher: (_) => directoryWatcher,
+            generatorTarget: (
+              _, {
+              CreateFile? createFile,
+              Logger? logger,
+            }) =>
+                generatorTarget,
+            isWindows: isWindows,
+            startProcess: (
+              String executable,
+              List<String> arguments, {
+              bool runInShell = false,
+            }) async {
+              return process;
+            },
+            sigint: sigint,
+            runProcess: (_, __) async => processResult,
+          );
         },
-        sigint: sigint,
-      )
-        ..testArgResults = argResults
-        ..testRunProcess = (_, __) async => processResult;
+      )..testArgResults = argResults;
     });
 
     test('throws if ensureRuntimeCompatibility fails', () {
       command = DevCommand(
         logger: logger,
-        ensureRuntimeCompatibility: (_) {
-          throw const DartFrogCompatibilityException('oops');
+        devServerRunnerBuilder: ({
+          required Logger logger,
+          required String port,
+          required MasonGenerator devServerBundleGenerator,
+          required String dartVmServicePort,
+          required Directory workingDirectory,
+        }) {
+          return DevServerRunner(
+            logger: logger,
+            port: port,
+            devServerBundleGenerator: devServerBundleGenerator,
+            dartVmServicePort: dartVmServicePort,
+            workingDirectory: workingDirectory,
+            // test
+            ensureRuntimeCompatibility: (_) {
+              throw const DartFrogCompatibilityException('oops');
+            },
+          );
         },
-      );
+      )..testArgResults = argResults;
       expect(command.run, throwsA(isA<DartFrogCompatibilityException>()));
     });
 
@@ -560,18 +598,34 @@ void main() {
 
       command = DevCommand(
         logger: logger,
-        ensureRuntimeCompatibility: (_) {},
-        directoryWatcher: (_) => directoryWatcher,
         generator: (_) async => generator,
-        startProcess: (
-          String executable,
-          List<String> arguments, {
-          bool runInShell = false,
-        }) async {
-          receivedArgs = arguments;
-          return process;
+        devServerRunnerBuilder: ({
+          required Logger logger,
+          required String port,
+          required MasonGenerator devServerBundleGenerator,
+          required String dartVmServicePort,
+          required Directory workingDirectory,
+        }) {
+          return DevServerRunner(
+            logger: logger,
+            port: port,
+            devServerBundleGenerator: devServerBundleGenerator,
+            dartVmServicePort: dartVmServicePort,
+            workingDirectory: workingDirectory,
+            // test
+            ensureRuntimeCompatibility: (_) {},
+            directoryWatcher: (_) => directoryWatcher,
+            startProcess: (
+              String executable,
+              List<String> arguments, {
+              bool runInShell = false,
+            }) async {
+              receivedArgs = arguments;
+              return process;
+            },
+            sigint: sigint,
+          );
         },
-        sigint: sigint,
       )..testArgResults = argResults;
       final exitCode = await command.run();
       expect(exitCode, equals(ExitCode.success.code));
@@ -618,18 +672,34 @@ void main() {
 
         command = DevCommand(
           logger: logger,
-          ensureRuntimeCompatibility: (_) {},
-          directoryWatcher: (_) => directoryWatcher,
           generator: (_) async => generator,
-          startProcess: (
-            String executable,
-            List<String> arguments, {
-            bool runInShell = false,
-          }) async {
-            receivedArgs = arguments;
-            return process;
+          devServerRunnerBuilder: ({
+            required Logger logger,
+            required String port,
+            required MasonGenerator devServerBundleGenerator,
+            required String dartVmServicePort,
+            required Directory workingDirectory,
+          }) {
+            return DevServerRunner(
+              logger: logger,
+              port: port,
+              devServerBundleGenerator: devServerBundleGenerator,
+              dartVmServicePort: dartVmServicePort,
+              workingDirectory: workingDirectory,
+              // test
+              ensureRuntimeCompatibility: (_) {},
+              directoryWatcher: (_) => directoryWatcher,
+              startProcess: (
+                String executable,
+                List<String> arguments, {
+                bool runInShell = false,
+              }) async {
+                receivedArgs = arguments;
+                return process;
+              },
+              sigint: sigint,
+            );
           },
-          sigint: sigint,
         )..testArgResults = argResults;
         final exitCode = await command.run();
         expect(exitCode, equals(ExitCode.success.code));
@@ -677,25 +747,40 @@ void main() {
       when(() => sigint.watch()).thenAnswer((_) => Stream.value(sigint));
       command = DevCommand(
         logger: logger,
-        ensureRuntimeCompatibility: (_) {},
-        directoryWatcher: (_) => directoryWatcher,
         generator: (_) async => generator,
-        exit: (code) => exitCode = code,
-        isWindows: true,
-        startProcess: (
-          String executable,
-          List<String> arguments, {
-          bool runInShell = false,
-        }) async {
-          return process;
+        devServerRunnerBuilder: ({
+          required Logger logger,
+          required String port,
+          required MasonGenerator devServerBundleGenerator,
+          required String dartVmServicePort,
+          required Directory workingDirectory,
+        }) {
+          return DevServerRunner(
+            logger: logger,
+            port: port,
+            devServerBundleGenerator: devServerBundleGenerator,
+            dartVmServicePort: dartVmServicePort,
+            workingDirectory: workingDirectory,
+            // test
+            ensureRuntimeCompatibility: (_) {},
+            directoryWatcher: (_) => directoryWatcher,
+            exit: (code) => exitCode = code,
+            isWindows: true,
+            startProcess: (
+              String executable,
+              List<String> arguments, {
+              bool runInShell = false,
+            }) async {
+              return process;
+            },
+            sigint: sigint,
+            runProcess: (String executable, List<String> arguments) async {
+              processRunCalls.add([executable, ...arguments]);
+              return processResult;
+            },
+          );
         },
-        sigint: sigint,
-      )
-        ..testArgResults = argResults
-        ..testRunProcess = (String executable, List<String> arguments) async {
-          processRunCalls.add([executable, ...arguments]);
-          return processResult;
-        };
+      )..testArgResults = argResults;
       command.run().ignore();
       await untilCalled(() => process.pid);
       expect(
@@ -743,25 +828,41 @@ void main() {
       when(() => sigint.watch()).thenAnswer((_) => const Stream.empty());
       command = DevCommand(
         logger: logger,
-        ensureRuntimeCompatibility: (_) {},
-        directoryWatcher: (_) => directoryWatcher,
         generator: (_) async => generator,
-        exit: (code) => exitCode = code,
-        isWindows: true,
-        startProcess: (
-          String executable,
-          List<String> arguments, {
-          bool runInShell = false,
-        }) async {
-          return process;
+        devServerRunnerBuilder: ({
+          required Logger logger,
+          required String port,
+          required MasonGenerator devServerBundleGenerator,
+          required String dartVmServicePort,
+          required Directory workingDirectory,
+        }) {
+          return DevServerRunner(
+            logger: logger,
+            port: port,
+            devServerBundleGenerator: devServerBundleGenerator,
+            dartVmServicePort: dartVmServicePort,
+            workingDirectory: workingDirectory,
+            // test
+            ensureRuntimeCompatibility: (_) {},
+            directoryWatcher: (_) => directoryWatcher,
+            exit: (code) => exitCode = code,
+            isWindows: true,
+            startProcess: (
+              String executable,
+              List<String> arguments, {
+              bool runInShell = false,
+            }) async {
+              return process;
+            },
+            sigint: sigint,
+            runProcess: (String executable, List<String> arguments) async {
+              processRunCalls.add([executable, ...arguments]);
+              return processResult;
+            },
+          );
         },
-        sigint: sigint,
-      )
-        ..testArgResults = argResults
-        ..testRunProcess = (String executable, List<String> arguments) async {
-          processRunCalls.add([executable, ...arguments]);
-          return processResult;
-        };
+      )..testArgResults = argResults;
+
       command.run().ignore();
       await untilCalled(() => process.pid);
       expect(exitCode, equals(1));
@@ -816,17 +917,33 @@ lib/my_model.g.dart:53:20: Warning: Operand of null-aware operation '!' has type
         );
         command = DevCommand(
           logger: logger,
-          ensureRuntimeCompatibility: (_) {},
-          directoryWatcher: (_) => directoryWatcher,
           generator: (_) async => generator,
-          startProcess: (
-            String executable,
-            List<String> arguments, {
-            bool runInShell = false,
-          }) async {
-            return process;
+          devServerRunnerBuilder: ({
+            required Logger logger,
+            required String port,
+            required MasonGenerator devServerBundleGenerator,
+            required String dartVmServicePort,
+            required Directory workingDirectory,
+          }) {
+            return DevServerRunner(
+              logger: logger,
+              port: port,
+              devServerBundleGenerator: devServerBundleGenerator,
+              dartVmServicePort: dartVmServicePort,
+              workingDirectory: workingDirectory,
+              // test
+              ensureRuntimeCompatibility: (_) {},
+              directoryWatcher: (_) => directoryWatcher,
+              startProcess: (
+                String executable,
+                List<String> arguments, {
+                bool runInShell = false,
+              }) async {
+                return process;
+              },
+              sigint: sigint,
+            );
           },
-          sigint: sigint,
         )..testArgResults = argResults;
         final exitCode = await command.run();
         expect(exitCode, equals(ExitCode.success.code));
@@ -877,24 +994,40 @@ lib/my_model.g.dart:53:20: Warning: Operand of null-aware operation '!' has type
       when(() => sigint.watch()).thenAnswer((_) => const Stream.empty());
       command = DevCommand(
         logger: logger,
-        ensureRuntimeCompatibility: (_) {},
-        directoryWatcher: (_) => directoryWatcher,
         generator: (_) async => generator,
-        exit: (code) => exitCode = code,
-        startProcess: (
-          String executable,
-          List<String> arguments, {
-          bool runInShell = false,
-        }) async {
-          return process;
+        devServerRunnerBuilder: ({
+          required Logger logger,
+          required String port,
+          required MasonGenerator devServerBundleGenerator,
+          required String dartVmServicePort,
+          required Directory workingDirectory,
+        }) {
+          return DevServerRunner(
+            logger: logger,
+            port: port,
+            devServerBundleGenerator: devServerBundleGenerator,
+            dartVmServicePort: dartVmServicePort,
+            workingDirectory: workingDirectory,
+            // test
+            ensureRuntimeCompatibility: (_) {},
+            directoryWatcher: (_) => directoryWatcher,
+            exit: (code) => exitCode = code,
+            startProcess: (
+              String executable,
+              List<String> arguments, {
+              bool runInShell = false,
+            }) async {
+              return process;
+            },
+            sigint: sigint,
+            runProcess: (String executable, List<String> arguments) async {
+              processRunCalls.add([executable, ...arguments]);
+              return processResult;
+            },
+          );
         },
-        sigint: sigint,
-      )
-        ..testArgResults = argResults
-        ..testRunProcess = (String executable, List<String> arguments) async {
-          processRunCalls.add([executable, ...arguments]);
-          return processResult;
-        };
+      )..testArgResults = argResults;
+
       command.run().ignore();
       await untilCalled(() => process.kill());
       expect(exitCode, equals(1));
@@ -940,26 +1073,41 @@ lib/my_model.g.dart:53:20: Warning: Operand of null-aware operation '!' has type
       when(() => sigint.watch()).thenAnswer((_) => const Stream.empty());
       command = DevCommand(
         logger: logger,
-        ensureRuntimeCompatibility: (_) {},
-        directoryWatcher: (_) => directoryWatcher,
         generator: (_) async => generator,
-        exit: (code) => exitCode = code,
-        startProcess: (
-          String executable,
-          List<String> arguments, {
-          bool runInShell = false,
-        }) async {
-          return process;
+        devServerRunnerBuilder: ({
+          required Logger logger,
+          required String port,
+          required MasonGenerator devServerBundleGenerator,
+          required String dartVmServicePort,
+          required Directory workingDirectory,
+        }) {
+          return DevServerRunner(
+            logger: logger,
+            port: port,
+            devServerBundleGenerator: devServerBundleGenerator,
+            dartVmServicePort: dartVmServicePort,
+            workingDirectory: workingDirectory,
+            // test
+            ensureRuntimeCompatibility: (_) {},
+            directoryWatcher: (_) => directoryWatcher,
+            exit: (code) => exitCode = code,
+            startProcess: (
+              String executable,
+              List<String> arguments, {
+              bool runInShell = false,
+            }) async {
+              return process;
+            },
+            sigint: sigint,
+            runProcess: (String executable, List<String> arguments) async {
+              processRunCalls.add([executable, ...arguments]);
+              return processResult;
+            },
+          );
         },
-        sigint: sigint,
-      )
-        ..testArgResults = argResults
-        ..testRunProcess = (String executable, List<String> arguments) async {
-          processRunCalls.add([executable, ...arguments]);
-          return processResult;
-        };
-      command.run().ignore();
+      )..testArgResults = argResults;
 
+      command.run().ignore();
       await untilCalled(() => process.kill());
       expect(
         exitCode,

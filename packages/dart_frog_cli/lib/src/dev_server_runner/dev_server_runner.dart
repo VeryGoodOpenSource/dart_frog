@@ -21,14 +21,8 @@ typedef ProcessStart = Future<io.Process> Function(
 /// Typedef for [io.Process.run].
 typedef ProcessRun = Future<io.ProcessResult> Function(
   String executable,
-  List<String> arguments, {
-  String? workingDirectory,
-  Map<String, String>? environment,
-  bool includeParentEnvironment,
-  bool runInShell,
-  Encoding? stdoutEncoding,
-  Encoding? stderrEncoding,
-});
+  List<String> arguments,
+);
 
 /// Typedef for [DirectoryWatcher.new].
 typedef DirectoryWatcherBuilder = DirectoryWatcher Function(
@@ -139,10 +133,7 @@ class DevServerRunner {
     logger.detail('[process] killing process complete.');
   }
 
-  Future<ExitCode> start({
-    required String port,
-    required String dartVmServicePort,
-  }) async {
+  Future<ExitCode> start() async {
     _ensureRuntimeCompatibility(workingDirectory);
 
     var isHotReloadingEnabled = false;
