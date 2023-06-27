@@ -1,5 +1,3 @@
-// ignore_for_file: public_member_api_docs
-
 import 'dart:convert';
 import 'dart:io' as io;
 
@@ -41,7 +39,12 @@ final _dartVmServiceAlreadyInUseErrorRegex = RegExp(
   multiLine: true,
 );
 
+// TODO(renancaraujo): Add reload and stop methods.
+/// {@template dev_server_runner}
+/// A class that manages a local development server process lifecycle.
+/// {@endtemplate}
 class DevServerRunner {
+  /// {@macro dev_server_runner}
   DevServerRunner({
     required this.logger,
     required this.port,
@@ -72,10 +75,19 @@ class DevServerRunner {
           'dartVmServicePort cannot be empty',
         );
 
+  /// [Logger] instance used to wrap stdout.
   final Logger logger;
+
+  /// Which port number the server should start on.
   final String port;
+
+  /// Which port number the dart vm service should listen on.
   final String dartVmServicePort;
+
+  /// The [MasonGenerator] used to generate the dev server runtime code.
   final MasonGenerator devServerBundleGenerator;
+
+  /// The working directory of the dart_frog project.
   final io.Directory workingDirectory;
 
   final DirectoryWatcherBuilder _directoryWatcher;
@@ -132,6 +144,10 @@ class DevServerRunner {
     logger.detail('[process] killing process complete.');
   }
 
+  // TODO(renancaraujo): this method returns a future that completes when the
+  // process is killed, but it should return a future that completes when the
+  // process is finished starting.
+  /// Starts the development server.
   Future<ExitCode> start() async {
     var isHotReloadingEnabled = false;
 
