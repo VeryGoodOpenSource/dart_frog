@@ -23,7 +23,6 @@ void main() {
     late MasonGenerator generator;
     late DevServerRunner runner;
     late Logger logger;
-    late DevCommand command;
 
     setUp(() {
       argResults = _MockArgResults();
@@ -37,12 +36,12 @@ void main() {
     });
 
     test('can be instantiated', () {
-      command = DevCommand();
+      final command = DevCommand();
       expect(command, isNotNull);
     });
 
     test('throws if ensureRuntimeCompatibility fails', () {
-      command = DevCommand(
+      final command = DevCommand(
         generator: (_) async => generator,
         ensureRuntimeCompatibility: (_) {
           throw const DartFrogCompatibilityException('oops');
@@ -80,7 +79,7 @@ void main() {
       late MasonGenerator givenDevServerBundleGenerator;
       late Directory givenWorkingDirectory;
 
-      command = DevCommand(
+      final command = DevCommand(
         generator: (_) async => generator,
         ensureRuntimeCompatibility: (_) {},
         devServerRunnerBuilder: ({
@@ -112,7 +111,7 @@ void main() {
     });
 
     test('results with dev server exit code', () async {
-      command = DevCommand(
+      final command = DevCommand(
         generator: (_) async => generator,
         ensureRuntimeCompatibility: (_) {},
         devServerRunnerBuilder: ({
