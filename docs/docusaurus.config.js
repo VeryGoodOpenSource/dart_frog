@@ -55,40 +55,27 @@ const config = {
         },
         items: [
           {
-            label: 'Overview',
             to: '/docs/overview',
+            label: 'Get Started',
+            position: 'right',
+            className: 'button nav-button',
           },
           {
-            label: 'Basics',
-            to: '/docs/category/basics',
+            label: 'VGV.DEV',
+            to: 'https://vgv.dev',
+            position: 'right',
           },
           {
-            label: 'Tutorials',
-            to: '/docs/category/tutorials',
-          },
-          {
-            label: 'Deploy',
-            to: '/docs/category/deploy',
-          },
-          {
-            label: 'Advanced',
-            to: '/docs/category/advanced',
-          },
-          {
-            label: 'Roadmap',
-            to: '/docs/roadmap',
+            href: 'https://verygood.ventures',
+            position: 'right',
+            className: 'navbar-vgv-icon',
+            'aria-label': 'VGV website',
           },
           {
             to: 'https://github.com/VeryGoodOpenSource/dart_frog',
             position: 'right',
             className: 'navbar-github-icon',
             'aria-label': 'GitHub repository',
-          },
-          {
-            to: 'https://verygood.ventures?utm_source=dartfrog&utm_medium=docs&utm_campaign=df',
-            position: 'right',
-            className: 'navbar-vgv-icon',
-            'aria-label': 'Very Good Ventures',
           },
         ],
       },
