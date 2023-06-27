@@ -17,7 +17,7 @@ void main() {
 
     group('userFromCredentials', () {
       test('userFromCredentials return null if no user is found', () async {
-        mockUserData([]);
+        db = {};
         final repository = UserRepository();
         final user =
             await repository.userFromCredentials('testuser', 'password');
@@ -27,14 +27,15 @@ void main() {
 
       test('userFromCredentials return null if password is incorrect',
           () async {
-        mockUserData([
-          User(
+        db = {
+          id: User(
             id: id,
             name: 'Test User',
             username: 'testuser',
             password: password,
           ),
-        ]);
+        };
+
         final repository = UserRepository();
         final user = await repository.userFromCredentials('testuser', 'wrong');
 
@@ -42,14 +43,14 @@ void main() {
       });
 
       test('userFromCredentials return user if password is correct', () async {
-        mockUserData([
-          User(
+        db = {
+          id: User(
             id: id,
             name: 'Test User',
             username: 'testuser',
             password: password,
           ),
-        ]);
+        };
 
         final repository = UserRepository();
         final user =
@@ -70,7 +71,7 @@ void main() {
     });
 
     test('createUser adds a new user, returning its id', () async {
-      mockUserData([]);
+      db = {};
       final repository = UserRepository();
       final returnedId = await repository.createUser(
         name: 'Test User',
@@ -81,43 +82,43 @@ void main() {
       expect(returnedId, equals(id));
 
       expect(
-        getDb(),
-        equals([
-          User(
+        db,
+        equals({
+          id: User(
             id: id,
             name: 'Test User',
             username: 'testuser',
             password: password,
           ),
-        ]),
+        }),
       );
     });
 
     test('deleteUser deletes a user', () async {
-      mockUserData([
-        User(
+      db = {
+        id: User(
           id: id,
           name: 'Test User',
           username: 'testuser',
           password: password,
         ),
-      ]);
+      };
       final repository = UserRepository();
       await repository.deleteUser(id);
 
-      expect(getDb(), isEmpty);
+      expect(db, isEmpty);
     });
 
     group('updateUser', () {
       test('updates the user on the db', () async {
-        mockUserData([
-          User(
+        db = {
+          id: User(
             id: id,
             name: 'Test User',
             username: 'testuser',
             password: password,
           ),
-        ]);
+        };
         final repository = UserRepository();
         await repository.updateUser(
           id: id,
@@ -127,27 +128,48 @@ void main() {
         );
 
         expect(
-          getDb(),
-          equals([
-            User(
+          db,
+          equals({
+            id: User(
               id: id,
               name: 'New Name',
               username: 'newusername',
               password: updatedPassword,
             ),
-          ]),
+          }),
+        );
+      });
+
+      test("throws when updating a user that doesn't exists", () async {
+        db = {
+          id: User(
+            id: id,
+            name: 'Test User',
+            username: 'testuser',
+            password: password,
+          ),
+        };
+        final repository = UserRepository();
+        await expectLater(
+          () => repository.updateUser(
+            id: 'non_existent_id',
+            name: 'New Name',
+            username: 'newusername',
+            password: 'newpassword',
+          ),
+          throwsException,
         );
       });
 
       test('can update just the name', () async {
-        mockUserData([
-          User(
+        db = {
+          id: User(
             id: id,
             name: 'Test User',
             username: 'testuser',
             password: password,
           ),
-        ]);
+        };
         final repository = UserRepository();
         await repository.updateUser(
           id: id,
@@ -157,27 +179,27 @@ void main() {
         );
 
         expect(
-          getDb(),
-          equals([
-            User(
+          db,
+          equals({
+            id: User(
               id: id,
               name: 'New Name',
               username: 'testuser',
               password: password,
             ),
-          ]),
+          }),
         );
       });
 
       test('can update just the username', () async {
-        mockUserData([
-          User(
+        db = {
+          id: User(
             id: id,
             name: 'Test User',
             username: 'testuser',
             password: password,
           ),
-        ]);
+        };
         final repository = UserRepository();
         await repository.updateUser(
           id: id,
@@ -187,27 +209,27 @@ void main() {
         );
 
         expect(
-          getDb(),
-          equals([
-            User(
+          db,
+          equals({
+            id: User(
               id: id,
               name: 'Test User',
               username: 'newusername',
               password: password,
             ),
-          ]),
+          }),
         );
       });
 
       test('can update just the password', () async {
-        mockUserData([
-          User(
+        db = {
+          id: User(
             id: id,
             name: 'Test User',
             username: 'testuser',
             password: password,
           ),
-        ]);
+        };
         final repository = UserRepository();
         await repository.updateUser(
           id: id,
@@ -217,15 +239,17 @@ void main() {
         );
 
         expect(
-          getDb(),
-          equals([
-            User(
-              id: id,
-              name: 'Test User',
-              username: 'testuser',
-              password: updatedPassword,
-            ),
-          ]),
+          db,
+          equals(
+            {
+              id: User(
+                id: id,
+                name: 'Test User',
+                username: 'testuser',
+                password: updatedPassword,
+              ),
+            },
+          ),
         );
       });
     });

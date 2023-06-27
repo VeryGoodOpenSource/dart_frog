@@ -21,10 +21,7 @@ jobs:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@v1.13.0
     with:
       working_directory: packages/dart_frog_auth
-
-  # TODO(erickzanardo): temporarirly disabled while we investigate what is wrong
-  # with the pana action.
-  # pana:
-  #   uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/pana.yml@v1.13.0
-  #   with:
-  #     working_directory: packages/dart_frog_auth
+  pana:
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/pana.yml@v1.13.0
+    with:
+      working_directory: packages/dart_frog_auth

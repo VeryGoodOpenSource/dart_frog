@@ -4,21 +4,10 @@ import 'package:crypto/crypto.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
-final List<User> _db = [];
-
 @visibleForTesting
 
-/// Used to mock the database of the repository.
-void mockUserData(List<User> users) {
-  _db
-    ..clear()
-    ..addAll(users);
-}
-
-@visibleForTesting
-
-/// Used in tests to get the data from the memory database.
-List<User> getDb() => _db;
+/// In memory database of users.
+Map<String, User> db = {};
 
 /// {@template user}
 /// A User.
@@ -63,7 +52,8 @@ class UserRepository {
   /// can be compared to the stored password hash.
   Future<User?> userFromCredentials(String username, String password) async {
     final hashedPassword = _hashValue(password);
-    final users = _db.where(
+
+    final users = db.values.where(
       (user) => user.username == username && user.password == hashedPassword,
     );
 
@@ -90,14 +80,14 @@ class UserRepository {
       password: _hashValue(password),
     );
 
-    _db.add(user);
+    db[id] = user;
 
     return Future.value(id);
   }
 
   /// Deletes the user with the given [id].
   Future<void> deleteUser(String id) {
-    _db.removeWhere((user) => user.id == id);
+    db.remove(id);
 
     return Future.value();
   }
@@ -110,7 +100,11 @@ class UserRepository {
     required String? username,
     required String? password,
   }) {
-    final currentUser = _db.firstWhere((user) => user.id == id);
+    final currentUser = db[id];
+
+    if (currentUser == null) {
+      return Future.error(Exception('User not found'));
+    }
 
     final user = User(
       id: id,
@@ -119,9 +113,7 @@ class UserRepository {
       password: password != null ? _hashValue(password) : currentUser.password,
     );
 
-    _db
-      ..removeWhere((user) => user.id == id)
-      ..add(user);
+    db[id] = user;
 
     return Future.value();
   }

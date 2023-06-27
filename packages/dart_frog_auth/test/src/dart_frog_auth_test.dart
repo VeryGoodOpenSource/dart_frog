@@ -115,14 +115,17 @@ void main() {
       final middleware = basicAuthentication<_User>(
         userFromCredentials: (_, __) async {
           called = true;
-          return user;
+          return null;
         },
         applies: (_) async => false,
       );
 
-      await middleware((_) async => Response())(context);
+      final response = await middleware((_) async => Response())(context);
 
       expect(called, isFalse);
+      // By returning null on the userFromCredentials, if the middleware had run
+      // we should have gotten a 401 response.
+      expect(response.statusCode, equals(HttpStatus.ok));
     });
   });
 
@@ -225,14 +228,17 @@ void main() {
       final middleware = bearerAuthentication<_User>(
         userFromToken: (_) async {
           called = true;
-          return user;
+          return null;
         },
         applies: (_) async => false,
       );
 
-      await middleware((_) async => Response())(context);
+      final response = await middleware((_) async => Response())(context);
 
       expect(called, isFalse);
+      // By returning null on the userFromCredentials, if the middleware had run
+      // we should have gotten a 401 response.
+      expect(response.statusCode, equals(HttpStatus.ok));
     });
   });
 }

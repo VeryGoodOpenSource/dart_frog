@@ -137,7 +137,7 @@ void main() {
         'returns forbidden when the logged user is not the requested one',
         () async {
           final user = User(
-            id: '1',
+            id: '2',
             name: 'John Doe',
             username: 'johndoe',
             password: '',
@@ -167,15 +167,7 @@ void main() {
 
           final response = await route.onRequest(context, '1');
 
-          expect(response.statusCode, equals(HttpStatus.noContent));
-          verify(
-            () => userRepository.updateUser(
-              id: '1',
-              name: 'Jane Doe',
-              username: 'janedoe',
-              password: 'password',
-            ),
-          ).called(1);
+          expect(response.statusCode, equals(HttpStatus.forbidden));
         },
       );
     });
