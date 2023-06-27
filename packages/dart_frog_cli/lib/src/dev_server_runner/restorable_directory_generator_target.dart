@@ -34,8 +34,8 @@ class CachedFile {
 }
 
 /// {@template restorable_directory_generator_target}
-/// A [DirectoryGeneratorTarget] that is capable of
-/// caching and restoring file snapshots.
+/// A [DirectoryGeneratorTarget] that is capable of and restoring file
+/// snapshots.
 /// {@endtemplate}
 class RestorableDirectoryGeneratorTarget extends DirectoryGeneratorTarget {
   /// {@macro restorable_directory_generator_target}

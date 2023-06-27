@@ -51,8 +51,6 @@ class DevServerRunner {
     required this.devServerBundleGenerator,
     required this.dartVmServicePort,
     required this.workingDirectory,
-
-    // Test parameters
     @visibleForTesting DirectoryWatcherBuilder? directoryWatcher,
     @visibleForTesting
     RestorableDirectoryGeneratorTargetBuilder? generatorTarget,
@@ -188,7 +186,7 @@ class DevServerRunner {
             '''Try specifying a different port using the `--dart-vm-service-port` argument when running `dart_frog dev`.''',
           );
         } else if (isSDKWarning) {
-          /// Do not kill the process if the error is a warning from the SDK.
+          // Do not kill the process if the error is a warning from the SDK.
           logger.warn(message);
         } else {
           logger.err(message);
