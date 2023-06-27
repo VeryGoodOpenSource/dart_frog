@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io' as io;
-import 'dart:io';
 
 import 'package:dart_frog_gen/dart_frog_gen.dart';
 import 'package:mason/mason.dart'
@@ -80,7 +79,7 @@ Future<void> preGen(
     },
   );
 
-  final customDockerFile = File(
+  final customDockerFile = io.File(
     path.join(projectDirectory.path, 'Dockerfile'),
   );
 
