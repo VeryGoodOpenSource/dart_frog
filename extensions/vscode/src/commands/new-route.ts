@@ -21,7 +21,7 @@ import { InputBoxOptions, Uri, window, OpenDialogOptions } from "vscode";
  * `dart_frog new route` command, from the Dart Frog CLI.
  *
  * @see [Dart Frog CLI `new` command implementation](https://github.com/VeryGoodOpenSource/dart_frog/tree/main/packages/dart_frog_cli/lib/src/commands/new)
- * @param { Uri | undefined} uri
+ * @param {Uri | undefined} uri
  */
 export const newRoute = async (uri: Uri | undefined): Promise<void> => {
   const routeName = await promptRouteName();
