@@ -3,20 +3,6 @@ import 'dart:io' as io;
 
 import 'package:mason/mason.dart';
 
-/// {@template cached_file}
-/// A cached file which consists of the file path and contents.
-/// {@endtemplate}
-class CachedFile {
-  /// {@macro cached_file}
-  const CachedFile({required this.path, required this.contents});
-
-  /// The generated file path.
-  final String path;
-
-  /// The contents of the generated files.
-  final List<int> contents;
-}
-
 /// Signature for the [DirectoryGeneratorTarget.createFile] method.
 typedef CreateFile = Future<GeneratedFile> Function(
   String path,
@@ -32,6 +18,20 @@ typedef RestorableDirectoryGeneratorTargetBuilder
   CreateFile? createFile,
   Logger? logger,
 });
+
+/// {@template cached_file}
+/// A cached file which consists of the file path and contents.
+/// {@endtemplate}
+class CachedFile {
+  /// {@macro cached_file}
+  const CachedFile({required this.path, required this.contents});
+
+  /// The generated file path.
+  final String path;
+
+  /// The contents of the generated files.
+  final List<int> contents;
+}
 
 /// {@template restorable_directory_generator_target}
 /// A [DirectoryGeneratorTarget] that is capable of

@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'dart:io' as io;
 
 import 'package:dart_frog_cli/src/dev_server_runner/restorable_directory_generator_target.dart';
-import 'package:dart_frog_cli/src/runtime_compatibility.dart' as runtime_compat;
 import 'package:mason/mason.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
@@ -50,9 +49,7 @@ class DevServerRunner {
     required this.dartVmServicePort,
     required this.workingDirectory,
 
-    // Test stuff
-    @visibleForTesting
-    runtime_compat.RuntimeCompatibilityCallback? ensureRuntimeCompatibility,
+    // Test parameters
     @visibleForTesting DirectoryWatcherBuilder? directoryWatcher,
     @visibleForTesting
     RestorableDirectoryGeneratorTargetBuilder? generatorTarget,
@@ -61,16 +58,19 @@ class DevServerRunner {
     @visibleForTesting ProcessStart? startProcess,
     @visibleForTesting ProcessRun? runProcess,
     @visibleForTesting Exit? exit,
-  })  : _ensureRuntimeCompatibility = ensureRuntimeCompatibility ??
-            runtime_compat.ensureRuntimeCompatibility,
-        _directoryWatcher = directoryWatcher ?? DirectoryWatcher.new,
+  })  : _directoryWatcher = directoryWatcher ?? DirectoryWatcher.new,
         _exit = exit ?? io.exit,
         _isWindows = isWindows ?? io.Platform.isWindows,
         _sigint = sigint ?? io.ProcessSignal.sigint,
         _startProcess = startProcess ?? io.Process.start,
         _runProcess = runProcess ?? io.Process.run,
         _generatorTarget =
-            generatorTarget ?? RestorableDirectoryGeneratorTarget.new;
+            generatorTarget ?? RestorableDirectoryGeneratorTarget.new,
+        assert(port.isNotEmpty, 'port cannot be empty'),
+        assert(
+          dartVmServicePort.isNotEmpty,
+          'dartVmServicePort cannot be empty',
+        );
 
   final Logger logger;
   final String port;
@@ -78,7 +78,6 @@ class DevServerRunner {
   final MasonGenerator devServerBundleGenerator;
   final io.Directory workingDirectory;
 
-  final runtime_compat.RuntimeCompatibilityCallback _ensureRuntimeCompatibility;
   final DirectoryWatcherBuilder _directoryWatcher;
   final ProcessStart _startProcess;
   final ProcessRun _runProcess;
@@ -134,8 +133,6 @@ class DevServerRunner {
   }
 
   Future<ExitCode> start() async {
-    _ensureRuntimeCompatibility(workingDirectory);
-
     var isHotReloadingEnabled = false;
 
     Future<void> serve() async {
