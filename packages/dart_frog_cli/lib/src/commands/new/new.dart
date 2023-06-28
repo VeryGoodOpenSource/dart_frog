@@ -172,8 +172,6 @@ class _NewSubCommand extends DartFrogCommand {
 /// The directory with a DartFrog will be returned if it is found, otherwise
 /// `null` will be returned.
 Directory? _nearestDartFrogProject(Directory directory) {
-  /// TODO(alestiago): Use a heuristic and only look into those directories
-  /// that are parents of `/routes`.
   var currentDirectory = directory;
   while (path.split(currentDirectory.path).length > 1) {
     if (_isDartFrogProject(currentDirectory)) {
