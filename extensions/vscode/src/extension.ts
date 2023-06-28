@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { newRoute } from "./commands";
 
 /**
  * This method is called when the extension is activated.
@@ -11,6 +12,9 @@ import * as vscode from "vscode";
 export function activate(
   context: vscode.ExtensionContext
 ): vscode.ExtensionContext {
+  context.subscriptions.push(
+    vscode.commands.registerCommand("extension.new-route", newRoute)
+  );
   return context;
 }
 
