@@ -13,7 +13,7 @@ Developed with 💙 by [Very Good Ventures][very_good_ventures_link] 🦄
 
 ## About
 
-There are many different approaches when tackling authentication in a backend. `dart_frog_auth`provides one such foundation for additional authentication methods to be built on top.
+There are many different approaches when tackling authentication in a backend. `dart_frog_auth` provides one such foundation for additional authentication methods to be built on top.
 
 The authentication methods provided in `dart_frog_auth` are based on `Authorization` specification,
 as defined in [`General HTTP`][general_http]. Here you will find support
