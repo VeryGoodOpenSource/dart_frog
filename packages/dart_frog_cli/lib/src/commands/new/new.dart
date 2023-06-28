@@ -192,11 +192,10 @@ Directory? _nearestDartFrogProject(Directory directory) {
 bool _isDartFrogProject(Directory directory) {
   // TODO(alestiago): Actually parse the pubspec.yaml and check for the
   // dart_frog dependency.
+  final routesDirectory = Directory(path.join(directory.path, 'routes'));
+  final pubspecFile = File(path.join(directory.path, 'pubspec.yaml'));
   return directory.existsSync() &&
-      directory.listSync().any(
-            (entity) =>
-                entity is File &&
-                entity.path.endsWith('pubspec.yaml') &&
-                entity.readAsStringSync().contains('dart_frog'),
-          );
+      routesDirectory.existsSync() &&
+      pubspecFile.existsSync() &&
+      pubspecFile.readAsStringSync().contains('dart_frog');
 }
