@@ -180,6 +180,7 @@ Directory? _nearestDartFrogProject(Directory directory) {
       currentDirectory = currentDirectory.parent;
     }
   }
+  return null;
 }
 
 /// Returns whether the current directory is a dart_frog project.
