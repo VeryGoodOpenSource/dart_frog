@@ -122,18 +122,25 @@ class _NewSubCommand extends DartFrogCommand {
       'type': name,
     };
 
-    final routesDirectory = Directory(path.join(cwd.path, 'routes'));
-    if (!routesDirectory.existsSync()) {
+    final projectDirectory = _nearestDartFrogProject(cwd);
+    if (projectDirectory == null) {
       throw UsageException(
-        'No "routes" directory found in the current directory. '
-        'Make sure to run this command on a dart_frog project.',
+        '''No dart_frog project found in the current directory or any of its parents. '''
+        'Make sure to run this command within a dart_frog project.',
         usageString,
       );
     }
 
+    final routesDirectory =
+        Directory(path.join(projectDirectory.path, 'routes'));
+    if (cwd.path != projectDirectory.path || cwd.path != routesDirectory.path) {
+      final relativePath = path.relative(cwd.path, from: routesDirectory.path);
+      vars['route_path'] = path.join(relativePath, routePath);
+    }
+
     await generator.hooks.preGen(
       vars: vars,
-      workingDirectory: cwd.path,
+      workingDirectory: projectDirectory.path,
       onVarsChanged: vars.addAll,
       logger: logger,
     );
@@ -144,15 +151,52 @@ class _NewSubCommand extends DartFrogCommand {
 
     final generateProgress = logger.progress('Creating $name $routePath');
 
-    await generator.generate(DirectoryGeneratorTarget(cwd), vars: vars);
+    await generator.generate(
+      DirectoryGeneratorTarget(projectDirectory),
+      vars: vars,
+    );
 
     await generator.hooks.postGen(
       vars: vars,
-      workingDirectory: cwd.path,
+      workingDirectory: projectDirectory.path,
       logger: logger,
     );
     generateProgress.complete();
 
     return ExitCode.success.code;
   }
+}
+
+/// Returns the nearest dart_frog project directory.
+///
+/// The directory with a DartFrog will be returned if it is found, otherwise
+/// `null` will be returned.
+Directory? _nearestDartFrogProject(Directory directory) {
+  /// TODO(alestiago): Use a heuristic and only look into those directories
+  /// that are parents of `/routes`.
+  var currentDirectory = directory;
+  while (path.split(currentDirectory.path).length > 1) {
+    if (_isDartFrogProject(currentDirectory)) {
+      return currentDirectory;
+    } else {
+      currentDirectory = currentDirectory.parent;
+    }
+  }
+}
+
+/// Returns whether the current directory is a dart_frog project.
+///
+/// A dart_frog project is defined as:
+/// - A directory that contains a `pubspec.yaml` with a `dart_frog` dependency.
+/// - A directory that containts a `routes` subdirectory.
+bool _isDartFrogProject(Directory directory) {
+  // TODO(alestiago): Actually parse the pubspec.yaml and check for the
+  // dart_frog dependency.
+  return directory.existsSync() &&
+      directory.listSync().any(
+            (entity) =>
+                entity is File &&
+                entity.path.endsWith('pubspec.yaml') &&
+                entity.readAsStringSync().contains('dart_frog'),
+          );
 }
