@@ -359,6 +359,71 @@ void main() {
         );
       });
 
+      test('enable asserts', () async {
+        final generatorHooks = _MockGeneratorHooks();
+        when(
+          () => generatorHooks.preGen(
+            vars: any(named: 'vars'),
+            workingDirectory: any(named: 'workingDirectory'),
+            onVarsChanged: any(named: 'onVarsChanged'),
+          ),
+        ).thenAnswer((invocation) async {
+          (invocation.namedArguments[const Symbol('onVarsChanged')] as void
+                  Function(Map<String, dynamic> vars))
+              .call(<String, dynamic>{});
+        });
+        when(
+          () => generator.generate(
+            any(),
+            vars: any(named: 'vars'),
+            fileConflictResolution: FileConflictResolution.overwrite,
+          ),
+        ).thenAnswer((_) async => []);
+        when(() => generator.hooks).thenReturn(generatorHooks);
+        when(() => process.stdout).thenAnswer((_) => const Stream.empty());
+        when(() => process.stderr).thenAnswer((_) => const Stream.empty());
+        when(
+          () => directoryWatcher.events,
+        ).thenAnswer(
+          (_) => Stream.value(WatchEvent(ChangeType.MODIFY, 'README.md')),
+        );
+
+        late List<String> receivedArgs;
+        devServerRunner = DevServerRunner(
+          logger: logger,
+          port: '4242',
+          devServerBundleGenerator: generator,
+          dartVmServicePort: '4343',
+          workingDirectory: Directory.current,
+          // test
+
+          directoryWatcher: (_) => directoryWatcher,
+          generatorTarget: (
+            _, {
+            CreateFile? createFile,
+            Logger? logger,
+          }) =>
+              generatorTarget,
+          isWindows: isWindows,
+          startProcess: (
+            String executable,
+            List<String> arguments, {
+            bool runInShell = false,
+          }) async {
+            receivedArgs = arguments;
+            return process;
+          },
+          sigint: sigint,
+          runProcess: (_, __) async => processResult,
+        );
+        await expectLater(devServerRunner.start(), completes);
+
+        expect(
+          receivedArgs,
+          contains('--enable-asserts'),
+        );
+      });
+
       test('does not reload when reloading ', () async {
         await expectLater(devServerRunner.start(), completes);
 
