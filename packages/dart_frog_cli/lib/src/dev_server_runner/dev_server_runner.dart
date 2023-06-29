@@ -153,12 +153,16 @@ class DevServerRunner {
       final enableVmServiceFlag = '--enable-vm-service=$dartVmServicePort';
 
       logger.detail(
-        '''[process] dart $enableVmServiceFlag ${path.join('.dart_frog', 'server.dart')}''',
+        '''[process] dart $enableVmServiceFlag --enable-asserts ${path.join('.dart_frog', 'server.dart')}''',
       );
 
       final process = await _startProcess(
         'dart',
-        [enableVmServiceFlag, path.join('.dart_frog', 'server.dart')],
+        [
+          enableVmServiceFlag,
+          '--enable-asserts',
+          path.join('.dart_frog', 'server.dart')
+        ],
         runInShell: true,
       );
 
