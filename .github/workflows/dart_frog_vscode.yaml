@@ -1,0 +1,50 @@
+name: dart_frog_vscode
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/dart_frog_vscode.yaml"
+      - "extensions/vscode/**"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/dart_frog_vscode.yaml"
+      - "extensions/vscode/**"
+
+jobs:
+  build:
+    defaults:
+      run:
+        working-directory: extensions/vscode
+
+    runs-on: macos-latest
+
+    steps:
+      - name: 📚 Git Checkout
+        uses: actions/checkout@v3
+
+      - name: 🎯 Setup Node.js (18.x)
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: "npm"
+          cache-dependency-path: extensions/vscode/package-lock.json
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🕵️ Analyze
+        run: npm run lint
+
+      - name: 🧪 Run tests
+        run: npm test
+
+      - name: 📊 Check Code Coverage
+        uses: VeryGoodOpenSource/very_good_coverage@v2.1.0
+        with:
+          path: extensions/vscode/coverage/lcov.info
