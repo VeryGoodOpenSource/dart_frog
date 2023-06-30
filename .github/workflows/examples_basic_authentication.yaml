@@ -12,7 +12,7 @@ on:
       - "examples/basic_authentication/lib/**"
       - "examples/basic_authentication/test/**"
       - "examples/basic_authentication/e2e/**"
-      - ".github/workflows/examples_counter.yaml"
+      - ".github/workflows/examples_basic_authentication.yaml"
       - "packages/dart_frog/lib/**"
       - "packages/dart_frog/pubspec.yaml"
       - "packages/dart_frog_cli/lib/**"
