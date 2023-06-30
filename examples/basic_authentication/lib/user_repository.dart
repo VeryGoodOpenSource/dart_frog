@@ -86,10 +86,8 @@ class UserRepository {
   }
 
   /// Deletes the user with the given [id].
-  Future<void> deleteUser(String id) {
+  Future<void> deleteUser(String id) async {
     db.remove(id);
-
-    return Future.value();
   }
 
   /// Updates the user with the given [id] with the given [name], [username]
