@@ -4,9 +4,8 @@ import 'package:crypto/crypto.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
-@visibleForTesting
-
 /// In memory database of users.
+@visibleForTesting
 Map<String, User> db = {};
 
 /// {@template user}
