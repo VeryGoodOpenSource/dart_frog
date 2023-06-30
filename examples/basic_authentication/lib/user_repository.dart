@@ -99,7 +99,7 @@ class UserRepository {
     required String? name,
     required String? username,
     required String? password,
-  }) {
+  }) async {
     final currentUser = db[id];
 
     if (currentUser == null) {
@@ -114,7 +114,5 @@ class UserRepository {
     );
 
     db[id] = user;
-
-    return Future.value();
   }
 }
