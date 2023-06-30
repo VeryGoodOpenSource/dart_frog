@@ -1,0 +1,5 @@
+dependency_overrides:
+  dart_frog:
+    path: ../../packages/dart_frog
+  dart_frog_auth:
+    path: ../../packages/dart_frog_auth
