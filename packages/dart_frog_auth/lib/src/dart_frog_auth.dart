@@ -20,9 +20,9 @@ extension on Map<String, String> {
 
 /// Function definition for the predicate function used by Dart Frog Auth
 /// middleware to determine if the request should be authenticated or not.
-typedef ApplyToRoute = Future<bool> Function(RequestContext);
+typedef Applies = Future<bool> Function(RequestContext);
 
-Future<bool> _defaultApplyToRoute(RequestContext context) async => true;
+Future<bool> _defaultApplies(RequestContext context) async => true;
 
 /// Authentication that uses the `Authorization` header with the `Basic` scheme.
 ///
@@ -48,7 +48,7 @@ Future<bool> _defaultApplyToRoute(RequestContext context) async => true;
 /// apply to the route and the call will have authentication validation.
 Middleware basicAuthentication<T extends Object>({
   required Future<T?> Function(String, String) userFromCredentials,
-  ApplyToRoute applies = _defaultApplyToRoute,
+  Applies applies = _defaultApplies,
 }) =>
     (handler) => (context) async {
           if (!await applies(context)) {
@@ -91,7 +91,7 @@ Middleware basicAuthentication<T extends Object>({
 /// apply to the route and the call will have no authentication validation.
 Middleware bearerAuthentication<T extends Object>({
   required Future<T?> Function(String) userFromToken,
-  ApplyToRoute applies = _defaultApplyToRoute,
+  Applies applies = _defaultApplies,
 }) =>
     (handler) => (context) async {
           if (!await applies(context)) {
