@@ -1,10 +1,10 @@
 const cp = require("child_process");
 const path = require("node:path");
 
-import { InputBoxOptions, Uri, window, OpenDialogOptions } from "vscode";
+import { Uri, window, OpenDialogOptions } from "vscode";
 
 /**
- * Command to create a new route.
+ * Command to create a new middleware.
  *
  * This command is available from the command palette and the context menu.
  *
@@ -18,18 +18,12 @@ import { InputBoxOptions, Uri, window, OpenDialogOptions } from "vscode";
  * does not need to select a directory or file via the open dialog.
  *
  * All the logic associated with creating a new route is handled by the
- * `dart_frog new route` command, from the Dart Frog CLI.
+ * `dart_frog new middleware` command, from the Dart Frog CLI.
  *
  * @see [Dart Frog CLI `new` command implementation](https://github.com/VeryGoodOpenSource/dart_frog/tree/main/packages/dart_frog_cli/lib/src/commands/new)
  * @param {Uri | undefined} uri
  */
-export const newRoute = async (uri: Uri | undefined): Promise<void> => {
-  const routeName = await promptRouteName();
-  if (routeName === undefined || routeName.trim() === "") {
-    window.showErrorMessage("Please enter a valid route name");
-    return;
-  }
-
+export const newMiddleware = async (uri: Uri | undefined): Promise<void> => {
   let workingDirectory;
   if (uri === undefined) {
     const selectedUri = await promptForTargetDirectory();
@@ -49,22 +43,8 @@ export const newRoute = async (uri: Uri | undefined): Promise<void> => {
     return;
   }
 
-  executeDartFrogNewRouteCommand(routeName, workingDirectory);
+  executeDartFrogNewMiddlewareCommand(workingDirectory);
 };
-
-/**
- * Shows an input box to the user and returns a Thenable that resolves to
- * a string the user provided.
- *
- * @returns The route name the user provided or undefined if the user canceled.
- */
-function promptRouteName(): Thenable<string | undefined> {
-  const inputBoxOptions: InputBoxOptions = {
-    prompt: "Route name",
-    placeHolder: "index",
-  };
-  return window.showInputBox(inputBoxOptions);
-}
 
 /**
  * Shows an open dialog to the user and returns a Promise that resolves
@@ -107,15 +87,12 @@ function isValidWorkingPath(workingDirectory: String) {
 }
 
 /**
- * Runs the `dart_frog new route` command with the given route name.
+ * Runs the `dart_frog new middleware` command with the route path segment being
+ * the path relative to working directory from the routes directory.
  *
- * @param {string} routeName
  * @param {String} workingDirectory
  */
-function executeDartFrogNewRouteCommand(
-  routeName: String,
-  workingDirectory: String
-): void {
+function executeDartFrogNewMiddlewareCommand(workingDirectory: String): void {
   let workingDirectorySplits = workingDirectory.split(path.sep);
 
   const lastWorkingDirectoryElement =
@@ -135,13 +112,15 @@ function executeDartFrogNewRouteCommand(
   const dartProjectDirectory = workingDirectorySplits
     .slice(0, routesIndex)
     .join(path.sep);
-  const normalizedRouteName = path.join(
-    workingDirectorySplits.slice(routesIndex + 1).join(path.sep),
-    routeName
-  );
+  let normalizedRouteName = workingDirectorySplits
+    .slice(routesIndex + 1)
+    .join(path.sep);
+  if (normalizedRouteName === "") {
+    normalizedRouteName = "/";
+  }
 
   cp.exec(
-    `dart_frog new route '${normalizedRouteName}'`,
+    `dart_frog new middleware '${normalizedRouteName}'`,
     {
       cwd: dartProjectDirectory,
     },
