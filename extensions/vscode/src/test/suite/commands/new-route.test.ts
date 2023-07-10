@@ -173,8 +173,8 @@ suite("new-route command", () => {
     }
   );
 
-  suite("runs dart_frog new route command with route", () => {
-    test("runs as expected when Uri is project root directory", async () => {
+  suite("runs `dart_frog new route` command with route", () => {
+    test("successfully when Uri is project root directory", async () => {
       vscodeStub.window.showInputBox.returns(validRouteName);
 
       await command.newRoute({
@@ -187,7 +187,7 @@ suite("new-route command", () => {
       );
     });
 
-    test("runs as expected when Uri is not project root directory", async () => {
+    test("successfully when Uri is not project root directory", async () => {
       vscodeStub.window.showInputBox.returns(validRouteName);
 
       const nestedDirectory = "about";
@@ -201,7 +201,7 @@ suite("new-route command", () => {
       );
     });
 
-    test("runs as expected when Uri is a valid non-index nested file", async () => {
+    test("successfully when Uri is a valid non-index nested file", async () => {
       vscodeStub.window.showInputBox.returns(validRouteName);
 
       const nestedDirectory = "about";
@@ -216,7 +216,7 @@ suite("new-route command", () => {
       );
     });
 
-    test("runs as expected when Uri is a valid index nested file", async () => {
+    test("successfully when Uri is a valid index nested file", async () => {
       vscodeStub.window.showInputBox.returns(validRouteName);
 
       const nestedDirectory = "about";
@@ -232,9 +232,9 @@ suite("new-route command", () => {
     });
   });
 
-  test("shows error message when dart_frog new route fails", async () => {
+  test("shows error message when `dart_frog new route` fails", async () => {
     vscodeStub.window.showInputBox.returns(validRouteName);
-    const error = Error("Failed to run dart_frog new route");
+    const error = Error("Failed to run `dart_frog new route`");
     childProcessStub.exec.yields(error);
 
     await command.newRoute({
