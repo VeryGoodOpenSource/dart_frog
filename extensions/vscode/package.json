@@ -32,18 +32,27 @@
   "contributes": {
     "commands": [
       {
+        "command": "extension.install-cli",
+        "title": "Dart Frog: Install CLI"
+      },
+      {
         "command": "extension.new-route",
         "title": "Dart Frog: New Route"
       },
       {
-        "command": "extension.install-cli",
-        "title": "Dart Frog: Install CLI"
+        "command": "extension.new-middleware",
+        "title": "Dart Frog: New Middleware"
       }
     ],
     "menus": {
       "explorer/context": [
         {
           "command": "extension.new-route",
+          "group": "dartFrogGroup@1",
+          "when": "resourceDirname =~ /routes/ && (explorerResourceIsFolder || resourceExtname == .dart)"
+        },
+        {
+          "command": "extension.new-middleware",
           "group": "dartFrogGroup@1",
           "when": "resourceDirname =~ /routes/ && (explorerResourceIsFolder || resourceExtname == .dart)"
         }

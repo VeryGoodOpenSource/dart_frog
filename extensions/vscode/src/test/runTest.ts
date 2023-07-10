@@ -19,7 +19,11 @@ async function main() {
     await runTests({
       extensionDevelopmentPath,
       extensionTestsPath,
-      launchArgs: ["--disable-extensions"],
+      launchArgs: [
+        "--disable-extensions",
+        "--install-extension",
+        "DartCode.dart-code",
+      ],
     });
   } catch (err) {
     console.error("❌ Failed to run tests");

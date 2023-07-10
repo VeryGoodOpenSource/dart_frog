@@ -4,6 +4,7 @@ import 'dart:io' as io;
 import 'package:dart_frog_gen/dart_frog_gen.dart';
 import 'package:mason/mason.dart'
     show HookContext, defaultForeground, lightCyan;
+import 'package:path/path.dart' as path;
 
 import 'src/create_bundle.dart';
 import 'src/exit_overrides.dart';
@@ -78,6 +79,12 @@ Future<void> preGen(
     },
   );
 
+  final customDockerFile = io.File(
+    path.join(projectDirectory.path, 'Dockerfile'),
+  );
+
+  final addDockerfile = !customDockerFile.existsSync();
+
   context.vars = {
     'directories': configuration.directories
         .map((c) => c.toJson())
@@ -94,5 +101,6 @@ Future<void> preGen(
     'invokeCustomInit': configuration.invokeCustomInit,
     'pathDependencies': await getPathDependencies(projectDirectory),
     'dartVersion': context.vars['dartVersion'],
+    'addDockerfile': addDockerfile,
   };
 }

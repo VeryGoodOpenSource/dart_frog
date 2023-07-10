@@ -108,6 +108,25 @@ void main() {
         );
       },
     );
+
+    test("skips routes that doesn't match the custom predicate", () async {
+      var called = false;
+
+      final middleware = basicAuthentication<_User>(
+        userFromCredentials: (_, __) async {
+          called = true;
+          return null;
+        },
+        applies: (_) async => false,
+      );
+
+      final response = await middleware((_) async => Response())(context);
+
+      expect(called, isFalse);
+      // By returning null on the userFromCredentials, if the middleware had run
+      // we should have gotten a 401 response.
+      expect(response.statusCode, equals(HttpStatus.ok));
+    });
   });
 
   group('bearerAuthentication', () {
@@ -202,5 +221,24 @@ void main() {
         );
       },
     );
+
+    test("skips routes that doesn't match the custom predicate", () async {
+      var called = false;
+
+      final middleware = bearerAuthentication<_User>(
+        userFromToken: (_) async {
+          called = true;
+          return null;
+        },
+        applies: (_) async => false,
+      );
+
+      final response = await middleware((_) async => Response())(context);
+
+      expect(called, isFalse);
+      // By returning null on the userFromCredentials, if the middleware had run
+      // we should have gotten a 401 response.
+      expect(response.statusCode, equals(HttpStatus.ok));
+    });
   });
 }

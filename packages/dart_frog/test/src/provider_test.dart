@@ -7,13 +7,17 @@ import 'package:test/test.dart';
 void main() {
   test('values can be provided and read via middleware', () async {
     const value = '__test_value__';
+    String? nullableValue;
     Handler middleware(Handler handler) {
-      return handler.use(provider<String>((_) => value));
+      return handler
+          .use(provider<String>((_) => value))
+          .use(provider<String?>((_) => nullableValue));
     }
 
     Response onRequest(RequestContext context) {
       final value = context.read<String>();
-      return Response(body: value);
+      final nullableValue = context.read<String?>();
+      return Response(body: '$value:$nullableValue');
     }
 
     final handler =
@@ -24,7 +28,7 @@ void main() {
     final response = await client.get(Uri.parse('http://localhost:3010/'));
 
     await expectLater(response.statusCode, equals(HttpStatus.ok));
-    await expectLater(response.body, equals(value));
+    await expectLater(response.body, equals('$value:$nullableValue'));
 
     await server.close();
   });
