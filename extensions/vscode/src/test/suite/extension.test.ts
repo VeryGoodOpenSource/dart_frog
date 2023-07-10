@@ -26,7 +26,14 @@ suite("activate", () => {
           registerCommand: sinon.stub(),
         },
       };
-      extension = proxyquire("../../extension", { vscode: vscodeStub });
+      const childProcessStub = {
+        execSync: sinon.stub(),
+      };
+      extension = proxyquire("../../extension", {
+        vscode: vscodeStub,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        child_process: childProcessStub,
+      });
       context = { subscriptions: [] };
     });
 
