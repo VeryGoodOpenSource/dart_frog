@@ -12,14 +12,10 @@ suite("readDartFrogVersion", () => {
     cpStub = {
       execSync: sinon.stub(),
     };
-    const semverStub = {
-      satisfies: sinon.stub(),
-    };
 
     cliVersion = proxyquire("../../../utils/cli-version", {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       child_process: cpStub,
-      semver: semverStub,
     });
   });
 
