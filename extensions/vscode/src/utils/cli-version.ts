@@ -2,10 +2,10 @@ const cp = require("child_process");
 const semver = require("semver");
 
 /**
- * The version constraints for Dart Frog CLI to be compatible with this
+ * The semantic version constraints for Dart Frog CLI to be compatible with this
  * extension.
  */
-const compatibleCLIVersion = ">=0.3.7";
+const compatibleCLIVersion = ">=0.3.7 <1.0.0";
 
 /**
  * Collects the version of Dart Frog CLI installed in the user's system.
