@@ -4,6 +4,9 @@ import 'package:mason/mason.dart';
 import 'package:path/path.dart' as path;
 import 'package:pubspec_parse/pubspec_parse.dart';
 
+/// Type definition for [ensureRuntimeCompatibility].
+typedef RuntimeCompatibilityCallback = void Function(Directory cwd);
+
 /// {@template dart_frog_compatibility_exception}
 /// An exception thrown when the current version of dart_frog_cli
 /// is incompatible with the dart_frog runtime being used.
