@@ -3,7 +3,7 @@ var proxyquire = require("proxyquire");
 
 import * as assert from "assert";
 import * as vscode from "vscode";
-import { newMiddleware, newRoute } from "../../commands";
+import { installCLI, newMiddleware, newRoute } from "../../commands";
 import { afterEach, beforeEach } from "mocha";
 
 suite("activate", () => {
@@ -26,12 +26,29 @@ suite("activate", () => {
           registerCommand: sinon.stub(),
         },
       };
-      extension = proxyquire("../../extension", { vscode: vscodeStub });
+      const childProcessStub = {
+        execSync: sinon.stub(),
+      };
+      extension = proxyquire("../../extension", {
+        vscode: vscodeStub,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        child_process: childProcessStub,
+      });
       context = { subscriptions: [] };
     });
 
     afterEach(() => {
       sinon.restore();
+    });
+
+    test("install-cli", async () => {
+      extension.activate(context);
+
+      sinon.assert.calledWith(
+        vscodeStub.commands.registerCommand,
+        "extension.install-cli",
+        installCLI
+      );
     });
 
     test("new-route", async () => {
@@ -53,5 +70,24 @@ suite("activate", () => {
         newMiddleware
       );
     });
+  });
+
+  test("calls installCLI", async () => {
+    const vscodeStub = {
+      commands: {
+        registerCommand: sinon.stub(),
+      },
+    };
+    const installCLIStub = sinon.stub();
+    const extension = proxyquire("../../extension", {
+      vscode: vscodeStub,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      "./commands": { installCLI: installCLIStub },
+    });
+    const context = { subscriptions: [] };
+
+    extension.activate(context);
+
+    sinon.assert.calledOnce(installCLIStub);
   });
 });

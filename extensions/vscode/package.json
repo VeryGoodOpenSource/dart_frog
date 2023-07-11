@@ -32,6 +32,10 @@
   "contributes": {
     "commands": [
       {
+        "command": "extension.install-cli",
+        "title": "Dart Frog: Install CLI"
+      },
+      {
         "command": "extension.new-route",
         "title": "Dart Frog: New Route"
       },
@@ -55,6 +59,9 @@
       ]
     }
   },
+  "extensionDependencies": [
+    "Dart-Code.dart-code"
+  ],
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
