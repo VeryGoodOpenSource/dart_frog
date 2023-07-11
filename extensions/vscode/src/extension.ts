@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { newRoute, newMiddleware } from "./commands";
+import { installCLI, newRoute, newMiddleware } from "./commands";
 
 /**
  * This method is called when the extension is activated.
@@ -12,11 +12,12 @@ import { newRoute, newMiddleware } from "./commands";
 export function activate(
   context: vscode.ExtensionContext
 ): vscode.ExtensionContext {
+  installCLI();
+
   context.subscriptions.push(
+    vscode.commands.registerCommand("extension.install-cli", installCLI),
     vscode.commands.registerCommand("extension.new-route", newRoute),
     vscode.commands.registerCommand("extension.new-middleware", newMiddleware)
   );
   return context;
 }
-
-export function deactivate() {}
