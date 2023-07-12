@@ -85,13 +85,8 @@ suite("update-cli", () => {
 
     await command.updateCLI();
 
-    const cpCalls = childProcessStub.exec.getCalls();
-    assert.equal(cpCalls.length, 0);
-
-    const progressCalls = vscodeStub.window.withProgress.getCalls();
-    assert.equal(progressCalls.length, 0);
-
-    const errorCalls = vscodeStub.window.showErrorMessage.getCalls();
-    assert.equal(errorCalls.length, 0);
+    sinon.assert.notCalled(childProcessStub.exec);
+    sinon.assert.notCalled(vscodeStub.window.withProgress);
+    sinon.assert.notCalled(vscodeStub.window.showErrorMessage);
   });
 });
