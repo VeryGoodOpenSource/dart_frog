@@ -6,8 +6,8 @@ import 'package:dart_frog_cli/src/daemon/daemon.dart';
 import 'package:meta/meta.dart';
 
 /// {@template daemon_connection}
-/// A connection of the daemon that hooks into an mean of communication with
-/// clients.
+/// A class responsible for managing the connection between a [DaemonServer]
+/// and its clients through input and output streams.
 /// {@endtemplate}
 ///
 /// See also:
