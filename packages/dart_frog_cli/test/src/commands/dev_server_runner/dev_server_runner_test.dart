@@ -705,7 +705,7 @@ runs codegen with debounce when changes are made to the public or routes directo
           await Future<void>.delayed(Duration.zero);
 
           verify(
-            () => logger.info('[process] server process has been terminated'),
+            () => logger.info('[process] Server process has been terminated'),
           ).called(1);
           verify(() => process.kill()).called(1);
           await expectLater(
