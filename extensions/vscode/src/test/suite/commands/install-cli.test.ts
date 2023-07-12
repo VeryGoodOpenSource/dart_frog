@@ -32,7 +32,7 @@ suite("install-cli command", () => {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       child_process: childProcessStub,
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      "../utils/utils": utilsStub,
+      "../utils": utilsStub,
     });
   });
 

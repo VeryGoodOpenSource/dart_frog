@@ -1,7 +1,7 @@
 const cp = require("child_process");
 
 import { window, ProgressOptions } from "vscode";
-import { isDartFrogCLIInstalled } from "../utils/utils";
+import { isDartFrogCLIInstalled } from "../utils";
 
 /**
  * Update Dart Frog CLI in the user's system.
