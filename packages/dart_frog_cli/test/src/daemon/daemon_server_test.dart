@@ -25,6 +25,9 @@ class _TestDomain extends Domain {
       },
     );
   }
+
+  @override
+  Future<void> dispose() async {}
 }
 
 void main() {
