@@ -15,7 +15,7 @@ class DartFrogCompatibilityException implements Exception {
   /// {@macro dart_frog_compatibility_exception}
   const DartFrogCompatibilityException(this.message);
 
-  /// The error message.
+  /// The exception message.
   final String message;
 
   @override
