@@ -24,7 +24,11 @@ suite("readDartFrogVersion", () => {
   });
 
   test("returns the version of Dart Frog CLI installed in the user's system", () => {
-    cpStub.execSync.returns("0.3.7");
+    const dartFrogVersionCommandOutput = "0.3.7\n";
+    const encoededDartFrogVersionCommandOutput = new TextEncoder().encode(
+      dartFrogVersionCommandOutput
+    );
+    cpStub.execSync.returns(encoededDartFrogVersionCommandOutput);
 
     assert.strictEqual(cliVersion.readDartFrogVersion(), "0.3.7");
   });

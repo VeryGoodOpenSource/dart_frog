@@ -15,7 +15,9 @@ const compatibleCLIVersion = ">=0.3.7 <1.0.0";
  */
 export function readDartFrogVersion(): String | undefined {
   try {
-    return cp.execSync(`dart_frog --version`);
+    const result = cp.execSync(`dart_frog --version`);
+    const decodedResult = new TextDecoder().decode(result);
+    return decodedResult.trim();
   } catch (error) {
     return undefined;
   }

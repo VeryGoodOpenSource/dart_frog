@@ -101,3 +101,7 @@ suite("activate", () => {
     sinon.assert.calledOnce(installCLIStub);
   });
 });
+
+suite("ensureCompatibleCLIVersion", () => {
+  // TODO(alestiago): Write tests.
+});
