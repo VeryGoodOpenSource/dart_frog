@@ -10,6 +10,7 @@ suite("install-cli command", () => {
   let vscodeStub: any;
   let childProcessStub: any;
   let command: any;
+  let utilsStub: any;
 
   beforeEach(() => {
     vscodeStub = {
@@ -22,11 +23,16 @@ suite("install-cli command", () => {
       exec: sinon.stub(),
       execSync: sinon.stub(),
     };
+    utilsStub = {
+      isDartFrogCliInstalled: sinon.stub(),
+    };
 
     command = proxyquire("../../../commands/install-cli", {
       vscode: vscodeStub,
       // eslint-disable-next-line @typescript-eslint/naming-convention
       child_process: childProcessStub,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      "../utils/utils": utilsStub,
     });
   });
 
@@ -35,7 +41,7 @@ suite("install-cli command", () => {
   });
 
   test("does not install if Dart Frog CLI is already installed", async () => {
-    childProcessStub.execSync.withArgs("dart_frog --version").returns("0.0.0");
+    utilsStub.isDartFrogCliInstalled.returns(true);
 
     await command.installCLI();
 
@@ -47,9 +53,7 @@ suite("install-cli command", () => {
 
   suite("installs Dart Frog CLI", () => {
     beforeEach(() => {
-      childProcessStub.execSync
-        .withArgs("dart_frog --version")
-        .throws("Command failed");
+      utilsStub.isDartFrogCliInstalled.returns(false);
     });
 
     test("when not already installed", async () => {

@@ -34,3 +34,13 @@ export function readDartFrogVersion(): String | undefined {
 export function isCompatibleCLIVersion(version: String): Boolean {
   return semver.satisfies(version, compatibleCLIVersion);
 }
+
+/**
+ * Whether the user has Dart Frog CLI installed in their system.
+ *
+ * @returns {boolean} True if the user has Dart Frog CLI installed in their
+ * system, false otherwise.
+ */
+export function isDartFrogCliInstalled(): boolean {
+  return readDartFrogVersion() !== undefined;
+}

@@ -1,12 +1,13 @@
 const cp = require("child_process");
 
 import { window, ProgressOptions } from "vscode";
+import { isDartFrogCliInstalled } from "../utils/utils";
 
 /**
  * Installs Dart Frog CLI in the user's system if not already installed.
  */
 export const installCLI = async (): Promise<void> => {
-  if (!hasDartFrogCliInstalled()) {
+  if (!isDartFrogCliInstalled()) {
     const options: ProgressOptions = {
       location: 15,
       title: "Installing Dart Frog CLI...",
@@ -14,21 +15,6 @@ export const installCLI = async (): Promise<void> => {
     window.withProgress(options, installDartFrogCliVersion);
   }
 };
-
-/**
- * Whether the user has Dart Frog CLI installed in their system.
- *
- * @returns {boolean} True if the user has Dart Frog CLI installed in their
- * system, false otherwise.
- */
-function hasDartFrogCliInstalled(): boolean {
-  try {
-    cp.execSync(`dart_frog --version`);
-    return true;
-  } catch (error) {
-    return false;
-  }
-}
 
 /**
  * Installs Dart Frog CLI from pub.dev.
