@@ -10,8 +10,13 @@ import 'package:equatable/equatable.dart';
 /// - [DaemonEvent]s are events that are sent spontaneously.
 ///
 /// The daemon protocol is asynchronous, so [DaemonRequest]s and
-/// [DaemonResponse]s are identified by an id. The id is a string
-/// that is unique for the connection that sent the message.
+/// [DaemonResponse]s are identified by an id. The daemon will make
+/// sure that the responses will have the same id as the request.
+///
+/// Therefore the uniqueness of the id should be guaranteed by the
+/// client.
+///
+/// There should be only one response for a request.
 /// {@endtemplate}
 sealed class DaemonMessage extends Equatable {
   /// {@macro daemon_message}
@@ -19,8 +24,8 @@ sealed class DaemonMessage extends Equatable {
 
   /// Creates a [DaemonMessage] from a [rawMessage] json.
   ///
-  /// Throws a [StateError] if the [rawMessage] is not
-  /// a `<String, dynamic>` map.
+  /// Throws a [DartFrogDaemonMessageException] if the message
+  /// is invalid, malformed or unknown.
   factory DaemonMessage.fromJson(Map<String, dynamic> rawMessage) {
     switch (rawMessage) {
       case {'id': _, 'method': _}:
@@ -41,7 +46,7 @@ sealed class DaemonMessage extends Equatable {
 }
 
 /// {@template daemon_request}
-/// A request to invoke a method on the daemon.
+/// A request to invoke a method.
 /// {@endtemplate}
 class DaemonRequest extends DaemonMessage {
   /// {@macro daemon_request}
@@ -201,7 +206,7 @@ class DaemonResponse extends DaemonMessage {
 }
 
 /// {@template daemon_event}
-/// An event that is sent spontaneously by the daemon.
+/// An event that is sent without necessarily being requested.
 /// {@endtemplate}
 class DaemonEvent extends DaemonMessage {
   /// {@macro daemon_event}
