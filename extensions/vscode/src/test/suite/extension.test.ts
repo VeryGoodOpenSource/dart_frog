@@ -191,7 +191,7 @@ suite("ensureCompatibleCLIVersion", () => {
 
     beforeEach(() => {
       utilsStub.cliVersion.readDartFrogVersion.returns(version);
-      utilsStub.cliVersion.isCompatibleCLIVersion.returns(true);
+      utilsStub.cliVersion.isCompatibleCLIVersion.returns(false);
     });
 
     afterEach(() => {
