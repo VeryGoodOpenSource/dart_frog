@@ -28,7 +28,7 @@ abstract interface class DaemonConnection {
 ///
 /// This is the default connection used by the daemon.
 ///
-/// This uses JSON rpc over stdio to communicate with the client.
+/// This uses JSON RPC over stdio to communicate with the client.
 /// {@endtemplate}
 class DaemonStdioConnection implements DaemonConnection {
   /// {@macro daemon_stdio_connection}
