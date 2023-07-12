@@ -41,6 +41,6 @@ export function isCompatibleCLIVersion(version: String): Boolean {
  * @returns {boolean} True if the user has Dart Frog CLI installed in their
  * system, false otherwise.
  */
-export function isDartFrogCliInstalled(): boolean {
+export function isDartFrogCLIInstalled(): boolean {
   return readDartFrogVersion() !== undefined;
 }

@@ -16,6 +16,7 @@ export function activate(
 
   context.subscriptions.push(
     vscode.commands.registerCommand("extension.install-cli", installCLI),
+    vscode.commands.registerCommand("extension.update-cli", installCLI),
     vscode.commands.registerCommand("extension.new-route", newRoute),
     vscode.commands.registerCommand("extension.new-middleware", newMiddleware)
   );
