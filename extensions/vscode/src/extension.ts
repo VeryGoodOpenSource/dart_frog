@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { installCLI, newRoute, newMiddleware, updateCLI } from "./commands";
-import { readDartFrogVersion, isCompatibleCLIVersion } from "./utils";
+import { readCLIVersion, isCompatibleCLIVersion } from "./utils";
 
 /**
  * This method is called when the extension is activated.
@@ -40,7 +40,7 @@ export function activate(
  * installed in the user's system is compatible with this extension.
  */
 export async function ensureCompatibleCLIVersion(): Promise<void> {
-  const version = readDartFrogVersion();
+  const version = readCLIVersion();
   if (!version) {
     return;
   }

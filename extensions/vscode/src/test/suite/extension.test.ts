@@ -28,11 +28,11 @@ suite("activate", () => {
       };
 
       const utilsStub = {
-        readDartFrogVersion: sinon.stub(),
+        readCLIVersion: sinon.stub(),
         isCompatibleCLIVersion: sinon.stub(),
         isDartFrogCLIInstalled: sinon.stub(),
       };
-      utilsStub.readDartFrogVersion.returns("0.0.0");
+      utilsStub.readCLIVersion.returns("0.0.0");
       utilsStub.isCompatibleCLIVersion.returns(true);
       utilsStub.isDartFrogCLIInstalled.returns(true);
 
@@ -103,11 +103,11 @@ suite("activate", () => {
     };
 
     const utilsStub = {
-      readDartFrogVersion: sinon.stub(),
+      readCLIVersion: sinon.stub(),
       isCompatibleCLIVersion: sinon.stub(),
       isDartFrogCLIInstalled: sinon.stub(),
     };
-    utilsStub.readDartFrogVersion.returns("0.0.0");
+    utilsStub.readCLIVersion.returns("0.0.0");
     utilsStub.isCompatibleCLIVersion.returns(true);
     utilsStub.isDartFrogCLIInstalled.returns(true);
 
@@ -144,7 +144,7 @@ suite("ensureCompatibleCLIVersion", () => {
     };
 
     utilsStub = {
-      readDartFrogVersion: sinon.stub(),
+      readCLIVersion: sinon.stub(),
       isCompatibleCLIVersion: sinon.stub(),
     };
     commandsStub = {
@@ -165,7 +165,7 @@ suite("ensureCompatibleCLIVersion", () => {
   });
 
   test("does not show warning when CLI is not installed", async () => {
-    utilsStub.readDartFrogVersion.returns(undefined);
+    utilsStub.readCLIVersion.returns(undefined);
 
     await extension.ensureCompatibleCLIVersion();
 
@@ -173,7 +173,7 @@ suite("ensureCompatibleCLIVersion", () => {
   });
 
   test("does not show warning when CLI is compatible", async () => {
-    utilsStub.readDartFrogVersion.returns("1.0.0");
+    utilsStub.readCLIVersion.returns("1.0.0");
     utilsStub.isCompatibleCLIVersion.returns(true);
 
     await extension.ensureCompatibleCLIVersion();
@@ -185,7 +185,7 @@ suite("ensureCompatibleCLIVersion", () => {
     const version = "0.0.0";
 
     beforeEach(() => {
-      utilsStub.readDartFrogVersion.returns(version);
+      utilsStub.readCLIVersion.returns(version);
       utilsStub.isCompatibleCLIVersion.returns(false);
     });
 
@@ -196,13 +196,12 @@ suite("ensureCompatibleCLIVersion", () => {
     test("shows warning", async () => {
       await extension.ensureCompatibleCLIVersion();
 
-      sinon.assert
-        .calledOnce(vscodeStub.window.showWarningMessage)
-        .withArgs(
-          `Dart Frog CLI version ${version} is not compatible with this extension.`,
-          "Update Dart Frog CLI",
-          "Ignore"
-        );
+      sinon.assert.calledOnceWithExactly(
+        vscodeStub.window.showWarningMessage,
+        `Dart Frog CLI version ${version} is not compatible with this extension.`,
+        "Update Dart Frog CLI",
+        "Ignore"
+      );
     });
 
     test("updates CLI when selected", async () => {
