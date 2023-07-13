@@ -54,6 +54,7 @@ async function suggestIntallingDartFrogCLI(): Promise<void> {
       await installCLI();
       break;
     case "Ignore":
+      break;
     default:
       break;
   }
