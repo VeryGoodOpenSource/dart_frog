@@ -15,12 +15,14 @@ import {
  * @returns The same instance of the extension context passed in.
  */
 export function activate(
-  context: vscode.ExtensionContext
+  context: vscode.ExtensionContext,
+  suggestInstallingCLI: () => Promise<void> = suggestInstallingDartFrogCLI,
+  ensureCompatibleCLI: () => Promise<void> = ensureCompatibleDartFrogCLI
 ): vscode.ExtensionContext {
-  if (isDartFrogCLIInstalled()) {
-    suggestInstallingDartFrogCLI();
+  if (!isDartFrogCLIInstalled()) {
+    suggestInstallingCLI();
   } else {
-    ensureCompatibleDartFrogCLI();
+    ensureCompatibleCLI();
   }
 
   context.subscriptions.push(

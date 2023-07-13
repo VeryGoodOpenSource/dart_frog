@@ -103,13 +103,9 @@ suite("activate", () => {
     };
 
     const utilsStub = {
-      readDartFrogCLIVersion: sinon.stub(),
-      isCompatibleDartFrogCLIVersion: sinon.stub(),
       isDartFrogCLIInstalled: sinon.stub(),
     };
-    utilsStub.readDartFrogCLIVersion.returns("0.0.0");
-    utilsStub.isCompatibleDartFrogCLIVersion.returns(true);
-    utilsStub.isDartFrogCLIInstalled.returns(true);
+    utilsStub.isDartFrogCLIInstalled.returns(false);
 
     const extension = proxyquire("../../extension", {
       vscode: vscodeStub,
@@ -118,9 +114,11 @@ suite("activate", () => {
     });
 
     const context = { subscriptions: [] };
-    extension.activate(context);
+    const suggestInstallingCLI = sinon.stub();
+    const ensureCompatibleCLI = sinon.stub();
+    extension.activate(context, suggestInstallingCLI, ensureCompatibleCLI);
 
-    // TODO(alestiago): Finish this test.
+    sinon.assert.calledOnce(suggestInstallingCLI);
   });
 
   test("calls ensureCompatibleDartFrogCLI when Dart Frog CLI is installed", () => {
@@ -131,12 +129,8 @@ suite("activate", () => {
     };
 
     const utilsStub = {
-      readDartFrogCLIVersion: sinon.stub(),
-      isCompatibleDartFrogCLIVersion: sinon.stub(),
       isDartFrogCLIInstalled: sinon.stub(),
     };
-    utilsStub.readDartFrogCLIVersion.returns("0.0.0");
-    utilsStub.isCompatibleDartFrogCLIVersion.returns(true);
     utilsStub.isDartFrogCLIInstalled.returns(true);
 
     const extension = proxyquire("../../extension", {
@@ -146,9 +140,11 @@ suite("activate", () => {
     });
 
     const context = { subscriptions: [] };
-    extension.activate(context);
+    const suggestInstallingCLI = sinon.stub();
+    const ensureCompatibleCLI = sinon.stub();
+    extension.activate(context, suggestInstallingCLI, ensureCompatibleCLI);
 
-    // TODO(alestiago): Finish this test.
+    sinon.assert.calledOnce(ensureCompatibleCLI);
   });
 });
 
