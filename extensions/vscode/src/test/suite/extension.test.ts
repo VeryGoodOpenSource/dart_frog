@@ -28,15 +28,13 @@ suite("activate", () => {
       };
 
       const utilsStub = {
-        cliVersion: {
-          readDartFrogVersion: sinon.stub(),
-          isCompatibleCLIVersion: sinon.stub(),
-          isDartFrogCLIInstalled: sinon.stub(),
-        },
+        readDartFrogVersion: sinon.stub(),
+        isCompatibleCLIVersion: sinon.stub(),
+        isDartFrogCLIInstalled: sinon.stub(),
       };
-      utilsStub.cliVersion.readDartFrogVersion.returns("0.0.0");
-      utilsStub.cliVersion.isCompatibleCLIVersion.returns(true);
-      utilsStub.cliVersion.isDartFrogCLIInstalled.returns(true);
+      utilsStub.readDartFrogVersion.returns("0.0.0");
+      utilsStub.isCompatibleCLIVersion.returns(true);
+      utilsStub.isDartFrogCLIInstalled.returns(true);
 
       const childProcessStub = {
         execSync: sinon.stub(),
@@ -105,15 +103,13 @@ suite("activate", () => {
     };
 
     const utilsStub = {
-      cliVersion: {
-        readDartFrogVersion: sinon.stub(),
-        isCompatibleCLIVersion: sinon.stub(),
-        isDartFrogCLIInstalled: sinon.stub(),
-      },
+      readDartFrogVersion: sinon.stub(),
+      isCompatibleCLIVersion: sinon.stub(),
+      isDartFrogCLIInstalled: sinon.stub(),
     };
-    utilsStub.cliVersion.readDartFrogVersion.returns("0.0.0");
-    utilsStub.cliVersion.isCompatibleCLIVersion.returns(true);
-    utilsStub.cliVersion.isDartFrogCLIInstalled.returns(true);
+    utilsStub.readDartFrogVersion.returns("0.0.0");
+    utilsStub.isCompatibleCLIVersion.returns(true);
+    utilsStub.isDartFrogCLIInstalled.returns(true);
 
     const commandsStub = {
       installCLI: sinon.stub(),
@@ -146,11 +142,10 @@ suite("ensureCompatibleCLIVersion", () => {
         showWarningMessage: sinon.stub(),
       },
     };
+
     utilsStub = {
-      cliVersion: {
-        readDartFrogVersion: sinon.stub(),
-        isCompatibleCLIVersion: sinon.stub(),
-      },
+      readDartFrogVersion: sinon.stub(),
+      isCompatibleCLIVersion: sinon.stub(),
     };
     commandsStub = {
       updateCLI: sinon.stub(),
@@ -170,7 +165,7 @@ suite("ensureCompatibleCLIVersion", () => {
   });
 
   test("does not show warning when CLI is not installed", async () => {
-    utilsStub.cliVersion.readDartFrogVersion.returns(null);
+    utilsStub.readDartFrogVersion.returns(undefined);
 
     await extension.ensureCompatibleCLIVersion();
 
@@ -178,8 +173,8 @@ suite("ensureCompatibleCLIVersion", () => {
   });
 
   test("does not show warning when CLI is compatible", async () => {
-    utilsStub.cliVersion.readDartFrogVersion.returns("1.0.0");
-    utilsStub.cliVersion.isCompatibleCLIVersion.returns(true);
+    utilsStub.readDartFrogVersion.returns("1.0.0");
+    utilsStub.isCompatibleCLIVersion.returns(true);
 
     await extension.ensureCompatibleCLIVersion();
 
@@ -190,8 +185,8 @@ suite("ensureCompatibleCLIVersion", () => {
     const version = "0.0.0";
 
     beforeEach(() => {
-      utilsStub.cliVersion.readDartFrogVersion.returns(version);
-      utilsStub.cliVersion.isCompatibleCLIVersion.returns(false);
+      utilsStub.readDartFrogVersion.returns(version);
+      utilsStub.isCompatibleCLIVersion.returns(false);
     });
 
     afterEach(() => {

@@ -14,6 +14,7 @@ const compatibleCLIVersion = ">=0.3.7 <1.0.0";
  * in the user's system, or null if Dart Frog CLI is not installed.
  */
 export function readDartFrogVersion(): String | undefined {
+  // TODO(alestiago): Rename to readCLIVersion.
   try {
     const result = cp.execSync(`dart_frog --version`);
     const decodedResult = new TextDecoder().decode(result);
