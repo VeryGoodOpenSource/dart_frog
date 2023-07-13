@@ -29,9 +29,12 @@ export function activate(
 }
 
 /**
- * This method is called upon activation of the extension to ensure that the
- * version of Dart Frog CLI installed in the user's system is compatible with
- * this extension.
+ * Checks if the version of Dart Frog CLI installed in the user's system is
+ * compatible with this extension, suggesting to install if it is not.
+ *
+ * This method should be called upon activation of the extension to ensure that
+ * the version of Dart Frog CLI installed in the user's system is compatible
+ * with this extension.
  *
  * If the version of Dart Frog CLI installed in the user's system is not
  * compatible with this extension, the user is prompted to update Dart Frog CLI
