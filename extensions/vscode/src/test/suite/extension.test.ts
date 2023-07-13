@@ -130,6 +130,10 @@ suite("activate", () => {
   });
 });
 
+suite("suggestInstallingDartFrogCLI", () => {
+  // TODO(alestiago): Write tests.
+});
+
 suite("ensureCompatibleDartFrogCLI", () => {
   let vscodeStub: any;
   let utilsStub: any;
