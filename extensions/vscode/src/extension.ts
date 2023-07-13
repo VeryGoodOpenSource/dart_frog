@@ -36,8 +36,11 @@ export function activate(
  * If the version of Dart Frog CLI installed in the user's system is not
  * compatible with this extension, the user is prompted to update Dart Frog CLI
  * or ignore the warning. If the user chooses to update Dart Frog CLI, the
- * extension will attempt to update Dart Frog CLI. Otherwise, the user will be
+ * extension will attempt to update Dart Frog CLI. Otherwise, the user will
  * proceed to use the extension at their own risk.
+ *
+ * If Dart Frog CLI is not installed in the user's system, this method will
+ * do nothing and returns immediately.
  *
  * @see {@link isCompatibleDartFrogCLIVersion}, to check if the version of
  * Dart Frog CLI installed in the user's system is compatible with this
