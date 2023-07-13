@@ -18,7 +18,7 @@ export function activate(
   context: vscode.ExtensionContext
 ): vscode.ExtensionContext {
   if (isDartFrogCLIInstalled()) {
-    suggestIntallingDartFrogCLI();
+    suggestInstallingDartFrogCLI();
   } else {
     ensureCompatibleDartFrogCLI();
   }
@@ -33,8 +33,8 @@ export function activate(
 }
 
 /**
- * This method is called upon activation of the extension whenever Dart Frog CLI
- * is not installed in the user's system.
+ * This method should be called upon activation of the extension whenever
+ * Dart Frog CLI is not installed in the user's system.
  *
  * If Dart Frog CLI is not installed in the user's system, the user is prompted
  * to install Dart Frog CLI. This is optional, and the user can choose to
@@ -43,7 +43,7 @@ export function activate(
  *
  * @see {@link isDartFrogCLIInstalled}, to check if Dart Frog CLI is installed
  */
-async function suggestIntallingDartFrogCLI(): Promise<void> {
+async function suggestInstallingDartFrogCLI(): Promise<void> {
   const selection = await vscode.window.showWarningMessage(
     "Dart Frog CLI is not installed. Install Dart Frog CLI to use this extension.",
     "Install Dart Frog CLI",
@@ -61,9 +61,9 @@ async function suggestIntallingDartFrogCLI(): Promise<void> {
 }
 
 /**
- * This method is called upon activation of the extension to ensure that the
- * version of Dart Frog CLI installed in the user's system is compatible with
- * this extension.
+ * This method should be called upon activation of the extension to ensure that
+ * the version of Dart Frog CLI installed in the user's system is compatible
+ * with this extension.
  *
  * If the version of Dart Frog CLI installed in the user's system is not
  * compatible with this extension, the user is prompted to update Dart Frog CLI
