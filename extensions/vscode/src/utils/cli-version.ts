@@ -33,7 +33,7 @@ export function readDartFrogCLIVersion(): String | undefined {
  * user's system is compatible with this extension, false otherwise.
  * @see {@link readDartFrogCLIVersion}, to collect the version of Dart Frog CLI.
  */
-export function isCompatibleCLIVersion(version: String): Boolean {
+export function isCompatibleDartFrogCLIVersion(version: String): Boolean {
   return semver.satisfies(version, compatibleCLIVersion);
 }
 

@@ -40,7 +40,7 @@ suite("readDartFrogCLIVersion", () => {
   });
 });
 
-suite("isCompatibleCLIVersion", () => {
+suite("isCompatibleDartFrogCLIVersion", () => {
   let cliVersion: any;
 
   beforeEach(() => {
@@ -48,12 +48,24 @@ suite("isCompatibleCLIVersion", () => {
   });
 
   test("returns true if the version of Dart Frog CLI installed in the user's system is compatible with this extension", () => {
-    assert.strictEqual(cliVersion.isCompatibleCLIVersion("0.3.8"), true);
-    assert.strictEqual(cliVersion.isCompatibleCLIVersion("0.3.7"), true);
+    assert.strictEqual(
+      cliVersion.isCompatibleDartFrogCLIVersion("0.3.8"),
+      true
+    );
+    assert.strictEqual(
+      cliVersion.isCompatibleDartFrogCLIVersion("0.3.7"),
+      true
+    );
   });
 
   test("returns false if the version of Dart Frog CLI installed in the user's system is not compatible with this extension", () => {
-    assert.strictEqual(cliVersion.isCompatibleCLIVersion("1.0.0"), false);
-    assert.strictEqual(cliVersion.isCompatibleCLIVersion("0.3.6"), false);
+    assert.strictEqual(
+      cliVersion.isCompatibleDartFrogCLIVersion("1.0.0"),
+      false
+    );
+    assert.strictEqual(
+      cliVersion.isCompatibleDartFrogCLIVersion("0.3.6"),
+      false
+    );
   });
 });
