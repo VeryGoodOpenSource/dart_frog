@@ -28,11 +28,11 @@ suite("activate", () => {
       };
 
       const utilsStub = {
-        readCLIVersion: sinon.stub(),
+        readDartFrogCLIVersion: sinon.stub(),
         isCompatibleCLIVersion: sinon.stub(),
         isDartFrogCLIInstalled: sinon.stub(),
       };
-      utilsStub.readCLIVersion.returns("0.0.0");
+      utilsStub.readDartFrogCLIVersion.returns("0.0.0");
       utilsStub.isCompatibleCLIVersion.returns(true);
       utilsStub.isDartFrogCLIInstalled.returns(true);
 
@@ -103,11 +103,11 @@ suite("activate", () => {
     };
 
     const utilsStub = {
-      readCLIVersion: sinon.stub(),
+      readDartFrogCLIVersion: sinon.stub(),
       isCompatibleCLIVersion: sinon.stub(),
       isDartFrogCLIInstalled: sinon.stub(),
     };
-    utilsStub.readCLIVersion.returns("0.0.0");
+    utilsStub.readDartFrogCLIVersion.returns("0.0.0");
     utilsStub.isCompatibleCLIVersion.returns(true);
     utilsStub.isDartFrogCLIInstalled.returns(true);
 
@@ -144,7 +144,7 @@ suite("ensureCompatibleCLIVersion", () => {
     };
 
     utilsStub = {
-      readCLIVersion: sinon.stub(),
+      readDartFrogCLIVersion: sinon.stub(),
       isCompatibleCLIVersion: sinon.stub(),
     };
     commandsStub = {
@@ -165,7 +165,7 @@ suite("ensureCompatibleCLIVersion", () => {
   });
 
   test("does not show warning when CLI is not installed", async () => {
-    utilsStub.readCLIVersion.returns(undefined);
+    utilsStub.readDartFrogCLIVersion.returns(undefined);
 
     await extension.ensureCompatibleCLIVersion();
 
@@ -173,7 +173,7 @@ suite("ensureCompatibleCLIVersion", () => {
   });
 
   test("does not show warning when CLI is compatible", async () => {
-    utilsStub.readCLIVersion.returns("1.0.0");
+    utilsStub.readDartFrogCLIVersion.returns("1.0.0");
     utilsStub.isCompatibleCLIVersion.returns(true);
 
     await extension.ensureCompatibleCLIVersion();
@@ -185,7 +185,7 @@ suite("ensureCompatibleCLIVersion", () => {
     const version = "0.0.0";
 
     beforeEach(() => {
-      utilsStub.readCLIVersion.returns(version);
+      utilsStub.readDartFrogCLIVersion.returns(version);
       utilsStub.isCompatibleCLIVersion.returns(false);
     });
 

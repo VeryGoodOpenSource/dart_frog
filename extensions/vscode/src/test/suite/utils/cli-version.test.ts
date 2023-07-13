@@ -4,7 +4,7 @@ var proxyquire = require("proxyquire");
 import { afterEach, beforeEach } from "mocha";
 import * as assert from "assert";
 
-suite("readCLIVersion", () => {
+suite("readDartFrogCLIVersion", () => {
   let cpStub: any;
   let cliVersion: any;
 
@@ -30,13 +30,13 @@ suite("readCLIVersion", () => {
     );
     cpStub.execSync.returns(encoededDartFrogVersionCommandResult);
 
-    assert.strictEqual(cliVersion.readCLIVersion(), "0.3.7");
+    assert.strictEqual(cliVersion.readDartFrogCLIVersion(), "0.3.7");
   });
 
   test("returns undefined if Dart Frog CLI is not installed", () => {
     cpStub.execSync.throws();
 
-    assert.strictEqual(cliVersion.readCLIVersion(), undefined);
+    assert.strictEqual(cliVersion.readDartFrogCLIVersion(), undefined);
   });
 });
 
