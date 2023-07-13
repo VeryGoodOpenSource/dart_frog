@@ -130,7 +130,7 @@ suite("activate", () => {
   });
 });
 
-suite("ensureCompatibleDartFrogCLIVersion", () => {
+suite("ensureCompatibleDartFrogCLI", () => {
   let vscodeStub: any;
   let utilsStub: any;
   let commandsStub: any;
@@ -167,7 +167,7 @@ suite("ensureCompatibleDartFrogCLIVersion", () => {
   test("does not show warning when CLI is not installed", async () => {
     utilsStub.readDartFrogCLIVersion.returns(undefined);
 
-    await extension.ensureCompatibleDartFrogCLIVersion();
+    await extension.ensureCompatibleDartFrogCLI();
 
     sinon.assert.notCalled(vscodeStub.window.showWarningMessage);
   });
@@ -176,7 +176,7 @@ suite("ensureCompatibleDartFrogCLIVersion", () => {
     utilsStub.readDartFrogCLIVersion.returns("1.0.0");
     utilsStub.isCompatibleDartFrogCLIVersion.returns(true);
 
-    await extension.ensureCompatibleDartFrogCLIVersion();
+    await extension.ensureCompatibleDartFrogCLI();
 
     sinon.assert.notCalled(vscodeStub.window.showWarningMessage);
   });
@@ -194,7 +194,7 @@ suite("ensureCompatibleDartFrogCLIVersion", () => {
     });
 
     test("shows warning", async () => {
-      await extension.ensureCompatibleDartFrogCLIVersion();
+      await extension.ensureCompatibleDartFrogCLI();
 
       sinon.assert.calledOnceWithExactly(
         vscodeStub.window.showWarningMessage,
@@ -207,7 +207,7 @@ suite("ensureCompatibleDartFrogCLIVersion", () => {
     test("updates CLI when selected", async () => {
       vscodeStub.window.showWarningMessage.returns("Update Dart Frog CLI");
 
-      await extension.ensureCompatibleDartFrogCLIVersion();
+      await extension.ensureCompatibleDartFrogCLI();
 
       sinon.assert.calledOnce(commandsStub.updateCLI);
     });
@@ -215,7 +215,7 @@ suite("ensureCompatibleDartFrogCLIVersion", () => {
     test("does not update CLI when ignored", async () => {
       vscodeStub.window.showWarningMessage.returns("Ignore");
 
-      await extension.ensureCompatibleDartFrogCLIVersion();
+      await extension.ensureCompatibleDartFrogCLI();
 
       sinon.assert.notCalled(commandsStub.updateCLI);
     });

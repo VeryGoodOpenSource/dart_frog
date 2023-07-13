@@ -17,7 +17,7 @@ export function activate(
   context: vscode.ExtensionContext
 ): vscode.ExtensionContext {
   installCLI();
-  ensureCompatibleDartFrogCLIVersion();
+  ensureCompatibleDartFrogCLI();
 
   context.subscriptions.push(
     vscode.commands.registerCommand("extension.install-cli", installCLI),
@@ -43,7 +43,7 @@ export function activate(
  * Dart Frog CLI installed in the user's system is compatible with this
  * extension.
  */
-export async function ensureCompatibleDartFrogCLIVersion(): Promise<void> {
+export async function ensureCompatibleDartFrogCLI(): Promise<void> {
   const version = readDartFrogCLIVersion();
   if (!version) {
     return;
