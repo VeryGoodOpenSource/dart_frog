@@ -40,10 +40,9 @@ export function activate(
  * This method should be called upon activation of the extension whenever
  * Dart Frog CLI is not installed in the user's system.
  *
- * If Dart Frog CLI is not installed in the user's system, the user is prompted
- * to install Dart Frog CLI. This is optional, and the user can choose to
- * install Dart Frog CLI at a later time but the extension may not work as
- * intended until Dart Frog CLI is installed.
+ * It prompts the user to install Dart Frog CLI. This is optional, the user
+ * can choose to install Dart Frog CLI at a later time but the extension may
+ * not work as intended until Dart Frog CLI is installed.
  *
  * @see {@link isDartFrogCLIInstalled}, to check if Dart Frog CLI is installed
  */
