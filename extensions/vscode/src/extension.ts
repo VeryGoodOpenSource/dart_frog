@@ -33,6 +33,8 @@ export function activate(
 }
 
 /**
+ * Suggests the user to install Dart Frog CLI.
+ *
  * This method should be called upon activation of the extension whenever
  * Dart Frog CLI is not installed in the user's system.
  *
@@ -43,7 +45,7 @@ export function activate(
  *
  * @see {@link isDartFrogCLIInstalled}, to check if Dart Frog CLI is installed
  */
-async function suggestInstallingDartFrogCLI(): Promise<void> {
+export async function suggestInstallingDartFrogCLI(): Promise<void> {
   const selection = await vscode.window.showWarningMessage(
     "Dart Frog CLI is not installed. Install Dart Frog CLI to use this extension.",
     "Install Dart Frog CLI",
