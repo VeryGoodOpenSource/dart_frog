@@ -4,7 +4,7 @@ import { installCLI, newRoute, newMiddleware } from "./commands";
 /**
  * This method is called when the extension is activated.
  *
- * The extension is activated the very first time the command is executed or
+ * The extension is activated the very first time a command is executed or
  * if the workspace contains a pubspec.yaml file.
  *
  * @param {vscode.ExtensionContext} context
