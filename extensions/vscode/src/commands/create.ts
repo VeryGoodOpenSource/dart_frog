@@ -12,7 +12,25 @@ import {
 /**
  * Creates a new Dart Frog project.
  *
+ * This command is available from the command palette and the context menu.
+ *
+ * When launching the command from the command palette, the Uri is undefined
+ * and the user is prompted to select a valid directory or file to create the
+ * project in.
+ *
+ * When launching the command from the context menu, the Uri corresponds to the
+ * selected file or directory. Only those directories that are not Dart Frog
+ * projects already show the command in the context menu.
+ *
+ * The user will always be prompted for a project name, which is pre-filled with
+ * the name of the directory the project will be created in. Mimicking the
+ * Dart Frog CLI create command implementation.
+ *
+ * All the logic associated with creating a new project is handled by the
+ * `dart_frog create` command, from the Dart Frog CLI.
+ *
  * @param {Uri | undefined} uri
+ * @see {@link https://github.com/VeryGoodOpenSource/dart_frog/blob/main/packages/dart_frog_cli/lib/src/commands/create/create.dart Dart Frog CLI `create` command implementation.}
  */
 export const create = async (uri: Uri | undefined): Promise<void> => {
   let outputDirectory =
