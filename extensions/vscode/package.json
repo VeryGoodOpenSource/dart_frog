@@ -32,6 +32,10 @@
   "contributes": {
     "commands": [
       {
+        "command": "extension.create",
+        "title": "Dart Frog: Create Project"
+      },
+      {
         "command": "extension.install-cli",
         "title": "Dart Frog: Install CLI"
       },
@@ -55,6 +59,11 @@
           "command": "extension.new-middleware",
           "group": "dartFrogGroup@1",
           "when": "resourceDirname =~ /routes/ && (explorerResourceIsFolder || resourceExtname == .dart)"
+        },
+        {
+          "command": "extension.create",
+          "group": "dartFrogGroup@2",
+          "when": "!(resourceDirname =~ /routes/)"
         }
       ]
     }
