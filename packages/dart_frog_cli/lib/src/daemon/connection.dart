@@ -47,9 +47,7 @@ class DaemonStdioConnection implements DaemonConnection {
     _inputStreamController
       ..onListen = () {
         stdinSubscription = _stdin.readMessages().listen(
-          (message) {
-            _inputStreamController.add(message);
-          },
+          _inputStreamController.add,
           onError: (dynamic error) {
             switch (error) {
               case DartFrogDaemonMessageException(message: final message):
