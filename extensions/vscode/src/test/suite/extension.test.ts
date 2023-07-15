@@ -3,7 +3,7 @@ var proxyquire = require("proxyquire");
 
 import * as assert from "assert";
 import * as vscode from "vscode";
-import { installCLI, newMiddleware, newRoute } from "../../commands";
+import { installCLI, newMiddleware, newRoute, updateCLI } from "../../commands";
 import { afterEach, beforeEach } from "mocha";
 
 suite("activate", () => {
@@ -48,6 +48,16 @@ suite("activate", () => {
         vscodeStub.commands.registerCommand,
         "extension.install-cli",
         installCLI
+      );
+    });
+
+    test("update-cli", async () => {
+      extension.activate(context);
+
+      sinon.assert.calledWith(
+        vscodeStub.commands.registerCommand,
+        "extension.update-cli",
+        updateCLI
       );
     });
 
