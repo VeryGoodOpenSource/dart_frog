@@ -16,6 +16,7 @@ suite("create command", () => {
         showErrorMessage: sinon.stub(),
         showInputBox: sinon.stub(),
         showOpenDialog: sinon.stub(),
+        withProgress: sinon.stub(),
       },
     };
     childProcessStub = {
@@ -98,7 +99,7 @@ suite("create command", () => {
     });
 
     test("is not shown when prompt is valid", async () => {
-      vscodeStub.window.showInputBox.returns("dart_frog");
+      vscodeStub.window.showInputBox.returns("my_project");
 
       await command.create(targetUri);
 
@@ -107,5 +108,85 @@ suite("create command", () => {
         "Please enter a project name"
       );
     });
+  });
+
+  suite("progress", () => {
+    test("is shown when prompt is valid", async () => {
+      vscodeStub.window.showInputBox.returns("my_project");
+
+      await command.create(targetUri);
+
+      sinon.assert.calledOnce(vscodeStub.window.withProgress);
+    });
+
+    test("is not shown when prompt is undefined", async () => {
+      vscodeStub.window.showInputBox.returns(undefined);
+
+      await command.create(targetUri);
+
+      sinon.assert.notCalled(vscodeStub.window.withProgress);
+    });
+
+    test("is not shown when prompt is empty", async () => {
+      vscodeStub.window.showInputBox.returns("");
+
+      await command.create(targetUri);
+
+      sinon.assert.notCalled(vscodeStub.window.withProgress);
+    });
+
+    test("is not shown when prompt is white spaced", async () => {
+      vscodeStub.window.showInputBox.returns("  ");
+
+      await command.create(targetUri);
+
+      sinon.assert.notCalled(vscodeStub.window.withProgress);
+    });
+  });
+
+  test("runs `dart_frog create` command when project name is valid and uri is defined", async () => {
+    vscodeStub.window.showInputBox.returns("my_project");
+
+    await command.create(targetUri);
+
+    const progressFunction = vscodeStub.window.withProgress.getCall(0).args[1];
+    await progressFunction();
+
+    sinon.assert.calledOnceWithMatch(
+      childProcessStub.exec,
+      "dart_frog create 'my_project'",
+      { cwd: targetUri.fsPath }
+    );
+  });
+
+  test("runs `dart_frog create` command when project name is valid and uri not defined", async () => {
+    vscodeStub.window.showOpenDialog.returns(Promise.resolve([targetUri]));
+    vscodeStub.window.showInputBox.returns("my_project");
+
+    await command.create();
+
+    const progressFunction = vscodeStub.window.withProgress.getCall(0).args[1];
+    await progressFunction();
+
+    sinon.assert.calledOnceWithMatch(
+      childProcessStub.exec,
+      "dart_frog create 'my_project'",
+      { cwd: targetUri.fsPath }
+    );
+  });
+
+  test("shows error when `dart_frog create` command fails", async () => {
+    const error = new Error("Command failed");
+    const createCommand = "dart_frog create 'my_project'";
+
+    vscodeStub.window.showInputBox.returns("my_project");
+    childProcessStub.exec.withArgs(createCommand).yields(error);
+
+    await command.create(targetUri);
+
+    const progressFunction = vscodeStub.window.withProgress.getCall(0).args[1];
+    await progressFunction();
+
+    sinon.assert.calledWith(vscodeStub.window.showErrorMessage, error.message);
   });
 });
