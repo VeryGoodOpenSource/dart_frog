@@ -26,13 +26,26 @@ suite("activate", () => {
           registerCommand: sinon.stub(),
         },
       };
+
+      const utilsStub = {
+        readDartFrogCLIVersion: sinon.stub(),
+        isCompatibleDartFrogCLIVersion: sinon.stub(),
+        isDartFrogCLIInstalled: sinon.stub(),
+      };
+      utilsStub.readDartFrogCLIVersion.returns("0.0.0");
+      utilsStub.isCompatibleDartFrogCLIVersion.returns(true);
+      utilsStub.isDartFrogCLIInstalled.returns(true);
+
       const childProcessStub = {
         execSync: sinon.stub(),
       };
+
       extension = proxyquire("../../extension", {
         vscode: vscodeStub,
         // eslint-disable-next-line @typescript-eslint/naming-convention
         child_process: childProcessStub,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        "./utils": utilsStub,
       });
       context = { subscriptions: [] };
     });
@@ -41,7 +54,7 @@ suite("activate", () => {
       sinon.restore();
     });
 
-    test("install-cli", async () => {
+    test("install-cli", () => {
       extension.activate(context);
 
       sinon.assert.calledWith(
@@ -51,7 +64,7 @@ suite("activate", () => {
       );
     });
 
-    test("update-cli", async () => {
+    test("update-cli", () => {
       extension.activate(context);
 
       sinon.assert.calledWith(
@@ -61,7 +74,7 @@ suite("activate", () => {
       );
     });
 
-    test("new-route", async () => {
+    test("new-route", () => {
       extension.activate(context);
 
       sinon.assert.calledWith(
@@ -71,7 +84,7 @@ suite("activate", () => {
       );
     });
 
-    test("new-middleware", async () => {
+    test("new-middleware", () => {
       extension.activate(context);
 
       sinon.assert.calledWith(
@@ -82,22 +95,129 @@ suite("activate", () => {
     });
   });
 
-  test("calls installCLI", async () => {
+  test("calls installCLI", () => {
     const vscodeStub = {
       commands: {
         registerCommand: sinon.stub(),
       },
     };
-    const installCLIStub = sinon.stub();
+
+    const utilsStub = {
+      readDartFrogCLIVersion: sinon.stub(),
+      isCompatibleDartFrogCLIVersion: sinon.stub(),
+      isDartFrogCLIInstalled: sinon.stub(),
+    };
+    utilsStub.readDartFrogCLIVersion.returns("0.0.0");
+    utilsStub.isCompatibleDartFrogCLIVersion.returns(true);
+    utilsStub.isDartFrogCLIInstalled.returns(true);
+
+    const commandsStub = {
+      installCLI: sinon.stub(),
+    };
+
     const extension = proxyquire("../../extension", {
       vscode: vscodeStub,
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      "./commands": { installCLI: installCLIStub },
+      "./utils": utilsStub,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      "./commands": commandsStub,
     });
-    const context = { subscriptions: [] };
 
+    const context = { subscriptions: [] };
     extension.activate(context);
 
-    sinon.assert.calledOnce(installCLIStub);
+    sinon.assert.calledOnce(commandsStub.installCLI);
+  });
+});
+
+suite("ensureCompatibleDartFrogCLI", () => {
+  let vscodeStub: any;
+  let utilsStub: any;
+  let commandsStub: any;
+  let extension: any;
+
+  beforeEach(() => {
+    vscodeStub = {
+      window: {
+        showWarningMessage: sinon.stub(),
+      },
+    };
+
+    utilsStub = {
+      readDartFrogCLIVersion: sinon.stub(),
+      isCompatibleDartFrogCLIVersion: sinon.stub(),
+    };
+    commandsStub = {
+      updateCLI: sinon.stub(),
+    };
+
+    extension = proxyquire("../../extension", {
+      vscode: vscodeStub,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      "./utils": utilsStub,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      "./commands": commandsStub,
+    });
+  });
+
+  afterEach(() => {
+    sinon.restore();
+  });
+
+  test("does not show warning when CLI is not installed", async () => {
+    utilsStub.readDartFrogCLIVersion.returns(undefined);
+
+    await extension.ensureCompatibleDartFrogCLI();
+
+    sinon.assert.notCalled(vscodeStub.window.showWarningMessage);
+  });
+
+  test("does not show warning when CLI is compatible", async () => {
+    utilsStub.readDartFrogCLIVersion.returns("1.0.0");
+    utilsStub.isCompatibleDartFrogCLIVersion.returns(true);
+
+    await extension.ensureCompatibleDartFrogCLI();
+
+    sinon.assert.notCalled(vscodeStub.window.showWarningMessage);
+  });
+
+  suite("incompatible CLI", () => {
+    const version = "0.0.0";
+
+    beforeEach(() => {
+      utilsStub.readDartFrogCLIVersion.returns(version);
+      utilsStub.isCompatibleDartFrogCLIVersion.returns(false);
+    });
+
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    test("shows warning", async () => {
+      await extension.ensureCompatibleDartFrogCLI();
+
+      sinon.assert.calledOnceWithExactly(
+        vscodeStub.window.showWarningMessage,
+        `Dart Frog CLI version ${version} is not compatible with this extension.`,
+        "Update Dart Frog CLI",
+        "Ignore"
+      );
+    });
+
+    test("updates CLI when selected", async () => {
+      vscodeStub.window.showWarningMessage.returns("Update Dart Frog CLI");
+
+      await extension.ensureCompatibleDartFrogCLI();
+
+      sinon.assert.calledOnce(commandsStub.updateCLI);
+    });
+
+    test("does not update CLI when ignored", async () => {
+      vscodeStub.window.showWarningMessage.returns("Ignore");
+
+      await extension.ensureCompatibleDartFrogCLI();
+
+      sinon.assert.notCalled(commandsStub.updateCLI);
+    });
   });
 });
