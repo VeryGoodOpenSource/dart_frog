@@ -65,8 +65,9 @@ void main() {
     });
 
     test('run the dev server with the given parameters', () async {
-      when(() => runner.start()).thenAnswer(
-        (invocation) => Future.value(ExitCode.success),
+      when(() => runner.start()).thenAnswer((_) => Future.value());
+      when(() => runner.exitCode).thenAnswer(
+        (_) => Future.value(ExitCode.success),
       );
 
       when(() => argResults['port']).thenReturn('1234');
@@ -126,11 +127,36 @@ void main() {
         logger: logger,
       )..testArgResults = argResults;
 
-      when(() => runner.start()).thenAnswer(
-        (invocation) => Future.value(ExitCode.software),
+      when(() => runner.start()).thenAnswer((_) => Future.value());
+      when(() => runner.exitCode).thenAnswer(
+        (_) => Future.value(ExitCode.unavailable),
       );
 
+      await expectLater(command.run(), completion(ExitCode.unavailable.code));
+    });
+
+    test('fails if dev server runner fails on start', () async {
+      final command = DevCommand(
+        generator: (_) async => generator,
+        ensureRuntimeCompatibility: (_) {},
+        devServerRunnerBuilder: ({
+          required logger,
+          required port,
+          required devServerBundleGenerator,
+          required dartVmServicePort,
+          required workingDirectory,
+        }) {
+          return runner;
+        },
+        logger: logger,
+      )..testArgResults = argResults;
+
+      when(() => runner.start()).thenAnswer((_) async {
+        throw DartFrogDevServerException('oops');
+      });
+
       await expectLater(command.run(), completion(ExitCode.software.code));
+      verify(() => logger.err('oops')).called(1);
     });
   });
 }
