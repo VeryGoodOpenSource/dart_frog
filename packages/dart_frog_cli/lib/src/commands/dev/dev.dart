@@ -70,13 +70,22 @@ class DevCommand extends DartFrogCommand {
         _defaultDartVmServicePort;
     final generator = await _generator(dartFrogDevServerBundle);
 
-    final result = await _devServerRunnerBuilder(
+    final devServer = _devServerRunnerBuilder(
       devServerBundleGenerator: generator,
       logger: logger,
       workingDirectory: cwd,
       port: port,
       dartVmServicePort: dartVmServicePort,
-    ).start();
+    );
+
+    try {
+      await devServer.start();
+    } on DartFrogDevServerException catch (e) {
+      logger.err(e.message);
+      return ExitCode.software.code;
+    }
+
+    final result = await devServer.exitCode;
 
     return result.code;
   }
