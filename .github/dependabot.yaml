@@ -8,6 +8,10 @@ updates:
     directory: "/docs"
     schedule:
       interval: "daily"
+  - package-ecosystem: "npm"
+    directory: "/extensions/vscode"
+    schedule:
+      interval: "daily"
   - package-ecosystem: "pub"
     directory: "/bricks/create_dart_frog/hooks"
     schedule:
