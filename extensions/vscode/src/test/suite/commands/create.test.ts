@@ -112,11 +112,15 @@ suite("create command", () => {
 
   suite("progress", () => {
     test("is shown when prompt is valid", async () => {
-      vscodeStub.window.showInputBox.returns("my_project");
+      const projectName = "my_project";
+      vscodeStub.window.showInputBox.returns(projectName);
 
       await command.create(targetUri);
 
-      sinon.assert.calledOnce(vscodeStub.window.withProgress);
+      sinon.assert.calledOnceWithMatch(vscodeStub.window.withProgress, {
+        location: 15,
+        title: `Creating ${projectName} Dart Frog Project...`,
+      });
     });
 
     test("is not shown when prompt is undefined", async () => {
