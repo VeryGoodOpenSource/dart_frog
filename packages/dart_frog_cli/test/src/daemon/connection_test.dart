@@ -66,7 +66,7 @@ void main() {
       expect(stdoutLines, isEmpty);
     });
 
-    test('handle invalid messages', () async {
+    test('handles invalid messages', () async {
       final messages = <String>[
         'not a valid json lol',
         '[]',
@@ -91,6 +91,17 @@ void main() {
 [{"event":"daemon.protocolError","params":{"message":"Message should be placed within a JSON list"}}]\n''',
         '''
 [{"event":"daemon.protocolError","params":{"message":"Malformed message, Invalid id: 1"}}]\n'''
+      ]);
+    });
+
+    test('handles unknown error', () async {
+      stdinStreamController.addError(Exception('catapimbas'));
+      await Future<void>.delayed(Duration.zero);
+
+      expect(receivedMessages, isEmpty);
+      expect(stdoutLines, <String>[
+        '''
+[{"event":"daemon.protocolError","params":{"message":"Unknown error: Exception: catapimbas"}}]\n'''
       ]);
     });
 

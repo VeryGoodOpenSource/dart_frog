@@ -66,6 +66,14 @@ class DaemonStdioConnection implements DaemonConnection {
                     params: {'message': 'Not a valid JSON'},
                   ),
                 );
+              default:
+                outputSink.add(
+                  DaemonEvent(
+                    domain: DaemonDomain.name,
+                    event: 'protocolError',
+                    params: {'message': 'Unknown error: $error'},
+                  ),
+                );
             }
           },
         );
