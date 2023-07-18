@@ -79,6 +79,7 @@ void main() {
               path: 'index.dart',
               route: '/',
               params: [],
+              wildcard: false,
             ),
           ],
           '/hello': [
@@ -87,12 +88,14 @@ void main() {
               path: 'hello.dart',
               route: '/hello',
               params: [],
+              wildcard: false,
             ),
             RouteFile(
               name: 'hello_index',
               path: 'hello/index.dart',
               route: '/',
               params: [],
+              wildcard: false,
             )
           ]
         },
@@ -124,6 +127,7 @@ void main() {
             path: 'hello.dart',
             route: '/hello',
             params: [],
+            wildcard: false,
           ),
         ],
         endpoints: {},
@@ -220,8 +224,61 @@ dev_dependencies:
           'invokeCustomInit': false,
           'pathDependencies': <String>[],
           'dartVersion': 'stable',
+          'addDockerfile': true,
         }),
       );
+    });
+
+    test("don't create the dockerfile if one already exists on the folder.",
+        () async {
+      const configuration = RouteConfiguration(
+        middleware: [],
+        directories: [],
+        routes: [],
+        rogueRoutes: [],
+        endpoints: {},
+      );
+
+      final directory = Directory.systemTemp.createTempSync();
+      File(path.join(directory.path, 'pubspec.yaml')).writeAsStringSync(
+        '''
+name: example
+version: 0.1.0
+environment:
+  sdk: ^2.17.0
+dependencies:
+  mason: any
+  test: any
+''',
+      );
+      File(path.join(directory.path, 'Dockerfile')).writeAsStringSync(
+        '',
+      );
+
+      final exitCalls = <int>[];
+      await preGen(
+        context,
+        buildConfiguration: (_) => configuration,
+        exit: exitCalls.add,
+        directory: directory,
+      );
+
+      expect(
+        context.vars,
+        equals({
+          'directories': <RouteDirectory>[],
+          'routes': <RouteFile>[],
+          'middleware': <MiddlewareFile>[],
+          'globalMiddleware': false,
+          'serveStaticFiles': false,
+          'invokeCustomEntrypoint': false,
+          'invokeCustomInit': false,
+          'pathDependencies': <String>[],
+          'dartVersion': 'stable',
+          'addDockerfile': false,
+        }),
+      );
+      directory.delete(recursive: true).ignore();
     });
 
     test('retains invokeCustomInit (true)', () async {
@@ -253,6 +310,7 @@ dev_dependencies:
           'invokeCustomInit': true,
           'pathDependencies': <String>[],
           'dartVersion': 'stable',
+          'addDockerfile': true,
         }),
       );
     });
@@ -282,12 +340,14 @@ dev_dependencies:
                   path: 'index.dart',
                   route: '/',
                   params: [],
+                  wildcard: false,
                 ),
                 RouteFile(
                   name: 'hello',
                   path: 'hello.dart',
                   route: '/hello',
                   params: [],
+                  wildcard: false,
                 ),
               ],
               params: [],
@@ -299,12 +359,14 @@ dev_dependencies:
               path: 'index.dart',
               route: '/',
               params: [],
+              wildcard: false,
             ),
             RouteFile(
               name: 'hello',
               path: 'hello.dart',
               route: '/hello',
               params: [],
+              wildcard: false,
             ),
           ],
           rogueRoutes: [],
@@ -315,6 +377,7 @@ dev_dependencies:
                 path: 'index.dart',
                 route: '/',
                 params: [],
+                wildcard: false,
               ),
             ],
             '/hello': [
@@ -323,6 +386,7 @@ dev_dependencies:
                 path: 'hello.dart',
                 route: '/hello',
                 params: [],
+                wildcard: false,
               ),
             ]
           },
@@ -349,13 +413,15 @@ dev_dependencies:
                     'name': 'index',
                     'path': 'index.dart',
                     'route': '/',
-                    'file_params': const <String>[]
+                    'file_params': const <String>[],
+                    'wildcard': false,
                   },
                   {
                     'name': 'hello',
                     'path': 'hello.dart',
                     'route': '/hello',
-                    'file_params': const <String>[]
+                    'file_params': const <String>[],
+                    'wildcard': false,
                   }
                 ],
                 'directory_params': const <String>[],
@@ -366,13 +432,15 @@ dev_dependencies:
                 'name': 'index',
                 'path': 'index.dart',
                 'route': '/',
-                'file_params': const <String>[]
+                'file_params': const <String>[],
+                'wildcard': false,
               },
               {
                 'name': 'hello',
                 'path': 'hello.dart',
                 'route': '/hello',
-                'file_params': const <String>[]
+                'file_params': const <String>[],
+                'wildcard': false,
               }
             ],
             'middleware': [
@@ -387,6 +455,7 @@ dev_dependencies:
             'invokeCustomInit': false,
             'pathDependencies': <String>[],
             'dartVersion': 'stable',
+            'addDockerfile': true,
           }),
         );
       },
