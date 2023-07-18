@@ -1,0 +1,67 @@
+name: publish
+
+on:
+  push:
+    tags:
+      - '*-v*.*.*'
+
+jobs:
+  to_publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      pull-requests: read
+
+    outputs:
+      package: ${{ steps.package.outputs.package }}
+      brick: ${{ steps.brick.outputs.brick }}
+
+    steps:
+      - name: 📚 Git Checkout
+        uses: actions/checkout@v3
+
+      - name: 📦 Finding a package to publish
+        id: package
+        run: |
+          tag=${GITHUB_REF#refs/*/}
+          package=$(echo $tag | sed -En "s/^(.*)-v(.*)/\1/p")
+          if [[ -d "packages/$package" ]]; then
+            echo "::set-output name=package::${package}"
+          fi
+
+      - name: 🧱 Finding a brick to publish
+        id: brick
+        if: steps.package.outputs.action == ''
+        run: |
+          tag=${GITHUB_REF#refs/*/}
+          brick=$(echo $tag | sed -En "s/^(.*)-v(.*)/\1/p")
+          if [[ -d "bricks/$brick" ]]; then
+            echo "::set-output name=brick::${brick}"
+          fi
+
+  failed_to_find:
+    needs: to_publish
+    if: needs.to_publish.outputs.package == '' && needs.to_publish.outputs.brick == ''
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 😢 No package or brick found to publish
+        run: exit 1
+
+  publish_package:
+    needs: to_publish
+    if: needs.to_publish.outputs.package != ''
+
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_pub_publish.yml@v1
+    with:
+      working-directory: packages/${{ needs.to_publish.outputs.package }}
+      pub_credentials: secrets.PUB_CREDENTIALS
+
+  publish_brick:
+    needs: to_publish
+    if: needs.to_publish.outputs.brick != ''
+
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/mason_publish.yml@v1
+    with:
+      working-directory: bricks/${{ needs.to_publish.outputs.brick }}
+      mason_credentials: secrets.MASON_CREDENTIALS
