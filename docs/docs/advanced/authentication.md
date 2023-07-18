@@ -5,15 +5,12 @@ title: 🔒 Authentication
 
 # Authentication 🔑
 
-There are many different approaches when tackling authentication in a backend, there are many protocols, different services and
-in many instances how it is implemented is affected by the business logic of the application.
+There are many different approaches, protocols, and services when tackling authentication in a backend, which can all be affected by the business logic of the application.
 
-Due that, out of the box, Dart frog does not bundle any feature, helpers or resource for authentication, so the developer
-have full freedom to implement the server authentication the best way that fits their needs.
+Because of this Dart Frog does not bundle any feature, helpers or resources for authentication out of the box. This means that developers have full freedom to implement server authentication in the best way that fits their needs.
 
-Nevertheless, there are a few common patterns that can be traced on the many different approaches, to give the developer a head start
-a package called `dart_frog_auth` is available, which will make it easy for a simple authentication method to be implemented, while also
-layering the foundation for a more advanced authentication to be implemented. Learn more about `dart_frog_auth` in the section bellow:
+Nevertheless, there are a few common patterns that can used in many different approaches to give the developer a head start. For example, there is a package called `dart_frog_auth`, which makes it easy for a simple authentication method to be implemented while also
+layering the foundation for more advanced authentication. See below for more details:
 
 ## Dart Frog Auth
 
