@@ -157,10 +157,10 @@ One of those can be described by looking at implementing a basic RESTful CRUD AP
 such an API that allows consumers to create, update, delete, and get user information, the following list
 of routes will need to be created:
 
- - `POST /users`: Creates a user
- - `PATCH /users/[id]`: Updates the user with the given id.
- - `DELETE /users/[id]`: Deletes the user with the given id.
- - `GET /users/[id]`: Returns the user with the given id.
+- `POST /users`: Creates a user
+- `PATCH /users/[id]`: Updates the user with the given id.
+- `DELETE /users/[id]`: Deletes the user with the given id.
+- `GET /users/[id]`: Returns the user with the given id.
 
 Those endpoints can be translated to the following structure in a Dart Frog backend:
 
