@@ -108,8 +108,8 @@ async function promptForTargetDirectory(): Promise<string | undefined> {
 /**
  * Runs the `dart_frog new route` command with the given route path.
  *
- * @param {string} routePath
- * @param {String} dartFrogProjectPath
+ * @param {string} routePath, the path of the new route.
+ * @param {String} dartFrogProjectPath, the root of the Dart Frog project.
  */
 function executeDartFrogNewRouteCommand(
   routePath: String,
