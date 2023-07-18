@@ -32,6 +32,10 @@
   "contributes": {
     "commands": [
       {
+        "command": "extension.create",
+        "title": "Dart Frog: Create Project"
+      },
+      {
         "command": "extension.install-cli",
         "title": "Dart Frog: Install CLI"
       },
@@ -59,6 +63,11 @@
           "command": "extension.new-middleware",
           "group": "dartFrogGroup@1",
           "when": "resourceDirname =~ /routes/ && (explorerResourceIsFolder || resourceExtname == .dart)"
+        },
+        {
+          "command": "extension.create",
+          "group": "dartFrogGroup@2",
+          "when": "!(resourceDirname =~ /routes/)"
         }
       ]
     }
@@ -77,13 +86,13 @@
   "devDependencies": {
     "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.1",
-    "@types/node": "20.2.5",
-    "@types/vscode": "^1.79.0",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
+    "@types/node": "20.4.2",
+    "@types/vscode": "^1.80.0",
+    "@typescript-eslint/eslint-plugin": "^6.1.0",
+    "@typescript-eslint/parser": "^6.1.0",
     "@vscode/test-electron": "^2.3.2",
     "c8": "^8.0.0",
-    "eslint": "^8.44.0",
+    "eslint": "^8.45.0",
     "glob": "^10.3.3",
     "mocha": "^10.2.0",
     "proxyquire": "^2.1.3",
