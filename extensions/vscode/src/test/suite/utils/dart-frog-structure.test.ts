@@ -36,10 +36,6 @@ suite("normalizeRoutePath", () => {
       .returns(validPubspecYaml);
 
     assert.equal(
-      normalizeRoutePath(`${dartFrogPath}/tennis.dart`, dartFrogPath),
-      undefined
-    );
-    assert.equal(
       normalizeRoutePath(`${dartFrogPath}/routes`, dartFrogPath),
       "/"
     );
@@ -87,6 +83,10 @@ suite("normalizeRoutePath", () => {
     assert.equal(
       normalizeRoutePath(`${dartFrogPath}/routes/a/[id]/b/`, dartFrogPath),
       "a/[id]/b"
+    );
+    assert.equal(
+      normalizeRoutePath(`${dartFrogPath}/tennis.dart`, dartFrogPath),
+      "/"
     );
   });
 });

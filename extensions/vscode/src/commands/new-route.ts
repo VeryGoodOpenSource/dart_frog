@@ -55,12 +55,6 @@ export const newRoute = async (uri: Uri | undefined): Promise<void> => {
     selectedUri,
     dartFrogProjectPath
   );
-  if (normalizedRoutePath === undefined) {
-    window.showErrorMessage(
-      "No 'routes' directory found in the selected directory"
-    );
-    return;
-  }
 
   let routePath = normalizedRoutePath;
   if (routeName !== "index") {

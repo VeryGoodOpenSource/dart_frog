@@ -10,12 +10,12 @@ const path = require("node:path");
  * Normalizes a file path to Dart Frog route path from the root of the
  * Dart Frog project.
  *
- * @param {string} selectedPath The path to a file, including directories,
- * to convert. This is selected by the user.
+ * @param {string} selectedPath User-selected path to a file, including
+ * directories,
  * @param {string} dartFrogProjectPath The path to the root of the Dart Frog
  * project.
- * @returns {string | undefined} The normalized Dart Frog route path, or
- * undefined if {@link selectedPath} is not in a Dart Frog project.
+ * @returns {string} The Dart Frog route path. If the {@link selectedPath} is
+ * not within the Dart Frog project routes, it returns "/".
  *
  * @see {@link nearestDartFrogProject}, to find the root of a Dart Frog
  * project from a file path.
@@ -23,10 +23,10 @@ const path = require("node:path");
 export function normalizeRoutePath(
   selectedPath: String,
   dartFrogProjectPath: String
-): String | undefined {
+): String {
   const routesPath = path.join(dartFrogProjectPath, "routes");
   if (!selectedPath.startsWith(routesPath)) {
-    return undefined;
+    return "/";
   }
 
   const relativePath = path.relative(routesPath, selectedPath);
