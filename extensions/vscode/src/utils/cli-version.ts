@@ -13,9 +13,11 @@ const compatibleCLIVersion = ">=0.3.7 <1.0.0";
  * @returns {String | undefined} The semantic version of Dart Frog CLI installed
  * in the user's system, or null if Dart Frog CLI is not installed.
  */
-export function readDartFrogVersion(): String | undefined {
+export function readDartFrogCLIVersion(): String | undefined {
   try {
-    return cp.execSync(`dart_frog --version`);
+    const result = cp.execSync(`dart_frog --version`);
+    const decodedResult = new TextDecoder().decode(result);
+    return decodedResult.trim();
   } catch (error) {
     return undefined;
   }
@@ -29,9 +31,9 @@ export function readDartFrogVersion(): String | undefined {
  * the user's system.
  * @returns {Boolean} True if the version of Dart Frog CLI installed in the
  * user's system is compatible with this extension, false otherwise.
- * @see {@link readDartFrogVersion}, to collect the version of Dart Frog CLI.
+ * @see {@link readDartFrogCLIVersion}, to collect the version of Dart Frog CLI.
  */
-export function isCompatibleCLIVersion(version: String): Boolean {
+export function isCompatibleDartFrogCLIVersion(version: String): Boolean {
   return semver.satisfies(version, compatibleCLIVersion);
 }
 
@@ -41,6 +43,6 @@ export function isCompatibleCLIVersion(version: String): Boolean {
  * @returns {boolean} True if the user has Dart Frog CLI installed in their
  * system, false otherwise.
  */
-export function isDartFrogCliInstalled(): boolean {
-  return readDartFrogVersion() !== undefined;
+export function isDartFrogCLIInstalled(): boolean {
+  return readDartFrogCLIVersion() !== undefined;
 }

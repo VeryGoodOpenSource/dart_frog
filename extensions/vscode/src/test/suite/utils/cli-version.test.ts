@@ -4,7 +4,7 @@ var proxyquire = require("proxyquire");
 import { afterEach, beforeEach } from "mocha";
 import * as assert from "assert";
 
-suite("readDartFrogVersion", () => {
+suite("readDartFrogCLIVersion", () => {
   let cpStub: any;
   let cliVersion: any;
 
@@ -24,19 +24,23 @@ suite("readDartFrogVersion", () => {
   });
 
   test("returns the version of Dart Frog CLI installed in the user's system", () => {
-    cpStub.execSync.returns("0.3.7");
+    const dartFrogVersionCommandResult = "0.3.7\n";
+    const encoededDartFrogVersionCommandResult = new TextEncoder().encode(
+      dartFrogVersionCommandResult
+    );
+    cpStub.execSync.returns(encoededDartFrogVersionCommandResult);
 
-    assert.strictEqual(cliVersion.readDartFrogVersion(), "0.3.7");
+    assert.strictEqual(cliVersion.readDartFrogCLIVersion(), "0.3.7");
   });
 
   test("returns undefined if Dart Frog CLI is not installed", () => {
     cpStub.execSync.throws();
 
-    assert.strictEqual(cliVersion.readDartFrogVersion(), undefined);
+    assert.strictEqual(cliVersion.readDartFrogCLIVersion(), undefined);
   });
 });
 
-suite("isCompatibleCLIVersion", () => {
+suite("isCompatibleDartFrogCLIVersion", () => {
   let cliVersion: any;
 
   beforeEach(() => {
@@ -44,12 +48,24 @@ suite("isCompatibleCLIVersion", () => {
   });
 
   test("returns true if the version of Dart Frog CLI installed in the user's system is compatible with this extension", () => {
-    assert.strictEqual(cliVersion.isCompatibleCLIVersion("0.3.8"), true);
-    assert.strictEqual(cliVersion.isCompatibleCLIVersion("0.3.7"), true);
+    assert.strictEqual(
+      cliVersion.isCompatibleDartFrogCLIVersion("0.3.8"),
+      true
+    );
+    assert.strictEqual(
+      cliVersion.isCompatibleDartFrogCLIVersion("0.3.7"),
+      true
+    );
   });
 
   test("returns false if the version of Dart Frog CLI installed in the user's system is not compatible with this extension", () => {
-    assert.strictEqual(cliVersion.isCompatibleCLIVersion("1.0.0"), false);
-    assert.strictEqual(cliVersion.isCompatibleCLIVersion("0.3.6"), false);
+    assert.strictEqual(
+      cliVersion.isCompatibleDartFrogCLIVersion("1.0.0"),
+      false
+    );
+    assert.strictEqual(
+      cliVersion.isCompatibleDartFrogCLIVersion("0.3.6"),
+      false
+    );
   });
 });
