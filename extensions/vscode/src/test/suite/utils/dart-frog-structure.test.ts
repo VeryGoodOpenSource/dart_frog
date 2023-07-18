@@ -40,6 +40,14 @@ suite("normalizeRoutePath", () => {
       undefined
     );
     assert.equal(
+      normalizeRoutePath(`${dartFrogPath}/routes`, dartFrogPath),
+      "/"
+    );
+    assert.equal(
+      normalizeRoutePath(`${dartFrogPath}/routes/index.dart`, dartFrogPath),
+      "/"
+    );
+    assert.equal(
       normalizeRoutePath(`${dartFrogPath}/routes/z.py`, dartFrogPath),
       "z"
     );
@@ -67,10 +75,6 @@ suite("normalizeRoutePath", () => {
         dartFrogPath
       ),
       "a/routes/b"
-    );
-    assert.equal(
-      normalizeRoutePath(`${dartFrogPath}/routes/index.dart`, dartFrogPath),
-      "/"
     );
     assert.equal(
       normalizeRoutePath(`${dartFrogPath}/routes/a/b/`, dartFrogPath),

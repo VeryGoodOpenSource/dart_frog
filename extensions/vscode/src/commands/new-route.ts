@@ -32,26 +32,43 @@ export const newRoute = async (uri: Uri | undefined): Promise<void> => {
     return;
   }
 
-  let workingDirectory;
+  let selectedUri;
   if (uri === undefined) {
-    const selectedUri = await promptForTargetDirectory();
+    selectedUri = await promptForTargetDirectory();
     if (selectedUri === undefined) {
       window.showErrorMessage("Please select a valid directory");
       return;
     }
-    workingDirectory = selectedUri;
   } else {
-    workingDirectory = uri.fsPath;
+    selectedUri = uri.fsPath;
   }
 
-  if (!isValidWorkingPath(workingDirectory)) {
+  const dartFrogProjectPath = nearestDartFrogProject(selectedUri);
+  if (dartFrogProjectPath === undefined) {
+    window.showErrorMessage(
+      "No Dart Frog project found in the selected directory"
+    );
+    return;
+  }
+
+  const normalizedRoutePath = normalizeRoutePath(
+    selectedUri,
+    dartFrogProjectPath
+  );
+  if (normalizedRoutePath === undefined) {
     window.showErrorMessage(
       "No 'routes' directory found in the selected directory"
     );
     return;
   }
 
-  executeDartFrogNewRouteCommand(routeName, workingDirectory);
+  let routePath = normalizedRoutePath;
+  if (routeName !== "index") {
+    const separator = routePath.endsWith("/") ? "" : "/";
+    routePath = `${routePath}${separator}${routeName}`;
+  }
+
+  executeDartFrogNewRouteCommand(routePath, dartFrogProjectPath);
 };
 
 /**
@@ -95,46 +112,15 @@ async function promptForTargetDirectory(): Promise<string | undefined> {
 }
 
 /**
- * Checks if the given path is a valid working directory.
+ * Runs the `dart_frog new route` command with the given route path.
  *
- * A valid working directory is a directory that contains a `routes` directory.
- *
- * @param {String} workingDirectory
- * @returns Whether or not the given path is a valid working directory.
- **/
-function isValidWorkingPath(workingDirectory: String) {
-  const workingDirectorySplits = workingDirectory.split(path.sep);
-  const routesIndex = workingDirectorySplits.findIndex((e) => e === "routes");
-  return routesIndex !== -1;
-}
-
-/**
- * Runs the `dart_frog new route` command with the given route name.
- *
- * @param {string} routeName
- * @param {String} workingDirectory
+ * @param {string} routePath
+ * @param {String} dartFrogProjectPath
  */
 function executeDartFrogNewRouteCommand(
-  routeName: String,
-  workingDirectory: String
+  routePath: String,
+  dartFrogProjectPath: String
 ): void {
-  const dartFrogProjectPath = nearestDartFrogProject(workingDirectory);
-  if (dartFrogProjectPath === undefined) {
-    window.showErrorMessage(
-      "No Dart Frog project found in the selected directory"
-    );
-    return;
-  }
-
-  const normalizedRoutePath = normalizeRoutePath(
-    workingDirectory,
-    dartFrogProjectPath
-  );
-  const routePath =
-    routeName === "index"
-      ? normalizedRoutePath
-      : `${normalizedRoutePath}/${routeName}`;
-
   cp.exec(
     `dart_frog new route '${routePath}'`,
     {

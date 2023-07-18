@@ -10,26 +10,26 @@ const path = require("node:path");
  * Normalizes a file path to Dart Frog route path from the root of the
  * Dart Frog project.
  *
- * @param {string} filePath The path to a file, including directories,
- * to convert.
+ * @param {string} selectedPath The path to a file, including directories,
+ * to convert. This is selected by the user.
  * @param {string} dartFrogProjectPath The path to the root of the Dart Frog
  * project.
  * @returns {string | undefined} The normalized Dart Frog route path, or
- * undefined if {@link filePath} is not in a Dart Frog project.
+ * undefined if {@link selectedPath} is not in a Dart Frog project.
  *
  * @see {@link nearestDartFrogProject}, to find the root of a Dart Frog
  * project from a file path.
  */
 export function normalizeRoutePath(
-  filePath: String,
+  selectedPath: String,
   dartFrogProjectPath: String
 ): String | undefined {
   const routesPath = path.join(dartFrogProjectPath, "routes");
-  if (!filePath.startsWith(routesPath)) {
+  if (!selectedPath.startsWith(routesPath)) {
     return undefined;
   }
 
-  const relativePath = path.relative(routesPath, filePath);
+  const relativePath = path.relative(routesPath, selectedPath);
   const parsedRelativePath = path.parse(relativePath);
 
   let routePath;
@@ -37,12 +37,12 @@ export function normalizeRoutePath(
   if (!isFile) {
     routePath = relativePath;
   } else if (parsedRelativePath.name === "index") {
-    routePath =
-      parsedRelativePath.dir === "" ? path.sep : parsedRelativePath.dir;
+    routePath = parsedRelativePath.dir;
   } else {
     routePath = path.join(parsedRelativePath.dir, parsedRelativePath.name);
   }
 
+  routePath = routePath === "" ? "/" : routePath;
   return routePath.replace(path.sep, "/");
 }
 
