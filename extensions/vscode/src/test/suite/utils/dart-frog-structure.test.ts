@@ -35,34 +35,53 @@ suite("normalizeRoutePath", () => {
       .withArgs(pubspecPath, "utf-8")
       .returns(validPubspecYaml);
 
-    assert.equal(normalizeRoutePath(`${dartFrogPath}/routes/z.py`), undefined);
-    assert.equal(normalizeRoutePath(`${dartFrogPath}/tennis.dart`), undefined);
     assert.equal(
-      normalizeRoutePath(`${dartFrogPath}/routes/tennis.dart`),
+      normalizeRoutePath(`${dartFrogPath}/tennis.dart`, dartFrogPath),
+      undefined
+    );
+    assert.equal(
+      normalizeRoutePath(`${dartFrogPath}/routes/z.py`, dartFrogPath),
+      "z"
+    );
+    assert.equal(
+      normalizeRoutePath(`${dartFrogPath}/routes/tennis.dart`, dartFrogPath),
       "tennis"
     );
     assert.equal(
-      normalizeRoutePath(`${dartFrogPath}/routes/sports/tennis.dart`),
+      normalizeRoutePath(
+        `${dartFrogPath}/routes/sports/tennis.dart`,
+        dartFrogPath
+      ),
       "sports/tennis"
     );
     assert.equal(
       normalizeRoutePath(
-        `${dartFrogPath}/routes/sports/tennis/players/[id]/spanish/nadal.dart`
+        `${dartFrogPath}/routes/sports/tennis/players/[id]/spanish/nadal.dart`,
+        dartFrogPath
       ),
       "sports/tennis/players/[id]/spanish/nadal"
     );
     assert.equal(
-      normalizeRoutePath(`${dartFrogPath}/routes/a/routes/b/index.dart`),
-      "a/routes/b"
-    );
-    assert.equal(normalizeRoutePath(`${dartFrogPath}/routes/index.dart`), "/");
-    assert.equal(normalizeRoutePath(`${dartFrogPath}/routes/a/b/`), "a/b");
-    assert.equal(
-      normalizeRoutePath(`${dartFrogPath}/routes/a/routes/b/`),
+      normalizeRoutePath(
+        `${dartFrogPath}/routes/a/routes/b/index.dart`,
+        dartFrogPath
+      ),
       "a/routes/b"
     );
     assert.equal(
-      normalizeRoutePath(`${dartFrogPath}/routes/a/[id]/b/`),
+      normalizeRoutePath(`${dartFrogPath}/routes/index.dart`, dartFrogPath),
+      "/"
+    );
+    assert.equal(
+      normalizeRoutePath(`${dartFrogPath}/routes/a/b/`, dartFrogPath),
+      "a/b"
+    );
+    assert.equal(
+      normalizeRoutePath(`${dartFrogPath}/routes/a/routes/b/`, dartFrogPath),
+      "a/routes/b"
+    );
+    assert.equal(
+      normalizeRoutePath(`${dartFrogPath}/routes/a/[id]/b/`, dartFrogPath),
       "a/[id]/b"
     );
   });

@@ -12,17 +12,19 @@ const path = require("node:path");
  *
  * @param {string} filePath The path to a file, including directories,
  * to convert.
+ * @param {string} dartFrogProjectPath The path to the root of the Dart Frog
+ * project.
  * @returns {string | undefined} The normalized Dart Frog route path, or
  * undefined if {@link filePath} is not in a Dart Frog project.
+ *
+ * @see {@link nearestDartFrogProject}, to find the root of a Dart Frog
+ * project from a file path.
  */
-export function normalizeRoutePath(filePath: String): String | undefined {
-  // TODO(alestiago): Allow injecting the path to the project root.
-  const projectRoot = nearestDartFrogProject(filePath);
-  if (projectRoot === undefined) {
-    return undefined;
-  }
-
-  const routesPath = path.join(projectRoot, "routes");
+export function normalizeRoutePath(
+  filePath: String,
+  dartFrogProjectPath: String
+): String | undefined {
+  const routesPath = path.join(dartFrogProjectPath, "routes");
   if (!filePath.startsWith(routesPath)) {
     return undefined;
   }
@@ -34,8 +36,6 @@ export function normalizeRoutePath(filePath: String): String | undefined {
   const isFile = parsedRelativePath.ext !== "";
   if (!isFile) {
     routePath = relativePath;
-  } else if (parsedRelativePath.ext !== ".dart") {
-    return undefined;
   } else if (parsedRelativePath.name === "index") {
     routePath =
       parsedRelativePath.dir === "" ? path.sep : parsedRelativePath.dir;

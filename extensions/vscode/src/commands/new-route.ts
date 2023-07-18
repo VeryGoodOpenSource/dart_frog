@@ -2,6 +2,8 @@ const cp = require("child_process");
 const path = require("node:path");
 
 import { InputBoxOptions, Uri, window, OpenDialogOptions } from "vscode";
+import { nearestDartFrogProject, normalizeRoutePath } from "../utils";
+import { normalize } from "path";
 
 /**
  * Command to create a new route.
@@ -116,34 +118,27 @@ function executeDartFrogNewRouteCommand(
   routeName: String,
   workingDirectory: String
 ): void {
-  let workingDirectorySplits = workingDirectory.split(path.sep);
-
-  const lastWorkingDirectoryElement =
-    workingDirectorySplits[workingDirectorySplits.length - 1];
-  const isFile = lastWorkingDirectoryElement.includes(".");
-  if (isFile) {
-    const lastDotIndex = lastWorkingDirectoryElement.lastIndexOf(".");
-    workingDirectorySplits[workingDirectorySplits.length - 1] =
-      lastWorkingDirectoryElement.substring(0, lastDotIndex);
-
-    if (workingDirectorySplits[workingDirectorySplits.length - 1] === "index") {
-      workingDirectorySplits.pop();
-    }
+  const dartFrogProjectPath = nearestDartFrogProject(workingDirectory);
+  if (dartFrogProjectPath === undefined) {
+    window.showErrorMessage(
+      "No Dart Frog project found in the selected directory"
+    );
+    return;
   }
 
-  const routesIndex = workingDirectorySplits.findIndex((e) => e === "routes");
-  const dartProjectDirectory = workingDirectorySplits
-    .slice(0, routesIndex)
-    .join(path.sep);
-  const normalizedRouteName = path.join(
-    workingDirectorySplits.slice(routesIndex + 1).join(path.sep),
-    routeName
+  const normalizedRoutePath = normalizeRoutePath(
+    workingDirectory,
+    dartFrogProjectPath
   );
+  const routePath =
+    routeName === "index"
+      ? normalizedRoutePath
+      : `${normalizedRoutePath}/${routeName}`;
 
   cp.exec(
-    `dart_frog new route '${normalizedRouteName}'`,
+    `dart_frog new route '${routePath}'`,
     {
-      cwd: dartProjectDirectory,
+      cwd: dartFrogProjectPath,
     },
     function (error: Error, stdout: String, stderr: String) {
       if (error) {
