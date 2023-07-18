@@ -42,8 +42,11 @@ export function normalizeRoutePath(
     routePath = path.join(parsedRelativePath.dir, parsedRelativePath.name);
   }
 
-  routePath = routePath === "" ? "/" : routePath;
-  return routePath.replace(path.sep, "/");
+  if (routePath === "") {
+    return "/";
+  } else {
+    return routePath.replace(path.sep, "/");
+  }
 }
 
 /**
