@@ -7,14 +7,15 @@ const fs = require("fs");
 const path = require("node:path");
 
 /**
- * Converts a file path to a route path.
+ * Normalizes a file path to Dart Frog route path from the root of the
+ * Dart Frog project.
  *
  * @param {string} filePath The path to a file, including directories,
  * to convert.
- * @returns {string | undefined} The route path, or `undefined` if the
- * {@link filePath} is not in a Dart Frog project.
+ * @returns {string | undefined} The normalized Dart Frog route path, or
+ * undefined if {@link filePath} is not in a Dart Frog project.
  */
-export function filePathToRoutePath(filePath: String): String | undefined {
+export function normalizeRoutePath(filePath: String): String | undefined {
   const projectRoot = nearestDartFrogProject(filePath);
   if (projectRoot === undefined) {
     return undefined;

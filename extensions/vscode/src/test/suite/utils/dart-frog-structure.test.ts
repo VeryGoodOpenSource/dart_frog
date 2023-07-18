@@ -5,9 +5,9 @@ const path = require("node:path");
 import { afterEach, beforeEach } from "mocha";
 import * as assert from "assert";
 
-suite("filePathToRoutePath", () => {
+suite("normalizeRoutePath", () => {
   let fsStub: any;
-  let filePathToRoutePath: any;
+  let normalizeRoutePath: any;
 
   beforeEach(() => {
     fsStub = {
@@ -15,9 +15,9 @@ suite("filePathToRoutePath", () => {
       readFileSync: sinon.stub(),
     };
 
-    filePathToRoutePath = proxyquire("../../../utils/dart-frog-structure", {
+    normalizeRoutePath = proxyquire("../../../utils/dart-frog-structure", {
       fs: fsStub,
-    }).filePathToRoutePath;
+    }).normalizeRoutePath;
   });
 
   afterEach(() => {
@@ -35,34 +35,34 @@ suite("filePathToRoutePath", () => {
       .withArgs(pubspecPath, "utf-8")
       .returns(validPubspecYaml);
 
-    assert.equal(filePathToRoutePath(`${dartFrogPath}/routes/z.py`), undefined);
-    assert.equal(filePathToRoutePath(`${dartFrogPath}/tennis.dart`), undefined);
+    assert.equal(normalizeRoutePath(`${dartFrogPath}/routes/z.py`), undefined);
+    assert.equal(normalizeRoutePath(`${dartFrogPath}/tennis.dart`), undefined);
     assert.equal(
-      filePathToRoutePath(`${dartFrogPath}/routes/tennis.dart`),
+      normalizeRoutePath(`${dartFrogPath}/routes/tennis.dart`),
       "tennis"
     );
     assert.equal(
-      filePathToRoutePath(`${dartFrogPath}/routes/sports/tennis.dart`),
+      normalizeRoutePath(`${dartFrogPath}/routes/sports/tennis.dart`),
       "sports/tennis"
     );
     assert.equal(
-      filePathToRoutePath(
+      normalizeRoutePath(
         `${dartFrogPath}/routes/sports/tennis/players/[id]/spanish/nadal.dart`
       ),
       "sports/tennis/players/[id]/spanish/nadal"
     );
     assert.equal(
-      filePathToRoutePath(`${dartFrogPath}/routes/a/routes/b/index.dart`),
+      normalizeRoutePath(`${dartFrogPath}/routes/a/routes/b/index.dart`),
       "a/routes/b"
     );
-    assert.equal(filePathToRoutePath(`${dartFrogPath}/routes/index.dart`), "/");
-    assert.equal(filePathToRoutePath(`${dartFrogPath}/routes/a/b/`), "a/b");
+    assert.equal(normalizeRoutePath(`${dartFrogPath}/routes/index.dart`), "/");
+    assert.equal(normalizeRoutePath(`${dartFrogPath}/routes/a/b/`), "a/b");
     assert.equal(
-      filePathToRoutePath(`${dartFrogPath}/routes/a/routes/b/`),
+      normalizeRoutePath(`${dartFrogPath}/routes/a/routes/b/`),
       "a/routes/b"
     );
     assert.equal(
-      filePathToRoutePath(`${dartFrogPath}/routes/a/[id]/b/`),
+      normalizeRoutePath(`${dartFrogPath}/routes/a/[id]/b/`),
       "a/[id]/b"
     );
   });
