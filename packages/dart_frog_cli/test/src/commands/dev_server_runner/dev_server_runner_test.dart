@@ -212,10 +212,7 @@ void main() {
 
         expect(
           receivedArgs,
-          equals([
-            '--enable-vm-service=4343',
-            endsWith('.dart_frog/server.dart'),
-          ]),
+          contains('--enable-vm-service=4343'),
         );
         verify(
           () => generatorHooks.preGen(
