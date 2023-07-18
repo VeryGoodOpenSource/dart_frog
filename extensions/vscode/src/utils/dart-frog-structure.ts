@@ -20,10 +20,24 @@ export function filePathToRoutePath(filePath: String): String | undefined {
     return undefined;
   }
 
-  const relativePath = path.relative(projectRoot, filePath);
-  const routePath = relativePath.replace(".dart", "").replace(/\\/g, "/");
+  const routesPath = path.join(projectRoot, "routes");
+  if (!filePath.startsWith(routesPath)) {
+    return undefined;
+  }
 
-  return routePath;
+  const relativePath = path.relative(routesPath, filePath);
+  const parsedRelativePath = path.parse(relativePath);
+
+  const isFile = parsedRelativePath.ext !== "";
+  if (!isFile) {
+    return relativePath;
+  } else if (parsedRelativePath.ext !== ".dart") {
+    return undefined;
+  } else if (parsedRelativePath.name === "index") {
+    return parsedRelativePath.dir === "" ? path.sep : parsedRelativePath.dir;
+  } else {
+    return path.join(parsedRelativePath.dir, parsedRelativePath.name);
+  }
 }
 
 /**

@@ -5,6 +5,69 @@ const path = require("node:path");
 import { afterEach, beforeEach } from "mocha";
 import * as assert from "assert";
 
+suite("filePathToRoutePath", () => {
+  let fsStub: any;
+  let filePathToRoutePath: any;
+
+  beforeEach(() => {
+    fsStub = {
+      existsSync: sinon.stub(),
+      readFileSync: sinon.stub(),
+    };
+
+    filePathToRoutePath = proxyquire("../../../utils/dart-frog-structure", {
+      fs: fsStub,
+    }).filePathToRoutePath;
+  });
+
+  afterEach(() => {
+    sinon.restore();
+  });
+
+  test("returns the route path", () => {
+    const dartFrogPath = "/home/user";
+    const routesPath = path.join(dartFrogPath, "routes");
+    const pubspecPath = path.join(dartFrogPath, "pubspec.yaml");
+
+    fsStub.existsSync.withArgs(routesPath).returns(true);
+    fsStub.existsSync.withArgs(pubspecPath).returns(true);
+    fsStub.readFileSync
+      .withArgs(pubspecPath, "utf-8")
+      .returns(validPubspecYaml);
+
+    assert.equal(filePathToRoutePath(`${dartFrogPath}/routes/z.py`), undefined);
+    assert.equal(filePathToRoutePath(`${dartFrogPath}/tennis.dart`), undefined);
+    assert.equal(
+      filePathToRoutePath(`${dartFrogPath}/routes/tennis.dart`),
+      "tennis"
+    );
+    assert.equal(
+      filePathToRoutePath(`${dartFrogPath}/routes/sports/tennis.dart`),
+      "sports/tennis"
+    );
+    assert.equal(
+      filePathToRoutePath(
+        `${dartFrogPath}/routes/sports/tennis/players/[id]/spanish/nadal.dart`
+      ),
+      "sports/tennis/players/[id]/spanish/nadal"
+    );
+    assert.equal(
+      filePathToRoutePath(`${dartFrogPath}/routes/a/routes/b/index.dart`),
+      "a/routes/b"
+    );
+    assert.equal(filePathToRoutePath(`${dartFrogPath}/routes/index.dart`), "/");
+    assert.equal(filePathToRoutePath(`${dartFrogPath}/routes/a/b/`), "a/b");
+    assert.equal(
+      filePathToRoutePath(`${dartFrogPath}/routes/a/routes/b/`),
+      "a/routes/b"
+    );
+    assert.equal(
+      filePathToRoutePath(`${dartFrogPath}/routes/a/[id]/b/`),
+      "a/[id]/b"
+    );
+  });
+});
+
 suite("nearestDartFrogProject", () => {
   let fsStub: any;
   let nearestDartFrogProject: any;
