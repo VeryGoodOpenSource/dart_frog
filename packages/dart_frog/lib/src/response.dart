@@ -60,6 +60,26 @@ class Response {
           },
         );
 
+  /// Create a [Response] Moved Permanently.
+  ///
+  /// This indicates that the requested resource has moved permanently to a new
+  /// URI. [location] is that URI. It's automatically set as the Location
+  /// header in [headers].
+  Response.movedPermanently({
+    required String location,
+    String? body,
+    Map<String, Object> headers = const <String, Object>{},
+    Encoding? encoding,
+  }) : this(
+          statusCode: 301,
+          headers: {
+            ...headers,
+            'Location': location,
+          },
+          body: body,
+          encoding: encoding,
+        );
+
   Response._(this._response);
 
   shelf.Response _response;
