@@ -37,11 +37,11 @@ export function filePathToRoutePath(filePath: String): String | undefined {
  */
 export function nearestDartFrogProject(filePath: String): String | undefined {
   let currentPath = filePath;
-  while (currentPath !== "/") {
+  while (currentPath !== path.sep) {
     if (isDartFrogProject(currentPath)) {
       return currentPath;
     }
-    currentPath = path.dirname(filePath);
+    currentPath = path.dirname(currentPath);
   }
 
   return undefined;

@@ -5,6 +5,103 @@ const path = require("node:path");
 import { afterEach, beforeEach } from "mocha";
 import * as assert from "assert";
 
+suite("nearestDartFrogProject", () => {
+  let fsStub: any;
+  let nearestDartFrogProject: any;
+
+  beforeEach(() => {
+    fsStub = {
+      existsSync: sinon.stub(),
+      readFileSync: sinon.stub(),
+    };
+
+    nearestDartFrogProject = proxyquire("../../../utils/dart-frog-structure", {
+      fs: fsStub,
+    }).nearestDartFrogProject;
+  });
+
+  afterEach(() => {
+    sinon.restore();
+  });
+
+  test("returns the path to the root of the Dart Frog project", () => {
+    const dartFrogPath = "/home/user";
+    const routesPath = path.join(dartFrogPath, "routes");
+    const pubspecPath = path.join(dartFrogPath, "pubspec.yaml");
+
+    fsStub.existsSync.withArgs(routesPath).returns(true);
+    fsStub.existsSync.withArgs(pubspecPath).returns(true);
+    fsStub.readFileSync
+      .withArgs(pubspecPath, "utf-8")
+      .returns(validPubspecYaml);
+
+    assert.equal(
+      nearestDartFrogProject(`${dartFrogPath}/routes/a/routes/b/index.dart`),
+      dartFrogPath
+    );
+    assert.equal(
+      nearestDartFrogProject(`${dartFrogPath}/routes/index.dart`),
+      dartFrogPath
+    );
+    assert.equal(
+      nearestDartFrogProject(`${dartFrogPath}/routes/z.py`),
+      dartFrogPath
+    );
+    assert.equal(
+      nearestDartFrogProject(`${dartFrogPath}/tennis.dart`),
+      dartFrogPath
+    );
+  });
+
+  test("returns the path to the root of the Dart Frog project when nested", () => {
+    const dartFrogPath1 = "/home/user";
+    const routesPath1 = path.join(dartFrogPath1, "routes");
+    const pubspecPath1 = path.join(dartFrogPath1, "pubspec.yaml");
+
+    const dartFrogPath2 = "/home/user/Developer/myserver";
+    const routesPath2 = path.join(dartFrogPath2, "routes");
+    const pubspecPath2 = path.join(dartFrogPath2, "pubspec.yaml");
+
+    fsStub.existsSync.withArgs(routesPath1).returns(true);
+    fsStub.existsSync.withArgs(pubspecPath1).returns(true);
+    fsStub.readFileSync
+      .withArgs(pubspecPath1, "utf-8")
+      .returns(validPubspecYaml);
+
+    fsStub.existsSync.withArgs(routesPath2).returns(true);
+    fsStub.existsSync.withArgs(pubspecPath2).returns(true);
+    fsStub.readFileSync
+      .withArgs(pubspecPath2, "utf-8")
+      .returns(validPubspecYaml);
+
+    assert.equal(
+      nearestDartFrogProject(`${dartFrogPath2}/routes/a/routes/b/index.dart`),
+      dartFrogPath2
+    );
+    assert.equal(
+      nearestDartFrogProject(`${dartFrogPath1}/routes/index.dart`),
+      dartFrogPath1
+    );
+  });
+
+  test("returns undefined when there is no Dart Frog project", () => {
+    const dartFrogPath = "/home/user";
+    const routesPath = path.join(dartFrogPath, "routes");
+    const pubspecPath = path.join(dartFrogPath, "pubspec.yaml");
+
+    fsStub.existsSync.withArgs(routesPath).returns(false);
+    fsStub.existsSync.withArgs(pubspecPath).returns(false);
+    fsStub.readFileSync
+      .withArgs(pubspecPath, "utf-8")
+      .returns(invalidPubspecYaml);
+
+    const result = nearestDartFrogProject(
+      `${dartFrogPath}/fruits/pineapple.dart`
+    );
+    assert.equal(result, undefined);
+  });
+});
+
 suite("isDartFrogProject", () => {
   let fsStub: any;
   let isDartFrogProject: any;
