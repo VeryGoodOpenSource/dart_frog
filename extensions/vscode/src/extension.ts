@@ -1,5 +1,11 @@
 import * as vscode from "vscode";
-import { installCLI, newRoute, newMiddleware, updateCLI } from "./commands";
+import {
+  installCLI,
+  newRoute,
+  newMiddleware,
+  updateCLI,
+  create,
+} from "./commands";
 import {
   readDartFrogCLIVersion,
   isCompatibleDartFrogCLIVersion,
@@ -29,6 +35,7 @@ export function activate(
   }
 
   context.subscriptions.push(
+    vscode.commands.registerCommand("extension.create", create),
     vscode.commands.registerCommand("extension.install-cli", installCLI),
     vscode.commands.registerCommand("extension.update-cli", updateCLI),
     vscode.commands.registerCommand("extension.new-route", newRoute),
