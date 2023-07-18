@@ -1,0 +1,96 @@
+{
+  "name": "dart-frog",
+  "displayName": "Dart Frog",
+  "description": "Support for Dart Frog, a minimalistic backend framework.",
+  "version": "0.0.1",
+  "publisher": "VeryGoodVentures",
+  "bugs": {
+    "url": "https://github.com/VeryGoodOpenSource/dart_frog/issues",
+    "email": "tools@verygood.ventures"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VeryGoodOpenSource/dart_frog"
+  },
+  "homepage": "https://dartfrog.vgv.dev/",
+  "engines": {
+    "vscode": "^1.79.0"
+  },
+  "categories": [
+    "Snippets",
+    "Programming Languages"
+  ],
+  "keywords": [
+    "dart",
+    "flutter",
+    "dartfrog",
+    "backend"
+  ],
+  "icon": "assets/logo.png",
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "extension.install-cli",
+        "title": "Dart Frog: Install CLI"
+      },
+      {
+        "command": "extension.update-cli",
+        "title": "Dart Frog: Update CLI"
+      },
+      {
+        "command": "extension.new-route",
+        "title": "Dart Frog: New Route"
+      },
+      {
+        "command": "extension.new-middleware",
+        "title": "Dart Frog: New Middleware"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "extension.new-route",
+          "group": "dartFrogGroup@1",
+          "when": "resourceDirname =~ /routes/ && (explorerResourceIsFolder || resourceExtname == .dart)"
+        },
+        {
+          "command": "extension.new-middleware",
+          "group": "dartFrogGroup@1",
+          "when": "resourceDirname =~ /routes/ && (explorerResourceIsFolder || resourceExtname == .dart)"
+        }
+      ]
+    }
+  },
+  "extensionDependencies": [
+    "Dart-Code.dart-code"
+  ],
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "rm -rf ./.vscode-test/** && c8 node ./out/test/runTest.js && open coverage/lcov-report/index.html"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "20.4.2",
+    "@types/vscode": "^1.79.0",
+    "@typescript-eslint/eslint-plugin": "^6.1.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vscode/test-electron": "^2.3.2",
+    "c8": "^8.0.0",
+    "eslint": "^8.45.0",
+    "glob": "^10.3.3",
+    "mocha": "^10.2.0",
+    "proxyquire": "^2.1.3",
+    "sinon": "^15.1.2",
+    "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "semver": "^7.5.4"
+  }
+}

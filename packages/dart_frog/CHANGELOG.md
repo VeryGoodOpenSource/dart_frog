@@ -1,3 +1,8 @@
+# 0.3.7
+
+- deps: upgrade to `Dart ">=3.0.0 <4.0.0"`
+- deps: upgrade to `very_good_analysis ^5.0.0`
+
 # 0.3.6
 
 - fix: `Pipeline` does not maintain `RequestContext` ([#605](https://github.com/VeryGoodOpenSource/dart_frog/pull/605))

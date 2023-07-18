@@ -1,3 +1,8 @@
+# 0.4.1
+
+- feat: update to Dart 3 and Very Good Analysis 5 ([#681](https://github.com/VeryGoodOpenSource/dart_frog/pull/681))
+- feat: adding wildcard detection to dart frog gen ([#691](https://github.com/VeryGoodOpenSource/dart_frog/pull/691))
+
 # 0.4.0
 
 - feat!: re-land "add route configuration validation to gen" ([#614](https://github.com/VeryGoodOpenSource/dart_frog/pull/614))
