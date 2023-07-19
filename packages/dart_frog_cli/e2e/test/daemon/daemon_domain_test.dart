@@ -40,7 +40,10 @@ void main() {
   group('daemon domain', () {
     test('daemon is ready', () async {
       final readyEvent = await daemonStdio.awaitForDaemonEvent('daemon.ready');
-      expect(readyEvent.params?.keys, containsAll(['version', 'processId']));
+      expect(
+        readyEvent.params?.keys,
+        containsAll(['version', 'processId']),
+      );
     });
 
     group('daemon responds to invalid messages', () {
@@ -49,7 +52,10 @@ void main() {
         final protocolError = await daemonStdio.awaitForDaemonEvent(
           'daemon.protocolError',
         );
-        expect(protocolError.params?['message'], 'Not a valid JSON');
+        expect(
+          protocolError.params?['message'],
+          equals('Not a valid JSON'),
+        );
       });
 
       test('daemon process responds to invalid json', () async {
@@ -59,7 +65,7 @@ void main() {
         );
         expect(
           protocolError.params?['message'],
-          'Message should be placed within a JSON list',
+          equals('Message should be placed within a JSON list'),
         );
       });
 
@@ -68,7 +74,10 @@ void main() {
         final protocolError = await daemonStdio.awaitForDaemonEvent(
           'daemon.protocolError',
         );
-        expect(protocolError.params?['message'], 'Unknown message type: {}');
+        expect(
+          protocolError.params?['message'],
+          equals('Unknown message type: {}'),
+        );
       });
 
       test('daemon process responds to unkown message type', () async {
@@ -78,7 +87,7 @@ void main() {
         );
         expect(
           protocolError.params?['message'],
-          'Malformed message, Invalid id: 0',
+          equals('Malformed message, Invalid id: 0'),
         );
       });
 
@@ -94,7 +103,7 @@ void main() {
 
         expect(
           response.error,
-          {'message': 'Invalid domain: wrongdomain'},
+          equals({'message': 'Invalid domain: wrongdomain'}),
         );
       });
 
@@ -110,7 +119,7 @@ void main() {
 
         expect(
           response.error,
-          {'message': 'Method not found: unkownmethod'},
+          equals({'message': 'Method not found: unkownmethod'}),
         );
       });
     });
@@ -126,7 +135,7 @@ void main() {
 
       expect(
         response.result,
-        {'version': '0.0.1'},
+        equals({'version': '0.0.1'}),
       );
     });
 
@@ -137,11 +146,11 @@ void main() {
 
       expect(
         response.result,
-        {'message': 'Hogarth. You stay, I go. No following.'},
+        equals({'message': 'Hogarth. You stay, I go. No following.'}),
       );
 
       final exitCode = await daemonProcess.exitCode;
-      expect(exitCode, 0);
+      expect(exitCode, equals(0));
     });
   });
 }

@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:dart_frog_cli/src/daemon/daemon.dart';
@@ -10,15 +9,13 @@ import 'package:test/test.dart';
 /// Starts the dart_frog daemon in the given directory.
 Future<Process> dartFrogDaemonStart({
   required Directory directory,
-}) async {
-  final process = await Process.start(
+}) {
+  return Process.start(
     'dart_frog',
     ['daemon'],
     workingDirectory: directory.path,
     runInShell: true,
   );
-
-  return process;
 }
 
 /// Converts a raw message from the daemon stdout
@@ -155,9 +152,7 @@ class DaemonStdioHelper {
     await sendStringMessage('[$json]');
 
     final wrappedMatcher = isA<DaemonResponse>().having(
-      (e) {
-        return e.id;
-      },
+      (e) => e.id,
       'id is ${request.id}',
       request.id,
     );
@@ -183,8 +178,7 @@ class _MatchMessageToStdoutLine extends CustomMatcher {
   @override
   Object? featureValueOf(dynamic actual) {
     if (actual is String) {
-      final message = _sdtOutLineToMessage(actual);
-      return message;
+      return _sdtOutLineToMessage(actual);
     }
     return actual;
   }
