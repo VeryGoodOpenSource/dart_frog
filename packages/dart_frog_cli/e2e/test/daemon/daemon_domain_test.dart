@@ -10,10 +10,9 @@ import '../helpers/helpers.dart';
 ///
 /// * Generate a new Dart Frog project via `dart_frog create`
 /// * Start the daemon
-/// * verify pid of daemon
-/// * retrieve version from daemon
-/// * send invalid messages to daemon
-/// * kill daemon
+/// * verify daemon is ready
+/// * send invalid messages
+/// * request daemon.* methods
 void main() {
   const projectName = 'example';
   final tempDirectory = Directory.systemTemp.createTempSync();
@@ -24,7 +23,6 @@ void main() {
   late Process daemonProcess;
 
   late final DaemonStdioHelper daemonStdio;
-  late DaemonEvent readyEvent;
 
   setUpAll(() async {
     await dartFrogCreate(
@@ -37,83 +35,84 @@ void main() {
 
     daemonStdio = DaemonStdioHelper(daemonProcess);
     addTearDown(() => daemonStdio.dispose());
-
-    readyEvent = await daemonStdio.awaitForDaemonEvent('daemon.ready');
   });
 
-  group('daemon domain e2e', () {
-    test('daemon process is ready', () async {
+  group('daemon domain', () {
+    test('daemon is ready', () async {
+      final readyEvent = await daemonStdio.awaitForDaemonEvent('daemon.ready');
       expect(readyEvent.params?.keys, containsAll(['version', 'processId']));
     });
 
-    test('daemon process responds to invalid message', () async {
-      await daemonStdio.sendStringMessage('ooga boga');
-      final protocolError = await daemonStdio.awaitForDaemonEvent(
-        'daemon.protocolError',
-      );
-      expect(protocolError.params?['message'], 'Not a valid JSON');
-    });
+    group('daemon responds to invalid messages', () {
+      test('daemon responds to an invalid message', () async {
+        await daemonStdio.sendStringMessage('ooga boga');
+        final protocolError = await daemonStdio.awaitForDaemonEvent(
+          'daemon.protocolError',
+        );
+        expect(protocolError.params?['message'], 'Not a valid JSON');
+      });
 
-    test('daemon process responds to invalid json', () async {
-      await daemonStdio.sendStringMessage('{}');
-      final protocolError = await daemonStdio.awaitForDaemonEvent(
-        'daemon.protocolError',
-      );
-      expect(
-        protocolError.params?['message'],
-        'Message should be placed within a JSON list',
-      );
-    });
+      test('daemon process responds to invalid json', () async {
+        await daemonStdio.sendStringMessage('{}');
+        final protocolError = await daemonStdio.awaitForDaemonEvent(
+          'daemon.protocolError',
+        );
+        expect(
+          protocolError.params?['message'],
+          'Message should be placed within a JSON list',
+        );
+      });
 
-    test('daemon process responds to unkown message type', () async {
-      await daemonStdio.sendStringMessage('[{}]');
-      final protocolError = await daemonStdio.awaitForDaemonEvent(
-        'daemon.protocolError',
-      );
-      expect(protocolError.params?['message'], 'Unknown message type: {}');
-    });
+      test('daemon process responds to unkown message type', () async {
+        await daemonStdio.sendStringMessage('[{}]');
+        final protocolError = await daemonStdio.awaitForDaemonEvent(
+          'daemon.protocolError',
+        );
+        expect(protocolError.params?['message'], 'Unknown message type: {}');
+      });
 
-    test('daemon process responds to unkown message type', () async {
-      await daemonStdio.sendStringMessage('[{"id": 0, "method": "foo.bar"}]');
-      final protocolError = await daemonStdio.awaitForDaemonEvent(
-        'daemon.protocolError',
-      );
-      expect(
-        protocolError.params?['message'],
-        'Malformed message, Invalid id: 0',
-      );
-    });
+      test('daemon process responds to unkown message type', () async {
+        await daemonStdio.sendStringMessage('[{"id": 0, "method": "foo.bar"}]');
+        final protocolError = await daemonStdio.awaitForDaemonEvent(
+          'daemon.protocolError',
+        );
+        expect(
+          protocolError.params?['message'],
+          'Malformed message, Invalid id: 0',
+        );
+      });
 
-    test('daemon process responds to unknown domain', () async {
-      final response = await daemonStdio.sendDaemonRequest(
-        const DaemonRequest(
-          id: '1',
-          domain: 'wrongdomain',
-          method: 'unkownmethod',
-        ),
-        timeout: const Duration(seconds: 5),
-      );
+      test('daemon process responds to unknown domain', () async {
+        final response = await daemonStdio.sendDaemonRequest(
+          const DaemonRequest(
+            id: '1',
+            domain: 'wrongdomain',
+            method: 'unkownmethod',
+          ),
+          timeout: const Duration(seconds: 5),
+        );
 
-      expect(
-        response.error,
-        {'message': 'Invalid domain: wrongdomain'},
-      );
-    });
+        expect(
+          response.error,
+          {'message': 'Invalid domain: wrongdomain'},
+        );
+      });
 
-    test('daemon process responds to unknown method', () async {
-      final response = await daemonStdio.sendDaemonRequest(
-        const DaemonRequest(
-          id: '1',
-          domain: 'daemon',
-          method: 'unkownmethod',
-        ),
-        timeout: const Duration(seconds: 5),
-      );
+      test('daemon process responds to unknown method', () async {
+        final response = await daemonStdio.sendDaemonRequest(
+          const DaemonRequest(
+            id: '1',
+            domain: 'daemon',
+            method: 'unkownmethod',
+          ),
+          timeout: const Duration(seconds: 5),
+        );
 
-      expect(
-        response.error,
-        {'message': 'Method not found: unkownmethod'},
-      );
+        expect(
+          response.error,
+          {'message': 'Method not found: unkownmethod'},
+        );
+      });
     });
 
     test('daemon.requestVersion', () async {

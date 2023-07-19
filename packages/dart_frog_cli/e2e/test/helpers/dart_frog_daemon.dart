@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:dart_frog_cli/src/daemon/daemon.dart';
 import 'package:test/test.dart';
 
+/// Starts the dart_frog daemon in the given directory.
 Future<Process> dartFrogDaemonStart({
   required Directory directory,
 }) async {
@@ -20,12 +21,16 @@ Future<Process> dartFrogDaemonStart({
   return process;
 }
 
+/// Converts a raw message from the daemon stdout
+/// into a [DaemonMessage].
 DaemonMessage _sdtOutLineToMessage(String rawMessage) {
   final jsonList = jsonDecode(rawMessage) as List<dynamic>;
   final jsonMap = jsonList.first as Map<String, dynamic>;
   return DaemonMessage.fromJson(jsonMap);
 }
 
+/// A helper class to interact with the daemon process
+/// via its stdin and stdout.
 class DaemonStdioHelper {
   DaemonStdioHelper(this.daemonProcess) {
     subscription =
@@ -34,26 +39,24 @@ class DaemonStdioHelper {
 
   final Process daemonProcess;
 
-  var _pastMessagesBuffer = <String>[];
-
   late StreamSubscription<String> subscription;
+
+  var _pastMessagesCache = <String>[];
 
   Matcher? messageMatcher;
   Completer<String>? messageCompleter;
 
   void _handleStdoutLine(String line) {
-    log('!daemon: $line');
-
     final messageMatcher = this.messageMatcher;
     if (messageMatcher != null) {
       if (messageMatcher.matches(line, {})) {
         messageCompleter?.complete(line);
-        _pastMessagesBuffer.clear();
+        _pastMessagesCache.clear();
         return;
       }
     }
 
-    _pastMessagesBuffer.add(line);
+    _pastMessagesCache.add(line);
   }
 
   void _clean() {
@@ -61,6 +64,7 @@ class DaemonStdioHelper {
     messageCompleter = null;
   }
 
+  /// Awaits for a daemon event with the given [methodKey].
   Future<DaemonEvent> awaitForDaemonEvent(
     String methodKey, {
     Duration timeout = const Duration(seconds: 1),
@@ -76,6 +80,7 @@ class DaemonStdioHelper {
     return result as DaemonEvent;
   }
 
+  /// Awaits for a daemon message that matches the given [messageMatcher].
   Future<DaemonMessage> awaitForDaemonMessage(
     Matcher messageMatcher, {
     Duration timeout = const Duration(seconds: 1),
@@ -90,6 +95,7 @@ class DaemonStdioHelper {
     return _sdtOutLineToMessage(resultString);
   }
 
+  /// Awaits for a string message that matches the given [messageMatcher].
   Future<String> awaitForStringMessage(
     Matcher messageMatcher, {
     Duration timeout = const Duration(seconds: 1),
@@ -98,19 +104,25 @@ class DaemonStdioHelper {
 
     this.messageMatcher = messageMatcher;
 
-    final existingItem = _pastMessagesBuffer.indexed.where((pair) {
+    // Check if there is already a matching message in the cache.
+    final existingItem = _pastMessagesCache.indexed.where((pair) {
       return messageMatcher.matches(pair.$2, {});
     }).firstOrNull;
-
     if (existingItem != null) {
+      // if there is a matching message in the cache,
+      // remove all the previous messages from the cache and
+      // return the matching message.
       final (itemIndex, itemValue) = existingItem;
-      _pastMessagesBuffer = _pastMessagesBuffer.skip(itemIndex + 1).toList();
+      _pastMessagesCache = _pastMessagesCache.skip(itemIndex + 1).toList();
       _clean();
       return itemValue;
     }
 
-    final messageCompleter = this.messageCompleter = Completer<String>();
+    // if there is no matching message in the cache,
+    // create a completer and wait for the message to be received
+    // or for the timeout to expire.
 
+    final messageCompleter = this.messageCompleter = Completer<String>();
     final result = await Future.any(<Future<String?>>[
       messageCompleter.future,
       Future<String?>.delayed(timeout),
@@ -125,11 +137,15 @@ class DaemonStdioHelper {
     return result;
   }
 
+  /// Sends a string message to the daemon via its stdin.
   Future<void> sendStringMessage(String message) async {
     daemonProcess.stdin.writeln(message);
     await daemonProcess.stdin.flush();
   }
 
+  /// Sends a daemon request to the daemon via its stdin.
+  /// Returns the response or throws a
+  /// [TimeoutException] if the timeout expires.
   Future<DaemonResponse> sendDaemonRequest(
     DaemonRequest request, {
     Duration timeout = const Duration(seconds: 1),
@@ -138,9 +154,13 @@ class DaemonStdioHelper {
 
     await sendStringMessage('[$json]');
 
-    final wrappedMatcher = isA<DaemonResponse>().having((e) {
-      return e.id;
-    }, 'is ${request.id}', request.id,);
+    final wrappedMatcher = isA<DaemonResponse>().having(
+      (e) {
+        return e.id;
+      },
+      'id is ${request.id}',
+      request.id,
+    );
 
     final responseMessage = await awaitForDaemonMessage(
       wrappedMatcher,
@@ -155,6 +175,7 @@ class DaemonStdioHelper {
   }
 }
 
+/// A matcher that matches a [DaemonMessage] to a daemon stdout line.
 class _MatchMessageToStdoutLine extends CustomMatcher {
   _MatchMessageToStdoutLine(Matcher matcher)
       : super('Message to stdout line', 'message', matcher);
