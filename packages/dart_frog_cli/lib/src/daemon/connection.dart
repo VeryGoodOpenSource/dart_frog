@@ -86,11 +86,9 @@ class DaemonStdioConnection implements DaemonConnection {
   final StreamSink<List<int>> _stdout;
   final Stream<List<int>> _stdin;
 
-  late final StreamController<DaemonMessage> _inputStreamController =
-      StreamController<DaemonMessage>();
+  late final _inputStreamController = StreamController<DaemonMessage>();
 
-  late final StreamController<DaemonMessage> _outputStreamController =
-      StreamController<DaemonMessage>();
+  late final _outputStreamController = StreamController<DaemonMessage>();
 
   @override
   Stream<DaemonMessage> get inputStream => _inputStreamController.stream;
