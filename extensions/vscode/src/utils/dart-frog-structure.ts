@@ -90,7 +90,7 @@ export function isDartFrogProject(filePath: String): boolean {
 
   if (fs.existsSync(routesPath) && fs.existsSync(pubspecPath)) {
     const pubspec = fs.readFileSync(pubspecPath, "utf-8");
-    return pubspec.includes("dart_frog");
+    return pubspec.includes("dart_frog:");
   }
 
   return false;
