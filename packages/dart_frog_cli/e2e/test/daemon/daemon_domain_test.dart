@@ -139,6 +139,9 @@ void main() {
         response.result,
         {'message': 'Hogarth. You stay, I go. No following.'},
       );
+
+      final exitCode = await daemonProcess.exitCode;
+      expect(exitCode, 0);
     });
   });
 }
