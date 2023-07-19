@@ -5,55 +5,12 @@ import 'package:dart_frog_cli/src/daemon/daemon.dart';
 import 'package:mason/mason.dart';
 import 'package:meta/meta.dart';
 
-/// Type definition for a daemon method which handles a [DaemonRequest].
-typedef DomainRequestHandler = Future<DaemonResponse> Function(
-  DaemonRequest request,
-);
-
-/// {@template domain}
-/// A domain is a collection of methods that are semantically associated.
-/// {@endtemplate}
-abstract class Domain {
-  final Map<String, DomainRequestHandler> _handlers = {};
-
-  /// The name of this domain.
-  String get domainName;
-
-  /// Adds a [handler] for a [method].
-  ///
-  /// Should be called in the constructor of a subclass.
-  @protected
-  @visibleForTesting
-  void addHandler(String method, DomainRequestHandler handler) {
-    assert(!_handlers.containsKey(method), 'Duplicate handler for $method');
-    _handlers[method] = handler;
-  }
-
-  /// Handles a [DaemonRequest] and sends the response to the client.
-  @nonVirtual
-  Future<DaemonResponse> handleRequest(DaemonRequest request) async {
-    final handler = _handlers[request.method];
-    if (handler == null) {
-      return DaemonResponse.error(
-        id: request.id,
-        error: {
-          'message': 'Method not found: ${request.method}',
-        },
-      );
-    }
-    return handler(request);
-  }
-
-  /// Disposes of this domain.
-  Future<void> dispose();
-}
-
 /// {@template daemon_domain}
 /// The daemon domain.
 ///
 /// This should include all the meta-related methods.
 /// {@endtemplate}
-class DaemonDomain extends Domain {
+class DaemonDomain extends DomainBase {
   /// {@macro daemon_domain}
   DaemonDomain(
     this.daemon, {
