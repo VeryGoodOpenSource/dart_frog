@@ -76,20 +76,6 @@ async function promptForTargetDirectory(): Promise<string | undefined> {
 }
 
 /**
- * Checks if the given path is a valid working directory.
- *
- * A valid working directory is a directory that contains a `routes` directory.
- *
- * @param {String} workingDirectory
- * @returns Whether or not the given path is a valid working directory.
- **/
-function isValidWorkingPath(workingDirectory: String) {
-  const workingDirectorySplits = workingDirectory.split(path.sep);
-  const routesIndex = workingDirectorySplits.findIndex((e) => e === "routes");
-  return routesIndex !== -1;
-}
-
-/**
  * Runs the `dart_frog new middleware` command with the given route path.
  *
  * @param {string} routePath, the path of the new middleware.

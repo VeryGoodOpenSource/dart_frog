@@ -6,8 +6,8 @@ import * as assert from "assert";
 
 suite("new-route command", () => {
   const validRouteName = "frog";
-  const invalidDartFrogProjectUri = { fsPath: "/home/not_dart_frog/routes" };
-  const validDartFrogProjectUri = { fsPath: "/home/dart_frog/routes" };
+  const invalidUri = { fsPath: "/home/not_dart_frog/routes" };
+  const validUri = { fsPath: "/home/dart_frog/routes" };
 
   let vscodeStub: any;
   let childProcessStub: any;
@@ -32,11 +32,11 @@ suite("new-route command", () => {
     };
 
     utilsStub.nearestDartFrogProject
-      .withArgs(invalidDartFrogProjectUri.fsPath)
+      .withArgs(invalidUri.fsPath)
       .returns(undefined);
     utilsStub.nearestDartFrogProject
-      .withArgs(validDartFrogProjectUri.fsPath)
-      .returns(validDartFrogProjectUri.fsPath);
+      .withArgs(validUri.fsPath)
+      .returns(validUri.fsPath);
 
     command = proxyquire("../../../commands/new-route", {
       vscode: vscodeStub,
@@ -96,7 +96,7 @@ suite("new-route command", () => {
     test("is not shown when prompt is valid", async () => {
       vscodeStub.window.showInputBox.returns(validRouteName);
 
-      await command.newRoute(invalidDartFrogProjectUri);
+      await command.newRoute(invalidUri);
 
       const wantedCalls = vscodeStub.window.showErrorMessage
         .getCalls()
@@ -123,7 +123,7 @@ suite("new-route command", () => {
     test("is not shown when Uri is defined", async () => {
       vscodeStub.window.showInputBox.returns(validRouteName);
 
-      await command.newRoute(invalidDartFrogProjectUri);
+      await command.newRoute(invalidUri);
 
       sinon.assert.notCalled(vscodeStub.window.showOpenDialog);
     });
@@ -143,9 +143,7 @@ suite("new-route command", () => {
 
     test("is not shown when Uri is undefined and selected file is given", async () => {
       vscodeStub.window.showInputBox.returns(validRouteName);
-      vscodeStub.window.showOpenDialog.returns(
-        Promise.resolve([invalidDartFrogProjectUri])
-      );
+      vscodeStub.window.showOpenDialog.returns(Promise.resolve([invalidUri]));
 
       await command.newRoute();
 
@@ -164,9 +162,7 @@ suite("new-route command", () => {
 
       test("is shown when Uri is undefined and selected file is invalid", async () => {
         vscodeStub.window.showInputBox.returns(validRouteName);
-        vscodeStub.window.showOpenDialog.returns(
-          Promise.resolve([invalidDartFrogProjectUri])
-        );
+        vscodeStub.window.showOpenDialog.returns(Promise.resolve([invalidUri]));
 
         await command.newRoute();
 
@@ -179,7 +175,7 @@ suite("new-route command", () => {
       test("is shown when Uri is invalid", async () => {
         vscodeStub.window.showInputBox.returns(validRouteName);
 
-        await command.newRoute(invalidDartFrogProjectUri);
+        await command.newRoute(invalidUri);
 
         sinon.assert.calledWith(
           vscodeStub.window.showErrorMessage,
@@ -195,7 +191,7 @@ suite("new-route command", () => {
       vscodeStub.window.showInputBox.returns(routeName);
       utilsStub.normalizeRoutePath.returns("/");
 
-      await command.newRoute(validDartFrogProjectUri);
+      await command.newRoute(validUri);
 
       sinon.assert.calledWith(
         childProcessStub.exec,
@@ -208,7 +204,7 @@ suite("new-route command", () => {
       vscodeStub.window.showInputBox.returns(routeName);
 
       const selectedUri = {
-        fsPath: `${validDartFrogProjectUri.fsPath}/food`,
+        fsPath: `${validUri.fsPath}/food`,
       };
       utilsStub.nearestDartFrogProject.returns(selectedUri);
       utilsStub.normalizeRoutePath.returns(`food`);
@@ -226,7 +222,7 @@ suite("new-route command", () => {
       vscodeStub.window.showInputBox.returns(routeName);
       utilsStub.normalizeRoutePath.returns("/");
 
-      await command.newRoute(validDartFrogProjectUri);
+      await command.newRoute(validUri);
 
       sinon.assert.calledWith(childProcessStub.exec, `dart_frog new route '/'`);
     });
@@ -236,7 +232,7 @@ suite("new-route command", () => {
       vscodeStub.window.showInputBox.returns(routeName);
 
       const selectedUri = {
-        fsPath: `${validDartFrogProjectUri.fsPath}/food`,
+        fsPath: `${validUri.fsPath}/food`,
       };
       utilsStub.nearestDartFrogProject.returns(selectedUri);
       utilsStub.normalizeRoutePath.returns("food");
@@ -258,7 +254,7 @@ suite("new-route command", () => {
     const error = Error("Failed to run `dart_frog new route`");
     childProcessStub.exec.yields(error);
 
-    await command.newRoute(validDartFrogProjectUri);
+    await command.newRoute(validUri);
 
     sinon.assert.calledWith(vscodeStub.window.showErrorMessage, error.message);
   });

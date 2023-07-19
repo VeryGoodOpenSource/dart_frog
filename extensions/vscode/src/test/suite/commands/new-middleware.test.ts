@@ -5,11 +5,12 @@ import { afterEach, beforeEach } from "mocha";
 import * as assert from "assert";
 
 suite("new-middleware command", () => {
-  const invalidRouteUri = { fsPath: "/home/dart_frog" };
-  const validRouteUri = { fsPath: "/home/dart_frog/routes" };
+  const invalidUri = { fsPath: "/home/not_dart_frog/routes" };
+  const validUri = { fsPath: "/home/dart_frog/routes" };
 
   let vscodeStub: any;
   let childProcessStub: any;
+  let utilsStub: any;
   let command: any;
 
   beforeEach(() => {
@@ -22,11 +23,24 @@ suite("new-middleware command", () => {
     childProcessStub = {
       exec: sinon.stub(),
     };
+    utilsStub = {
+      nearestDartFrogProject: sinon.stub(),
+      normalizeRoutePath: sinon.stub(),
+    };
+
+    utilsStub.nearestDartFrogProject
+      .withArgs(invalidUri.fsPath)
+      .returns(undefined);
+    utilsStub.nearestDartFrogProject
+      .withArgs(validUri.fsPath)
+      .returns(validUri.fsPath);
 
     command = proxyquire("../../../commands/new-middleware", {
       vscode: vscodeStub,
       // eslint-disable-next-line @typescript-eslint/naming-convention
       child_process: childProcessStub,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      "../utils": utilsStub,
     });
   });
 
@@ -49,7 +63,7 @@ suite("new-middleware command", () => {
     });
 
     test("is not shown when Uri is defined", async () => {
-      await command.newMiddleware(invalidRouteUri);
+      await command.newMiddleware(invalidUri);
 
       sinon.assert.notCalled(vscodeStub.window.showOpenDialog);
     });
@@ -67,9 +81,7 @@ suite("new-middleware command", () => {
     });
 
     test("is not shown when Uri is undefined and selected file is given", async () => {
-      vscodeStub.window.showOpenDialog.returns(
-        Promise.resolve([invalidRouteUri])
-      );
+      vscodeStub.window.showOpenDialog.returns(Promise.resolve([invalidUri]));
 
       await command.newMiddleware();
 
@@ -78,90 +90,106 @@ suite("new-middleware command", () => {
         .filter((call: any) => call.args[0] === errorMessage);
       assert.equal(wantedCalls.length, 0);
     });
+  });
 
-    suite("runs `dart_frog new middleware` command with route", () => {
-      test("successfully when Uri is project root directory", async () => {
-        await command.newMiddleware({
-          fsPath: "/home/dart_frog/routes/",
-        });
+  suite(
+    "'No Dart Frog project found in the selected directory' error message",
+    () => {
+      const errorMessage =
+        "No Dart Frog project found in the selected directory";
+
+      test("is shown when Uri is undefined and selected file is invalid", async () => {
+        vscodeStub.window.showOpenDialog.returns(Promise.resolve([invalidUri]));
+
+        await command.newMiddleware();
 
         sinon.assert.calledWith(
-          childProcessStub.exec,
-          `dart_frog new middleware '/'`
+          vscodeStub.window.showErrorMessage,
+          errorMessage
         );
       });
 
-      test("successfully when Uri is project root index file", async () => {
-        await command.newMiddleware({
-          fsPath: "/home/dart_frog/routes/index.dart",
-        });
+      test("is shown when Uri is invalid", async () => {
+        await command.newMiddleware(invalidUri);
 
         sinon.assert.calledWith(
-          childProcessStub.exec,
-          `dart_frog new middleware '/'`
+          vscodeStub.window.showErrorMessage,
+          errorMessage
         );
       });
+    }
+  );
 
-      test("successfully when Uri is project root non-index file", async () => {
-        await command.newMiddleware({
-          fsPath: "/home/dart_frog/routes/a.dart",
-        });
+  suite("runs `dart_frog new middleware` command with route", () => {
+    test("successfully with non-index route name", async () => {
+      const selectedUri = {
+        fsPath: `${validUri.fsPath}/food`,
+      };
+      utilsStub.normalizeRoutePath.returns("food");
 
-        sinon.assert.calledWith(
-          childProcessStub.exec,
-          `dart_frog new middleware 'a'`
-        );
-      });
-
-      test("successfully when Uri is not project root directory", async () => {
-        const nestedDirectory = "about";
-        await command.newMiddleware({
-          fsPath: `/home/dart_frog/routes/${nestedDirectory}`,
-        });
-
-        sinon.assert.calledWith(
-          childProcessStub.exec,
-          `dart_frog new middleware '${nestedDirectory}'`
-        );
-      });
-
-      test("successfully when Uri is a valid non-index nested file", async () => {
-        const nestedDirectory = "about";
-        const nestedFileName = "vgv";
-        await command.newMiddleware({
-          fsPath: `/home/dart_frog/routes/${nestedDirectory}/${nestedFileName}.dart`,
-        });
-
-        sinon.assert.calledWith(
-          childProcessStub.exec,
-          `dart_frog new middleware '${nestedDirectory}/${nestedFileName}'`
-        );
-      });
-
-      test("successfully when Uri is a valid index nested file", async () => {
-        const nestedDirectory = "about";
-        const nestedFileName = "index";
-        await command.newMiddleware({
-          fsPath: `/home/dart_frog/routes/${nestedDirectory}/${nestedFileName}.dart`,
-        });
-
-        sinon.assert.calledWith(
-          childProcessStub.exec,
-          `dart_frog new middleware '${nestedDirectory}'`
-        );
-      });
-    });
-
-    test("shows error message when `dart_frog new middleware` fails", async () => {
-      const error = Error("Failed to run `dart_frog new middleware`");
-      childProcessStub.exec.yields(error);
-
-      await command.newMiddleware(validRouteUri);
+      await command.newMiddleware(validUri);
 
       sinon.assert.calledWith(
-        vscodeStub.window.showErrorMessage,
-        error.message
+        childProcessStub.exec,
+        `dart_frog new middleware 'food'`
       );
     });
+
+    test("successfully with deep non-index route name", async () => {
+      const selectedUri = {
+        fsPath: `${validUri.fsPath}/food/pizza.dart`,
+      };
+      utilsStub.nearestDartFrogProject.returns(selectedUri);
+      utilsStub.normalizeRoutePath.returns(`food/pizza`);
+
+      await command.newMiddleware(selectedUri);
+
+      sinon.assert.calledWith(
+        childProcessStub.exec,
+        `dart_frog new middleware 'food/pizza'`
+      );
+    });
+
+    test("successfully with index route name", async () => {
+      const selectedUri = {
+        fsPath: `${validUri.fsPath}/index.dart`,
+      };
+      utilsStub.nearestDartFrogProject.returns(selectedUri);
+      utilsStub.normalizeRoutePath.returns("/");
+
+      await command.newMiddleware(validUri);
+
+      sinon.assert.calledWith(
+        childProcessStub.exec,
+        `dart_frog new middleware '/'`
+      );
+    });
+
+    test("successfully with deep index route name", async () => {
+      const selectedUri = {
+        fsPath: `${validUri.fsPath}/food/italian/index.dart`,
+      };
+      utilsStub.nearestDartFrogProject.returns(selectedUri);
+      utilsStub.normalizeRoutePath.returns("food/italian");
+
+      await command.newMiddleware(selectedUri);
+
+      sinon.assert.calledWith(
+        childProcessStub.exec,
+        `dart_frog new middleware 'food/italian'`
+      );
+    });
+  });
+
+  test("shows error message when `dart_frog new middleware` fails", async () => {
+    const error = Error("Failed to run `dart_frog new middleware`");
+    childProcessStub.exec.yields(error);
+
+    utilsStub.nearestDartFrogProject.returns(validUri);
+    utilsStub.normalizeRoutePath.returns("/");
+
+    await command.newMiddleware(validUri);
+
+    sinon.assert.calledWith(vscodeStub.window.showErrorMessage, error.message);
   });
 });
