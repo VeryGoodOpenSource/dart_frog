@@ -1,12 +1,9 @@
 import 'package:dart_frog_cli/src/command.dart';
 import 'package:dart_frog_cli/src/daemon/daemon.dart';
-import 'package:mason/mason.dart';
 import 'package:meta/meta.dart';
 
-/// Type definition for a function which creates a [Daemon].
-typedef DaemonBuilder = Daemon Function(Logger logger);
-
-Daemon _defaultDaemonBuilder(Logger logger) => Daemon(logger: logger);
+/// Type definition for a function which creates a [DaemonServer].
+typedef DaemonBuilder = DaemonServer Function();
 
 /// {@template daemon_command}
 /// `dart_frog daemon` command which starts the Dart Frog daemon.
@@ -16,7 +13,7 @@ class DaemonCommand extends DartFrogCommand {
   DaemonCommand({
     super.logger,
     DaemonBuilder? daemonBuilder,
-  }) : _daemonBuilder = daemonBuilder ?? _defaultDaemonBuilder;
+  }) : _daemonBuilder = daemonBuilder ?? DaemonServer.new;
 
   final DaemonBuilder _daemonBuilder;
 
@@ -30,11 +27,11 @@ class DaemonCommand extends DartFrogCommand {
   // TODO(renancaraujo): unhide this command when it's ready
   bool get hidden => true;
 
-  /// The [Daemon] instance used by this command.
+  /// The [DaemonServer] instance used by this command.
   ///
   /// Visible for testing purposes only.
   @visibleForTesting
-  Daemon get daemon => _daemonBuilder(logger);
+  late final DaemonServer daemon = _daemonBuilder();
 
   @override
   Future<int> run() async => (await daemon.exitCode).code;

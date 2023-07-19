@@ -27,7 +27,9 @@
     "backend"
   ],
   "icon": "assets/logo.png",
-  "activationEvents": [],
+  "activationEvents": [
+    "workspaceContains:**/pubspec.yaml"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
