@@ -4,7 +4,7 @@ import 'package:dart_frog/dart_frog.dart';
 
 Handler middleware(Handler handler) {
   final userRepository = UserRepository();
-  final sessionRepository = SessionRepository();
+  const sessionRepository = SessionRepository();
 
   return handler
       .use(requestLogger())
