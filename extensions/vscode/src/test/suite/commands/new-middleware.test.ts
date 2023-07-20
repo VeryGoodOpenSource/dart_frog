@@ -18,6 +18,7 @@ suite("new-middleware command", () => {
       window: {
         showErrorMessage: sinon.stub(),
         showOpenDialog: sinon.stub(),
+        withProgress: sinon.stub(),
       },
     };
     childProcessStub = {
@@ -128,6 +129,9 @@ suite("new-middleware command", () => {
       utilsStub.normalizeRoutePath.returns("food");
 
       await command.newMiddleware(validUri);
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      await progressFunction();
 
       sinon.assert.calledWith(
         childProcessStub.exec,
@@ -143,6 +147,9 @@ suite("new-middleware command", () => {
       utilsStub.normalizeRoutePath.returns(`food/pizza`);
 
       await command.newMiddleware(selectedUri);
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      await progressFunction();
 
       sinon.assert.calledWith(
         childProcessStub.exec,
@@ -158,6 +165,9 @@ suite("new-middleware command", () => {
       utilsStub.normalizeRoutePath.returns("/");
 
       await command.newMiddleware(validUri);
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      await progressFunction();
 
       sinon.assert.calledWith(
         childProcessStub.exec,
@@ -173,6 +183,9 @@ suite("new-middleware command", () => {
       utilsStub.normalizeRoutePath.returns("food/italian");
 
       await command.newMiddleware(selectedUri);
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      await progressFunction();
 
       sinon.assert.calledWith(
         childProcessStub.exec,
@@ -189,6 +202,8 @@ suite("new-middleware command", () => {
     utilsStub.normalizeRoutePath.returns("/");
 
     await command.newMiddleware(validUri);
+    const progressFunction = vscodeStub.window.withProgress.getCall(0).args[1];
+    await progressFunction();
 
     sinon.assert.calledWith(vscodeStub.window.showErrorMessage, error.message);
   });
