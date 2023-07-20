@@ -11,7 +11,7 @@ class RequestContext {
 
   /// Provide the value returned by [create] to the respective
   /// request context.
-  RequestContext provide<T extends Object>(T Function() create) {
+  RequestContext provide<T extends Object?>(T Function() create) {
     return RequestContext._(
       request._request.change(
         context: {...request._request.context, '$T': create},

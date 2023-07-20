@@ -1,0 +1,40 @@
+name: examples/basic_authentication
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+    paths:
+      - "examples/basic_authentication/pubspec.yaml"
+      - "examples/basic_authentication/routes/**"
+      - "examples/basic_authentication/lib/**"
+      - "examples/basic_authentication/test/**"
+      - "examples/basic_authentication/e2e/**"
+      - ".github/workflows/examples_basic_authentication.yaml"
+      - "packages/dart_frog/lib/**"
+      - "packages/dart_frog/pubspec.yaml"
+      - "packages/dart_frog_cli/lib/**"
+      - "packages/dart_frog_cli/pubspec.yaml"
+      - "packages/dart_frog_auth/lib/**"
+      - "packages/dart_frog_auth/pubspec.yaml"
+    branches:
+      - main
+
+jobs:
+  build:
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@v1
+    with:
+      working_directory: examples/basic_authentication
+      analyze_directories: "routes test"
+      report_on: "routes"
+
+  docker:
+    if: false
+    uses: ./.github/workflows/.docker_tests.yaml
+    with:
+      # TODO(erickzanardo): temporarirly disabled while dart_frog_auth is
+      # no published yet.
+      setup: rm pubspec_overrides.yaml && dart pub global activate --source path ../../packages/dart_frog_cli
+      working_directory: examples/basic_authentication
