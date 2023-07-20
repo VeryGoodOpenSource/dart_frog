@@ -202,6 +202,19 @@ suite("new-route command", () => {
     }
   );
 
+  test("shows progess on route creation", async () => {
+    utilsStub.normalizeRoutePath.returns("/");
+    const routePath = "pizza";
+    vscodeStub.window.showInputBox.returns(routePath);
+
+    await command.newRoute(validUri);
+
+    sinon.assert.calledOnceWithMatch(vscodeStub.window.withProgress, {
+      location: 15,
+      title: `Creating '${routePath}' route...`,
+    });
+  });
+
   test("runs `dart_frog new route` command with prompted route successfully", async () => {
     utilsStub.normalizeRoutePath.returns("/");
     const routePath = "pizza";

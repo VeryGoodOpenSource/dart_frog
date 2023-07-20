@@ -47,7 +47,7 @@ export const newMiddleware = async (uri: Uri | undefined): Promise<void> => {
 
   const options: ProgressOptions = {
     location: 15,
-    title: `Creating '${routePath}' middleware`,
+    title: `Creating '${routePath}' middleware...`,
   };
   window.withProgress(options, async function () {
     executeDartFrogNewMiddlewareCommand(routePath, dartFrogProjectPath);

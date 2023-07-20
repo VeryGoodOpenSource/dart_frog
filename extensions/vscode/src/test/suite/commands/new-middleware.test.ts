@@ -121,6 +121,22 @@ suite("new-middleware command", () => {
     }
   );
 
+  test("shows progess on middleware creation", async () => {
+    const routePath = "food/pizza";
+    const selectedUri = {
+      fsPath: `${validUri.fsPath}${routePath}`,
+    };
+    utilsStub.nearestDartFrogProject.returns(selectedUri);
+    utilsStub.normalizeRoutePath.returns(routePath);
+
+    await command.newMiddleware(validUri);
+
+    sinon.assert.calledOnceWithMatch(vscodeStub.window.withProgress, {
+      location: 15,
+      title: `Creating '${routePath}' middleware...`,
+    });
+  });
+
   suite("runs `dart_frog new middleware` command with route", () => {
     test("successfully with non-index route name", async () => {
       const selectedUri = {
