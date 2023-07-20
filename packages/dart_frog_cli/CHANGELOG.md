@@ -1,3 +1,12 @@
+# 0.3.9
+
+- fix: Remove multiple EOL when creating route or middleware
+- feat: enable asserts when running dart_frog dev
+- fix: use custom docker file when building prod server
+- feat: start daemon implementation
+- feat: add devserver lifecycle
+- feat: add `dart_frog daemon` command
+
 # 0.3.8
 
 - feat: update brick bundles to dart 3.0.0
