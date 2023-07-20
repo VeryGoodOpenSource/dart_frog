@@ -11,7 +11,7 @@ import 'package:test/test.dart';
 
 import '../../../helpers/helpers.dart';
 
-class _MockDaemon extends Mock implements Daemon {}
+class _MockDaemonServer extends Mock implements DaemonServer {}
 
 class _MockPubUpdater extends Mock implements PubUpdater {}
 
@@ -47,13 +47,12 @@ void main() {
       );
     });
 
-    test('should instantiate and run with default value', () async {
-      final DaemonCommand command;
-      expect(command = DaemonCommand(), isNotNull);
+    test('runs with default value', () async {
+      final command = DaemonCommand();
 
       final runFuture = command.run();
 
-      command.daemon.kill(ExitCode.success);
+      await command.daemon.kill(ExitCode.success);
 
       await expectLater(runFuture, completion(ExitCode.success.code));
     });
@@ -71,16 +70,16 @@ void main() {
     test(
       'starts a daemon, waits for it to be completed and returns exit code',
       () async {
-        final daemon = _MockDaemon();
+        final daemonServer = _MockDaemonServer();
         final completer = Completer<ExitCode>();
-        when(() => daemon.exitCode).thenAnswer(
+        when(() => daemonServer.exitCode).thenAnswer(
           (_) => completer.future,
         );
         final command = DaemonCommand(
-          daemonBuilder: (_) => daemon,
+          daemonBuilder: () => daemonServer,
         );
         final future = command.run();
-        verify(() => daemon.exitCode).called(1);
+        verify(() => daemonServer.exitCode).called(1);
         completer.complete(ExitCode.success);
         final result = await future;
         expect(result, ExitCode.success.code);

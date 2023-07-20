@@ -196,5 +196,66 @@ void main() {
         );
       });
     });
+
+    group('movedPermanently', () {
+      test('has correct location url', () {
+        final response = Response.movedPermanently(
+          location: 'test-location',
+        );
+        expect(
+          response.headers[HttpHeaders.locationHeader],
+          equals('test-location'),
+        );
+      });
+
+      test('has correct body', () {
+        final response = Response.movedPermanently(
+          location: 'location',
+          body: 'body',
+        );
+        expect(response.body(), completion('body'));
+      });
+
+      test('has correct body (string)', () {
+        final response = Response.movedPermanently(
+          location: 'location',
+          body: 'body',
+        );
+        expect(response.body(), completion('body'));
+      });
+
+      test('has correct body (empty)', () {
+        final response = Response.movedPermanently(
+          location: 'location',
+        );
+        expect(response.body(), completion(isEmpty));
+      });
+
+      test('has correct body (json)', () {
+        final response = Response.movedPermanently(
+          location: 'location',
+          body: jsonEncode(
+            <String, dynamic>{'foo': 'bar'},
+          ),
+        );
+        expect(
+          response.json(),
+          completion(<String, dynamic>{'foo': 'bar'}),
+        );
+      });
+
+      test('has correct headers', () {
+        const headers = <String, String>{'foo': 'bar'};
+        final response = Response.movedPermanently(
+          location: 'location',
+          headers: headers,
+        );
+        expect(response.headers['foo'], equals('bar'));
+        expect(
+          response.headers[HttpHeaders.locationHeader],
+          equals('location'),
+        );
+      });
+    });
   });
 }
