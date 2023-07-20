@@ -14,13 +14,13 @@ final dartFrogNewBundle = MasonBundle.fromJson(<String, dynamic>{
     {
       "path": "{{~ middleware.dart }}",
       "data":
-          "SGFuZGxlciBtaWRkbGV3YXJlKEhhbmRsZXIgaGFuZGxlcikgewogIC8vIFRPRE86IGltcGxlbWVudCBtaWRkbGV3YXJlCiAgcmV0dXJuIGhhbmRsZXI7Cn0K",
+          "SGFuZGxlciBtaWRkbGV3YXJlKEhhbmRsZXIgaGFuZGxlcikgewogIC8vIFRPRE86IGltcGxlbWVudCBtaWRkbGV3YXJlCiAgcmV0dXJuIGhhbmRsZXI7Cn0=",
       "type": "text"
     },
     {
       "path": "{{~ route.dart }}",
       "data":
-          "e3tecGFyYW1zfX1SZXNwb25zZSBvblJlcXVlc3QoUmVxdWVzdENvbnRleHQgY29udGV4dCkgewp7ey9wYXJhbXN9fXt7I3BhcmFtcy4wfX1SZXNwb25zZSBvblJlcXVlc3QoCiAgUmVxdWVzdENvbnRleHQgY29udGV4dCx7eyNwYXJhbXN9fQogIFN0cmluZyB7eyNjYW1lbENhc2V9fXt7Ln19e3svY2FtZWxDYXNlfX0se3svcGFyYW1zfX0KKSB7Cnt7L3BhcmFtcy4wfX0gIC8vIFRPRE86IGltcGxlbWVudCByb3V0ZSBoYW5kbGVyCiAgcmV0dXJuIFJlc3BvbnNlKGJvZHk6ICdUaGlzIGlzIGEgbmV3IHJvdXRlIScpOwp9Cg==",
+          "e3tecGFyYW1zfX1SZXNwb25zZSBvblJlcXVlc3QoUmVxdWVzdENvbnRleHQgY29udGV4dCkgewp7ey9wYXJhbXN9fXt7I3BhcmFtcy4wfX1SZXNwb25zZSBvblJlcXVlc3QoCiAgUmVxdWVzdENvbnRleHQgY29udGV4dCx7eyNwYXJhbXN9fQogIFN0cmluZyB7eyNjYW1lbENhc2V9fXt7Ln19e3svY2FtZWxDYXNlfX0se3svcGFyYW1zfX0KKSB7Cnt7L3BhcmFtcy4wfX0gIC8vIFRPRE86IGltcGxlbWVudCByb3V0ZSBoYW5kbGVyCiAgcmV0dXJuIFJlc3BvbnNlKGJvZHk6ICdUaGlzIGlzIGEgbmV3IHJvdXRlIScpOwp9",
       "type": "text"
     }
   ],
