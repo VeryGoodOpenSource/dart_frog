@@ -1,3 +1,8 @@
+# 0.3.8
+
+- feat: provider support nullable values
+- feat: Add `Response.movedPermanently()` constructor
+
 # 0.3.7
 
 - deps: upgrade to `Dart ">=3.0.0 <4.0.0"`
