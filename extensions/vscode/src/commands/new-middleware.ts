@@ -1,5 +1,4 @@
 const cp = require("child_process");
-const path = require("node:path");
 
 import { Uri, window, OpenDialogOptions, ProgressOptions } from "vscode";
 import { nearestDartFrogProject, normalizeRoutePath } from "../utils";

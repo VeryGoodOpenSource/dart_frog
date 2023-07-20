@@ -1,5 +1,4 @@
 const cp = require("child_process");
-const path = require("node:path");
 
 import {
   InputBoxOptions,
