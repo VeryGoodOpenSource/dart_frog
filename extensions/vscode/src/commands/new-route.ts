@@ -1,9 +1,7 @@
 const cp = require("child_process");
-const path = require("node:path");
 
 import { InputBoxOptions, Uri, window, OpenDialogOptions } from "vscode";
 import { nearestDartFrogProject, normalizeRoutePath } from "../utils";
-import { normalize } from "path";
 
 /**
  * Command to create a new route.
