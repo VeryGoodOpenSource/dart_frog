@@ -392,8 +392,6 @@ void main() {
           devServerBundleGenerator: generator,
           dartVmServicePort: '4343',
           workingDirectory: Directory.current,
-          // test
-
           directoryWatcher: (_) => directoryWatcher,
           generatorTarget: (
             _, {
