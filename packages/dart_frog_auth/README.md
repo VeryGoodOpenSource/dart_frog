@@ -13,7 +13,7 @@ Developed with 💙 by [Very Good Ventures][very_good_ventures_link] 🦄
 
 ## About
 
-A package that provides the foundation for authentication in a Dart Frog Backend Server.
+A package that provides the foundation for authentication for a Dart Frog backend server.
 
 Learn more about it on the [official docs](https://dartfrog.vgv.dev/docs/advanced/authentication).
 
