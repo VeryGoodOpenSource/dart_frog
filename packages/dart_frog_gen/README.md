@@ -22,8 +22,8 @@ void main() {
 }
 ```
 
-[ci_badge]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog.yaml/badge.svg
-[ci_link]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog.yaml
+[ci_badge]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog_gen.yaml/badge.svg?branch=main
+[ci_link]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog_gen.yaml
 [coverage_badge]: https://raw.githubusercontent.com/VeryGoodOpenSource/dart_frog/main/packages/dart_frog_gen/coverage_badge.svg
 [dart_frog_link]: https://github.com/verygoodopensource/dart_frog
 [dart_frog_link_dark]: https://github.com/verygoodopensource/dart_frog#gh-dark-mode-only

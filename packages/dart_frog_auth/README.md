@@ -17,8 +17,8 @@ A package that provides the foundation for authentication for a Dart Frog backen
 
 Learn more about it on the [official docs](https://dartfrog.vgv.dev/docs/advanced/authentication).
 
-[ci_badge]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog_web_socket.yaml/badge.svg
-[ci_link]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog_web_socket.yaml
+[ci_badge]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog_auth.yaml/badge.svg?branch=main
+[ci_link]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog_auth.yaml
 [coverage_badge]: https://raw.githubusercontent.com/VeryGoodOpenSource/dart_frog/main/packages/dart_frog_web_socket/coverage_badge.svg
 [dart_frog_link]: https://github.com/verygoodopensource/dart_frog
 [dart_frog_link_dark]: https://github.com/verygoodopensource/dart_frog#gh-dark-mode-only
