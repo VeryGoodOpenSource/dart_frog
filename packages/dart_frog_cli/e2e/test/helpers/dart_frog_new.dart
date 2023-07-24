@@ -37,12 +37,12 @@ Future<void> _dartFrogNew({
   );
 }
 
-Matcher failsWithA({required String message}) {
+Matcher failsWith({required String stderr}) {
   return throwsA(
     isA<RunProcessException>().having(
-      (e) => e.message.trim(),
-      'message',
-      message,
+      (e) => e.stderr.trim(),
+      'stderr',
+      stderr,
     ),
   );
 }
