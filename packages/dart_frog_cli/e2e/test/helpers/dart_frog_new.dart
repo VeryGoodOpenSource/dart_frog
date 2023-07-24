@@ -39,6 +39,10 @@ Future<void> _dartFrogNew({
 
 Matcher failsWithA({required String message}) {
   return throwsA(
-    isA<FormatException>().having((e) => e.message.trim(), 'message', message),
+    isA<RunProcessException>().having(
+      (e) => e.message.trim(),
+      'message',
+      message,
+    ),
   );
 }

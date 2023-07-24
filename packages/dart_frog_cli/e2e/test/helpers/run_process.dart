@@ -18,7 +18,7 @@ Future<ProcessResult> runProcess(
   if (result.exitCode != 0) {
     final commandLine = [executable, ...arguments].join(' ');
 
-    throw Exception('''
+    throw RunProcessException('''
 "$commandLine" exited with code ${result.exitCode}. 
  stderr: ${result.stderr}
  stdout: ${result.stdout}
@@ -26,4 +26,15 @@ Future<ProcessResult> runProcess(
   }
 
   return result;
+}
+
+class RunProcessException implements Exception {
+  RunProcessException(this.message);
+
+  final String message;
+
+  @override
+  String toString() {
+    return message;
+  }
 }
