@@ -8,4 +8,5 @@ export 'dart_frog_new.dart';
 export 'dart_tst.dart';
 export 'files.dart';
 export 'kill_dart_frog_server.dart';
+export 'run_process.dart';
 export 'test_server.dart';
