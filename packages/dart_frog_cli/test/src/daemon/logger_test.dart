@@ -12,41 +12,34 @@ void main() {
 
   final daemonEvents = <DaemonEvent>[];
 
-  void sendEvent(DaemonEvent event) {
-    daemonEvents.add(event);
-  }
+  void sendEvent(DaemonEvent event) => daemonEvents.add(event);
 
   tearDown(daemonEvents.clear);
 
   group('$DaemonLogger', () {
-    String idGenerator() => 'id';
-
-    final params = <String, dynamic>{
-      'meta-information1': true,
-    };
-
     final logger = DaemonLogger(
       domain: 'test',
-      params: params,
+      params: {'meta-information1': true},
       sendEvent: sendEvent,
-      idGenerator: idGenerator,
+      idGenerator: () => 'id',
     );
 
     test('can be instantiated', () {
-      final logger = DaemonLogger(
-        domain: 'test',
-        params: {},
-        sendEvent: (event) {},
-        idGenerator: idGenerator,
+      expect(
+        DaemonLogger(
+          domain: 'test',
+          params: {},
+          sendEvent: (event) {},
+          idGenerator: () => 'id',
+        ),
+        isNotNull,
       );
-      expect(logger, isNotNull);
     });
 
     test('alert', () {
       logger.alert('alert');
 
       expect(daemonEvents.length, equals(1));
-
       expect(
         daemonEvents.last,
         const DaemonEvent(
@@ -88,7 +81,6 @@ void main() {
         ..flush();
 
       expect(daemonEvents.length, 2);
-
       expect(
         daemonEvents.first,
         const DaemonEvent(
@@ -118,7 +110,6 @@ void main() {
       logger.detail('detail');
 
       expect(daemonEvents.length, equals(1));
-
       expect(
         daemonEvents.last,
         const DaemonEvent(
@@ -136,7 +127,6 @@ void main() {
       logger.err('err');
 
       expect(daemonEvents.length, equals(1));
-
       expect(
         daemonEvents.last,
         const DaemonEvent(
@@ -154,7 +144,6 @@ void main() {
       logger.info('info');
 
       expect(daemonEvents.length, equals(1));
-
       expect(
         daemonEvents.last,
         const DaemonEvent(
@@ -186,7 +175,6 @@ void main() {
       logger.success('success');
 
       expect(daemonEvents.length, equals(1));
-
       expect(
         daemonEvents.last,
         const DaemonEvent(
@@ -204,7 +192,6 @@ void main() {
       logger.warn('warn');
 
       expect(daemonEvents.length, equals(1));
-
       expect(
         daemonEvents.last,
         const DaemonEvent(
@@ -222,7 +209,6 @@ void main() {
       logger.write('write');
 
       expect(daemonEvents.length, equals(1));
-
       expect(
         daemonEvents.last,
         const DaemonEvent(
@@ -236,56 +222,34 @@ void main() {
       );
     });
 
-    test('progressOptions', () {
-      final options = logger.progressOptions;
-      expect(options, isNotNull);
-    });
+    test('progressOptions', () => expect(logger.progressOptions, isNotNull));
 
     test('progress', () {
       final progress = logger.progress('progress this');
       expect(
         progress,
         isA<DaemonProgress>()
-            .having(
-              (e) => e.message,
-              'progress message',
-              equals('progress this'),
-            )
-            .having(
-              (e) => e.sendEvent,
-              'progress sendEvent',
-              same(sendEvent),
-            )
+            .having((e) => e.message, 'progress', equals('progress this'))
+            .having((e) => e.sendEvent, 'progress sendEvent', same(sendEvent))
             .having(
               (e) => e.params,
               'progress params',
-              same(params),
+              equals(
+                {'meta-information1': true},
+              ),
             )
-            .having(
-              (e) => e.domain,
-              'progress domain',
-              equals('test'),
-            )
-            .having(
-              (e) => e.id,
-              'progress id',
-              equals('id'),
-            ),
+            .having((e) => e.domain, 'progress domain', equals('test'))
+            .having((e) => e.id, 'progress id', equals('id')),
       );
     });
   });
 
   group('DaemonProgress', () {
-    final params = <String, dynamic>{
-      'meta-information1': true,
-    };
-
     late DaemonProgress progress;
-
     setUp(() {
       progress = DaemonProgress(
         domain: 'test',
-        params: params,
+        params: {'meta-information1': true},
         sendEvent: sendEvent,
         id: 'id',
         message: 'initial message',
@@ -294,7 +258,6 @@ void main() {
 
     test('sends initial message upon construction', () {
       expect(daemonEvents.length, equals(1));
-
       expect(
         daemonEvents.last,
         const DaemonEvent(
@@ -330,7 +293,6 @@ void main() {
     test('complete', () {
       expect(daemonEvents.length, equals(1));
       progress.complete();
-
       expect(daemonEvents.length, equals(2));
       expect(
         daemonEvents.last,
@@ -344,7 +306,6 @@ void main() {
           },
         ),
       );
-
       progress.complete('complete message');
       expect(daemonEvents.length, equals(3));
       expect(
@@ -382,7 +343,6 @@ void main() {
     test('fail', () {
       expect(daemonEvents.length, equals(1));
       progress.fail();
-
       expect(daemonEvents.length, equals(2));
       expect(
         daemonEvents.last,
@@ -396,7 +356,6 @@ void main() {
           },
         ),
       );
-
       progress.fail('fail message');
       expect(daemonEvents.length, equals(3));
       expect(
