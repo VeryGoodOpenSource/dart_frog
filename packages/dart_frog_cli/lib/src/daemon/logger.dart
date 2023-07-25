@@ -73,9 +73,8 @@ class DaemonLogger implements Logger {
     required List<T> choices,
     List<T>? defaultValues,
     String Function(T choice)? display,
-  }) {
-    throw UnsupportedError('cannot call user interaction methods in daemon');
-  }
+  }) =>
+      _throwUnsupported();
 
   @override
   T chooseOne<T extends Object?>(
@@ -83,14 +82,12 @@ class DaemonLogger implements Logger {
     required List<T> choices,
     T? defaultValue,
     String Function(T choice)? display,
-  }) {
-    throw UnsupportedError('cannot call user interaction methods in daemon');
-  }
+  }) =>
+      _throwUnsupported();
 
   @override
-  bool confirm(String? message, {bool defaultValue = false}) {
-    throw UnsupportedError('cannot call user interaction methods in daemon');
-  }
+  bool confirm(String? message, {bool defaultValue = false}) =>
+      _throwUnsupported();
 
   @override
   void delayed(String? message) => _queue.add(message);
@@ -159,7 +156,7 @@ class DaemonLogger implements Logger {
 
   @override
   String prompt(String? message, {Object? defaultValue, bool hidden = false}) {
-    throw UnsupportedError('cannot call user interaction methods in daemon');
+    _throwUnsupported();
   }
 
   @override
@@ -181,7 +178,7 @@ class DaemonLogger implements Logger {
     sendEvent(
       DaemonEvent(
         domain: domain,
-        event: 'loggerWarn',
+        event: 'loggerWarning',
         params: {
           ...params,
           'message': message ?? '',
@@ -192,7 +189,16 @@ class DaemonLogger implements Logger {
 
   @override
   void write(String? message) {
-    throw UnsupportedError('cannot call user interaction methods in daemon');
+    sendEvent(
+      DaemonEvent(
+        domain: domain,
+        event: 'loggerWrite',
+        params: {
+          ...params,
+          'message': message ?? '',
+        },
+      ),
+    );
   }
 }
 
@@ -296,4 +302,8 @@ class DaemonProgress implements Progress {
       ),
     );
   }
+}
+
+Never _throwUnsupported() {
+  throw UnsupportedError('Cannot call user interaction methods on daemon');
 }
