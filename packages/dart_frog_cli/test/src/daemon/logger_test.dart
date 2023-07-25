@@ -43,7 +43,7 @@ void main() {
         idGenerator: idGenerator,
       ).alert('alert');
 
-      expect(daemonEvents.length, 1);
+      expect(daemonEvents.length, equals(1));
 
       expect(
         daemonEvents.last,
@@ -146,7 +146,7 @@ void main() {
         idGenerator: idGenerator,
       ).detail('detail');
 
-      expect(daemonEvents.length, 1);
+      expect(daemonEvents.length, equals(1));
 
       expect(
         daemonEvents.last,
@@ -169,7 +169,7 @@ void main() {
         idGenerator: idGenerator,
       ).err('err');
 
-      expect(daemonEvents.length, 1);
+      expect(daemonEvents.length, equals(1));
 
       expect(
         daemonEvents.last,
@@ -192,7 +192,7 @@ void main() {
         idGenerator: idGenerator,
       ).info('info');
 
-      expect(daemonEvents.length, 1);
+      expect(daemonEvents.length, equals(1));
 
       expect(
         daemonEvents.last,
@@ -243,7 +243,7 @@ void main() {
         idGenerator: idGenerator,
       ).success('success');
 
-      expect(daemonEvents.length, 1);
+      expect(daemonEvents.length, equals(1));
 
       expect(
         daemonEvents.last,
@@ -266,7 +266,7 @@ void main() {
         idGenerator: idGenerator,
       ).warn('warn');
 
-      expect(daemonEvents.length, 1);
+      expect(daemonEvents.length, equals(1));
 
       expect(
         daemonEvents.last,
@@ -289,7 +289,7 @@ void main() {
         idGenerator: idGenerator,
       ).write('write');
 
-      expect(daemonEvents.length, 1);
+      expect(daemonEvents.length, equals(1));
 
       expect(
         daemonEvents.last,

@@ -26,6 +26,7 @@ class DaemonServer {
     @visibleForTesting DaemonConnection? connection,
   }) : _connection = connection ?? DaemonStdioConnection() {
     _connection.inputStream.listen(_handleMessage);
+
     addDomain(DaemonDomain(this));
   }
 

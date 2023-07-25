@@ -175,16 +175,44 @@ class DaemonLogger implements Logger {
   }
 
   @override
-  Never noSuchMethod(Invocation invocation) {
-    return throw UnsupportedError(
-      'Unsupported daemon logger property: ${invocation.memberName.name}',
-    );
+  List<T> chooseAny<T extends Object?>(
+    String? message, {
+    required List<T> choices,
+    List<T>? defaultValues,
+    String Function(T choice)? display,
+  }) {
+    _unsupported('chooseAny');
+  }
+
+  @override
+  T chooseOne<T extends Object?>(
+    String? message, {
+    required List<T> choices,
+    T? defaultValue,
+    String Function(T choice)? display,
+  }) {
+    _unsupported('chooseOne');
+  }
+
+  @override
+  bool confirm(String? message, {bool defaultValue = false}) {
+    _unsupported('confirm');
+  }
+
+  @override
+  String prompt(String? message, {Object? defaultValue, bool hidden = false}) {
+    _unsupported('prompt');
+  }
+
+  @override
+  List<String> promptAny(String? message, {String separator = ','}) {
+    _unsupported('promptAny');
   }
 }
 
 /// {@template daemon_progress}
 /// A [Progress] that sends messages to the daemon instead of
-/// printing them to the console.
+/// printing them to stdout.
 /// {@endtemplate}
 class DaemonProgress implements Progress {
   /// {@macro daemon_progress}
@@ -284,6 +312,8 @@ class DaemonProgress implements Progress {
   }
 }
 
-extension on Symbol {
-  String get name => toString().split('"')[1];
+Never _unsupported(String methodName) {
+  return throw UnsupportedError(
+    'Unsupported daemon logger property: $methodName',
+  );
 }
