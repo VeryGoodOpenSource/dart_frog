@@ -229,7 +229,7 @@ class DaemonProgress implements Progress {
         event: 'progressStart',
         params: {
           ...params,
-          'message': message,
+          'progressMessage': message,
           'progressId': id,
         },
       ),
@@ -240,7 +240,7 @@ class DaemonProgress implements Progress {
   final String domain;
 
   /// The message to display for the progress.
-  final String message;
+  String message;
 
   /// The ID of the progress instance.
   final String id;
@@ -259,7 +259,7 @@ class DaemonProgress implements Progress {
         event: 'progressCancel',
         params: {
           ...params,
-          'message': message,
+          'progressMessage': message,
           'progressId': id,
         },
       ),
@@ -268,13 +268,14 @@ class DaemonProgress implements Progress {
 
   @override
   void complete([String? update]) {
+    message = update ?? message;
     sendEvent(
       DaemonEvent(
         domain: domain,
         event: 'progressComplete',
         params: {
           ...params,
-          'message': message,
+          'progressMessage': message,
           'progressId': id,
         },
       ),
@@ -283,13 +284,14 @@ class DaemonProgress implements Progress {
 
   @override
   void fail([String? update]) {
+    message = update ?? message;
     sendEvent(
       DaemonEvent(
         domain: domain,
         event: 'progressFail',
         params: {
           ...params,
-          'message': message,
+          'progressMessage': message,
           'progressId': id,
         },
       ),
@@ -298,13 +300,14 @@ class DaemonProgress implements Progress {
 
   @override
   void update(String update) {
+    message = update;
     sendEvent(
       DaemonEvent(
         domain: domain,
         event: 'progressUpdate',
         params: {
           ...params,
-          'message': message,
+          'progressMessage': message,
           'progressId': id,
         },
       ),

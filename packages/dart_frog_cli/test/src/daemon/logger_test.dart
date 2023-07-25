@@ -10,20 +10,27 @@ void main() {
     );
   }
 
+  final daemonEvents = <DaemonEvent>[];
+
+  void sendEvent(DaemonEvent event) {
+    daemonEvents.add(event);
+  }
+
+  tearDown(daemonEvents.clear);
+
   group('$DaemonLogger', () {
     String idGenerator() => 'id';
-
-    final daemonEvents = <DaemonEvent>[];
-
-    void sendEvent(DaemonEvent event) {
-      daemonEvents.add(event);
-    }
-
-    tearDown(daemonEvents.clear);
 
     final params = <String, dynamic>{
       'meta-information1': true,
     };
+
+    final logger = DaemonLogger(
+      domain: 'test',
+      params: params,
+      sendEvent: sendEvent,
+      idGenerator: idGenerator,
+    );
 
     test('can be instantiated', () {
       final logger = DaemonLogger(
@@ -36,12 +43,7 @@ void main() {
     });
 
     test('alert', () {
-      DaemonLogger(
-        domain: 'test',
-        params: params,
-        sendEvent: sendEvent,
-        idGenerator: idGenerator,
-      ).alert('alert');
+      logger.alert('alert');
 
       expect(daemonEvents.length, equals(1));
 
@@ -59,13 +61,6 @@ void main() {
     });
 
     test('chooseAny', () {
-      final logger = DaemonLogger(
-        domain: 'test',
-        params: {},
-        sendEvent: sendEvent,
-        idGenerator: idGenerator,
-      );
-
       expect(
         () => logger.chooseAny('choose any of this', choices: ['oi', 'ai']),
         throwsA(unsupportedErrorWithMessage('chooseAny')),
@@ -73,13 +68,6 @@ void main() {
     });
 
     test('chooseOne', () {
-      final logger = DaemonLogger(
-        domain: 'test',
-        params: {},
-        sendEvent: sendEvent,
-        idGenerator: idGenerator,
-      );
-
       expect(
         () => logger.chooseOne('choose one of this', choices: ['oi', 'ai']),
         throwsA(unsupportedErrorWithMessage('chooseOne')),
@@ -87,13 +75,6 @@ void main() {
     });
 
     test('confirm', () {
-      final logger = DaemonLogger(
-        domain: 'test',
-        params: {},
-        sendEvent: sendEvent,
-        idGenerator: idGenerator,
-      );
-
       expect(
         () => logger.confirm('confirm this'),
         throwsA(unsupportedErrorWithMessage('confirm')),
@@ -101,12 +82,7 @@ void main() {
     });
 
     test('delayed/flush', () {
-      DaemonLogger(
-        domain: 'test',
-        params: params,
-        sendEvent: sendEvent,
-        idGenerator: idGenerator,
-      )
+      logger
         ..delayed('delayed1')
         ..delayed('delayed2')
         ..flush();
@@ -139,12 +115,7 @@ void main() {
     });
 
     test('detail', () {
-      DaemonLogger(
-        domain: 'test',
-        params: params,
-        sendEvent: sendEvent,
-        idGenerator: idGenerator,
-      ).detail('detail');
+      logger.detail('detail');
 
       expect(daemonEvents.length, equals(1));
 
@@ -162,12 +133,7 @@ void main() {
     });
 
     test('err', () {
-      DaemonLogger(
-        domain: 'test',
-        params: params,
-        sendEvent: sendEvent,
-        idGenerator: idGenerator,
-      ).err('err');
+      logger.err('err');
 
       expect(daemonEvents.length, equals(1));
 
@@ -185,12 +151,7 @@ void main() {
     });
 
     test('info', () {
-      DaemonLogger(
-        domain: 'test',
-        params: params,
-        sendEvent: sendEvent,
-        idGenerator: idGenerator,
-      ).info('info');
+      logger.info('info');
 
       expect(daemonEvents.length, equals(1));
 
@@ -208,13 +169,6 @@ void main() {
     });
 
     test('prompt', () {
-      final logger = DaemonLogger(
-        domain: 'test',
-        params: {},
-        sendEvent: sendEvent,
-        idGenerator: idGenerator,
-      );
-
       expect(
         () => logger.prompt('prompt this'),
         throwsA(unsupportedErrorWithMessage('prompt')),
@@ -222,13 +176,6 @@ void main() {
     });
 
     test('promptAny', () {
-      final logger = DaemonLogger(
-        domain: 'test',
-        params: {},
-        sendEvent: sendEvent,
-        idGenerator: idGenerator,
-      );
-
       expect(
         () => logger.promptAny('prompt anything'),
         throwsA(unsupportedErrorWithMessage('promptAny')),
@@ -236,12 +183,7 @@ void main() {
     });
 
     test('success', () {
-      DaemonLogger(
-        domain: 'test',
-        params: params,
-        sendEvent: sendEvent,
-        idGenerator: idGenerator,
-      ).success('success');
+      logger.success('success');
 
       expect(daemonEvents.length, equals(1));
 
@@ -259,12 +201,7 @@ void main() {
     });
 
     test('warn', () {
-      DaemonLogger(
-        domain: 'test',
-        params: params,
-        sendEvent: sendEvent,
-        idGenerator: idGenerator,
-      ).warn('warn');
+      logger.warn('warn');
 
       expect(daemonEvents.length, equals(1));
 
@@ -282,12 +219,7 @@ void main() {
     });
 
     test('write', () {
-      DaemonLogger(
-        domain: 'test',
-        params: params,
-        sendEvent: sendEvent,
-        idGenerator: idGenerator,
-      ).write('write');
+      logger.write('write');
 
       expect(daemonEvents.length, equals(1));
 
@@ -299,6 +231,183 @@ void main() {
           params: {
             'meta-information1': true,
             'message': 'write',
+          },
+        ),
+      );
+    });
+
+    test('progressOptions', () {
+      final options = logger.progressOptions;
+      expect(options, isNotNull);
+    });
+
+    test('progress', () {
+      final progress = logger.progress('progress this');
+      expect(
+        progress,
+        isA<DaemonProgress>()
+            .having(
+              (e) => e.message,
+              'progress message',
+              equals('progress this'),
+            )
+            .having(
+              (e) => e.sendEvent,
+              'progress sendEvent',
+              same(sendEvent),
+            )
+            .having(
+              (e) => e.params,
+              'progress params',
+              same(params),
+            )
+            .having(
+              (e) => e.domain,
+              'progress domain',
+              equals('test'),
+            )
+            .having(
+              (e) => e.id,
+              'progress id',
+              equals('id'),
+            ),
+      );
+    });
+  });
+
+  group('DaemonProgress', () {
+    final params = <String, dynamic>{
+      'meta-information1': true,
+    };
+
+    late DaemonProgress progress;
+
+    setUp(() {
+      progress = DaemonProgress(
+        domain: 'test',
+        params: params,
+        sendEvent: sendEvent,
+        id: 'id',
+        message: 'initial message',
+      );
+    });
+
+    test('sends initial message upon construction', () {
+      expect(daemonEvents.length, equals(1));
+
+      expect(
+        daemonEvents.last,
+        const DaemonEvent(
+          domain: 'test',
+          event: 'progressStart',
+          params: {
+            'meta-information1': true,
+            'progressMessage': 'initial message',
+            'progressId': 'id',
+          },
+        ),
+      );
+    });
+
+    test('update', () {
+      expect(daemonEvents.length, equals(1));
+      progress.update('update message');
+      expect(daemonEvents.length, equals(2));
+      expect(
+        daemonEvents.last,
+        const DaemonEvent(
+          domain: 'test',
+          event: 'progressUpdate',
+          params: {
+            'meta-information1': true,
+            'progressMessage': 'update message',
+            'progressId': 'id',
+          },
+        ),
+      );
+    });
+
+    test('complete', () {
+      expect(daemonEvents.length, equals(1));
+      progress.complete();
+
+      expect(daemonEvents.length, equals(2));
+      expect(
+        daemonEvents.last,
+        const DaemonEvent(
+          domain: 'test',
+          event: 'progressComplete',
+          params: {
+            'meta-information1': true,
+            'progressMessage': 'initial message',
+            'progressId': 'id',
+          },
+        ),
+      );
+
+      progress.complete('complete message');
+      expect(daemonEvents.length, equals(3));
+      expect(
+        daemonEvents.last,
+        const DaemonEvent(
+          domain: 'test',
+          event: 'progressComplete',
+          params: {
+            'meta-information1': true,
+            'progressMessage': 'complete message',
+            'progressId': 'id',
+          },
+        ),
+      );
+    });
+
+    test('cancel', () {
+      expect(daemonEvents.length, equals(1));
+      progress.cancel();
+      expect(daemonEvents.length, equals(2));
+      expect(
+        daemonEvents.last,
+        const DaemonEvent(
+          domain: 'test',
+          event: 'progressCancel',
+          params: {
+            'meta-information1': true,
+            'progressMessage': 'initial message',
+            'progressId': 'id',
+          },
+        ),
+      );
+    });
+
+    test('fail', () {
+      expect(daemonEvents.length, equals(1));
+      progress.fail();
+
+      expect(daemonEvents.length, equals(2));
+      expect(
+        daemonEvents.last,
+        const DaemonEvent(
+          domain: 'test',
+          event: 'progressFail',
+          params: {
+            'meta-information1': true,
+            'progressMessage': 'initial message',
+            'progressId': 'id',
+          },
+        ),
+      );
+
+      progress.fail('fail message');
+      expect(daemonEvents.length, equals(3));
+      expect(
+        daemonEvents.last,
+        const DaemonEvent(
+          domain: 'test',
+          event: 'progressFail',
+          params: {
+            'meta-information1': true,
+            'progressMessage': 'fail message',
+            'progressId': 'id',
           },
         ),
       );
