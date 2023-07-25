@@ -15,5 +15,5 @@
     }
   ],
   "useGitignore": true,
-  "words": ["doctl", "endtemplate", "hotreload", "intelli", "sigint"]
+  "words": ["doctl", "endtemplate", "hotreload", "intelli", "sigint", "devserver"]
 }
