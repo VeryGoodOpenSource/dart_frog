@@ -1,17 +1,6 @@
 import 'package:dart_frog_cli/src/daemon/daemon.dart';
 import 'package:mason/mason.dart';
 
-String? _boringStyle(String? m) => m;
-
-const _boringLoggerTheme = LogTheme(
-  detail: _boringStyle,
-  info: _boringStyle,
-  err: _boringStyle,
-  warn: _boringStyle,
-  alert: _boringStyle,
-  success: _boringStyle,
-);
-
 /// {@template daemon_logger}
 /// A [Logger] that emits daemon messages instead of
 /// printing them to stdout.
@@ -43,7 +32,7 @@ class DaemonLogger implements Logger {
   final _queue = <String?>[];
 
   @override
-  LogTheme get theme => _boringLoggerTheme;
+  final LogTheme theme = const LogTheme();
 
   @override
   Level level = Level.info;

@@ -222,6 +222,8 @@ void main() {
       );
     });
 
+    test('theme', () => expect(logger.theme, isNotNull));
+
     test('progressOptions', () => expect(logger.progressOptions, isNotNull));
 
     test('progress', () {
