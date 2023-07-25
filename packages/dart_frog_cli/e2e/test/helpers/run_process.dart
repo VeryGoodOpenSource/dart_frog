@@ -22,8 +22,7 @@ Future<ProcessResult> runProcess(
 
     throw RunProcessException(
       '"$commandLine" exited with code ${result.exitCode}',
-      stderr: result.stderr as String,
-      stdout: result.stdout as String,
+      processResult: result,
     );
   }
 
@@ -33,21 +32,20 @@ Future<ProcessResult> runProcess(
 class RunProcessException implements Exception {
   RunProcessException(
     this.message, {
-    required this.stderr,
-    required this.stdout,
+    required this.processResult,
   });
 
   final String message;
 
-  final String stderr;
-  final String stdout;
+  final ProcessResult processResult;
 
   @override
   String toString() {
     return '''
 $message
-- stderr: $stderr
-- stdout: $stdout
+- pid: ${processResult.pid}
+- stderr: ${processResult.stderr}
+- stdout: ${processResult.stdout}
 ''';
   }
 }

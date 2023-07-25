@@ -40,7 +40,7 @@ Future<void> _dartFrogNew({
 Matcher failsWith({required String stderr}) {
   return throwsA(
     isA<RunProcessException>().having(
-      (e) => e.stderr.trim(),
+      (e) => (e.processResult.stderr as String).trim(),
       'stderr',
       stderr,
     ),
