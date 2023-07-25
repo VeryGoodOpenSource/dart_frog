@@ -20,6 +20,10 @@
   }
 }
 
+.heroLogo {
+  width: 300px;
+}
+
 .features {
   display: flex;
   align-items: center;
