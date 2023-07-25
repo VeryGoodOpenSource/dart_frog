@@ -71,7 +71,7 @@ void main() {
           directory: Directory(path.join(tempDirectory.path, projectName1)),
         );
         addTearDown(() async {
-          await killDartFrogServer(process1.pid);
+          await killDartFrogServer(process1.pid).ignoreErrors();
         });
 
         try {
@@ -80,7 +80,7 @@ void main() {
             exitOnError: false,
           );
           addTearDown(() async {
-            await killDartFrogServer(process2.pid);
+            await killDartFrogServer(process2.pid).ignoreErrors();
           });
 
           fail('exception not thrown');
@@ -102,9 +102,7 @@ void main() {
           directory: Directory(path.join(tempDirectory.path, projectName1)),
         );
 
-        addTearDown(() async {
-          await killDartFrogServer(process1.pid);
-        });
+        addTearDown(() async {});
 
         final process2Future = dartFrogDev(
           directory: Directory(path.join(tempDirectory.path, projectName2)),
@@ -116,9 +114,19 @@ void main() {
 
         addTearDown(() async {
           final process2 = await process2Future;
-          await killDartFrogServer(process2.pid);
+
+          await killDartFrogServer(process1.pid).ignoreErrors();
+          await killDartFrogServer(process2.pid).ignoreErrors();
         });
       },
     );
   });
+}
+
+extension<T> on Future<T> {
+  Future<void> ignoreErrors() async {
+    try {
+      await this;
+    } catch (_) {}
+  }
 }

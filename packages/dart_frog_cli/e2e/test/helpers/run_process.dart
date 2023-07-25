@@ -12,6 +12,8 @@ Future<ProcessResult> runProcess(
     executable,
     arguments,
     workingDirectory: workingDirectory,
+    environment: environment,
+    includeParentEnvironment: includeParentEnvironment,
     runInShell: runInShell,
   );
 
