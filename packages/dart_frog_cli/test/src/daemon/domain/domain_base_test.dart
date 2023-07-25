@@ -1,14 +1,19 @@
 import 'package:dart_frog_cli/src/daemon/daemon.dart';
+import 'package:mocktail/mocktail.dart';
 
 import 'package:test/test.dart';
 
 class _TestDomain extends DomainBase {
+  _TestDomain(super.daemon, {super.getId});
+
   @override
   Future<void> dispose() async {}
 
   @override
   String get domainName => 'test';
 }
+
+class _MockDaemonServer extends Mock implements DaemonServer {}
 
 void main() {
   group('$DomainBase', () {
@@ -23,7 +28,8 @@ void main() {
     }
 
     test('routes requests to handlers', () async {
-      final domain = _TestDomain()..addHandler('myHandler', myHandler);
+      final domain = _TestDomain(_MockDaemonServer())
+        ..addHandler('myHandler', myHandler);
       final response = await domain.handleRequest(
         const DaemonRequest(
           id: '1',
@@ -43,7 +49,8 @@ void main() {
     });
 
     test('handles invalid requests', () async {
-      final domain = _TestDomain()..addHandler('myHandler', myHandler);
+      final domain = _TestDomain(_MockDaemonServer())
+        ..addHandler('myHandler', myHandler);
       final response = await domain.handleRequest(
         const DaemonRequest(
           id: '1',
@@ -59,6 +66,40 @@ void main() {
           error: {'message': 'Method not found: invalidHandler'},
         ),
       );
+    });
+
+    test('handle malformed requests', () async {
+      Future<DaemonResponse> myHandler(DaemonRequest request) async {
+        throw const DartFrogDaemonMalformedMessageException('oopsie');
+      }
+
+      final domain = _TestDomain(_MockDaemonServer())
+        ..addHandler('myHandler', myHandler);
+
+      final response = await domain.handleRequest(
+        const DaemonRequest(
+          id: '1',
+          method: 'myHandler',
+          domain: 'test',
+        ),
+      );
+
+      expect(
+        response,
+        const DaemonResponse.error(
+          id: '1',
+          error: {'message': 'Malformed message, oopsie'},
+        ),
+      );
+    });
+
+    test('getId returns as passed', () async {
+      final domain = _TestDomain(
+        _MockDaemonServer(),
+        getId: () => 'id',
+      );
+
+      expect(domain.getId(), 'id');
     });
   });
 }

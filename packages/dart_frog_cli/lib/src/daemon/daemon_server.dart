@@ -28,6 +28,7 @@ class DaemonServer {
     _connection.inputStream.listen(_handleMessage);
 
     addDomain(DaemonDomain(this));
+    addDomain(DevServerDomain(this));
   }
 
   final Map<String, DomainBase> _domains = {};

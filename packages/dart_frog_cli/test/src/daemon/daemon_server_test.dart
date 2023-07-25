@@ -9,7 +9,7 @@ import 'package:test/test.dart';
 class _MockDaemonConnection extends Mock implements DaemonConnection {}
 
 class _TestDomain extends DomainBase {
-  _TestDomain() {
+  _TestDomain(super.daemon) {
     addHandler('something', _something);
   }
 
@@ -44,12 +44,10 @@ void main() {
 
       inputStreamController = StreamController<DaemonMessage>.broadcast();
       outputStreamController = StreamController<DaemonMessage>.broadcast();
-      when(() => connection.inputStream).thenAnswer(
-        (_) => inputStreamController.stream,
-      );
-      when(() => connection.outputSink).thenAnswer(
-        (_) => outputStreamController.sink,
-      );
+      when(() => connection.inputStream)
+          .thenAnswer((_) => inputStreamController.stream);
+      when(() => connection.outputSink)
+          .thenAnswer((_) => outputStreamController.sink);
 
       daemonServer = DaemonServer(
         connection: connection,
@@ -70,7 +68,7 @@ void main() {
     });
 
     test('domainNames returns the correct domains', () {
-      expect(daemonServer.domainNames, ['daemon']);
+      expect(daemonServer.domainNames, ['daemon', 'dev_server']);
     });
 
     test('kill exits with given exit code', () async {
@@ -100,7 +98,7 @@ void main() {
     });
 
     test('routes requests to correct domain', () async {
-      final testDomain = _TestDomain();
+      final testDomain = _TestDomain(daemonServer);
       daemonServer.addDomain(testDomain);
 
       inputStreamController.add(
