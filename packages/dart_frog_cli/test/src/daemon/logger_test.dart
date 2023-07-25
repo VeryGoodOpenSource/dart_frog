@@ -2,11 +2,13 @@ import 'package:dart_frog_cli/src/daemon/daemon.dart';
 import 'package:test/test.dart';
 
 void main() {
-  final unsupportedErrorWithMessage = isA<UnsupportedError>().having(
-    (p) => p.message,
-    'message',
-    'Cannot call user interaction methods on daemon',
-  );
+  Matcher unsupportedErrorWithMessage(String name) {
+    return isA<UnsupportedError>().having(
+      (p) => p.message,
+      'message',
+      'Unsupported daemon logger property: $name',
+    );
+  }
 
   group('$DaemonLogger', () {
     String idGenerator() => 'id';
@@ -65,8 +67,8 @@ void main() {
       );
 
       expect(
-        () => logger.chooseAny('chooseAny', choices: ['oi', 'ai']),
-        throwsA(unsupportedErrorWithMessage),
+        () => logger.chooseAny('choose any of this', choices: ['oi', 'ai']),
+        throwsA(unsupportedErrorWithMessage('chooseAny')),
       );
     });
 
@@ -79,8 +81,8 @@ void main() {
       );
 
       expect(
-        () => logger.chooseOne('chooseAny', choices: ['oi', 'ai']),
-        throwsA(unsupportedErrorWithMessage),
+        () => logger.chooseOne('choose one of this', choices: ['oi', 'ai']),
+        throwsA(unsupportedErrorWithMessage('chooseOne')),
       );
     });
 
@@ -93,8 +95,8 @@ void main() {
       );
 
       expect(
-        () => logger.chooseOne('confirm', choices: ['oi', 'ai']),
-        throwsA(unsupportedErrorWithMessage),
+        () => logger.confirm('confirm this'),
+        throwsA(unsupportedErrorWithMessage('confirm')),
       );
     });
 
@@ -214,8 +216,22 @@ void main() {
       );
 
       expect(
-        () => logger.prompt('prompt?'),
-        throwsA(unsupportedErrorWithMessage),
+        () => logger.prompt('prompt this'),
+        throwsA(unsupportedErrorWithMessage('prompt')),
+      );
+    });
+
+    test('promptAny', () {
+      final logger = DaemonLogger(
+        domain: 'test',
+        params: {},
+        sendEvent: sendEvent,
+        idGenerator: idGenerator,
+      );
+
+      expect(
+        () => logger.promptAny('prompt anything'),
+        throwsA(unsupportedErrorWithMessage('promptAny')),
       );
     });
 

@@ -68,28 +68,6 @@ class DaemonLogger implements Logger {
   }
 
   @override
-  List<T> chooseAny<T extends Object?>(
-    String? message, {
-    required List<T> choices,
-    List<T>? defaultValues,
-    String Function(T choice)? display,
-  }) =>
-      _throwUnsupported();
-
-  @override
-  T chooseOne<T extends Object?>(
-    String? message, {
-    required List<T> choices,
-    T? defaultValue,
-    String Function(T choice)? display,
-  }) =>
-      _throwUnsupported();
-
-  @override
-  bool confirm(String? message, {bool defaultValue = false}) =>
-      _throwUnsupported();
-
-  @override
   void delayed(String? message) => _queue.add(message);
 
   @override
@@ -155,11 +133,6 @@ class DaemonLogger implements Logger {
   }
 
   @override
-  String prompt(String? message, {Object? defaultValue, bool hidden = false}) {
-    _throwUnsupported();
-  }
-
-  @override
   void success(String? message, {LogStyle? style}) {
     sendEvent(
       DaemonEvent(
@@ -198,6 +171,13 @@ class DaemonLogger implements Logger {
           'message': message ?? '',
         },
       ),
+    );
+  }
+
+  @override
+  Never noSuchMethod(Invocation invocation) {
+    return throw UnsupportedError(
+      'Unsupported daemon logger property: ${invocation.memberName.name}',
     );
   }
 }
@@ -304,6 +284,6 @@ class DaemonProgress implements Progress {
   }
 }
 
-Never _throwUnsupported() {
-  throw UnsupportedError('Cannot call user interaction methods on daemon');
+extension on Symbol {
+  String get name => toString().split('"')[1];
 }
