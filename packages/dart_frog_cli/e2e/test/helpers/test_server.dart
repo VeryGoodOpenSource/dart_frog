@@ -2,10 +2,14 @@ import 'package:meta/meta.dart';
 import 'package:test/test.dart';
 
 @isTest
-void testServer(String name, Future<void> Function(String host) func) {
+void testServer(
+  String name,
+  Future<void> Function(String host) func, {
+  int port = 8080,
+}) {
   test(
     name,
-    () async => func('http://localhost:8080'),
+    () async => func('http://localhost:$port'),
     timeout: _defaultTimeout,
   );
 }
