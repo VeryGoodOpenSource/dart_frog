@@ -7,13 +7,10 @@ import 'package:dart_frog_cli/src/daemon/daemon.dart';
 import 'package:test/test.dart';
 
 /// Starts the dart_frog daemon in the given directory.
-Future<Process> dartFrogDaemonStart({
-  required Directory directory,
-}) {
+Future<Process> dartFrogDaemonStart() {
   return Process.start(
     'dart_frog',
     ['daemon'],
-    workingDirectory: directory.path,
     runInShell: true,
   );
 }
@@ -43,17 +40,22 @@ class DaemonStdioHelper {
   Matcher? messageMatcher;
   Completer<String>? messageCompleter;
 
-  void _handleStdoutLine(String line) {
+  void _handleStdoutLine(String lines) {
     final messageMatcher = this.messageMatcher;
-    if (messageMatcher != null) {
-      if (messageMatcher.matches(line, {})) {
-        messageCompleter?.complete(line);
-        _pastMessagesCache.clear();
-        return;
-      }
-    }
 
-    _pastMessagesCache.add(line);
+    final linesSplit = lines.split('\n');
+
+    for (final line in linesSplit.where((element) => element.isNotEmpty)) {
+      stdout.writeln('::debug:: <- $line');
+      if (messageMatcher != null) {
+        if (messageMatcher.matches(line, {})) {
+          messageCompleter?.complete(line);
+          _pastMessagesCache.clear();
+          return;
+        }
+      }
+      _pastMessagesCache.add(line);
+    }
   }
 
   void _clean() {
@@ -65,9 +67,18 @@ class DaemonStdioHelper {
   Future<DaemonEvent> awaitForDaemonEvent(
     String methodKey, {
     Duration timeout = const Duration(seconds: 1),
+    Matcher? withParamsThat,
   }) async {
-    final wrappedMatcher = isA<DaemonEvent>()
+    var wrappedMatcher = isA<DaemonEvent>()
         .having((e) => '${e.domain}.${e.event}', 'is $methodKey', methodKey);
+
+    if (withParamsThat != null) {
+      wrappedMatcher = wrappedMatcher.having(
+        (e) => e.params,
+        'params',
+        withParamsThat,
+      );
+    }
 
     final result = await awaitForDaemonMessage(
       wrappedMatcher,
@@ -136,6 +147,7 @@ class DaemonStdioHelper {
 
   /// Sends a string message to the daemon via its stdin.
   Future<void> sendStringMessage(String message) async {
+    stdout.writeln('::debug:: -> $message');
     daemonProcess.stdin.writeln(message);
     await daemonProcess.stdin.flush();
   }
@@ -145,7 +157,7 @@ class DaemonStdioHelper {
   /// [TimeoutException] if the timeout expires.
   Future<DaemonResponse> sendDaemonRequest(
     DaemonRequest request, {
-    Duration timeout = const Duration(seconds: 1),
+    Duration timeout = const Duration(seconds: 10),
   }) async {
     final json = jsonEncode(request.toJson());
 
