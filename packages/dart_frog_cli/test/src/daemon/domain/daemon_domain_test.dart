@@ -56,9 +56,11 @@ void main() {
 
         expect(
           response,
-          const DaemonResponse.success(
-            id: '12',
-            result: {'version': '1.0.0'},
+          equals(
+            const DaemonResponse.success(
+              id: '12',
+              result: {'version': '1.0.0'},
+            ),
           ),
         );
       });
@@ -83,11 +85,13 @@ void main() {
 
         expect(
           response,
-          const DaemonResponse.success(
-            id: '12',
-            result: {
-              'message': 'Hogarth. You stay, I go. No following.',
-            },
+          equals(
+            const DaemonResponse.success(
+              id: '12',
+              result: {
+                'message': 'Hogarth. You stay, I go. No following.',
+              },
+            ),
           ),
         );
       });

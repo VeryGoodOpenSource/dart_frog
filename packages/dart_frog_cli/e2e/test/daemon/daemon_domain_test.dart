@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:dart_frog_cli/src/daemon/daemon.dart';
-import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
 import '../helpers/helpers.dart';
@@ -16,9 +15,6 @@ import '../helpers/helpers.dart';
 void main() {
   const projectName = 'example';
   final tempDirectory = Directory.systemTemp.createTempSync();
-  final projectDirectory = Directory(
-    path.join(tempDirectory.path, projectName),
-  );
 
   late Process daemonProcess;
 
@@ -29,9 +25,7 @@ void main() {
       projectName: projectName,
       directory: tempDirectory,
     );
-    daemonProcess = await dartFrogDaemonStart(
-      directory: projectDirectory,
-    );
+    daemonProcess = await dartFrogDaemonStart();
 
     daemonStdio = DaemonStdioHelper(daemonProcess);
     addTearDown(() => daemonStdio.dispose());
