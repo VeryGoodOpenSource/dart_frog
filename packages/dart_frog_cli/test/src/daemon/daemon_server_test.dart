@@ -8,7 +8,7 @@ import 'package:test/test.dart';
 
 class _MockDaemonConnection extends Mock implements DaemonConnection {}
 
-class _TestDomain extends Domain {
+class _TestDomain extends DomainBase {
   _TestDomain() {
     addHandler('something', _something);
   }
