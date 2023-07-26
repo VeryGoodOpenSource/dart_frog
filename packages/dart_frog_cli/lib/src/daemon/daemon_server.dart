@@ -30,7 +30,7 @@ class DaemonServer {
     addDomain(DaemonDomain(this));
   }
 
-  final Map<String, Domain> _domains = {};
+  final Map<String, DomainBase> _domains = {};
 
   final DaemonConnection _connection;
 
@@ -53,7 +53,7 @@ class DaemonServer {
   /// Visible for testing purposes only.
   @visibleForTesting
   @protected
-  void addDomain(Domain domain) {
+  void addDomain(DomainBase domain) {
     assert(!_domains.containsKey(domain.domainName), 'Domain already exists');
     _domains[domain.domainName] = domain;
   }
