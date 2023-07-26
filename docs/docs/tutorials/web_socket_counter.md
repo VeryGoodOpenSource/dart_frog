@@ -183,10 +183,10 @@ name: example
 publish_to: none
 
 environment:
-  sdk: '>=2.18.0 <3.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
-  web_socket_channel: ^2.0.0
+  web_socket_channel: ^2.4.0
 ```
 
 Next, install the dependencies:
