@@ -46,7 +46,7 @@ class DaemonStdioHelper {
     final linesSplit = lines.split('\n');
 
     for (final line in linesSplit.where((element) => element.isNotEmpty)) {
-      stdout.writeln('<- $line');
+      stdout.writeln('::debug:: <- $line');
       if (messageMatcher != null) {
         if (messageMatcher.matches(line, {})) {
           messageCompleter?.complete(line);
@@ -147,7 +147,7 @@ class DaemonStdioHelper {
 
   /// Sends a string message to the daemon via its stdin.
   Future<void> sendStringMessage(String message) async {
-    stdout.writeln('-> $message');
+    stdout.writeln('::debug:: -> $message');
     daemonProcess.stdin.writeln(message);
     await daemonProcess.stdin.flush();
   }
@@ -157,7 +157,7 @@ class DaemonStdioHelper {
   /// [TimeoutException] if the timeout expires.
   Future<DaemonResponse> sendDaemonRequest(
     DaemonRequest request, {
-    Duration timeout = const Duration(seconds: 3),
+    Duration timeout = const Duration(seconds: 10),
   }) async {
     final json = jsonEncode(request.toJson());
 
