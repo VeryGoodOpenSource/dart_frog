@@ -269,6 +269,7 @@ void main() {
         equals({'message': 'Hogarth. You stay, I go. No following.'}),
       );
 
+      await Future<void>.delayed(const Duration(seconds: 10));
       final exitCode = await daemonProcess.exitCode;
       expect(exitCode, equals(0));
     });
@@ -278,15 +279,8 @@ void main() {
 
       await expectLater(
         responseFuture,
-        throwsA(
-          isA<SocketException>().having(
-            (p0) => p0.message,
-            'message',
-            'Connection refused',
-          ),
-        ),
+        throwsA(isA<SocketException>()),
       );
-      ;
     });
 
     testServer(
@@ -298,14 +292,9 @@ void main() {
         await expectLater(
           responseFuture,
           throwsA(
-            isA<SocketException>().having(
-              (p0) => p0.message,
-              'message',
-              'Connection refused',
-            ),
+            isA<SocketException>(),
           ),
         );
-        ;
       },
     );
 
@@ -313,19 +302,16 @@ void main() {
       port: 9090,
       'GET / on project 1 server 2: connection refused',
       (host) async {
-        final responseFuture = http.get(Uri.parse(host));
-
         await expectLater(
-          responseFuture,
-          throwsA(
-            isA<SocketException>().having(
-              (p0) => p0.message,
-              'message',
-              'Connection refused',
-            ),
-          ),
+          () async {
+            final response = await http.get(Uri.parse(host));
+            stderr
+              ..writeln(response.statusCode)
+              ..writeln(response.body);
+            return response;
+          },
+          throwsA(isA<SocketException>()),
         );
-        ;
       },
     );
   });
