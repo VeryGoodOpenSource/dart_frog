@@ -12,7 +12,7 @@ import 'package:meta/meta.dart';
 class DaemonDomain extends DomainBase {
   /// {@macro daemon_domain}
   DaemonDomain(
-    this.daemon, {
+    super.daemon, {
     @visibleForTesting int? processId,
   }) {
     addHandler('requestVersion', _requestVersion);
@@ -32,9 +32,6 @@ class DaemonDomain extends DomainBase {
 
   /// The name of this domain.
   static const String name = 'daemon';
-
-  /// The [DaemonServer] instance used by this domain.
-  final DaemonServer daemon;
 
   @override
   String get domainName => name;
