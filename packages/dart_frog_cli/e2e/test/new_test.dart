@@ -131,7 +131,7 @@ void main() {
     test('Excuse root route', () async {
       await expectLater(
         () async => dartFrogNewRoute('/', directory: projectDirectory),
-        failsWithA(message: 'Failed to create route: / already exists.'),
+        failsWith(stderr: 'Failed to create route: / already exists.'),
       );
     });
 
@@ -141,8 +141,8 @@ void main() {
       await expectLater(
         () async =>
             dartFrogNewRoute('/existing_endpoint', directory: projectDirectory),
-        failsWithA(
-          message: 'Failed to create route: /existing_endpoint already exists.',
+        failsWith(
+          stderr: 'Failed to create route: /existing_endpoint already exists.',
         ),
       );
     });
@@ -163,8 +163,8 @@ void main() {
           '/existing_endpoint_dir',
           directory: projectDirectory,
         ),
-        failsWithA(
-          message:
+        failsWith(
+          stderr:
               'Failed to create route: /existing_endpoint_dir already exists.',
         ),
       );
@@ -173,8 +173,8 @@ void main() {
     test('Excuse route creation of invalid route identifiers', () async {
       await expectLater(
         () async => dartFrogNewRoute('/👯‍', directory: projectDirectory),
-        failsWithA(
-          message: 'Route path segments must be valid Dart identifiers',
+        failsWith(
+          stderr: 'Route path segments must be valid Dart identifiers',
         ),
       );
     });
@@ -185,8 +185,8 @@ void main() {
           '/[id]/something/[id]',
           directory: projectDirectory,
         ),
-        failsWithA(
-          message: 'Failed to create route: Duplicate parameter name found: id',
+        failsWith(
+          stderr: 'Failed to create route: Duplicate parameter name found: id',
         ),
       );
     });
@@ -228,8 +228,8 @@ void main() {
         await expectLater(
           () =>
               dartFrogNewRoute('/existing_rogue', directory: projectDirectory),
-          failsWithA(
-            message: 'Failed to create route: Rogue route detected. '
+          failsWith(
+            stderr: 'Failed to create route: Rogue route detected. '
                 'Rename routes${slash}existing_rogue.dart to '
                 'routes${slash}existing_rogue${slash}index.dart.',
           ),
@@ -250,8 +250,8 @@ void main() {
             '/conflicting_route',
             directory: projectDirectory,
           ),
-          failsWithA(
-            message: 'Failed to create route: '
+          failsWith(
+            stderr: 'Failed to create route: '
                 'Route conflict detected. '
                 'routes${slash}conflicting_route.dart and '
                 'routes${slash}conflicting_route${slash}index.dart '
@@ -380,8 +380,8 @@ void main() {
           '/existing_middleware',
           directory: projectDirectory,
         ),
-        failsWithA(
-          message: 'There is already a middleware at '
+        failsWith(
+          stderr: 'There is already a middleware at '
               'routes${slash}existing_middleware${slash}_middleware.dart',
         ),
       );
@@ -390,8 +390,8 @@ void main() {
     test('Excuse middleware creation of invalid route identifier', () async {
       await expectLater(
         () async => dartFrogNewMiddleware('/👯‍', directory: projectDirectory),
-        failsWithA(
-          message: 'Route path segments must be valid Dart identifiers',
+        failsWith(
+          stderr: 'Route path segments must be valid Dart identifiers',
         ),
       );
     });
@@ -402,8 +402,8 @@ void main() {
           '/[id]/something/[id]',
           directory: projectDirectory,
         ),
-        failsWithA(
-          message: 'Failed to create middleware: '
+        failsWith(
+          stderr: 'Failed to create middleware: '
               'Duplicate parameter name found: id',
         ),
       );
@@ -450,8 +450,8 @@ void main() {
             '/existing_rogue',
             directory: projectDirectory,
           ),
-          failsWithA(
-            message: 'Failed to create middleware: Rogue route detected. '
+          failsWith(
+            stderr: 'Failed to create middleware: Rogue route detected. '
                 'Rename routes${slash}existing_rogue.dart to '
                 'routes${slash}existing_rogue${slash}index.dart.',
           ),
@@ -473,8 +473,8 @@ void main() {
             '/conflicting_route',
             directory: projectDirectory,
           ),
-          failsWithA(
-            message: 'Failed to create middleware: Route conflict detected. '
+          failsWith(
+            stderr: 'Failed to create middleware: Route conflict detected. '
                 'routes${slash}conflicting_route.dart and '
                 'routes${slash}conflicting_route${slash}index.dart both '
                 'resolve to /conflicting_route.',

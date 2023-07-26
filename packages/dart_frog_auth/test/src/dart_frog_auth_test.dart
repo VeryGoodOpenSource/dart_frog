@@ -16,7 +16,7 @@ class _User {
 }
 
 void main() {
-  group('basicAuthentication', () {
+  group('$basicAuthentication', () {
     late RequestContext context;
     late Request request;
     _User? user;
@@ -129,7 +129,7 @@ void main() {
     });
   });
 
-  group('bearerAuthentication', () {
+  group('$bearerAuthentication', () {
     late RequestContext context;
     late Request request;
     _User? user;

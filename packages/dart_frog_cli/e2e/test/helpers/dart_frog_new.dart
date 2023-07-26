@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:test/test.dart';
 
+import 'run_process.dart';
+
 Future<void> dartFrogNewRoute(
   String routePath, {
   required Directory directory,
@@ -27,20 +29,20 @@ Future<void> _dartFrogNew({
   required String what,
   required Directory directory,
 }) async {
-  final result = await Process.run(
+  await runProcess(
     'dart_frog',
     ['new', what, routePath],
     workingDirectory: directory.path,
     runInShell: true,
   );
-
-  if (result.exitCode != 0) {
-    throw FormatException('${result.stderr}');
-  }
 }
 
-Matcher failsWithA({required String message}) {
+Matcher failsWith({required String stderr}) {
   return throwsA(
-    isA<FormatException>().having((e) => e.message.trim(), 'message', message),
+    isA<RunProcessException>().having(
+      (e) => (e.processResult.stderr as String).trim(),
+      'stderr',
+      stderr,
+    ),
   );
 }
