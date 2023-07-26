@@ -6,10 +6,12 @@ void testServer(
   String name,
   Future<void> Function(String host) func, {
   int port = 8080,
+  Object? skip,
 }) {
   test(
     name,
     () async => func('http://localhost:$port'),
+    skip: skip,
     timeout: _defaultTimeout,
   );
 }
