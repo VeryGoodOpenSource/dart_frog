@@ -239,6 +239,10 @@ void main() {
         ),
       );
 
+      if (Platform.isLinux) {
+        killDartFrogServer(daemonProcess.pid, port: 8080).ignore();
+      }
+
       expect(response.isSuccess, isTrue);
       expect(response.result!['exitCode'], equals(0));
     });
@@ -269,8 +273,14 @@ void main() {
         equals({'message': 'Hogarth. You stay, I go. No following.'}),
       );
 
+      if (Platform.isLinux) {
+        killDartFrogServer(daemonProcess.pid, port: 8090).ignore();
+        killDartFrogServer(daemonProcess.pid, port: 9090).ignore();
+      }
+
       await Future<void>.delayed(const Duration(seconds: 10));
       final exitCode = await daemonProcess.exitCode;
+
       expect(exitCode, equals(0));
     });
 

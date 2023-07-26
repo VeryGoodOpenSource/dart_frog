@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'helpers.dart';
 
-Future<void> killDartFrogServer(int pid) async {
+Future<void> killDartFrogServer(int pid, {int port = 8080}) async {
   if (Platform.isWindows) {
     await runProcess(
       'taskkill',
@@ -14,7 +14,7 @@ Future<void> killDartFrogServer(int pid) async {
   }
 
   if (Platform.isLinux) {
-    await runProcess('fuser', ['-n', 'tcp', '-k', '8080']);
+    await runProcess('fuser', ['-n', 'tcp', '-k', '$port']);
 
     return;
   }
