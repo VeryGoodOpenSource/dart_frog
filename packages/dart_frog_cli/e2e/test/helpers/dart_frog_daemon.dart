@@ -128,7 +128,7 @@ class DaemonStdioHelper {
     _clean();
 
     if (result == null) {
-      throw TimeoutException('Timed out waiting for message');
+      throw TimeoutException('Timed out waiting for message', timeout);
     }
 
     return result;
