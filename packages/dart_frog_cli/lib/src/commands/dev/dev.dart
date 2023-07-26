@@ -8,15 +8,6 @@ import 'package:dart_frog_cli/src/runtime_compatibility.dart'
     as runtime_compatibility;
 import 'package:mason/mason.dart';
 
-/// Typedef for [DevServerRunner.new].
-typedef DevServerRunnerBuilder = DevServerRunner Function({
-  required Logger logger,
-  required String port,
-  required MasonGenerator devServerBundleGenerator,
-  required String dartVmServicePort,
-  required io.Directory workingDirectory,
-});
-
 /// {@template dev_command}
 /// `dart_frog dev` command which starts the dev server`.
 /// {@endtemplate}

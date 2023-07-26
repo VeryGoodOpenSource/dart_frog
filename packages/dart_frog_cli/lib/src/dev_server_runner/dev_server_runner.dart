@@ -40,6 +40,15 @@ final _dartVmServiceAlreadyInUseErrorRegex = RegExp(
   multiLine: true,
 );
 
+/// Typedef for [DevServerRunner.new].
+typedef DevServerRunnerBuilder = DevServerRunner Function({
+  required Logger logger,
+  required String port,
+  required MasonGenerator devServerBundleGenerator,
+  required String dartVmServicePort,
+  required io.Directory workingDirectory,
+});
+
 /// {@template dev_server_runner}
 /// A class that manages a local development server process lifecycle.
 ///
