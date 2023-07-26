@@ -41,9 +41,11 @@ void main() {
 
       expect(
         response,
-        const DaemonResponse.success(
-          id: '1',
-          result: {'foo': 'bar', 'baz': 'qux'},
+        equals(
+          const DaemonResponse.success(
+            id: '1',
+            result: {'foo': 'bar', 'baz': 'qux'},
+          ),
         ),
       );
     });
@@ -61,9 +63,11 @@ void main() {
 
       expect(
         response,
-        const DaemonResponse.error(
-          id: '1',
-          error: {'message': 'Method not found: invalidHandler'},
+        equals(
+          const DaemonResponse.error(
+            id: '1',
+            error: {'message': 'Method not found: invalidHandler'},
+          ),
         ),
       );
     });
@@ -86,9 +90,11 @@ void main() {
 
       expect(
         response,
-        const DaemonResponse.error(
-          id: '1',
-          error: {'message': 'Malformed message, oopsie'},
+        equals(
+          const DaemonResponse.error(
+            id: '1',
+            error: {'message': 'Malformed message, oopsie'},
+          ),
         ),
       );
     });
@@ -99,7 +105,7 @@ void main() {
         getId: () => 'id',
       );
 
-      expect(domain.getId(), 'id');
+      expect(domain.getId(), equals('id'));
     });
   });
 }

@@ -94,17 +94,19 @@ void main() {
               },
             ),
           ),
-          const DaemonResponse.success(
-            id: '12',
-            result: {'applicationId': 'id'},
+          equals(
+            const DaemonResponse.success(
+              id: '12',
+              result: {'applicationId': 'id'},
+            ),
           ),
         );
 
         expect(passedLogger, isA<DaemonLogger>());
-        expect(passedPort, '3000');
+        expect(passedPort, equals('3000'));
         expect(passedDevServerBundleGenerator, same(generator));
-        expect(passedDartVmServicePort, '3001');
-        expect(passedWorkingDirectory.path, '/');
+        expect(passedDartVmServicePort, equals('3001'));
+        expect(passedWorkingDirectory.path, equals('/'));
 
         verify(
           () => daemonServer.sendEvent(
@@ -128,11 +130,13 @@ void main() {
                 params: {'workingDirectory': 123},
               ),
             ),
-            const DaemonResponse.error(
-              id: '12',
-              error: {
-                'message': 'Malformed message, invalid workingDirectory',
-              },
+            equals(
+              const DaemonResponse.error(
+                id: '12',
+                error: {
+                  'message': 'Malformed message, invalid workingDirectory',
+                },
+              ),
             ),
           );
         });
@@ -150,9 +154,11 @@ void main() {
                 },
               ),
             ),
-            const DaemonResponse.error(
-              id: '12',
-              error: {'message': 'Malformed message, invalid port'},
+            equals(
+              const DaemonResponse.error(
+                id: '12',
+                error: {'message': 'Malformed message, invalid port'},
+              ),
             ),
           );
         });
@@ -171,11 +177,13 @@ void main() {
                 },
               ),
             ),
-            const DaemonResponse.error(
-              id: '12',
-              error: {
-                'message': 'Malformed message, invalid dartVmServicePort',
-              },
+            equals(
+              const DaemonResponse.error(
+                id: '12',
+                error: {
+                  'message': 'Malformed message, invalid dartVmServicePort',
+                },
+              ),
             ),
           );
         });
@@ -196,9 +204,11 @@ void main() {
               },
             ),
           ),
-          const DaemonResponse.error(
-            id: '12',
-            error: {'applicationId': 'id', 'message': 'error'},
+          equals(
+            const DaemonResponse.error(
+              id: '12',
+              error: {'applicationId': 'id', 'message': 'error'},
+            ),
           ),
         );
       });
@@ -231,9 +241,11 @@ void main() {
               params: {'applicationId': 'id'},
             ),
           ),
-          const DaemonResponse.success(
-            id: '12',
-            result: {'applicationId': 'id'},
+          equals(
+            const DaemonResponse.success(
+              id: '12',
+              result: {'applicationId': 'id'},
+            ),
           ),
         );
 
@@ -251,11 +263,13 @@ void main() {
                 params: {'applicationId': 123},
               ),
             ),
-            const DaemonResponse.error(
-              id: '12',
-              error: {
-                'message': 'Malformed message, invalid applicationId',
-              },
+            equals(
+              const DaemonResponse.error(
+                id: '12',
+                error: {
+                  'message': 'Malformed message, invalid applicationId',
+                },
+              ),
             ),
           );
         });
@@ -270,12 +284,14 @@ void main() {
                 params: {'applicationId': 'different-id'},
               ),
             ),
-            const DaemonResponse.error(
-              id: '12',
-              error: {
-                'applicationId': 'different-id',
-                'message': 'Application not found',
-              },
+            equals(
+              const DaemonResponse.error(
+                id: '12',
+                error: {
+                  'applicationId': 'different-id',
+                  'message': 'Application not found',
+                },
+              ),
             ),
           );
         });
@@ -293,9 +309,11 @@ void main() {
               params: {'applicationId': 'id'},
             ),
           ),
-          const DaemonResponse.error(
-            id: '12',
-            error: {'applicationId': 'id', 'message': 'error'},
+          equals(
+            const DaemonResponse.error(
+              id: '12',
+              error: {'applicationId': 'id', 'message': 'error'},
+            ),
           ),
         );
       });
@@ -330,12 +348,14 @@ void main() {
               params: {'applicationId': 'id'},
             ),
           ),
-          const DaemonResponse.success(
-            id: '12',
-            result: {
-              'applicationId': 'id',
-              'exitCode': 0,
-            },
+          equals(
+            const DaemonResponse.success(
+              id: '12',
+              result: {
+                'applicationId': 'id',
+                'exitCode': 0,
+              },
+            ),
           ),
         );
 
@@ -353,11 +373,13 @@ void main() {
                 params: {'applicationId': 123},
               ),
             ),
-            const DaemonResponse.error(
-              id: '12',
-              error: {
-                'message': 'Malformed message, invalid applicationId',
-              },
+            equals(
+              const DaemonResponse.error(
+                id: '12',
+                error: {
+                  'message': 'Malformed message, invalid applicationId',
+                },
+              ),
             ),
           );
         });
@@ -372,12 +394,14 @@ void main() {
                 params: {'applicationId': 'different-id'},
               ),
             ),
-            const DaemonResponse.error(
-              id: '12',
-              error: {
-                'applicationId': 'different-id',
-                'message': 'Application not found',
-              },
+            equals(
+              const DaemonResponse.error(
+                id: '12',
+                error: {
+                  'applicationId': 'different-id',
+                  'message': 'Application not found',
+                },
+              ),
             ),
           );
         });
@@ -395,9 +419,11 @@ void main() {
               params: {'applicationId': 'id'},
             ),
           ),
-          const DaemonResponse.error(
-            id: '12',
-            error: {'applicationId': 'id', 'message': 'error'},
+          equals(
+            const DaemonResponse.error(
+              id: '12',
+              error: {'applicationId': 'id', 'message': 'error'},
+            ),
           ),
         );
       });
