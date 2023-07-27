@@ -30,7 +30,7 @@ sealed class DaemonMessage extends Equatable {
     switch (rawMessage) {
       case {'id': _, 'method': _}:
         return DaemonRequest.fromJson(rawMessage);
-      case {'id': _, 'result': _}:
+      case {'id': _, 'result': _} || {'id': _, 'error': _}:
         return DaemonResponse.fromJson(rawMessage);
       case {'event': _}:
         return DaemonEvent.fromJson(rawMessage);

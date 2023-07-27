@@ -14,7 +14,7 @@ Future<User?> Function(String) userFromToken({
 
 Handler middleware(Handler handler) {
   final userRepository = UserRepository();
-  final sessionRepository = SessionRepository();
+  const sessionRepository = SessionRepository();
 
   return handler
       .use(requestLogger())
