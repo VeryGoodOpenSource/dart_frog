@@ -52,6 +52,7 @@ void main() {
           required devServerBundleGenerator,
           required dartVmServicePort,
           required workingDirectory,
+          void Function()? onHotReloadEnabled,
         }) {
           return runner;
         },
@@ -89,6 +90,7 @@ void main() {
           required devServerBundleGenerator,
           required dartVmServicePort,
           required workingDirectory,
+          void Function()? onHotReloadEnabled,
         }) {
           givenPort = port;
           givenDartVmServicePort = dartVmServicePort;
@@ -121,6 +123,7 @@ void main() {
           required devServerBundleGenerator,
           required dartVmServicePort,
           required workingDirectory,
+          void Function()? onHotReloadEnabled,
         }) {
           return runner;
         },
@@ -145,6 +148,7 @@ void main() {
           required devServerBundleGenerator,
           required dartVmServicePort,
           required workingDirectory,
+          void Function()? onHotReloadEnabled,
         }) {
           return runner;
         },

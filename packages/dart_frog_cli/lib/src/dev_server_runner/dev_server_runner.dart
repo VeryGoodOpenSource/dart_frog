@@ -47,6 +47,7 @@ typedef DevServerRunnerBuilder = DevServerRunner Function({
   required MasonGenerator devServerBundleGenerator,
   required String dartVmServicePort,
   required io.Directory workingDirectory,
+  void Function()? onHotReloadEnabled,
 });
 
 /// {@template dev_server_runner}
@@ -70,6 +71,7 @@ class DevServerRunner {
     required this.devServerBundleGenerator,
     required this.dartVmServicePort,
     required this.workingDirectory,
+    this.onHotReloadEnabled,
     @visibleForTesting DirectoryWatcherBuilder? directoryWatcher,
     @visibleForTesting
     RestorableDirectoryGeneratorTargetBuilder? generatorTarget,
@@ -111,6 +113,7 @@ class DevServerRunner {
   final RestorableDirectoryGeneratorTargetBuilder _generatorTarget;
   final bool _isWindows;
   final io.ProcessSignal _sigint;
+  final void Function()? onHotReloadEnabled;
 
   late final _generatedDirectory = io.Directory(
     path.join(workingDirectory.path, '.dart_frog'),
@@ -156,12 +159,19 @@ class DevServerRunner {
     logger.detail('[codegen] complete.');
   }
 
-  Future<void> _reload() async {
-    logger.detail('[codegen] reloading...');
+  Future<void> _reload([bool verbose = false]) async {
+    final void Function(String) log;
+    if (verbose) {
+      log = logger.info;
+    } else {
+      log = logger.detail;
+    }
+
+    log('[codegen] reloading...');
     _isReloading = true;
     await _codegen();
     _isReloading = false;
-    logger.detail('[codegen] reload complete.');
+    log('[codegen] reload complete.');
   }
 
   // Internal method to kill the server process.
@@ -289,8 +299,11 @@ class DevServerRunner {
       process.stdout.listen((_) {
         final message = utf8.decode(_).trim();
         final containsHotReload = message.contains('[hotreload]');
-        if (containsHotReload) isHotReloadingEnabled = true;
         if (message.isNotEmpty) logger.info(message);
+        if (containsHotReload) {
+          isHotReloadingEnabled = true;
+          onHotReloadEnabled?.call();
+        }
         final shouldCacheSnapshot = containsHotReload && !hasError;
         if (shouldCacheSnapshot) _target.cacheLatestSnapshot();
         hasError = false;
@@ -370,7 +383,7 @@ class DevServerRunner {
   /// server.
   Future<void> reload() async {
     if (isCompleted || !isServerRunning || _isReloading) return;
-    return _reload();
+    return _reload(true);
   }
 }
 
