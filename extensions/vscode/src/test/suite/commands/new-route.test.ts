@@ -6,10 +6,12 @@ import * as assert from "assert";
 
 suite("new-route command", () => {
   const validRouteName = "frog";
-  const invalidRouteUri = { fsPath: "/home/dart_frog" };
+  const invalidUri = { fsPath: "/home/not_dart_frog/routes" };
+  const validUri = { fsPath: "/home/dart_frog/routes" };
 
   let vscodeStub: any;
   let childProcessStub: any;
+  let utilsStub: any;
   let command: any;
 
   beforeEach(() => {
@@ -24,10 +26,24 @@ suite("new-route command", () => {
       exec: sinon.stub(),
     };
 
+    utilsStub = {
+      nearestDartFrogProject: sinon.stub(),
+      normalizeRoutePath: sinon.stub(),
+    };
+
+    utilsStub.nearestDartFrogProject
+      .withArgs(invalidUri.fsPath)
+      .returns(undefined);
+    utilsStub.nearestDartFrogProject
+      .withArgs(validUri.fsPath)
+      .returns(validUri.fsPath);
+
     command = proxyquire("../../../commands/new-route", {
       vscode: vscodeStub,
       // eslint-disable-next-line @typescript-eslint/naming-convention
       child_process: childProcessStub,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      "../utils": utilsStub,
     });
   });
 
@@ -80,7 +96,7 @@ suite("new-route command", () => {
     test("is not shown when prompt is valid", async () => {
       vscodeStub.window.showInputBox.returns(validRouteName);
 
-      await command.newRoute(invalidRouteUri);
+      await command.newRoute(invalidUri);
 
       const wantedCalls = vscodeStub.window.showErrorMessage
         .getCalls()
@@ -107,7 +123,7 @@ suite("new-route command", () => {
     test("is not shown when Uri is defined", async () => {
       vscodeStub.window.showInputBox.returns(validRouteName);
 
-      await command.newRoute(invalidRouteUri);
+      await command.newRoute(invalidUri);
 
       sinon.assert.notCalled(vscodeStub.window.showOpenDialog);
     });
@@ -127,9 +143,7 @@ suite("new-route command", () => {
 
     test("is not shown when Uri is undefined and selected file is given", async () => {
       vscodeStub.window.showInputBox.returns(validRouteName);
-      vscodeStub.window.showOpenDialog.returns(
-        Promise.resolve([invalidRouteUri])
-      );
+      vscodeStub.window.showOpenDialog.returns(Promise.resolve([invalidUri]));
 
       await command.newRoute();
 
@@ -141,16 +155,14 @@ suite("new-route command", () => {
   });
 
   suite(
-    "no 'routes' directory found in the selected directory error message",
+    "'No Dart Frog project found in the selected directory' error message",
     () => {
       const errorMessage =
-        "No 'routes' directory found in the selected directory";
+        "No Dart Frog project found in the selected directory";
 
       test("is shown when Uri is undefined and selected file is invalid", async () => {
         vscodeStub.window.showInputBox.returns(validRouteName);
-        vscodeStub.window.showOpenDialog.returns(
-          Promise.resolve([invalidRouteUri])
-        );
+        vscodeStub.window.showOpenDialog.returns(Promise.resolve([invalidUri]));
 
         await command.newRoute();
 
@@ -163,7 +175,7 @@ suite("new-route command", () => {
       test("is shown when Uri is invalid", async () => {
         vscodeStub.window.showInputBox.returns(validRouteName);
 
-        await command.newRoute(invalidRouteUri);
+        await command.newRoute(invalidUri);
 
         sinon.assert.calledWith(
           vscodeStub.window.showErrorMessage,
@@ -174,72 +186,75 @@ suite("new-route command", () => {
   );
 
   suite("runs `dart_frog new route` command with route", () => {
-    test("successfully when Uri is project root directory", async () => {
-      vscodeStub.window.showInputBox.returns(validRouteName);
+    test("successfully with non-index route name", async () => {
+      const routeName = "pizza";
+      vscodeStub.window.showInputBox.returns(routeName);
+      utilsStub.normalizeRoutePath.returns("/");
 
-      await command.newRoute({
-        fsPath: "/home/dart_frog/routes/",
-      });
+      await command.newRoute(validUri);
 
       sinon.assert.calledWith(
         childProcessStub.exec,
-        `dart_frog new route '${validRouteName}'`
+        `dart_frog new route '/${routeName}'`
       );
     });
 
-    test("successfully when Uri is not project root directory", async () => {
-      vscodeStub.window.showInputBox.returns(validRouteName);
+    test("successfully with deep non-index route name", async () => {
+      const routeName = "pizza";
+      vscodeStub.window.showInputBox.returns(routeName);
 
-      const nestedDirectory = "about";
-      await command.newRoute({
-        fsPath: `/home/dart_frog/routes/${nestedDirectory}`,
-      });
+      const selectedUri = {
+        fsPath: `${validUri.fsPath}/food`,
+      };
+      utilsStub.nearestDartFrogProject.returns(selectedUri);
+      utilsStub.normalizeRoutePath.returns(`food`);
+
+      await command.newRoute(selectedUri);
 
       sinon.assert.calledWith(
         childProcessStub.exec,
-        `dart_frog new route '${nestedDirectory}/${validRouteName}'`
+        `dart_frog new route 'food/${routeName}'`
       );
     });
 
-    test("successfully when Uri is a valid non-index nested file", async () => {
-      vscodeStub.window.showInputBox.returns(validRouteName);
+    test("successfully with index route name", async () => {
+      const routeName = "index";
+      vscodeStub.window.showInputBox.returns(routeName);
+      utilsStub.normalizeRoutePath.returns("/");
 
-      const nestedDirectory = "about";
-      const nestedFileName = "vgv";
-      await command.newRoute({
-        fsPath: `/home/dart_frog/routes/${nestedDirectory}/${nestedFileName}.dart`,
-      });
+      await command.newRoute(validUri);
 
-      sinon.assert.calledWith(
-        childProcessStub.exec,
-        `dart_frog new route '${nestedDirectory}/${nestedFileName}/${validRouteName}'`
-      );
+      sinon.assert.calledWith(childProcessStub.exec, `dart_frog new route '/'`);
     });
 
-    test("successfully when Uri is a valid index nested file", async () => {
-      vscodeStub.window.showInputBox.returns(validRouteName);
+    test("successfully with deep index route name", async () => {
+      const routeName = "index";
+      vscodeStub.window.showInputBox.returns(routeName);
 
-      const nestedDirectory = "about";
-      const nestedFileName = "index";
-      await command.newRoute({
-        fsPath: `/home/dart_frog/routes/${nestedDirectory}/${nestedFileName}.dart`,
-      });
+      const selectedUri = {
+        fsPath: `${validUri.fsPath}/food`,
+      };
+      utilsStub.nearestDartFrogProject.returns(selectedUri);
+      utilsStub.normalizeRoutePath.returns("food");
+
+      await command.newRoute(selectedUri);
 
       sinon.assert.calledWith(
         childProcessStub.exec,
-        `dart_frog new route '${nestedDirectory}/${validRouteName}'`
+        `dart_frog new route 'food'`
       );
     });
   });
 
   test("shows error message when `dart_frog new route` fails", async () => {
     vscodeStub.window.showInputBox.returns(validRouteName);
+
+    utilsStub.normalizeRoutePath.returns("hello");
+
     const error = Error("Failed to run `dart_frog new route`");
     childProcessStub.exec.yields(error);
 
-    await command.newRoute({
-      fsPath: "/home/dart_frog/routes/",
-    });
+    await command.newRoute(validUri);
 
     sinon.assert.calledWith(vscodeStub.window.showErrorMessage, error.message);
   });
