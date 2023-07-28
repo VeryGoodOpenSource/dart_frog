@@ -23,15 +23,37 @@ suite("readDartFrogCLIVersion", () => {
     sinon.restore();
   });
 
-  test("returns the version of Dart Frog CLI installed in the user's system", () => {
-    const dartFrogVersionCommandResult = "0.3.7\n";
-    const encoededDartFrogVersionCommandResult = new TextEncoder().encode(
-      dartFrogVersionCommandResult
-    );
-    cpStub.execSync.returns(encoededDartFrogVersionCommandResult);
+  test(
+    "returns the version of Dart Frog CLI installed in the user's system " +
+      "when is last version",
+    () => {
+      const dartFrogVersionCommandResult = "0.3.7\n";
+      const encodedDartFrogVersionCommandResult = new TextEncoder().encode(
+        dartFrogVersionCommandResult
+      );
+      cpStub.execSync.returns(encodedDartFrogVersionCommandResult);
 
-    assert.strictEqual(cliVersion.readDartFrogCLIVersion(), "0.3.7");
-  });
+      assert.strictEqual(cliVersion.readDartFrogCLIVersion(), "0.3.7");
+    }
+  );
+
+  test(
+    "returns the version of Dart Frog CLI installed in the user's system " +
+      "when new version is available",
+    () => {
+      const dartFrogVersionCommandResult =
+        "0.3.7\n\n" +
+        "Update available! 0.3.7 → 0.3.9\n" +
+        "Changelog: \u001b]8;;https://github.com/verygoodopensource/dart_frog/releases/tag/dart_frog_cli-v0.3.9\u001b\\https://github.com/verygoodopensource/dart_frog/releases/tag/dart_frog_cli-v0.3.9\u001b]8;;\u001b\\\n" +
+        "Run dart_frog update to update\n";
+      const encodedDartFrogVersionCommandResult = new TextEncoder().encode(
+        dartFrogVersionCommandResult
+      );
+      cpStub.execSync.returns(encodedDartFrogVersionCommandResult);
+
+      assert.strictEqual(cliVersion.readDartFrogCLIVersion(), "0.3.7");
+    }
+  );
 
   test("returns undefined if Dart Frog CLI is not installed", () => {
     cpStub.execSync.throws();
