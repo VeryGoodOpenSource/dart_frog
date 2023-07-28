@@ -107,13 +107,15 @@ class DevServerRunner {
   /// The working directory of the dart_frog project.
   final io.Directory workingDirectory;
 
+  /// Callback for when hot reload is enabled.
+  final void Function()? onHotReloadEnabled;
+
   final DirectoryWatcherBuilder _directoryWatcher;
   final ProcessStart _startProcess;
   final ProcessRun _runProcess;
   final RestorableDirectoryGeneratorTargetBuilder _generatorTarget;
   final bool _isWindows;
   final io.ProcessSignal _sigint;
-  final void Function()? onHotReloadEnabled;
 
   late final _generatedDirectory = io.Directory(
     path.join(workingDirectory.path, '.dart_frog'),
