@@ -69,19 +69,19 @@ Create a production build which includes a `DockerFile` so that you can deploy a
 dart_frog build
 ```
 
-### Uninstalling 🗑️
+## Uninstalling 🗑️
 
-To uninstall dart frog completely, the cli completion files have to be removed before uninstalling.
+To uninstall Dart Frog completely, the [CLI completion](https://github.com/VeryGoodOpenSource/cli_completion) files have to be removed before uninstalling.
 
 ```shell
-# 🗑️ Uninstall the dart_frog cli completion files
+# 🗑️ Uninstall the Dart Frog CLI completion files
 dart_frog uninstall-completion-files
 ```
 
-Now, dart frog can be uninstalled safely.
+Now, if you installed Dart Frog globally via Pub, Dart's package manager, you can uninstall Dart Frog using:
 
 ```shell
-# 🗑️ Uninstall the dart_frog cli from pub.dev
+# 🗑️ Uninstall the Dart Frog CLI from pub.dev
 dart pub global deactivate dart_frog_cli
 ```
 
