@@ -61,30 +61,32 @@ class DevCommand extends DartFrogCommand {
 
   void _startListeningForHelpers() {
     if (_stdinSubscription != null) return;
+    if (!_stdin.hasTerminal) return;
 
     // listen for the R key
-    if (_stdin.hasTerminal) {
-      _stdin
-        ..echoMode = false
-        ..lineMode = false;
-    }
+    _stdin
+      ..echoMode = false
+      ..lineMode = false;
+
     _stdinSubscription = _stdin.listen((event) {
       if (event.length == 1 && event.first == 82) {
         _devServerRunner.reload();
       }
     });
-    logger.info('Press R to reload the page');
+    logger.info('Press R to reload');
   }
 
   void _stopListeningForHelpers() {
     _stdinSubscription?.cancel();
     _stdinSubscription = null;
 
-    if (_stdin.hasTerminal) {
-      _stdin
-        ..lineMode = true
-        ..echoMode = true;
-    }
+    // The command may lose terminal after sigint, even though
+    // there may be a std subscription. That is why this check
+    // is made after the subscription is canceled, if existent.
+    if (!_stdin.hasTerminal) return;
+    _stdin
+      ..lineMode = true
+      ..echoMode = true;
   }
 
   @override
@@ -113,7 +115,6 @@ class DevCommand extends DartFrogCommand {
     }
 
     final result = await _devServerRunner.exitCode;
-
     _stopListeningForHelpers();
 
     return result.code;
