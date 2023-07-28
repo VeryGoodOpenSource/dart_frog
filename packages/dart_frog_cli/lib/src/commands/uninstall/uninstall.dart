@@ -22,9 +22,12 @@ class UninstallCommand extends Command<int> {
 
   @override
   Future<int> run() async {
+    final docs = link(
+      uri: Uri.parse('https://dartfrog.vgv.dev/docs/overview#uninstalling-'),
+    );
     _logger.info(
       'For instructions on how to uninstall $packageName completely, check out:'
-      '\nhttps://dartfrog.vgv.dev/docs/overview#uninstalling-',
+      '\n$docs',
     );
 
     return ExitCode.success.code;
