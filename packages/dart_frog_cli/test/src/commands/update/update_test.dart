@@ -85,7 +85,7 @@ void main() {
         final result = await commandRunner.run(['update', '--help']);
 
         expect(result, equals(ExitCode.success.code));
-        expect(printLogs, expectedUsage);
+        expect(printLogs, equals(expectedUsage));
       }),
     );
 
