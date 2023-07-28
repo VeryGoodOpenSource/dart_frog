@@ -7,47 +7,25 @@ import 'package:test/test.dart';
 
 class _MockRequestContext extends Mock implements RequestContext {}
 
-class _MockRequest extends Mock implements Request {}
-
 /// A test that can be used to test a Dart Frog handler.
 @isTest
-void testDartFrog(
+void testRouteHandler(
   String message, {
-  required String url,
   required FutureOr<Response> Function(RequestContext request) onRequest,
-  HttpMethod method = HttpMethod.get,
-  Map<String, String>? headers,
-  dynamic requestJson,
-  String? requestBody,
+  required Request request,
   FutureOr<void> Function(RequestContext)? setUp,
   FutureOr<void> Function(Response)? expect,
 }) {
-  assert(
-    !(requestJson != null && requestBody != null),
-    'Both a request json and a request body were provided. '
-    'Only one can be provided.',
+  test(
+    '${request.method.name.toUpperCase()} ${request.url.path}: $message',
+    () async {
+      final requestContext = _MockRequestContext();
+
+      when(() => requestContext.request).thenReturn(request);
+
+      await setUp?.call(requestContext);
+      final response = await onRequest(requestContext);
+      await expect?.call(response);
+    },
   );
-  test('${method.name.toUpperCase()} $url: $message', () async {
-    final requestContext = _MockRequestContext();
-
-    final request = _MockRequest();
-
-    when(() => request.method).thenReturn(method);
-    when(() => request.url).thenReturn(Uri.parse(url));
-    when(() => request.headers).thenReturn(headers ?? {});
-
-    if (requestBody != null) {
-      when(request.body).thenAnswer((_) async => requestBody);
-    }
-
-    if (requestJson != null) {
-      when(request.json).thenAnswer((_) async => requestJson);
-    }
-
-    when(() => requestContext.request).thenReturn(request);
-
-    await setUp?.call(requestContext);
-    final response = await onRequest(requestContext);
-    await expect?.call(response);
-  });
 }

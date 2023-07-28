@@ -11,10 +11,9 @@ import '../../routes/dice.dart' as route;
 class _MockRandom extends Mock implements Random {}
 
 void main() {
-  testDartFrog(
+  testRouteHandler(
     'responds with a 200 and the rolled number.',
-    url: '/dice',
-    method: HttpMethod.post,
+    request: Request('POST', Uri.parse('https://example/dice')),
     onRequest: route.onRequest,
     setUp: (context) {
       final random = _MockRandom();
@@ -30,14 +29,14 @@ void main() {
     },
   );
 
-  final notAllowedMethods =
-      HttpMethod.values.where((v) => v != HttpMethod.post);
+  final notAllowedMethods = HttpMethod.values
+      .where((v) => v != HttpMethod.post)
+      .map((e) => e.name.toUpperCase());
 
   for (final method in notAllowedMethods) {
-    testDartFrog(
+    testRouteHandler(
       'responds with method not allowed.',
-      url: '/dice',
-      method: method,
+      request: Request(method, Uri.parse('https://example/dice')),
       onRequest: route.onRequest,
       expect: (response) {
         expect(response.statusCode, equals(HttpStatus.methodNotAllowed));
