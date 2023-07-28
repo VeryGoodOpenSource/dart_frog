@@ -430,9 +430,9 @@ Response onRequest(RequestContext context, String page) {
 }
 ```
 
-```warning
+:::caution
 Wildcard routes **must** be unique leaf routes on their route node, meaning that they need to be a file, and they need to be the only route in their folder.
-```
+:::
 
 ## Route Conflicts 💥
 
