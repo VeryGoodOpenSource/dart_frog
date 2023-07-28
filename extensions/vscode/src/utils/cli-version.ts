@@ -17,7 +17,7 @@ export function readDartFrogCLIVersion(): String | undefined {
   try {
     const result = cp.execSync(`dart_frog --version`);
     const decodedResult = new TextDecoder().decode(result);
-    return decodedResult.trim();
+    return decodedResult.split("\n", 1).at(0);
   } catch (error) {
     return undefined;
   }
