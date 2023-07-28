@@ -398,4 +398,7 @@ class DartFrogDevServerException implements Exception {
 
   /// The exception message.
   final String message;
+
+  @override
+  String toString() => message;
 }

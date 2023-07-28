@@ -68,11 +68,19 @@ class DevCommand extends DartFrogCommand {
       ..echoMode = false
       ..lineMode = false;
 
-    _stdinSubscription = _stdin.listen((event) {
-      if (event.length == 1 && event.first == 82) {
-        _devServerRunner.reload();
-      }
-    });
+    _stdinSubscription = _stdin.listen(
+      (event) {
+        if (event.length == 1 && event.first == 82) {
+          _devServerRunner.reload();
+        }
+      },
+      onError: (dynamic error) {
+        logger.err(error.toString());
+      },
+      cancelOnError: true,
+      onDone: _stopListeningForHelpers,
+    );
+
     logger.info('Press R to reload');
   }
 
@@ -81,9 +89,12 @@ class DevCommand extends DartFrogCommand {
     _stdinSubscription = null;
 
     // The command may lose terminal after sigint, even though
-    // there may be a std subscription. That is why this check
-    // is made after the subscription is canceled, if existent.
+    // the stdin subscription may have been created when the
+    // devserver started.
+    // That is why this check is made after the subscription
+    // is canceled, if existent.
     if (!_stdin.hasTerminal) return;
+
     _stdin
       ..lineMode = true
       ..echoMode = true;
@@ -109,14 +120,12 @@ class DevCommand extends DartFrogCommand {
 
     try {
       await _devServerRunner.start();
-    } on DartFrogDevServerException catch (e) {
-      logger.err(e.message);
+      return (await _devServerRunner.exitCode).code;
+    } catch (e) {
+      logger.err(e.toString());
       return ExitCode.software.code;
+    } finally {
+      _stopListeningForHelpers();
     }
-
-    final result = await _devServerRunner.exitCode;
-    _stopListeningForHelpers();
-
-    return result.code;
   }
 }
