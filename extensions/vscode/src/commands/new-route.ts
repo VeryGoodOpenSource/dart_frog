@@ -1,6 +1,12 @@
 const cp = require("child_process");
 
-import { InputBoxOptions, Uri, window, OpenDialogOptions } from "vscode";
+import {
+  InputBoxOptions,
+  Uri,
+  window,
+  OpenDialogOptions,
+  ProgressOptions,
+} from "vscode";
 import { nearestDartFrogProject, normalizeRoutePath } from "../utils";
 
 /**
@@ -55,7 +61,13 @@ export const newRoute = async (uri: Uri | undefined): Promise<void> => {
     return;
   }
 
-  executeDartFrogNewRouteCommand(routePath, dartFrogProjectPath);
+  const options: ProgressOptions = {
+    location: 15,
+    title: `Creating '${routePath}' route...`,
+  };
+  window.withProgress(options, async function () {
+    executeDartFrogNewRouteCommand(routePath, dartFrogProjectPath);
+  });
 };
 
 /**

@@ -1,6 +1,6 @@
 const cp = require("child_process");
 
-import { Uri, window, OpenDialogOptions } from "vscode";
+import { Uri, window, OpenDialogOptions, ProgressOptions } from "vscode";
 import { nearestDartFrogProject, normalizeRoutePath } from "../utils";
 
 /**
@@ -45,7 +45,13 @@ export const newMiddleware = async (uri: Uri | undefined): Promise<void> => {
 
   const routePath = normalizeRoutePath(selectedUri, dartFrogProjectPath);
 
-  executeDartFrogNewMiddlewareCommand(routePath, dartFrogProjectPath);
+  const options: ProgressOptions = {
+    location: 15,
+    title: `Creating '${routePath}' middleware...`,
+  };
+  window.withProgress(options, async function () {
+    executeDartFrogNewMiddlewareCommand(routePath, dartFrogProjectPath);
+  });
 };
 
 /**
