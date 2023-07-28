@@ -10,6 +10,8 @@ import {
   readDartFrogCLIVersion,
   isCompatibleDartFrogCLIVersion,
   isDartFrogCLIInstalled,
+  openChangelog,
+  readLatestDartFrogCLIVersion,
 } from "./utils";
 
 /**
@@ -105,6 +107,11 @@ export async function ensureCompatibleDartFrogCLI(): Promise<void> {
     return;
   }
 
+  const latestVersion = readLatestDartFrogCLIVersion();
+  if (!latestVersion) {
+    return;
+  }
+
   const selection = await vscode.window.showWarningMessage(
     `Dart Frog CLI version ${version} is not compatible with this extension.`,
     "Update Dart Frog CLI",
@@ -116,20 +123,11 @@ export async function ensureCompatibleDartFrogCLI(): Promise<void> {
       updateCLI();
       break;
     case "Changelog":
-      openChangelog(version);
+      openChangelog(latestVersion);
       break;
     case "Ignore":
       break;
     default:
       break;
   }
-}
-
-export async function openChangelog(version: String): Promise<void> {
-  vscode.commands.executeCommand(
-    "vscode.open",
-    vscode.Uri.parse(
-      `https://github.com/verygoodopensource/dart_frog/releases/tag/dart_frog_cli-v${version}`
-    )
-  );
 }

@@ -1,3 +1,4 @@
+import * as vscode from "vscode";
 const cp = require("child_process");
 const semver = require("semver");
 
@@ -18,6 +19,26 @@ export function readDartFrogCLIVersion(): String | undefined {
     const result = cp.execSync(`dart_frog --version`);
     const decodedResult = new TextDecoder().decode(result);
     return decodedResult.split("\n", 1).at(0);
+  } catch (error) {
+    return undefined;
+  }
+}
+
+/**
+ * Collects the latest available version of Dart Frog CLI.
+ *
+ * @returns {String | undefined} The latest available semantic version of
+ * Dart Frog CLI, or null if Dart Frog CLI is not installed.
+ */
+export function readLatestDartFrogCLIVersion(): String | undefined {
+  try {
+    const result = cp.execSync(`dart_frog --version`);
+    const decodedResult = new TextDecoder().decode(result);
+    const lines = decodedResult.split("\n");
+    if (lines.length <= 2) {
+      return lines.at(0);
+    }
+    return lines.at(2)?.split(" ").at(-1);
   } catch (error) {
     return undefined;
   }
@@ -45,4 +66,19 @@ export function isCompatibleDartFrogCLIVersion(version: String): Boolean {
  */
 export function isDartFrogCLIInstalled(): boolean {
   return readDartFrogCLIVersion() !== undefined;
+}
+
+/**
+ * Opens the changelog for the specified version in a browser.
+ *
+ * @param {String} version The semantic version of Dart Frog CLI which changelog
+ * is requested to open.
+ */
+export async function openChangelog(version: String): Promise<void> {
+  vscode.commands.executeCommand(
+    "vscode.open",
+    vscode.Uri.parse(
+      `https://github.com/verygoodopensource/dart_frog/releases/tag/dart_frog_cli-v${version}`
+    )
+  );
 }
