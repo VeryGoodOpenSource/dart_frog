@@ -76,6 +76,7 @@ class DevCommand extends DartFrogCommand {
       },
       onError: (dynamic error) {
         logger.err(error.toString());
+        _stopListeningForHelpers();
       },
       cancelOnError: true,
       onDone: _stopListeningForHelpers,

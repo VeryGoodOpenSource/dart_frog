@@ -201,6 +201,9 @@ void main() {
         ).thenAnswer(
           (invocation) => stdinController.stream.listen(
             invocation.positionalArguments.first as void Function(List<int>),
+            onError: invocation.namedArguments[#onError] as Function?,
+            onDone: invocation.namedArguments[#onDone] as void Function()?,
+            cancelOnError: invocation.namedArguments[#cancelOnError] as bool?,
           ),
         );
 
@@ -315,6 +318,24 @@ void main() {
         expect(stdinController.hasListener, isFalse);
         verify(() => stdin.echoMode = true).called(1);
         verify(() => stdin.lineMode = true).called(1);
+      });
+
+      test('cancels subscription when stdin emits error', () async {
+        command.run().ignore();
+        await Future<void>.delayed(Duration.zero);
+
+        givenOnHotReloadEnabled();
+        await Future<void>.delayed(Duration.zero);
+
+        stdinController.addError(Exception('oops'));
+        await Future<void>.delayed(Duration.zero);
+        await Future<void>.delayed(Duration.zero);
+
+        expect(stdinController.hasListener, isFalse);
+        verify(() => stdin.echoMode = true).called(1);
+        verify(() => stdin.lineMode = true).called(1);
+
+        exitCodeCompleter.complete(ExitCode.success);
       });
     });
   });
