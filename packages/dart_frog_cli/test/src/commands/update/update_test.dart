@@ -121,13 +121,15 @@ void main() {
             () => logger.info('A new version of $packageName is available.\n'),
           ).called(1);
           verify(
-            () => logger.info('The latest version: $latestVersion'),
+            () => logger.info(
+              styleBold.wrap('The latest version: $latestVersion'),
+            ),
           ).called(1);
           verify(
             () => logger.info('Your current version: $packageVersion\n'),
           ).called(1);
           verify(
-            () => logger.info('To update, run "$executableName update".'),
+            () => logger.info('To update now, run "$executableName update".'),
           ).called(1);
         },
       );
