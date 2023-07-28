@@ -74,7 +74,7 @@ dart_frog build
 To uninstall Dart Frog completely, the [CLI completion](https://github.com/VeryGoodOpenSource/cli_completion) files have to be removed before uninstalling.
 
 ```shell
-# 🗑️ Uninstall the Dart Frog CLI completion files
+# 🧹 Uninstalling the Dart Frog CLI completion files
 dart_frog uninstall-completion-files
 ```
 
