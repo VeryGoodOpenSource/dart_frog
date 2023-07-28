@@ -26,7 +26,7 @@ suite("readDartFrogCLIVersion", () => {
   suite(
     "returns the version of Dart Frog CLI installed in the user's system",
     () => {
-      test("when is last version", () => {
+      test("when on latest version", () => {
         const dartFrogVersionCommandResult = "0.3.7\n";
         const encodedDartFrogVersionCommandResult = new TextEncoder().encode(
           dartFrogVersionCommandResult
