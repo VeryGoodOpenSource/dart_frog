@@ -54,7 +54,7 @@ jobs:
 
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_pub_publish.yml@v1
     with:
-      working-directory: packages/${{ needs.to_publish.outputs.package }}
+      working_directory: packages/${{ needs.to_publish.outputs.package }}
       pub_credentials: secrets.PUB_CREDENTIALS
 
   publish_brick:
@@ -63,5 +63,5 @@ jobs:
 
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/mason_publish.yml@v1
     with:
-      working-directory: bricks/${{ needs.to_publish.outputs.brick }}
+      working_directory: bricks/${{ needs.to_publish.outputs.brick }}
       mason_credentials: secrets.MASON_CREDENTIALS

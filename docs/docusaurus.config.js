@@ -80,64 +80,7 @@ const config = {
         ],
       },
       footer: {
-        links: [
-          {
-            title: 'Docs',
-            items: [
-              {
-                label: 'Overview',
-                to: '/docs/overview',
-              },
-              {
-                label: 'Basics',
-                to: '/docs/category/basics',
-              },
-              {
-                label: 'Tutorials',
-                to: '/docs/category/tutorials',
-              },
-              {
-                label: 'Deploy',
-                to: '/docs/category/deploy',
-              },
-              {
-                label: 'Advanced',
-                to: '/docs/category/advanced',
-              },
-              {
-                label: 'Roadmap',
-                to: '/docs/roadmap',
-              },
-            ],
-          },
-          {
-            title: 'Resources',
-            items: [
-              {
-                label: 'Blog Post',
-                href: 'https://verygood.ventures/blog/dart-frog?utm_source=dartfrog&utm_medium=docs&utm_campaign=df_blog',
-              },
-              {
-                label: 'Livestream Demo',
-                href: 'https://youtu.be/N7l0b09c6DA',
-              },
-            ],
-          },
-          {
-            title: 'More',
-            items: [
-              {
-                label: 'Open an Issue',
-                href: 'https://github.com/verygoodopensource/dart_frog/issues/new/choose',
-              },
-              {
-                label: 'GitHub',
-                href: 'https://github.com/verygoodopensource/dart_frog',
-              },
-            ],
-          },
-        ],
-        copyright: `Copyright © ${new Date().getFullYear()} Very Good Ventures.<br/>Built with 💙 by <a target="_blank" rel="noopener" aria-label="Very Good Ventures" href="https://verygood.ventures">Very Good Ventures</a>.`,
+        copyright: `Built with 💙 by <a target="_blank" rel="noopener" aria-label="Very Good Ventures" href="https://verygood.ventures"><b>Very Good Ventures</b>.</a><br/>Copyright © ${new Date().getFullYear()} Very Good Ventures.`,
       },
       prism: {
         additionalLanguages: ['bash', 'dart', 'docker', 'yaml'],
