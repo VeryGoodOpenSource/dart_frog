@@ -127,7 +127,7 @@ void main() {
             () => logger.info('Your current version: $packageVersion\n'),
           ).called(1);
           verify(
-            () => logger.info('To update, run "$packageName update".'),
+            () => logger.info('To update, run "$executableName update".'),
           ).called(1);
         },
       );

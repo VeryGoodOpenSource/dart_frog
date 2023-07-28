@@ -59,7 +59,7 @@ class UpdateCommand extends DartFrogCommand {
         ..info('A new version of $packageName is available.\n')
         ..info('The latest version: $latestVersion')
         ..info('Your current version: $packageVersion\n')
-        ..info('To update, run "$packageName update".');
+        ..info('To update, run "$executableName update".');
       return ExitCode.success.code;
     }
 
