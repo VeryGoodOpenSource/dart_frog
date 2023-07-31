@@ -75,7 +75,7 @@ npm run lint
 npm test
 ```
 
-💡 **Note**: As contributors we should avoid cross-test dependencies. We rely on Mocha as our testing framework, unfortunately it doesn't yet support [randomized test ordering](https://github.com/mochajs/mocha/issues/902).
+💡 **Note**: As contributors we should avoid cross-test dependencies. We rely on Mocha as our testing framework, unfortunately, it doesn't yet support [randomized test ordering](https://github.com/mochajs/mocha/issues/902).
 
 5. Create the Pull Request with a meaningful description, linking to the original issue where possible.
 
