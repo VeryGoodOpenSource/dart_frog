@@ -275,62 +275,178 @@ suite("isDartFrogProject", () => {
       assert.equal(result, false);
     });
   });
+});
 
-  suite("resolveDartFrogProjectPathFromWorkspace", () => {
-    let vscodeStub: any;
-    let fsStub: any;
-    let resolveDartFrogProjectPathFromWorkspace: any;
+suite("resolveDartFrogProjectPathFromWorkspace", () => {
+  let vscodeStub: any;
+  let fsStub: any;
+  let resolveDartFrogProjectPathFromWorkspace: any;
 
-    beforeEach(() => {
-      vscodeStub = {
-        workspace: sinon.stub(),
-        window: sinon.stub(),
-      };
-      fsStub = {
-        existsSync: sinon.stub(),
-        readFileSync: sinon.stub(),
-      };
-      fsStub.existsSync.returns(true);
-      fsStub.readFileSync.returns(validPubspecYaml);
+  beforeEach(() => {
+    vscodeStub = {
+      workspace: sinon.stub(),
+      window: sinon.stub(),
+    };
+    fsStub = {
+      existsSync: sinon.stub(),
+      readFileSync: sinon.stub(),
+    };
+    fsStub.existsSync.returns(true);
+    fsStub.readFileSync.returns(validPubspecYaml);
 
-      resolveDartFrogProjectPathFromWorkspace = proxyquire(
-        "../../../utils/dart-frog-structure",
+    resolveDartFrogProjectPathFromWorkspace = proxyquire(
+      "../../../utils/dart-frog-structure",
+      {
+        vscode: vscodeStub,
+      }
+    ).resolveDartFrogProjectPathFromWorkspace;
+  });
+
+  afterEach(() => {
+    sinon.restore();
+  });
+
+  test("returns the file path of the active route Dart file", () => {
+    vscodeStub.window.activeTextEditor.returns({
+      document: {
+        uri: {
+          fsPath: `/home/user/routes/index.dart`,
+        },
+      },
+    });
+
+    const result = resolveDartFrogProjectPathFromWorkspace();
+
+    assert.equal(result, "/home/user/routes/index.dart");
+  });
+
+  test("returns the directory path of the active middleware Dart file", () => {
+    vscodeStub.window.activeTextEditor.returns({
+      document: {
+        uri: {
+          fsPath: `/home/user/routes/animals/_middleware.dart`,
+        },
+      },
+    });
+
+    const result = resolveDartFrogProjectPathFromWorkspace();
+
+    assert.equal(result, "/home/user/routes/animals");
+  });
+
+  suite("returns the directory path of the active workspace folder", () => {
+    test("when there is no active text editor", () => {
+      vscodeStub.window.activeTextEditor.returns(undefined);
+      vscodeStub.workspace.workspaceFolders = [
         {
-          vscode: vscodeStub,
-        }
-      ).resolveDartFrogProjectPathFromWorkspace;
-    });
-
-    afterEach(() => {
-      sinon.restore();
-    });
-
-    test("returns the path of the active route Dart file", () => {
-      vscodeStub.window.activeTextEditor.returns({
-        document: {
           uri: {
-            fsPath: `/home/user/routes/index.dart`,
+            fsPath: `/home/user/routes/animals`,
           },
         },
-      });
+      ];
 
       const result = resolveDartFrogProjectPathFromWorkspace();
 
-      assert.equal(result, "/home/user/routes/index.dart");
+      assert.equal(result, "/home/user/routes/animals");
     });
 
-    test("returns the directory path of the active middleware Dart file", () => {
+    test("when the active text editor is not a route", () => {
       vscodeStub.window.activeTextEditor.returns({
         document: {
           uri: {
-            fsPath: `/home/user/routes/a/_middleware.dart`,
+            fsPath: `/home/user/pubspec.yaml`,
           },
         },
       });
+      vscodeStub.workspace.workspaceFolders = [
+        {
+          uri: {
+            fsPath: `/home/user/`,
+          },
+        },
+      ];
 
       const result = resolveDartFrogProjectPathFromWorkspace();
 
-      assert.equal(result, "/home/user/routes/a");
+      assert.equal(result, "/home/user/");
+    });
+
+    test("when the active text editor is not a Dart route", () => {
+      vscodeStub.window.activeTextEditor.returns({
+        document: {
+          uri: {
+            fsPath: `/home/user/routes/hello.yaml`,
+          },
+        },
+      });
+      vscodeStub.workspace.workspaceFolders = [
+        {
+          uri: {
+            fsPath: `/home/user/`,
+          },
+        },
+      ];
+
+      const result = resolveDartFrogProjectPathFromWorkspace();
+
+      assert.equal(result, "/home/user/");
+    });
+
+    test("when the active text editor is not a Dart Frog project", () => {
+      vscodeStub.window.activeTextEditor.returns({
+        document: {
+          uri: {
+            fsPath: `/home/user/routes/animals/frog.dart`,
+          },
+        },
+      });
+      vscodeStub.workspace.workspaceFolders = [
+        {
+          uri: {
+            fsPath: `/home/user/`,
+          },
+        },
+      ];
+      fsStub.existsSync.returns(false);
+      fsStub.readFileSync.returns(invalidPubspecYaml);
+
+      const result = resolveDartFrogProjectPathFromWorkspace();
+
+      assert.equal(result, "/home/user/");
+    });
+  });
+
+  suite("returns undefined", () => {
+    test("when there is no active workspace folder nor text editor", () => {
+      vscodeStub.window.activeTextEditor.returns(undefined);
+      vscodeStub.workspace.workspaceFolders = undefined;
+
+      const result = resolveDartFrogProjectPathFromWorkspace();
+
+      assert.equal(result, undefined);
+    });
+
+    test("when there is active workspace folder nor text editor are Dart Frog projects", () => {
+      vscodeStub.window.activeTextEditor.returns({
+        document: {
+          uri: {
+            fsPath: `/home/user/routes/animals/frog.dart`,
+          },
+        },
+      });
+      vscodeStub.workspace.workspaceFolders = [
+        {
+          uri: {
+            fsPath: `/home/user/`,
+          },
+        },
+      ];
+      fsStub.existsSync.returns(false);
+      fsStub.readFileSync.returns(invalidPubspecYaml);
+
+      const result = resolveDartFrogProjectPathFromWorkspace();
+
+      assert.equal(result, undefined);
     });
   });
 });

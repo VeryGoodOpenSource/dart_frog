@@ -109,6 +109,8 @@ export function isDartFrogProject(filePath: String): boolean {
  * returned (without the `_middleware.dart` suffix, if any).
  * 2. If the user has a workspace folder open that is within a Dart Frog
  * project, then the path of that workspace folder is returned.
+ *
+ * If none of the above conditions are met, then `undefined` is returned.
  */
 export async function resolveDartFrogProjectPathFromWorkspace() {
   if (window.activeTextEditor) {
@@ -120,6 +122,8 @@ export async function resolveDartFrogProjectPathFromWorkspace() {
       nearestDartFrogProject(currentTextEditorPath) !== undefined
     ) {
       const filePath = path.parse(currentTextEditorPath);
+      // TODO(alestiago): Remove this middleware logic directly from
+      normalizeRoutePath;
       if (filePath.base === "_middleware.dart") {
         return filePath.dir;
       }
