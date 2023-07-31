@@ -1,7 +1,17 @@
 const cp = require("child_process");
 
-import { Uri, window, OpenDialogOptions, ProgressOptions } from "vscode";
-import { nearestDartFrogProject, normalizeRoutePath } from "../utils";
+import {
+  Uri,
+  window,
+  OpenDialogOptions,
+  ProgressOptions,
+  workspace,
+} from "vscode";
+import {
+  nearestDartFrogProject,
+  normalizeRoutePath,
+  resolveDartFrogProjectPathFromWorkspace,
+} from "../utils";
 
 /**
  * Command to create a new middleware.
@@ -24,18 +34,22 @@ import { nearestDartFrogProject, normalizeRoutePath } from "../utils";
  * @param {Uri | undefined} uri
  */
 export const newMiddleware = async (uri: Uri | undefined): Promise<void> => {
-  let selectedUri;
+  let selectedPath;
   if (uri === undefined) {
-    selectedUri = await promptForTargetDirectory();
-    if (selectedUri === undefined) {
+    selectedPath = await resolveDartFrogProjectPathFromWorkspace();
+
+    if (selectedPath === undefined) {
+      selectedPath = await promptForTargetDirectory();
+    }
+    if (selectedPath === undefined) {
       window.showErrorMessage("Please select a valid directory");
       return;
     }
   } else {
-    selectedUri = uri.fsPath;
+    selectedPath = uri.fsPath;
   }
 
-  const dartFrogProjectPath = nearestDartFrogProject(selectedUri);
+  const dartFrogProjectPath = nearestDartFrogProject(selectedPath);
   if (dartFrogProjectPath === undefined) {
     window.showErrorMessage(
       "No Dart Frog project found in the selected directory"
@@ -43,7 +57,7 @@ export const newMiddleware = async (uri: Uri | undefined): Promise<void> => {
     return;
   }
 
-  const routePath = normalizeRoutePath(selectedUri, dartFrogProjectPath);
+  const routePath = normalizeRoutePath(selectedPath, dartFrogProjectPath);
 
   const options: ProgressOptions = {
     location: 15,
@@ -67,7 +81,7 @@ export const newMiddleware = async (uri: Uri | undefined): Promise<void> => {
 async function promptForTargetDirectory(): Promise<string | undefined> {
   const options: OpenDialogOptions = {
     canSelectMany: false,
-    openLabel: "Select a folder or file to create the Route in",
+    openLabel: "Select a folder or file to create the middleware in",
     canSelectFolders: true,
     canSelectFiles: true,
   };

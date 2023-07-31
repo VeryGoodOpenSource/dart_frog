@@ -5,6 +5,7 @@
 
 const fs = require("fs");
 const path = require("node:path");
+import { window, workspace } from "vscode";
 
 /**
  * Normalizes a file path to Dart Frog route path from the root of the
@@ -94,4 +95,38 @@ export function isDartFrogProject(filePath: String): boolean {
   }
 
   return false;
+}
+
+/**
+ * Resolves a path in a Dart Frog project, used for when the command is
+ * launched from the command palette.
+ *
+ * The resolution is done in the following order:
+ * 1. If the user has a Dart file open in the editor that is under a `routes`
+ * directory and within a Dart Frog project, then the path of that file is
+ * returned.
+ * 2. If the user has a workspace folder open that is within a Dart Frog
+ * project, then the path of that workspace folder is returned.
+ */
+export async function resolveDartFrogProjectPathFromWorkspace() {
+  if (window.activeTextEditor) {
+    const currentTextEditorPath = window.activeTextEditor.document.uri.fsPath;
+    if (
+      currentTextEditorPath.includes("routes") &&
+      currentTextEditorPath.endsWith(".dart") &&
+      nearestDartFrogProject(currentTextEditorPath) !== undefined
+    ) {
+      return currentTextEditorPath;
+    }
+  } else if (
+    workspace.workspaceFolders &&
+    workspace.workspaceFolders.length > 0
+  ) {
+    const currentWorkspaceFolder = workspace.workspaceFolders[0].uri.fsPath;
+    if (nearestDartFrogProject(currentWorkspaceFolder) !== undefined) {
+      return currentWorkspaceFolder;
+    }
+  }
+
+  return undefined;
 }
