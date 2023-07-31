@@ -119,10 +119,9 @@ export async function resolveDartFrogProjectPathFromWorkspace() {
       currentTextEditorPath.endsWith(".dart") &&
       nearestDartFrogProject(currentTextEditorPath) !== undefined
     ) {
-      // TODO(alestiago): Use path package since a file might end with:
-      // "a_middleware.dart"
-      if (currentTextEditorPath.endsWith("_middleware.dart")) {
-        return currentTextEditorPath.slice(0, "_middleware.dart".length * -1);
+      const filePath = path.parse(currentTextEditorPath);
+      if (filePath.base === "_middleware.dart") {
+        return filePath.dir;
       }
       return currentTextEditorPath;
     }

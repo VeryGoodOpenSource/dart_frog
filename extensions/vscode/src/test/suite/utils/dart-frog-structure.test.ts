@@ -4,6 +4,7 @@ const path = require("node:path");
 
 import { afterEach, beforeEach } from "mocha";
 import * as assert from "assert";
+import { test } from "node:test";
 
 suite("normalizeRoutePath", () => {
   let fsStub: any;
@@ -272,6 +273,64 @@ suite("isDartFrogProject", () => {
 
       const result = isDartFrogProject(filePath);
       assert.equal(result, false);
+    });
+  });
+
+  suite("resolveDartFrogProjectPathFromWorkspace", () => {
+    let vscodeStub: any;
+    let fsStub: any;
+    let resolveDartFrogProjectPathFromWorkspace: any;
+
+    beforeEach(() => {
+      vscodeStub = {
+        workspace: sinon.stub(),
+        window: sinon.stub(),
+      };
+      fsStub = {
+        existsSync: sinon.stub(),
+        readFileSync: sinon.stub(),
+      };
+      fsStub.existsSync.returns(true);
+      fsStub.readFileSync.returns(validPubspecYaml);
+
+      resolveDartFrogProjectPathFromWorkspace = proxyquire(
+        "../../../utils/dart-frog-structure",
+        {
+          vscode: vscodeStub,
+        }
+      ).resolveDartFrogProjectPathFromWorkspace;
+    });
+
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    test("returns the path of the active route Dart file", () => {
+      vscodeStub.window.activeTextEditor.returns({
+        document: {
+          uri: {
+            fsPath: `/home/user/routes/index.dart`,
+          },
+        },
+      });
+
+      const result = resolveDartFrogProjectPathFromWorkspace();
+
+      assert.equal(result, "/home/user/routes/index.dart");
+    });
+
+    test("returns the directory path of the active middleware Dart file", () => {
+      vscodeStub.window.activeTextEditor.returns({
+        document: {
+          uri: {
+            fsPath: `/home/user/routes/a/_middleware.dart`,
+          },
+        },
+      });
+
+      const result = resolveDartFrogProjectPathFromWorkspace();
+
+      assert.equal(result, "/home/user/routes/a");
     });
   });
 });

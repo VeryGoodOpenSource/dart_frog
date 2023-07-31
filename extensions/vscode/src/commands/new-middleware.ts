@@ -1,12 +1,6 @@
 const cp = require("child_process");
 
-import {
-  Uri,
-  window,
-  OpenDialogOptions,
-  ProgressOptions,
-  workspace,
-} from "vscode";
+import { Uri, window, OpenDialogOptions, ProgressOptions } from "vscode";
 import {
   nearestDartFrogProject,
   normalizeRoutePath,
