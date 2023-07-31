@@ -88,6 +88,13 @@ suite("normalizeRoutePath", () => {
       normalizeRoutePath(`${dartFrogPath}/tennis.dart`, dartFrogPath),
       "/"
     );
+    assert.equal(
+      normalizeRoutePath(
+        `${dartFrogPath}/routes/a/b/_middleware.dart`,
+        dartFrogPath
+      ),
+      "a/b"
+    );
   });
 });
 
