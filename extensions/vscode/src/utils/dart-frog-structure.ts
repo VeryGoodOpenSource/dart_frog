@@ -98,8 +98,9 @@ export function isDartFrogProject(filePath: String): boolean {
 }
 
 /**
- * Resolves a path in a Dart Frog project, used for when the command is
- * launched from the command palette.
+ * Resolves a path in a Dart Frog project.
+ *
+ * Usually used for when the command is launched from the command palette.
  *
  * The resolution is done in the following order:
  * 1. If the user has a Dart file open in the editor that is under a `routes`
