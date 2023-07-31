@@ -125,10 +125,9 @@ export async function resolveDartFrogProjectPathFromWorkspace() {
       }
       return currentTextEditorPath;
     }
-  } else if (
-    workspace.workspaceFolders &&
-    workspace.workspaceFolders.length > 0
-  ) {
+  }
+
+  if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
     const currentWorkspaceFolder = workspace.workspaceFolders[0].uri.fsPath;
     if (nearestDartFrogProject(currentWorkspaceFolder) !== undefined) {
       return currentWorkspaceFolder;
