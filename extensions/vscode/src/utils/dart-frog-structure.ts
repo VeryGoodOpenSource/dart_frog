@@ -105,18 +105,22 @@ export function isDartFrogProject(filePath: String): boolean {
  * The resolution is done in the following order:
  * 1. If the user has a Dart file open in the editor that is under a `routes`
  * directory and within a Dart Frog project, then the path of that file is
- * returned.
+ * returned (without the `_middleware.dart` suffix, if any).
  * 2. If the user has a workspace folder open that is within a Dart Frog
  * project, then the path of that workspace folder is returned.
  */
 export async function resolveDartFrogProjectPathFromWorkspace() {
   if (window.activeTextEditor) {
     const currentTextEditorPath = window.activeTextEditor.document.uri.fsPath;
+
     if (
       currentTextEditorPath.includes("routes") &&
       currentTextEditorPath.endsWith(".dart") &&
       nearestDartFrogProject(currentTextEditorPath) !== undefined
     ) {
+      if (currentTextEditorPath.endsWith("_middleware.dart")) {
+        return currentTextEditorPath.slice(0, "_middleware.dart".length * -1);
+      }
       return currentTextEditorPath;
     }
   } else if (
