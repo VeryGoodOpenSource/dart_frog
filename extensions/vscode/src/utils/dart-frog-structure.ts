@@ -23,7 +23,7 @@ const path = require("node:path");
 export function normalizeRoutePath(
   selectedPath: String,
   dartFrogProjectPath: String
-): String {
+): string {
   const routesPath = path.join(dartFrogProjectPath, "routes");
   if (!selectedPath.startsWith(routesPath)) {
     return "/";
