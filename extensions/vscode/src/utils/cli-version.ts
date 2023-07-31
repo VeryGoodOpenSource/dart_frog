@@ -28,7 +28,7 @@ export function readDartFrogCLIVersion(): String | undefined {
  * Collects the latest available version of Dart Frog CLI.
  *
  * @returns {String | undefined} The latest available semantic version of
- * Dart Frog CLI, or null if Dart Frog CLI is not installed.
+ * Dart Frog CLI, or undefined if Dart Frog CLI is not installed.
  */
 export function readLatestDartFrogCLIVersion(): String | undefined {
   try {
