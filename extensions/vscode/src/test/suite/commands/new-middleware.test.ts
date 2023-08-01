@@ -19,6 +19,7 @@ suite("new-middleware command", () => {
         showErrorMessage: sinon.stub(),
         showOpenDialog: sinon.stub(),
         withProgress: sinon.stub(),
+        showInputBox: sinon.stub(),
       },
     };
     childProcessStub = {
@@ -67,8 +68,10 @@ suite("new-middleware command", () => {
 
     test("is not shown when Uri is undefined but resolves a path from workspace", async () => {
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
-        validUri.fsPath
+        "/home/dart_frog/routes"
       );
+      utilsStub.nearestDartFrogProject.returns("/home/dart_frog/");
+      utilsStub.normalizeRoutePath.returns("/");
 
       await command.newMiddleware();
 
@@ -132,6 +135,75 @@ suite("new-middleware command", () => {
       });
     }
   );
+
+  suite("prompts for route path", () => {
+    test("is shown when Uri is undefined and selected file is valid", async () => {
+      vscodeStub.window.showInputBox.returns("animals/frog");
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+        "home/routes/animals/frog"
+      );
+      utilsStub.nearestDartFrogProject.returns("home/routes/animals/frog");
+      utilsStub.normalizeRoutePath.returns("/animals/frog");
+
+      await command.newMiddleware();
+
+      sinon.assert.calledWith(vscodeStub.window.showInputBox, {
+        prompt: "Middleware's route path",
+        value: "/animals/frog",
+        placeHolder: "_middleware",
+      });
+    });
+
+    test("is not shown when Uri is defined and selected file is valid", async () => {
+      utilsStub.nearestDartFrogProject.returns("home/routes/animals/frog");
+      utilsStub.normalizeRoutePath.returns("/animals/frog");
+
+      await command.newMiddleware(validUri);
+
+      sinon.assert.neverCalledWith(vscodeStub.window.showInputBox, {
+        prompt: "Middleware's route path",
+        value: "/animals/frog/",
+        placeHolder: "_middleware",
+      });
+    });
+  });
+
+  suite("invalid route path error message", () => {
+    const errorMessage = "Please enter a valid route path";
+
+    beforeEach(() => {
+      vscodeStub.window.showInputBox.returns("animals/frog");
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+        "home/routes/animals/frog"
+      );
+      utilsStub.nearestDartFrogProject.returns("home/routes/animals/frog");
+      utilsStub.normalizeRoutePath.returns("/animals/frog");
+    });
+
+    test("is shown when prompt is empty", async () => {
+      vscodeStub.window.showInputBox.returns("");
+
+      await command.newMiddleware();
+
+      sinon.assert.calledWith(vscodeStub.window.showErrorMessage, errorMessage);
+    });
+
+    test("is shown when prompt is white spaced", async () => {
+      vscodeStub.window.showInputBox.returns("  ");
+
+      await command.newMiddleware();
+
+      sinon.assert.calledWith(vscodeStub.window.showErrorMessage, errorMessage);
+    });
+
+    test("is shown when prompt is undefined", async () => {
+      vscodeStub.window.showInputBox.returns(undefined);
+
+      await command.newMiddleware();
+
+      sinon.assert.calledWith(vscodeStub.window.showErrorMessage, errorMessage);
+    });
+  });
 
   test("shows progess on middleware creation", async () => {
     const routePath = "food/pizza";
@@ -218,6 +290,25 @@ suite("new-middleware command", () => {
       sinon.assert.calledWith(
         childProcessStub.exec,
         `dart_frog new middleware 'food/italian'`
+      );
+    });
+
+    test("successfully with prompt route path", async () => {
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+        "home/routes/animals/frog"
+      );
+      utilsStub.nearestDartFrogProject.returns("home/routes/animals/frog");
+      utilsStub.normalizeRoutePath.returns("/animals/frog");
+      vscodeStub.window.showInputBox.returns("animals/lion");
+
+      await command.newMiddleware();
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      await progressFunction();
+
+      sinon.assert.calledWith(
+        childProcessStub.exec,
+        `dart_frog new middleware 'animals/lion'`
       );
     });
   });
