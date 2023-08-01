@@ -61,7 +61,7 @@ suite("new-middleware command", () => {
 
       sinon.assert.calledWith(vscodeStub.window.showOpenDialog, {
         canSelectMany: false,
-        openLabel: "Select a folder or file to create the middleware in",
+        openLabel: "Select a folder or file to create the Route in",
         canSelectFolders: true,
         canSelectFiles: true,
       });
