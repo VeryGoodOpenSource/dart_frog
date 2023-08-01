@@ -313,7 +313,7 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
     };
 
     const result = resolveDartFrogProjectPathFromWorkspace(
-      sinon.stub().returns(true)
+      sinon.stub().returns("")
     );
 
     sinon.assert.match(result, "/home/user/routes/index.dart");
@@ -331,7 +331,7 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
       ];
 
       const result = resolveDartFrogProjectPathFromWorkspace(
-        sinon.stub().returns(true)
+        sinon.stub().returns("")
       );
 
       sinon.assert.match(result, "/home/user/routes/animals");
@@ -354,7 +354,7 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
       ];
 
       const result = resolveDartFrogProjectPathFromWorkspace(
-        sinon.stub().returns(true)
+        sinon.stub().returns("")
       );
 
       sinon.assert.match(result, "/home/user/");
@@ -377,7 +377,7 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
       ];
 
       const result = resolveDartFrogProjectPathFromWorkspace(
-        sinon.stub().returns(true)
+        sinon.stub().returns("")
       );
 
       sinon.assert.match(result, "/home/user/");
@@ -419,7 +419,7 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
       vscodeStub.workspace.workspaceFolders = undefined;
 
       const result = resolveDartFrogProjectPathFromWorkspace(
-        sinon.stub().returns(true)
+        sinon.stub().returns("")
       );
 
       sinon.assert.match(result, undefined);
@@ -442,7 +442,7 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
       ];
 
       const result = resolveDartFrogProjectPathFromWorkspace(
-        sinon.stub().returns(false)
+        sinon.stub().returns(undefined)
       );
 
       sinon.assert.match(result, undefined);

@@ -104,18 +104,24 @@ export function isDartFrogProject(filePath: String): boolean {
  * Usually used for when the command is launched from the command palette since
  * it lacks a defined path.
  *
- * The resolution is done in the following order:
+ * @param {function} _nearestDartFrogProject A function, used for testing, that
+ * finds the root of a Dart Frog project from a file path. Defaults to
+ * {@link nearestDartFrogProject}.
+ *
+ * @returns {string | undefined} A path, derived from the user's workspace, that
+ * is located within a Dart Frog project; or `undefined` if no such path could
+ * be resolved. The resolution is done in the following order:
+ *
  * 1. If the user has a Dart file open in the editor that is under a `routes`
  * directory and within a Dart Frog project, then the path of that file is
  * returned.
  * 2. If the user has a workspace folder open that is within a Dart Frog
  * project, then the path of that workspace folder is returned.
- *
- * If none of the above conditions are met, then `undefined` is returned.
  */
 export function resolveDartFrogProjectPathFromWorkspace(
-  isWithinDartFrogProject: (filePath: String) => boolean = (filePath) =>
-    nearestDartFrogProject(filePath) !== undefined
+  _nearestDartFrogProject: (
+    filePath: String
+  ) => String | undefined = nearestDartFrogProject
 ): string | undefined {
   if (window.activeTextEditor) {
     const currentTextEditorPath = window.activeTextEditor.document.uri.fsPath;
@@ -123,7 +129,7 @@ export function resolveDartFrogProjectPathFromWorkspace(
     if (
       currentTextEditorPath.includes("routes") &&
       currentTextEditorPath.endsWith(".dart") &&
-      isWithinDartFrogProject(currentTextEditorPath)
+      _nearestDartFrogProject(currentTextEditorPath) !== undefined
     ) {
       return currentTextEditorPath;
     }
@@ -131,7 +137,7 @@ export function resolveDartFrogProjectPathFromWorkspace(
 
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
     const currentWorkspaceFolder = workspace.workspaceFolders[0].uri.fsPath;
-    if (isWithinDartFrogProject(currentWorkspaceFolder)) {
+    if (_nearestDartFrogProject(currentWorkspaceFolder) !== undefined) {
       return currentWorkspaceFolder;
     }
   }
