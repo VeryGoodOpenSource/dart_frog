@@ -37,7 +37,10 @@ export function normalizeRoutePath(
   const isFile = parsedRelativePath.ext !== "";
   if (!isFile) {
     routePath = relativePath;
-  } else if (parsedRelativePath.name === "index") {
+  } else if (
+    parsedRelativePath.name === "index" ||
+    parsedRelativePath.name === "_middleware"
+  ) {
     routePath = parsedRelativePath.dir;
   } else {
     routePath = path.join(parsedRelativePath.dir, parsedRelativePath.name);
