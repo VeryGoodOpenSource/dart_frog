@@ -143,6 +143,7 @@ suite("new-route command", () => {
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
         validUri.fsPath
       );
+      utilsStub.normalizeRoutePath.returns("/");
 
       await command.newRoute();
 
