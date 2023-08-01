@@ -98,21 +98,24 @@ export function isDartFrogProject(filePath: String): boolean {
 }
 
 /**
- * Resolves a path in a Dart Frog project.
+ * Resolves a path of a file or directory within a Dart Frog project from the
+ * user's workspace.
  *
- * Usually used for when the command is launched from the command palette, and
- * hence without a defined path.
+ * Usually used for when the command is launched from the command palette since
+ * it lacks a defined path.
  *
  * The resolution is done in the following order:
  * 1. If the user has a Dart file open in the editor that is under a `routes`
  * directory and within a Dart Frog project, then the path of that file is
- * returned (without the `_middleware.dart` suffix, if any).
+ * returned.
  * 2. If the user has a workspace folder open that is within a Dart Frog
  * project, then the path of that workspace folder is returned.
  *
  * If none of the above conditions are met, then `undefined` is returned.
  */
-export async function resolveDartFrogProjectPathFromWorkspace() {
+export async function resolveDartFrogProjectPathFromWorkspace(): Promise<
+  string | undefined
+> {
   if (window.activeTextEditor) {
     const currentTextEditorPath = window.activeTextEditor.document.uri.fsPath;
 
@@ -121,12 +124,6 @@ export async function resolveDartFrogProjectPathFromWorkspace() {
       currentTextEditorPath.endsWith(".dart") &&
       nearestDartFrogProject(currentTextEditorPath) !== undefined
     ) {
-      const filePath = path.parse(currentTextEditorPath);
-      // TODO(alestiago): Remove this middleware logic directly from
-      normalizeRoutePath;
-      if (filePath.base === "_middleware.dart") {
-        return filePath.dir;
-      }
       return currentTextEditorPath;
     }
   }

@@ -320,20 +320,6 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
     assert.equal(result, "/home/user/routes/index.dart");
   });
 
-  test("returns the directory path of the active middleware Dart file", () => {
-    vscodeStub.window.activeTextEditor.returns({
-      document: {
-        uri: {
-          fsPath: `/home/user/routes/animals/_middleware.dart`,
-        },
-      },
-    });
-
-    const result = resolveDartFrogProjectPathFromWorkspace();
-
-    assert.equal(result, "/home/user/routes/animals");
-  });
-
   suite("returns the directory path of the active workspace folder", () => {
     test("when there is no active text editor", () => {
       vscodeStub.window.activeTextEditor.returns(undefined);
@@ -426,7 +412,7 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
       assert.equal(result, undefined);
     });
 
-    test("when there is active workspace folder nor text editor are Dart Frog projects", () => {
+    test("when there is not an active workspace folder nor text editor that are Dart Frog projects", () => {
       vscodeStub.window.activeTextEditor.returns({
         document: {
           uri: {
