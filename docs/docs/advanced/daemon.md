@@ -44,7 +44,7 @@ The `id` field on the request is used to match the request with the response. As
 
 ---
 
-To organize the accepted requests and its parameters as well as events, there are the "domains". A
+To organize the accepted requests and its parameters as well as events, there are "domains." A
 domain is a group of related requests and events.
 
 The domains are:
