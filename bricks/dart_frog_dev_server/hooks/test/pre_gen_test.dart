@@ -73,6 +73,7 @@ void main() {
               path: 'index.dart',
               route: '/',
               params: [],
+              wildcard: false,
             ),
           ],
           '/hello': [
@@ -81,12 +82,14 @@ void main() {
               path: 'hello.dart',
               route: '/hello',
               params: [],
+              wildcard: false,
             ),
             RouteFile(
               name: 'hello_index',
               path: 'hello/index.dart',
               route: '/',
               params: [],
+              wildcard: false,
             )
           ]
         },
@@ -118,6 +121,7 @@ void main() {
             path: 'hello.dart',
             route: '/hello',
             params: [],
+            wildcard: false,
           ),
         ],
         endpoints: {},
@@ -310,12 +314,14 @@ dev_dependencies:
                 path: 'index.dart',
                 route: '/',
                 params: [],
+                wildcard: false,
               ),
               RouteFile(
                 name: 'hello',
                 path: 'hello.dart',
                 route: '/hello',
                 params: [],
+                wildcard: false,
               ),
             ],
             params: [],
@@ -327,12 +333,14 @@ dev_dependencies:
             path: 'index.dart',
             route: '/',
             params: [],
+            wildcard: false,
           ),
           RouteFile(
             name: 'hello',
             path: 'hello.dart',
             route: '/hello',
             params: [],
+            wildcard: false,
           ),
         ],
         endpoints: {
@@ -342,6 +350,7 @@ dev_dependencies:
               path: 'index.dart',
               route: '/',
               params: [],
+              wildcard: false,
             ),
           ],
           '/hello': [
@@ -350,6 +359,7 @@ dev_dependencies:
               path: 'hello.dart',
               route: '/hello',
               params: [],
+              wildcard: false,
             ),
           ]
         },
