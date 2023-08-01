@@ -64,10 +64,7 @@ export const newMiddleware = async (uri: Uri | undefined): Promise<void> => {
 
   let routePath = normalizedRoutePath;
   if (uri === undefined) {
-    const separator = normalizedRoutePath.endsWith("/") ? "" : "/";
-    const newRoutePath = await promptRoutePath(
-      `${normalizedRoutePath}${separator}`
-    );
+    const newRoutePath = await promptRoutePath(`${normalizedRoutePath}`);
     if (newRoutePath === undefined || newRoutePath.trim() === "") {
       window.showErrorMessage("Please enter a valid route path");
       return;
