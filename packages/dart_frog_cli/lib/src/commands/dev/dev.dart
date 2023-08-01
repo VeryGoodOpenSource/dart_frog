@@ -70,7 +70,7 @@ class DevCommand extends DartFrogCommand {
 
     _stdinSubscription = _stdin.listen(
       (event) {
-        if (event.length == 1 && event.first == 82) {
+        if (event.length == 1 && event.first == 'R'.codeUnitAt(0)) {
           _devServerRunner.reload();
         }
       },
