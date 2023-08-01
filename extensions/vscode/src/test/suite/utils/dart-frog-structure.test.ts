@@ -4,7 +4,6 @@ const path = require("node:path");
 
 import { afterEach, beforeEach } from "mocha";
 import * as assert from "assert";
-import { test } from "node:test";
 
 suite("normalizeRoutePath", () => {
   let fsStub: any;
