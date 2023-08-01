@@ -127,9 +127,7 @@ suite("new-route command", () => {
     test("is shown when Uri is undefined and fails to resolve a path from workspace", async () => {
       vscodeStub.window.showInputBox.returns(validRouteName);
       vscodeStub.window.showOpenDialog.returns(Promise.resolve(undefined));
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
-        Promise.resolve(undefined)
-      );
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
 
       await command.newRoute();
 
@@ -143,7 +141,7 @@ suite("new-route command", () => {
 
     test("is not shown when Uri is undefined but resolves a path from workspace", async () => {
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
-        Promise.resolve(validUri.fsPath)
+        validUri.fsPath
       );
 
       await command.newRoute();

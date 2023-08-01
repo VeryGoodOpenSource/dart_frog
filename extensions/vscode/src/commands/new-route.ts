@@ -36,7 +36,7 @@ import {
 export const newRoute = async (uri: Uri | undefined): Promise<void> => {
   let selectedPath;
   if (uri === undefined) {
-    selectedPath = await resolveDartFrogProjectPathFromWorkspace();
+    selectedPath = resolveDartFrogProjectPathFromWorkspace();
 
     if (selectedPath === undefined) {
       selectedPath = await promptForTargetDirectory();

@@ -113,24 +113,46 @@ export function isDartFrogProject(filePath: String): boolean {
  *
  * If none of the above conditions are met, then `undefined` is returned.
  */
-export async function resolveDartFrogProjectPathFromWorkspace(): Promise<
-  string | undefined
-> {
+export function resolveDartFrogProjectPathFromWorkspace(
+  isWithinDartFrogProject: (filePath: String) => boolean = (filePath) =>
+    nearestDartFrogProject(filePath) !== undefined
+): string | undefined {
+  console.log("resolveDartFrogProjectPathFromWorkspace");
+  console.log(`window.activeTextEditor: ${window.activeTextEditor}`);
   if (window.activeTextEditor) {
     const currentTextEditorPath = window.activeTextEditor.document.uri.fsPath;
+    console.log(`currentTextEditorPath: ${currentTextEditorPath}`);
+
+    console.log(
+      `currentTextEditorPath.includes("routes"): ${currentTextEditorPath.includes(
+        "routes"
+      )}`
+    );
+    console.log(
+      `currentTextEditorPath.endsWith(".dart"): ${currentTextEditorPath.endsWith(
+        ".dart"
+      )}`
+    );
+    console.log(
+      `nearestDartFrogProject(currentTextEditorPath): ${isWithinDartFrogProject(
+        currentTextEditorPath
+      )}`
+    );
 
     if (
       currentTextEditorPath.includes("routes") &&
       currentTextEditorPath.endsWith(".dart") &&
-      nearestDartFrogProject(currentTextEditorPath) !== undefined
+      isWithinDartFrogProject(currentTextEditorPath) !== undefined
     ) {
       return currentTextEditorPath;
     }
   }
 
+  console.log(`workspace.workspaceFolders: ${workspace.workspaceFolders}`);
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
     const currentWorkspaceFolder = workspace.workspaceFolders[0].uri.fsPath;
-    if (nearestDartFrogProject(currentWorkspaceFolder) !== undefined) {
+    console.log(`currentWorkspaceFolder: ${currentWorkspaceFolder}`);
+    if (isWithinDartFrogProject(currentWorkspaceFolder) !== undefined) {
       return currentWorkspaceFolder;
     }
   }

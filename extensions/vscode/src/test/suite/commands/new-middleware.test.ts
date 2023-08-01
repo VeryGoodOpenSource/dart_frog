@@ -53,9 +53,7 @@ suite("new-middleware command", () => {
   suite("file open dialog", () => {
     test("is shown when Uri is undefined and fails to resolve a path from workspace", async () => {
       vscodeStub.window.showOpenDialog.returns(Promise.resolve(undefined));
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
-        Promise.resolve(undefined)
-      );
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
 
       await command.newMiddleware();
 
@@ -69,7 +67,7 @@ suite("new-middleware command", () => {
 
     test("is not shown when Uri is undefined but resolves a path from workspace", async () => {
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
-        Promise.resolve(validUri.fsPath)
+        validUri.fsPath
       );
 
       await command.newMiddleware();

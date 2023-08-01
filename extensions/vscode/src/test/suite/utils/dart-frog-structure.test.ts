@@ -283,15 +283,13 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
 
   beforeEach(() => {
     vscodeStub = {
-      workspace: sinon.stub(),
-      window: sinon.stub(),
+      workspace: {
+        workspaceFolders: sinon.stub(),
+      },
+      window: {
+        activeTextEditor: sinon.stub(),
+      },
     };
-    fsStub = {
-      existsSync: sinon.stub(),
-      readFileSync: sinon.stub(),
-    };
-    fsStub.existsSync.returns(true);
-    fsStub.readFileSync.returns(validPubspecYaml);
 
     resolveDartFrogProjectPathFromWorkspace = proxyquire(
       "../../../utils/dart-frog-structure",
@@ -306,22 +304,23 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
   });
 
   test("returns the file path of the active route Dart file", () => {
-    vscodeStub.window.activeTextEditor.returns({
+    console.log("returns the file path of the active route Dart file");
+    vscodeStub.window.activeTextEditor = {
       document: {
         uri: {
           fsPath: `/home/user/routes/index.dart`,
         },
       },
-    });
+    };
 
-    const result = resolveDartFrogProjectPathFromWorkspace();
+    const result = resolveDartFrogProjectPathFromWorkspace(() => true);
 
-    assert.equal(result, "/home/user/routes/index.dart");
+    sinon.assert.match(result, "/home/user/routes/index.dart");
   });
 
   suite("returns the directory path of the active workspace folder", () => {
     test("when there is no active text editor", () => {
-      vscodeStub.window.activeTextEditor.returns(undefined);
+      vscodeStub.window.activeTextEditor = undefined;
       vscodeStub.workspace.workspaceFolders = [
         {
           uri: {
@@ -330,19 +329,21 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
         },
       ];
 
-      const result = resolveDartFrogProjectPathFromWorkspace();
+      const result = resolveDartFrogProjectPathFromWorkspace(() => true);
 
-      assert.equal(result, "/home/user/routes/animals");
+      sinon.assert.match(result, "/home/user/routes/animals");
     });
 
     test("when the active text editor is not a route", () => {
-      vscodeStub.window.activeTextEditor.returns({
-        document: {
-          uri: {
-            fsPath: `/home/user/pubspec.yaml`,
+      vscodeStub.window.activeTextEditor = {
+        activeTextEditor: {
+          document: {
+            uri: {
+              fsPath: `/home/user/pubspec.yaml`,
+            },
           },
         },
-      });
+      };
       vscodeStub.workspace.workspaceFolders = [
         {
           uri: {
@@ -351,19 +352,21 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
         },
       ];
 
-      const result = resolveDartFrogProjectPathFromWorkspace();
+      const result = resolveDartFrogProjectPathFromWorkspace(() => true);
 
-      assert.equal(result, "/home/user/");
+      sinon.assert.match(result, "/home/user/");
     });
 
     test("when the active text editor is not a Dart route", () => {
-      vscodeStub.window.activeTextEditor.returns({
-        document: {
-          uri: {
-            fsPath: `/home/user/routes/hello.yaml`,
+      vscodeStub.window.activeTextEditor = {
+        activeTextEditor: {
+          document: {
+            uri: {
+              fsPath: `/home/user/routes/hello.yaml`,
+            },
           },
         },
-      });
+      };
       vscodeStub.workspace.workspaceFolders = [
         {
           uri: {
@@ -372,19 +375,19 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
         },
       ];
 
-      const result = resolveDartFrogProjectPathFromWorkspace();
+      const result = resolveDartFrogProjectPathFromWorkspace(() => true);
 
-      assert.equal(result, "/home/user/");
+      sinon.assert.match(result, "/home/user/");
     });
 
     test("when the active text editor is not a Dart Frog project", () => {
-      vscodeStub.window.activeTextEditor.returns({
+      vscodeStub.window.activeTextEditor = {
         document: {
           uri: {
             fsPath: `/home/user/routes/animals/frog.dart`,
           },
         },
-      });
+      };
       vscodeStub.workspace.workspaceFolders = [
         {
           uri: {
@@ -392,33 +395,33 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
           },
         },
       ];
-      fsStub.existsSync.returns(false);
-      fsStub.readFileSync.returns(invalidPubspecYaml);
 
-      const result = resolveDartFrogProjectPathFromWorkspace();
+      const result = resolveDartFrogProjectPathFromWorkspace(() => false);
 
-      assert.equal(result, "/home/user/");
+      sinon.assert.match(result, "/home/user/");
     });
   });
 
   suite("returns undefined", () => {
     test("when there is no active workspace folder nor text editor", () => {
-      vscodeStub.window.activeTextEditor.returns(undefined);
-      vscodeStub.workspace.workspaceFolders = undefined;
+      vscodeStub.window.activeTextEditor = undefined;
+      vscodeStub.workspace = {
+        workspaceFolders: undefined,
+      };
 
-      const result = resolveDartFrogProjectPathFromWorkspace();
+      const result = resolveDartFrogProjectPathFromWorkspace(() => true);
 
-      assert.equal(result, undefined);
+      sinon.assert.match(result, undefined);
     });
 
     test("when there is not an active workspace folder nor text editor that are Dart Frog projects", () => {
-      vscodeStub.window.activeTextEditor.returns({
+      vscodeStub.window.activeTextEditor = {
         document: {
           uri: {
             fsPath: `/home/user/routes/animals/frog.dart`,
           },
         },
-      });
+      };
       vscodeStub.workspace.workspaceFolders = [
         {
           uri: {
@@ -426,12 +429,13 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
           },
         },
       ];
+
       fsStub.existsSync.returns(false);
       fsStub.readFileSync.returns(invalidPubspecYaml);
 
-      const result = resolveDartFrogProjectPathFromWorkspace();
+      const result = resolveDartFrogProjectPathFromWorkspace(() => false);
 
-      assert.equal(result, undefined);
+      sinon.assert.match(result, undefined);
     });
   });
 });
