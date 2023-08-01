@@ -124,20 +124,29 @@ export function resolveDartFrogProjectPathFromWorkspace(
   ) => String | undefined = nearestDartFrogProject
 ): string | undefined {
   if (window.activeTextEditor) {
-    const currentTextEditorPath = window.activeTextEditor.document.uri.fsPath;
+    const currentTextEditorPath = path.normalize(
+      window.activeTextEditor.document.uri.fsPath
+    );
+    const dartFrogProjectPath = _nearestDartFrogProject(currentTextEditorPath);
+    console.log(`dartFrogProjectPath, ${dartFrogProjectPath}`);
 
-    if (
-      currentTextEditorPath.includes("routes") &&
-      currentTextEditorPath.endsWith(".dart") &&
-      _nearestDartFrogProject(currentTextEditorPath) !== undefined
-    ) {
-      return currentTextEditorPath;
+    if (dartFrogProjectPath) {
+      const routesPath = path.join(dartFrogProjectPath, "routes");
+      console.log(`routesPath, ${routesPath}`);
+      if (
+        currentTextEditorPath.startsWith(routesPath) &&
+        currentTextEditorPath.endsWith(".dart")
+      ) {
+        return currentTextEditorPath;
+      }
     }
   }
 
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
-    const currentWorkspaceFolder = workspace.workspaceFolders[0].uri.fsPath;
-    if (_nearestDartFrogProject(currentWorkspaceFolder) !== undefined) {
+    const currentWorkspaceFolder = path.normalize(
+      workspace.workspaceFolders[0].uri.fsPath
+    );
+    if (_nearestDartFrogProject(currentWorkspaceFolder)) {
       return currentWorkspaceFolder;
     }
   }
