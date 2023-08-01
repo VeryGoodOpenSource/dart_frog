@@ -20,6 +20,7 @@ suite("new-route command", () => {
         showErrorMessage: sinon.stub(),
         showInputBox: sinon.stub(),
         showOpenDialog: sinon.stub(),
+        withProgress: sinon.stub(),
       },
     };
     childProcessStub = {
@@ -201,12 +202,27 @@ suite("new-route command", () => {
     }
   );
 
+  test("shows progess on route creation", async () => {
+    utilsStub.normalizeRoutePath.returns("/");
+    const routePath = "pizza";
+    vscodeStub.window.showInputBox.returns(routePath);
+
+    await command.newRoute(validUri);
+
+    sinon.assert.calledOnceWithMatch(vscodeStub.window.withProgress, {
+      location: 15,
+      title: `Creating '${routePath}' route...`,
+    });
+  });
+
   test("runs `dart_frog new route` command with prompted route successfully", async () => {
     utilsStub.normalizeRoutePath.returns("/");
     const routePath = "pizza";
     vscodeStub.window.showInputBox.returns(routePath);
 
     await command.newRoute(validUri);
+    const progressFunction = vscodeStub.window.withProgress.getCall(0).args[1];
+    await progressFunction();
 
     sinon.assert.calledWith(
       childProcessStub.exec,
@@ -223,6 +239,8 @@ suite("new-route command", () => {
     childProcessStub.exec.yields(error);
 
     await command.newRoute(validUri);
+    const progressFunction = vscodeStub.window.withProgress.getCall(0).args[1];
+    await progressFunction();
 
     sinon.assert.calledWith(vscodeStub.window.showErrorMessage, error.message);
   });
