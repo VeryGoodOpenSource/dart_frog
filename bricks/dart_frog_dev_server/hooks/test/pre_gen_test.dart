@@ -389,12 +389,14 @@ dev_dependencies:
                   'path': 'index.dart',
                   'route': '/',
                   'file_params': <String>[],
+                  'wildcard': false,
                 },
                 {
                   'name': 'hello',
                   'path': 'hello.dart',
                   'route': '/hello',
                   'file_params': <String>[],
+                  'wildcard': false,
                 }
               ],
               'directory_params': <String>[],
@@ -406,12 +408,14 @@ dev_dependencies:
               'path': 'index.dart',
               'route': '/',
               'file_params': const <String>[],
+              'wildcard': false,
             },
             {
               'name': 'hello',
               'path': 'hello.dart',
               'route': '/hello',
               'file_params': const <String>[],
+              'wildcard': false,
             }
           ],
           'middleware': [
