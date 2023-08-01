@@ -62,26 +62,25 @@ export const newMiddleware = async (uri: Uri | undefined): Promise<void> => {
     dartFrogProjectPath
   );
 
+  let routePath = normalizedRoutePath;
   if (uri === undefined) {
     const separator = normalizedRoutePath.endsWith("/") ? "" : "/";
-    const routePath = await promptRoutePath(
-      `${normalizedRoutePath}${separator}_middleware`
+    const newRoutePath = await promptRoutePath(
+      `${normalizedRoutePath}${separator}`
     );
-    if (routePath === undefined || routePath.trim() === "") {
+    if (newRoutePath === undefined || newRoutePath.trim() === "") {
       window.showErrorMessage("Please enter a valid route path");
       return;
     }
+    routePath = newRoutePath;
   }
 
   const options: ProgressOptions = {
     location: 15,
-    title: `Creating '${normalizedRoutePath}' middleware...`,
+    title: `Creating '${routePath}' middleware...`,
   };
   window.withProgress(options, async function () {
-    executeDartFrogNewMiddlewareCommand(
-      normalizedRoutePath,
-      dartFrogProjectPath
-    );
+    executeDartFrogNewMiddlewareCommand(routePath, dartFrogProjectPath);
   });
 };
 
