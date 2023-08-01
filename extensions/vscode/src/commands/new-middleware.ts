@@ -1,6 +1,12 @@
 const cp = require("child_process");
 
-import { Uri, window, OpenDialogOptions, ProgressOptions } from "vscode";
+import {
+  Uri,
+  window,
+  OpenDialogOptions,
+  ProgressOptions,
+  InputBoxOptions,
+} from "vscode";
 import {
   nearestDartFrogProject,
   normalizeRoutePath,
@@ -51,7 +57,20 @@ export const newMiddleware = async (uri: Uri | undefined): Promise<void> => {
     return;
   }
 
-  const routePath = normalizeRoutePath(selectedPath, dartFrogProjectPath);
+  const normalizedRoutePath = normalizeRoutePath(
+    selectedPath,
+    dartFrogProjectPath
+  );
+
+  let routePath = normalizedRoutePath;
+  if (uri === undefined) {
+    const newRoutePath = await promptRoutePath(`${normalizedRoutePath}`);
+    if (newRoutePath === undefined || newRoutePath.trim() === "") {
+      window.showErrorMessage("Please enter a valid route path");
+      return;
+    }
+    routePath = newRoutePath;
+  }
 
   const options: ProgressOptions = {
     location: 15,
@@ -86,6 +105,21 @@ async function promptForTargetDirectory(): Promise<string | undefined> {
 
     return undefined;
   });
+}
+
+/**
+ * Shows an input box to the user and returns a Thenable that resolves to
+ * a string the user provided.
+ *
+ * @returns The route name the user provided or undefined if the user canceled.
+ */
+function promptRoutePath(routePath: string): Thenable<string | undefined> {
+  const inputBoxOptions: InputBoxOptions = {
+    prompt: "Middleware's route path",
+    value: routePath,
+    placeHolder: "_middleware",
+  };
+  return window.showInputBox(inputBoxOptions);
 }
 
 /**
