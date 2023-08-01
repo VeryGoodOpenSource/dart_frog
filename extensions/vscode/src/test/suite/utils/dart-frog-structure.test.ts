@@ -303,7 +303,6 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
   });
 
   test("returns the file path of the active route Dart file", () => {
-    console.log("returns the file path of the active route Dart file");
     vscodeStub.window.activeTextEditor = {
       document: {
         uri: {

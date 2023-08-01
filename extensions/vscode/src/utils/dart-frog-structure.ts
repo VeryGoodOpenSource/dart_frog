@@ -128,11 +128,9 @@ export function resolveDartFrogProjectPathFromWorkspace(
       window.activeTextEditor.document.uri.fsPath
     );
     const dartFrogProjectPath = _nearestDartFrogProject(currentTextEditorPath);
-    console.log(`dartFrogProjectPath, ${dartFrogProjectPath}`);
 
     if (dartFrogProjectPath) {
       const routesPath = path.join(dartFrogProjectPath, "routes");
-      console.log(`routesPath, ${routesPath}`);
       if (
         currentTextEditorPath.startsWith(routesPath) &&
         currentTextEditorPath.endsWith(".dart")
