@@ -117,42 +117,21 @@ export function resolveDartFrogProjectPathFromWorkspace(
   isWithinDartFrogProject: (filePath: String) => boolean = (filePath) =>
     nearestDartFrogProject(filePath) !== undefined
 ): string | undefined {
-  console.log("resolveDartFrogProjectPathFromWorkspace");
-  console.log(`window.activeTextEditor: ${window.activeTextEditor}`);
   if (window.activeTextEditor) {
     const currentTextEditorPath = window.activeTextEditor.document.uri.fsPath;
-    console.log(`currentTextEditorPath: ${currentTextEditorPath}`);
-
-    console.log(
-      `currentTextEditorPath.includes("routes"): ${currentTextEditorPath.includes(
-        "routes"
-      )}`
-    );
-    console.log(
-      `currentTextEditorPath.endsWith(".dart"): ${currentTextEditorPath.endsWith(
-        ".dart"
-      )}`
-    );
-    console.log(
-      `nearestDartFrogProject(currentTextEditorPath): ${isWithinDartFrogProject(
-        currentTextEditorPath
-      )}`
-    );
 
     if (
       currentTextEditorPath.includes("routes") &&
       currentTextEditorPath.endsWith(".dart") &&
-      isWithinDartFrogProject(currentTextEditorPath) !== undefined
+      isWithinDartFrogProject(currentTextEditorPath)
     ) {
       return currentTextEditorPath;
     }
   }
 
-  console.log(`workspace.workspaceFolders: ${workspace.workspaceFolders}`);
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
     const currentWorkspaceFolder = workspace.workspaceFolders[0].uri.fsPath;
-    console.log(`currentWorkspaceFolder: ${currentWorkspaceFolder}`);
-    if (isWithinDartFrogProject(currentWorkspaceFolder) !== undefined) {
+    if (isWithinDartFrogProject(currentWorkspaceFolder)) {
       return currentWorkspaceFolder;
     }
   }

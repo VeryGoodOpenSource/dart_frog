@@ -304,7 +304,6 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
   });
 
   test("returns the file path of the active route Dart file", () => {
-    console.log("returns the file path of the active route Dart file");
     vscodeStub.window.activeTextEditor = {
       document: {
         uri: {
@@ -313,7 +312,9 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
       },
     };
 
-    const result = resolveDartFrogProjectPathFromWorkspace(() => true);
+    const result = resolveDartFrogProjectPathFromWorkspace(
+      sinon.stub().returns(true)
+    );
 
     sinon.assert.match(result, "/home/user/routes/index.dart");
   });
@@ -329,18 +330,18 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
         },
       ];
 
-      const result = resolveDartFrogProjectPathFromWorkspace(() => true);
+      const result = resolveDartFrogProjectPathFromWorkspace(
+        sinon.stub().returns(true)
+      );
 
       sinon.assert.match(result, "/home/user/routes/animals");
     });
 
     test("when the active text editor is not a route", () => {
       vscodeStub.window.activeTextEditor = {
-        activeTextEditor: {
-          document: {
-            uri: {
-              fsPath: `/home/user/pubspec.yaml`,
-            },
+        document: {
+          uri: {
+            fsPath: `/home/user/pubspec.yaml`,
           },
         },
       };
@@ -352,18 +353,18 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
         },
       ];
 
-      const result = resolveDartFrogProjectPathFromWorkspace(() => true);
+      const result = resolveDartFrogProjectPathFromWorkspace(
+        sinon.stub().returns(true)
+      );
 
       sinon.assert.match(result, "/home/user/");
     });
 
     test("when the active text editor is not a Dart route", () => {
       vscodeStub.window.activeTextEditor = {
-        activeTextEditor: {
-          document: {
-            uri: {
-              fsPath: `/home/user/routes/hello.yaml`,
-            },
+        document: {
+          uri: {
+            fsPath: `/home/user/routes/hello.yaml`,
           },
         },
       };
@@ -375,7 +376,9 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
         },
       ];
 
-      const result = resolveDartFrogProjectPathFromWorkspace(() => true);
+      const result = resolveDartFrogProjectPathFromWorkspace(
+        sinon.stub().returns(true)
+      );
 
       sinon.assert.match(result, "/home/user/");
     });
@@ -396,7 +399,15 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
         },
       ];
 
-      const result = resolveDartFrogProjectPathFromWorkspace(() => false);
+      const isWithinDartFrogProject = sinon.stub();
+      isWithinDartFrogProject
+        .withArgs("/home/user/routes/animals")
+        .returns(false);
+      isWithinDartFrogProject.withArgs("/home/user/").returns(true);
+
+      const result = resolveDartFrogProjectPathFromWorkspace(
+        isWithinDartFrogProject
+      );
 
       sinon.assert.match(result, "/home/user/");
     });
@@ -405,11 +416,11 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
   suite("returns undefined", () => {
     test("when there is no active workspace folder nor text editor", () => {
       vscodeStub.window.activeTextEditor = undefined;
-      vscodeStub.workspace = {
-        workspaceFolders: undefined,
-      };
+      vscodeStub.workspace.workspaceFolders = undefined;
 
-      const result = resolveDartFrogProjectPathFromWorkspace(() => true);
+      const result = resolveDartFrogProjectPathFromWorkspace(
+        sinon.stub().returns(true)
+      );
 
       sinon.assert.match(result, undefined);
     });
@@ -430,10 +441,9 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
         },
       ];
 
-      fsStub.existsSync.returns(false);
-      fsStub.readFileSync.returns(invalidPubspecYaml);
-
-      const result = resolveDartFrogProjectPathFromWorkspace(() => false);
+      const result = resolveDartFrogProjectPathFromWorkspace(
+        sinon.stub().returns(false)
+      );
 
       sinon.assert.match(result, undefined);
     });
