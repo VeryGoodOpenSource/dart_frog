@@ -5,11 +5,10 @@ import TOCInline from '@theme/TOCInline';
 Dart frog daemon is a standing process that, during its lifetime, will be used by first and
 third-party tools to manage, build, and diagnose dart frog projects.
 
-By design, a daemon is able to manage multiple projects simultaneously. The daemon can run multiple
+By design, the daemon is able to manage multiple projects simultaneously; it can also run multiple
 application instances of the same project if necessary.
 
-The daemon can be started by running the `dart_frog daemon` command. The daemon
-uses [JSON-RPC](https://www.jsonrpc.org/) over stdin/stdout to receive and send messages.
+To start using it,  install the Dart Frog CLI and run the `dart_frog daemon` command. Once running, communicating with it can be done via [JSON-RPC](https://www.jsonrpc.org/) over stdin/stdout to receive and send messages.
 
 The messages can be sorted in three types:
 
