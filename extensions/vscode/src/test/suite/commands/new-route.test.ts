@@ -20,6 +20,7 @@ suite("new-route command", () => {
         showErrorMessage: sinon.stub(),
         showInputBox: sinon.stub(),
         showOpenDialog: sinon.stub(),
+        withProgress: sinon.stub(),
       },
     };
     childProcessStub = {
@@ -29,6 +30,7 @@ suite("new-route command", () => {
     utilsStub = {
       nearestDartFrogProject: sinon.stub(),
       normalizeRoutePath: sinon.stub(),
+      resolveDartFrogProjectPathFromWorkspace: sinon.stub(),
     };
 
     utilsStub.nearestDartFrogProject
@@ -51,28 +53,44 @@ suite("new-route command", () => {
     sinon.restore();
   });
 
-  test("shows input box to input route name", async () => {
-    vscodeStub.window.showInputBox.returns("");
+  suite("shows input box to input route path", () => {
+    test("without suffixing / when not required", async () => {
+      utilsStub.normalizeRoutePath.returns("/");
 
-    await command.newRoute();
+      await command.newRoute(validUri);
 
-    sinon.assert.calledWith(vscodeStub.window.showInputBox, {
-      prompt: "Route name",
-      placeHolder: "index",
+      sinon.assert.calledWith(vscodeStub.window.showInputBox, {
+        prompt: "Route path",
+        value: "/",
+        placeHolder: "index",
+      });
+    });
+
+    test("with suffixing / when required", async () => {
+      utilsStub.normalizeRoutePath.returns("/food");
+
+      await command.newRoute(validUri);
+
+      sinon.assert.calledWith(vscodeStub.window.showInputBox, {
+        prompt: "Route path",
+        value: "/food/",
+        placeHolder: "index",
+      });
     });
   });
 
-  suite("invalid route name error message", () => {
-    const errorMessage = "Please enter a valid route name";
+  suite("invalid route path error message", () => {
+    const errorMessage = "Please enter a valid route path";
 
     beforeEach(() => {
       vscodeStub.window.showErrorMessage.returns({});
+      utilsStub.normalizeRoutePath.returns("/");
     });
 
     test("is shown when prompt is empty", async () => {
       vscodeStub.window.showInputBox.returns("");
 
-      await command.newRoute();
+      await command.newRoute(validUri);
 
       sinon.assert.calledWith(vscodeStub.window.showErrorMessage, errorMessage);
     });
@@ -80,7 +98,7 @@ suite("new-route command", () => {
     test("is shown when prompt is white spaced", async () => {
       vscodeStub.window.showInputBox.returns("  ");
 
-      await command.newRoute();
+      await command.newRoute(validUri);
 
       sinon.assert.calledWith(vscodeStub.window.showErrorMessage, errorMessage);
     });
@@ -88,7 +106,7 @@ suite("new-route command", () => {
     test("is shown when prompt is undefined", async () => {
       vscodeStub.window.showInputBox.returns(undefined);
 
-      await command.newRoute();
+      await command.newRoute(validUri);
 
       sinon.assert.calledWith(vscodeStub.window.showErrorMessage, errorMessage);
     });
@@ -106,18 +124,30 @@ suite("new-route command", () => {
   });
 
   suite("file open dialog", () => {
-    test("is shown when Uri is undefined", async () => {
+    test("is shown when Uri is undefined and fails to resolve a path from workspace", async () => {
       vscodeStub.window.showInputBox.returns(validRouteName);
       vscodeStub.window.showOpenDialog.returns(Promise.resolve(undefined));
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
 
       await command.newRoute();
 
       sinon.assert.calledWith(vscodeStub.window.showOpenDialog, {
         canSelectMany: false,
-        openLabel: "Select a folder or file to create the Route in",
+        openLabel: "Select a folder or file to create the route in",
         canSelectFolders: true,
         canSelectFiles: true,
       });
+    });
+
+    test("is not shown when Uri is undefined but resolves a path from workspace", async () => {
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+        validUri.fsPath
+      );
+      utilsStub.normalizeRoutePath.returns("/");
+
+      await command.newRoute();
+
+      sinon.assert.notCalled(vscodeStub.window.showOpenDialog);
     });
 
     test("is not shown when Uri is defined", async () => {
@@ -185,65 +215,32 @@ suite("new-route command", () => {
     }
   );
 
-  suite("runs `dart_frog new route` command with route", () => {
-    test("successfully with non-index route name", async () => {
-      const routeName = "pizza";
-      vscodeStub.window.showInputBox.returns(routeName);
-      utilsStub.normalizeRoutePath.returns("/");
+  test("shows progess on route creation", async () => {
+    utilsStub.normalizeRoutePath.returns("/");
+    const routePath = "pizza";
+    vscodeStub.window.showInputBox.returns(routePath);
 
-      await command.newRoute(validUri);
+    await command.newRoute(validUri);
 
-      sinon.assert.calledWith(
-        childProcessStub.exec,
-        `dart_frog new route '/${routeName}'`
-      );
+    sinon.assert.calledOnceWithMatch(vscodeStub.window.withProgress, {
+      location: 15,
+      title: `Creating '${routePath}' route...`,
     });
+  });
 
-    test("successfully with deep non-index route name", async () => {
-      const routeName = "pizza";
-      vscodeStub.window.showInputBox.returns(routeName);
+  test("runs `dart_frog new route` command with prompted route successfully", async () => {
+    utilsStub.normalizeRoutePath.returns("/");
+    const routePath = "pizza";
+    vscodeStub.window.showInputBox.returns(routePath);
 
-      const selectedUri = {
-        fsPath: `${validUri.fsPath}/food`,
-      };
-      utilsStub.nearestDartFrogProject.returns(selectedUri);
-      utilsStub.normalizeRoutePath.returns(`food`);
+    await command.newRoute(validUri);
+    const progressFunction = vscodeStub.window.withProgress.getCall(0).args[1];
+    await progressFunction();
 
-      await command.newRoute(selectedUri);
-
-      sinon.assert.calledWith(
-        childProcessStub.exec,
-        `dart_frog new route 'food/${routeName}'`
-      );
-    });
-
-    test("successfully with index route name", async () => {
-      const routeName = "index";
-      vscodeStub.window.showInputBox.returns(routeName);
-      utilsStub.normalizeRoutePath.returns("/");
-
-      await command.newRoute(validUri);
-
-      sinon.assert.calledWith(childProcessStub.exec, `dart_frog new route '/'`);
-    });
-
-    test("successfully with deep index route name", async () => {
-      const routeName = "index";
-      vscodeStub.window.showInputBox.returns(routeName);
-
-      const selectedUri = {
-        fsPath: `${validUri.fsPath}/food`,
-      };
-      utilsStub.nearestDartFrogProject.returns(selectedUri);
-      utilsStub.normalizeRoutePath.returns("food");
-
-      await command.newRoute(selectedUri);
-
-      sinon.assert.calledWith(
-        childProcessStub.exec,
-        `dart_frog new route 'food'`
-      );
-    });
+    sinon.assert.calledWith(
+      childProcessStub.exec,
+      `dart_frog new route '${routePath}'`
+    );
   });
 
   test("shows error message when `dart_frog new route` fails", async () => {
@@ -255,6 +252,8 @@ suite("new-route command", () => {
     childProcessStub.exec.yields(error);
 
     await command.newRoute(validUri);
+    const progressFunction = vscodeStub.window.withProgress.getCall(0).args[1];
+    await progressFunction();
 
     sinon.assert.calledWith(vscodeStub.window.showErrorMessage, error.message);
   });

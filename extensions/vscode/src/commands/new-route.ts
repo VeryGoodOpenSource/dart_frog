@@ -1,9 +1,17 @@
 const cp = require("child_process");
-const path = require("node:path");
 
-import { InputBoxOptions, Uri, window, OpenDialogOptions } from "vscode";
-import { nearestDartFrogProject, normalizeRoutePath } from "../utils";
-import { normalize } from "path";
+import {
+  InputBoxOptions,
+  Uri,
+  window,
+  OpenDialogOptions,
+  ProgressOptions,
+} from "vscode";
+import {
+  nearestDartFrogProject,
+  normalizeRoutePath,
+  resolveDartFrogProjectPathFromWorkspace,
+} from "../utils";
 
 /**
  * Command to create a new route.
@@ -26,24 +34,22 @@ import { normalize } from "path";
  * @param {Uri | undefined} uri
  */
 export const newRoute = async (uri: Uri | undefined): Promise<void> => {
-  const routeName = await promptRouteName();
-  if (routeName === undefined || routeName.trim() === "") {
-    window.showErrorMessage("Please enter a valid route name");
-    return;
-  }
-
-  let selectedUri;
+  let selectedPath;
   if (uri === undefined) {
-    selectedUri = await promptForTargetDirectory();
-    if (selectedUri === undefined) {
+    selectedPath = resolveDartFrogProjectPathFromWorkspace();
+
+    if (selectedPath === undefined) {
+      selectedPath = await promptForTargetDirectory();
+    }
+    if (selectedPath === undefined) {
       window.showErrorMessage("Please select a valid directory");
       return;
     }
   } else {
-    selectedUri = uri.fsPath;
+    selectedPath = uri.fsPath;
   }
 
-  const dartFrogProjectPath = nearestDartFrogProject(selectedUri);
+  const dartFrogProjectPath = nearestDartFrogProject(selectedPath);
   if (dartFrogProjectPath === undefined) {
     window.showErrorMessage(
       "No Dart Frog project found in the selected directory"
@@ -52,17 +58,24 @@ export const newRoute = async (uri: Uri | undefined): Promise<void> => {
   }
 
   const normalizedRoutePath = normalizeRoutePath(
-    selectedUri,
+    selectedPath,
     dartFrogProjectPath
   );
 
-  let routePath = normalizedRoutePath;
-  if (routeName !== "index") {
-    const separator = routePath.endsWith("/") ? "" : "/";
-    routePath = `${routePath}${separator}${routeName}`;
+  const separator = normalizedRoutePath.endsWith("/") ? "" : "/";
+  const routePath = await promptRouteName(`${normalizedRoutePath}${separator}`);
+  if (routePath === undefined || routePath.trim() === "") {
+    window.showErrorMessage("Please enter a valid route path");
+    return;
   }
 
-  executeDartFrogNewRouteCommand(routePath, dartFrogProjectPath);
+  const options: ProgressOptions = {
+    location: 15,
+    title: `Creating '${routePath}' route...`,
+  };
+  window.withProgress(options, async function () {
+    executeDartFrogNewRouteCommand(routePath, dartFrogProjectPath);
+  });
 };
 
 /**
@@ -71,9 +84,10 @@ export const newRoute = async (uri: Uri | undefined): Promise<void> => {
  *
  * @returns The route name the user provided or undefined if the user canceled.
  */
-function promptRouteName(): Thenable<string | undefined> {
+function promptRouteName(routePath: string): Thenable<string | undefined> {
   const inputBoxOptions: InputBoxOptions = {
-    prompt: "Route name",
+    prompt: "Route path",
+    value: routePath,
     placeHolder: "index",
   };
   return window.showInputBox(inputBoxOptions);
@@ -92,7 +106,7 @@ function promptRouteName(): Thenable<string | undefined> {
 async function promptForTargetDirectory(): Promise<string | undefined> {
   const options: OpenDialogOptions = {
     canSelectMany: false,
-    openLabel: "Select a folder or file to create the Route in",
+    openLabel: "Select a folder or file to create the route in",
     canSelectFolders: true,
     canSelectFiles: true,
   };
