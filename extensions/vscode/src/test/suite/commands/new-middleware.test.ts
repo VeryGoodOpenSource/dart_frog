@@ -203,18 +203,6 @@ suite("new-middleware command", () => {
 
       sinon.assert.calledWith(vscodeStub.window.showErrorMessage, errorMessage);
     });
-
-    // test("is not shown when prompt is valid", async () => {
-    //   vscodeStub.window.showInputBox.returns("animals/frog");
-
-    //   await command.newMiddleware();
-
-    //   // TODO(alestigo): Uses sinon.asserts over assert.
-    //   const wantedCalls = vscodeStub.window.showErrorMessage
-    //     .getCalls()
-    //     .filter((call: any) => call.args[0] === errorMessage);
-    //   assert.equal(wantedCalls.length, 0);
-    // });
   });
 
   test("shows progess on middleware creation", async () => {
@@ -302,6 +290,25 @@ suite("new-middleware command", () => {
       sinon.assert.calledWith(
         childProcessStub.exec,
         `dart_frog new middleware 'food/italian'`
+      );
+    });
+
+    test("successfully with prompt route path", async () => {
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+        "home/routes/animals/frog"
+      );
+      utilsStub.nearestDartFrogProject.returns("home/routes/animals/frog");
+      utilsStub.normalizeRoutePath.returns("/animals/frog");
+      vscodeStub.window.showInputBox.returns("animals/lion");
+
+      await command.newMiddleware();
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      await progressFunction();
+
+      sinon.assert.calledWith(
+        childProcessStub.exec,
+        `dart_frog new middleware 'animals/lion'`
       );
     });
   });
