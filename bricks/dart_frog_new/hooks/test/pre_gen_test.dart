@@ -136,7 +136,12 @@ void main() {
     test('preGen completes', () {
       expect(
         ExitOverrides.runZoned(
-          () async => preGen(_FakeHookContext()),
+          () async => preGen(
+            _FakeHookContext(),
+            buildConfiguration: (_) {
+              throw Exception('oops');
+            },
+          ),
           exit: (_) {},
         ),
         completes,
