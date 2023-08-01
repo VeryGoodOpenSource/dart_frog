@@ -133,7 +133,7 @@ suite("isCompatibleDartFrogCLIVersion", () => {
 
   test("returns false if the version of Dart Frog CLI installed in the user's system is not compatible with this extension", () => {
     assert.strictEqual(
-      cliVersion.isCompatibleDartFrogCLIVersion("1.0.0"),
+      cliVersion.isCompatibleDartFrogCLIVersion("2.0.0"),
       false
     );
     assert.strictEqual(
