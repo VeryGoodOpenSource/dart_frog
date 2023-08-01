@@ -30,6 +30,7 @@ suite("new-route command", () => {
     utilsStub = {
       nearestDartFrogProject: sinon.stub(),
       normalizeRoutePath: sinon.stub(),
+      resolveDartFrogProjectPathFromWorkspace: sinon.stub(),
     };
 
     utilsStub.nearestDartFrogProject
@@ -123,9 +124,12 @@ suite("new-route command", () => {
   });
 
   suite("file open dialog", () => {
-    test("is shown when Uri is undefined", async () => {
+    test("is shown when Uri is undefined and fails to resolve a path from workspace", async () => {
       vscodeStub.window.showInputBox.returns(validRouteName);
       vscodeStub.window.showOpenDialog.returns(Promise.resolve(undefined));
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+        Promise.resolve(undefined)
+      );
 
       await command.newRoute();
 
@@ -135,6 +139,16 @@ suite("new-route command", () => {
         canSelectFolders: true,
         canSelectFiles: true,
       });
+    });
+
+    test("is not shown when Uri is undefined but resolves a path from workspace", async () => {
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+        Promise.resolve(validUri.fsPath)
+      );
+
+      await command.newRoute();
+
+      sinon.assert.notCalled(vscodeStub.window.showOpenDialog);
     });
 
     test("is not shown when Uri is defined", async () => {

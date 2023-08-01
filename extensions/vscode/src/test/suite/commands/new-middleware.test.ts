@@ -51,7 +51,7 @@ suite("new-middleware command", () => {
   });
 
   suite("file open dialog", () => {
-    test("is shown when Uri is undefined and fails to resolve", async () => {
+    test("is shown when Uri is undefined and fails to resolve a path from workspace", async () => {
       vscodeStub.window.showOpenDialog.returns(Promise.resolve(undefined));
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
         Promise.resolve(undefined)
@@ -61,14 +61,13 @@ suite("new-middleware command", () => {
 
       sinon.assert.calledWith(vscodeStub.window.showOpenDialog, {
         canSelectMany: false,
-        openLabel: "Select a folder or file to create the Route in",
+        openLabel: "Select a folder or file to create the middleware in",
         canSelectFolders: true,
         canSelectFiles: true,
       });
     });
 
-    test("is not shown when Uri is undefined but resolves", async () => {
-      vscodeStub.window.showOpenDialog.returns(Promise.resolve(undefined));
+    test("is not shown when Uri is undefined but resolves a path from workspace", async () => {
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
         Promise.resolve(validUri.fsPath)
       );
