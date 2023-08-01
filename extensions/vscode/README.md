@@ -21,7 +21,7 @@ Dart Frog can be installed from the [VS Code Marketplace](https://marketplace.vi
 
 ## Demonstration
 
-![demonstration](assets/new-route-middleware-usage.gif)
+![demonstration](https://github.com/VeryGoodOpenSource/dart_frog/blob/main/extensions/vscode/assets/new-route-middleware-usage.gif)
 
 [ci_link]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/main.yaml
 [dart_frog_link_dark]: https://github.com/verygoodopensource/dart_frog#gh-dark-mode-only
