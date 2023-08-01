@@ -7,7 +7,11 @@ import {
   OpenDialogOptions,
   ProgressOptions,
 } from "vscode";
-import { nearestDartFrogProject, normalizeRoutePath } from "../utils";
+import {
+  nearestDartFrogProject,
+  normalizeRoutePath,
+  resolveDartFrogProjectPathFromWorkspace,
+} from "../utils";
 
 /**
  * Command to create a new route.
@@ -30,18 +34,22 @@ import { nearestDartFrogProject, normalizeRoutePath } from "../utils";
  * @param {Uri | undefined} uri
  */
 export const newRoute = async (uri: Uri | undefined): Promise<void> => {
-  let selectedUri;
+  let selectedPath;
   if (uri === undefined) {
-    selectedUri = await promptForTargetDirectory();
-    if (selectedUri === undefined) {
+    selectedPath = resolveDartFrogProjectPathFromWorkspace();
+
+    if (selectedPath === undefined) {
+      selectedPath = await promptForTargetDirectory();
+    }
+    if (selectedPath === undefined) {
       window.showErrorMessage("Please select a valid directory");
       return;
     }
   } else {
-    selectedUri = uri.fsPath;
+    selectedPath = uri.fsPath;
   }
 
-  const dartFrogProjectPath = nearestDartFrogProject(selectedUri);
+  const dartFrogProjectPath = nearestDartFrogProject(selectedPath);
   if (dartFrogProjectPath === undefined) {
     window.showErrorMessage(
       "No Dart Frog project found in the selected directory"
@@ -50,7 +58,7 @@ export const newRoute = async (uri: Uri | undefined): Promise<void> => {
   }
 
   const normalizedRoutePath = normalizeRoutePath(
-    selectedUri,
+    selectedPath,
     dartFrogProjectPath
   );
 

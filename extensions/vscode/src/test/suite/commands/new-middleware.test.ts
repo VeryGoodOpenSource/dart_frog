@@ -27,6 +27,7 @@ suite("new-middleware command", () => {
     utilsStub = {
       nearestDartFrogProject: sinon.stub(),
       normalizeRoutePath: sinon.stub(),
+      resolveDartFrogProjectPathFromWorkspace: sinon.stub(),
     };
 
     utilsStub.nearestDartFrogProject
@@ -50,8 +51,9 @@ suite("new-middleware command", () => {
   });
 
   suite("file open dialog", () => {
-    test("is shown when Uri is undefined", async () => {
+    test("is shown when Uri is undefined and fails to resolve a path from workspace", async () => {
       vscodeStub.window.showOpenDialog.returns(Promise.resolve(undefined));
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
 
       await command.newMiddleware();
 
@@ -61,6 +63,16 @@ suite("new-middleware command", () => {
         canSelectFolders: true,
         canSelectFiles: true,
       });
+    });
+
+    test("is not shown when Uri is undefined but resolves a path from workspace", async () => {
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+        validUri.fsPath
+      );
+
+      await command.newMiddleware();
+
+      sinon.assert.notCalled(vscodeStub.window.showOpenDialog);
     });
 
     test("is not shown when Uri is defined", async () => {
