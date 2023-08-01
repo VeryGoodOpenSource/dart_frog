@@ -149,7 +149,7 @@ suite("new-middleware command", () => {
 
       sinon.assert.calledWith(vscodeStub.window.showInputBox, {
         prompt: "Middleware's route path",
-        value: "/animals/frog/",
+        value: "/animals/frog",
         placeHolder: "_middleware",
       });
     });
