@@ -26,7 +26,7 @@ void main() {
     });
 
     tearDownAll(() async {
-      await killDartFrogServer(process.pid);
+      killDartFrogServer(process.pid).ignore();
       tempDirectory.delete(recursive: true).ignore();
     });
 
@@ -54,22 +54,9 @@ void main() {
 
     final tempDirectory = Directory.systemTemp.createTempSync();
 
-    Process? process1;
-    Process? process2;
-
-    setUp(() async {
+    setUpAll(() async {
       await dartFrogCreate(projectName: projectName1, directory: tempDirectory);
       await dartFrogCreate(projectName: projectName2, directory: tempDirectory);
-    });
-
-    tearDown(() async {
-      if (process1 != null) {
-        killDartFrogServer(process1!.pid).ignore();
-      }
-
-      if (process2 != null) {
-        killDartFrogServer(process2!.pid).ignore();
-      }
     });
 
     tearDownAll(() {
@@ -80,15 +67,21 @@ void main() {
       'running two different dart_frog dev command will fail '
       'when different dart vm port is not set',
       () async {
-        process1 = await dartFrogDev(
+        final process1 = await dartFrogDev(
           directory: Directory(path.join(tempDirectory.path, projectName1)),
         );
+        addTearDown(() async {
+          await killDartFrogServer(process1.pid).ignoreErrors();
+        });
 
         try {
-          await dartFrogDev(
+          final process2 = await dartFrogDev(
             directory: Directory(path.join(tempDirectory.path, projectName2)),
             exitOnError: false,
-          ).then((process) => process2 = process);
+          );
+          addTearDown(() async {
+            await killDartFrogServer(process2.pid).ignoreErrors();
+          });
 
           fail('exception not thrown');
         } catch (e) {
@@ -105,22 +98,35 @@ void main() {
     test(
       'runs two different dart_frog dev servers without any issues',
       () async {
-        expect(
-          dartFrogDev(
-            directory: Directory(path.join(tempDirectory.path, projectName1)),
-          ).then((process) => process1 = process),
-          completes,
+        final process1 = await dartFrogDev(
+          directory: Directory(path.join(tempDirectory.path, projectName1)),
         );
 
-        expect(
-          dartFrogDev(
-            directory: Directory(path.join(tempDirectory.path, projectName2)),
-            exitOnError: false,
-            args: ['--dart-vm-service-port', '9191'],
-          ).then((process) => process2 = process),
-          completes,
+        addTearDown(() async {});
+
+        final process2Future = dartFrogDev(
+          directory: Directory(path.join(tempDirectory.path, projectName2)),
+          exitOnError: false,
+          args: ['--dart-vm-service-port', '9191'],
         );
+
+        expect(process2Future, completes);
+
+        addTearDown(() async {
+          final process2 = await process2Future;
+
+          await killDartFrogServer(process1.pid).ignoreErrors();
+          await killDartFrogServer(process2.pid).ignoreErrors();
+        });
       },
     );
   });
+}
+
+extension<T> on Future<T> {
+  Future<void> ignoreErrors() async {
+    try {
+      await this;
+    } catch (_) {}
+  }
 }
