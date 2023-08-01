@@ -119,9 +119,9 @@ async function promptForTargetDirectory(): Promise<string | undefined> {
  */
 function promptRoutePath(routePath: string): Thenable<string | undefined> {
   const inputBoxOptions: InputBoxOptions = {
-    prompt: "Middleware route path",
+    prompt: "Middleware's route path",
     value: routePath,
-    placeHolder: "index",
+    placeHolder: "_middleware",
   };
   return window.showInputBox(inputBoxOptions);
 }
