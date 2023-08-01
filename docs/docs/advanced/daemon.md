@@ -3,7 +3,7 @@ import TOCInline from '@theme/TOCInline';
 # 🧰 Daemon
 
 Dart frog daemon is a standing process that, during its lifetime, will be used by first and
-third-party tools to manage, build, and diagnose dart frog projects.
+third-party tools to manage, build, and diagnose Dart Frog projects.
 
 By design, the daemon is able to manage multiple projects simultaneously; it can also run multiple
 application instances of the same project if necessary.
