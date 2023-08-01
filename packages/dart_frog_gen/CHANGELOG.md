@@ -1,3 +1,7 @@
+# 1.0.0
+
+- feat: detect conflict between dynamic routes and non dynamic ones
+
 # 0.4.1
 
 - feat: update to Dart 3 and Very Good Analysis 5 ([#681](https://github.com/VeryGoodOpenSource/dart_frog/pull/681))
