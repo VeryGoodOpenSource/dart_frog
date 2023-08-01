@@ -22,6 +22,28 @@ The messages can be sorted in three types:
 Every request should be met with a response as soon as possible so the caller can work with
 timeouts. The daemon will send events to the client as they happen.
 
+--- 
+
+#### Usage example
+
+```json
+$ dart_frog daemon
+
+// ready event sent via stdout
+[{"event":"daemon.ready","params":{"version":"0.0.1","processId":75941}}]
+
+// request inserted via stdin
+[{"method": "daemon.requestVersion", "id": "12"}]
+
+// response sent via stdout
+[{"id":"12","result":{"version":"0.0.1"}}]
+
+```
+
+The `id` field on the request is used to match the request with the response. As the client sets it arbitrarily, the client is responsible for ensuring that the id is unique.
+
+---
+
 To organize the accepted requests and its parameters as well as events, there are the "domains". A
 domain is a group of related requests and events.
 
@@ -142,3 +164,4 @@ Signals that a dev server has exited.
 | applicationId | String | A unique identifier for the dev server instance                 |
 | requestId     | String | A unique identifier for the request that started the dev server |
 | exitCode      | int    | The exit code of the dev server process                         |
+
