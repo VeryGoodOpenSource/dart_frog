@@ -7,7 +7,6 @@ title: Roadmap
 
 In the interest of transparency, we want to share high-level details of our roadmap, so that others can see our priorities and make plans based on the work we are doing.
 
-
 ## Areas of Focus 💡
 
 ### Production Readiness ⚙️
