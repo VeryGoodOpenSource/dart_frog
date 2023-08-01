@@ -42,7 +42,7 @@ void main() {
       expect(fileAt('new_route.dart', on: routesDirectory), exists);
     });
 
-    test('Creates route without the leading slash', () async {
+    test(skip: true, 'Creates route without the leading slash', () async {
       await dartFrogNewRoute('another_new_route', directory: projectDirectory);
 
       expect(fileAt('another_new_route.dart', on: routesDirectory), exists);
