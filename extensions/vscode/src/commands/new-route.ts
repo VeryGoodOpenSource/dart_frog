@@ -98,7 +98,7 @@ function promptRouteName(routePath: string): Thenable<string | undefined> {
 async function promptForTargetDirectory(): Promise<string | undefined> {
   const options: OpenDialogOptions = {
     canSelectMany: false,
-    openLabel: "Select a folder or file to create the Route in",
+    openLabel: "Select a folder or file to create the route in",
     canSelectFolders: true,
     canSelectFiles: true,
   };
