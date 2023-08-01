@@ -27,8 +27,10 @@ DaemonMessage _sdtOutLineToMessage(String rawMessage) {
 /// via its stdin and stdout.
 class DaemonStdioHelper {
   DaemonStdioHelper(this.daemonProcess) {
-    subscription =
-        daemonProcess.stdout.transform(utf8.decoder).listen(_handleStdoutLine);
+    subscription = daemonProcess.stdout
+        .transform(utf8.decoder)
+        .transform(const LineSplitter())
+        .listen(_handleStdoutLine);
   }
 
   final Process daemonProcess;
@@ -40,22 +42,19 @@ class DaemonStdioHelper {
   Matcher? messageMatcher;
   Completer<String>? messageCompleter;
 
-  void _handleStdoutLine(String lines) {
+  void _handleStdoutLine(String line) {
     final messageMatcher = this.messageMatcher;
 
-    final linesSplit = lines.split('\n');
-
-    for (final line in linesSplit.where((element) => element.isNotEmpty)) {
-      stdout.writeln('::debug:: <- $line');
-      if (messageMatcher != null) {
-        if (messageMatcher.matches(line, {})) {
-          messageCompleter?.complete(line);
-          _pastMessagesCache.clear();
-          return;
-        }
+    stdout.writeln('::debug:: <- $line');
+    if (messageMatcher != null) {
+      if (messageMatcher.matches(line, {})) {
+        messageCompleter?.complete(line);
+        _pastMessagesCache.clear();
+        return;
       }
-      _pastMessagesCache.add(line);
     }
+
+    _pastMessagesCache.add(line);
   }
 
   void _clean() {
