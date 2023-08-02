@@ -15,7 +15,7 @@ layering the foundation for more advanced authentication. See below for more det
 ## Dart Frog Auth
 
 The authentication methods provided in `dart_frog_auth` are based on `Authorization` specification,
-as defined in [`General HTTP`][general_http]. Here you will find support
+as defined in [`General HTTP`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication). Here you will find support
 for `Basic` and `Bearer` authentications, which are common authentication methods used by many developers.
 
 ## Basic Authentication
@@ -206,7 +206,7 @@ perform or not a given operation.
 
 `dart_frog_auth` only solves the authentication part of the problem. To enforce
 authorization, it is up to the developer to implement it manually, or use an authorization issue
-system like OATH, for example.
+system like OAuth2, for example.
 
 In technical terms, a request should return `401` (Unauthorized) when authentication fails and
 `403` (Forbidden) when authorization failed.
