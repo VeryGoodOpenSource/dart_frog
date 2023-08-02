@@ -3,15 +3,15 @@ sidebar_position: 8
 title: ⚔️  Handling Cross-Origin Resource Sharing (CORS)
 ---
 
-Cross-Origin Resource Sharing or CORS is a common thing that needs to be handled by backend servers,
-this guide shows how the handling of CORS can be done in a Dart Frog project.
+Cross-Origin Resource Sharing or CORS is a common thing that needs to be handled by backend servers.
+This guide shows how the handling of CORS can be done in a Dart Frog project.
 
 :::warning
-To know more about what CORS is check this [helpful documentation from MDN](https://developer.mozilla.org/docs/Web/HTTP/CORS).
+To learn more about what CORS is, check out this [helpful documentation from MDN](https://developer.mozilla.org/docs/Web/HTTP/CORS).
 :::
 
-Shelf (the base of Dart Frog) already have in its ecosystem a package that helps the
-handling of cors, which we can use in Dart Frog ad well, so firstly add `shelf_cors_headers` to you project:
+[Shelf](https://pub.dev/packages/shelf) already has a package in its ecosystem that handles CORS. 
+Since Dart Frog is built on top of shelf, we can use it in Dart Frog as well. First add `shelf_cors_headers` to your project:
 
 ```bash
 dart pub add shelf_cors_headers
@@ -40,4 +40,4 @@ Handler middleware(Handler handler) {
 }
 ```
 
-For a full example of a Dart Frog server that handles core, check [Very Good Hub](https://github.com/VeryGoodOpenSource/very_good_hub/tree/main/api).
+For a full example of a Dart Frog server that handles CORS, check [Very Good Hub](https://github.com/VeryGoodOpenSource/very_good_hub/tree/main/api).
