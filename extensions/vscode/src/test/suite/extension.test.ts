@@ -263,7 +263,6 @@ suite("ensureCompatibleDartFrogCLI", () => {
     utilsStub.isCompatibleDartFrogCLIVersion.returns(true);
 
     await extension.ensureCompatibleDartFrogCLI();
-    teardown;
 
     sinon.assert.notCalled(vscodeStub.window.showWarningMessage);
   });
