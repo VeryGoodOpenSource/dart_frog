@@ -46,9 +46,9 @@ In the interest of transparency, we want to share high-level details of our road
 - [ ] Health Check endpoint for monitoring
 - [ ] Logger which can be configured to adhere to standard log formats (https://cloud.google.com/run/docs/logging)
 - [x] WebSocket support
-- [ ] VSCode/IntelliJ support for DartFrog
-  - [ ] Create a new project
-  - [ ] New Routes
-  - [ ] New Middleware
+- [x] VSCode support for DartFrog
+  - [x] Create a new project
+  - [x] New Routes
+  - [x] New Middleware
   - [ ] Attach Debugger
 - [ ] CLI `deploy` command to support deploying to supported cloud platforms (e.g: Cloud Run)
