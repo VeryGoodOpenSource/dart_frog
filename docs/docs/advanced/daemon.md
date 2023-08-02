@@ -10,7 +10,7 @@ application instances of the same project if necessary.
 
 To start using it, install the Dart Frog CLI and run the `dart_frog daemon` command. Once running, communicating with it can be done via [JSON-RPC](https://www.jsonrpc.org/) over stdin/stdout to receive and send messages.
 
-The messages can be sorted in three types:
+There are three types of messages:
 
 - **Request**: A request is a message sent by a client to the daemon. The daemon will process the
   request and send a response back to the client. A request is essentially a method invocation.
