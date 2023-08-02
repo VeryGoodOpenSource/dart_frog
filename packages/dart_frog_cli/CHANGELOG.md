@@ -1,3 +1,10 @@
+# 1.0.0
+
+- feat: add uninstall command
+- feat: add verify-only flag to update command
+- feat: add dev_server domain to daemon
+- feat: daemon logger
+
 # 0.3.9
 
 - fix: Remove multiple EOL when creating route or middleware
