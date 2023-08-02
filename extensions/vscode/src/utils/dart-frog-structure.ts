@@ -22,8 +22,8 @@ import { window, workspace } from "vscode";
  * project from a file path.
  */
 export function normalizeRoutePath(
-  selectedPath: String,
-  dartFrogProjectPath: String
+  selectedPath: string,
+  dartFrogProjectPath: string
 ): string {
   const routesPath = path.join(dartFrogProjectPath, "routes");
   if (!selectedPath.startsWith(routesPath)) {
@@ -62,7 +62,7 @@ export function normalizeRoutePath(
  * @see {@link isDartFrogProject}, to determine if a file is a Dart Frog
  * project.
  */
-export function nearestDartFrogProject(filePath: String): String | undefined {
+export function nearestDartFrogProject(filePath: string): string | undefined {
   let currentPath = filePath;
   while (currentPath !== path.sep) {
     if (isDartFrogProject(currentPath)) {
@@ -88,7 +88,7 @@ export function nearestDartFrogProject(filePath: String): String | undefined {
  * @returns {boolean} Whether or not the {@link filePath} is the root of Dart
  * Frog project.
  */
-export function isDartFrogProject(filePath: String): boolean {
+export function isDartFrogProject(filePath: string): boolean {
   const routesPath = path.join(filePath, "routes");
   const pubspecPath = path.join(filePath, "pubspec.yaml");
 
@@ -123,8 +123,8 @@ export function isDartFrogProject(filePath: String): boolean {
  */
 export function resolveDartFrogProjectPathFromWorkspace(
   _nearestDartFrogProject: (
-    filePath: String
-  ) => String | undefined = nearestDartFrogProject
+    filePath: string
+  ) => string | undefined = nearestDartFrogProject
 ): string | undefined {
   if (window.activeTextEditor) {
     const currentTextEditorPath = path.normalize(
