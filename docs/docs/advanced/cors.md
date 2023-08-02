@@ -6,7 +6,7 @@ title: ⚔️  Handling Cross-Origin Resource Sharing (CORS)
 Cross-Origin Resource Sharing or CORS is a common thing that needs to be handled by backend servers.
 This guide shows how the handling of CORS can be done in a Dart Frog project.
 
-:::warning
+:::info
 To learn more about what CORS is, check out this [helpful documentation from MDN](https://developer.mozilla.org/docs/Web/HTTP/CORS).
 :::
 
