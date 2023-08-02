@@ -206,7 +206,7 @@ perform or not a given operation.
 
 `dart_frog_auth` only solves the authentication part of the problem. To enforce
 authorization, it is up to the developer to implement it manually, or use an authorization issue
-system like OATH, for example.
+system like OAuth2, for example.
 
 In technical terms, a request should return `401` (Unauthorized) when authentication fails and
 `403` (Forbidden) when authorization failed.
