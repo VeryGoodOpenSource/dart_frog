@@ -126,18 +126,18 @@ function promptRoutePath(routePath: string): Thenable<string | undefined> {
  * Runs the `dart_frog new middleware` command with the given route path.
  *
  * @param {string} routePath, the path of the new middleware.
- * @param {String} dartFrogProjectPath, the root of the Dart Frog project.
+ * @param {string} dartFrogProjectPath, the root of the Dart Frog project.
  */
 function executeDartFrogNewMiddlewareCommand(
-  routePath: String,
-  dartFrogProjectPath: String
+  routePath: string,
+  dartFrogProjectPath: string
 ): void {
   cp.exec(
     `dart_frog new middleware '${routePath}'`,
     {
       cwd: dartFrogProjectPath,
     },
-    function (error: Error, stdout: String, stderr: String) {
+    function (error: Error, stdout: string, stderr: string) {
       if (error) {
         window.showErrorMessage(error.message);
       }

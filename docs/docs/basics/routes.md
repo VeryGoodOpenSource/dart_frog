@@ -28,6 +28,10 @@ Managing routes in Dart Frog is essentially as simple as managing the file struc
 dart_frog new route "/hello"
 ```
 
+:::tip
+Install and use the [Dart Frog VS Code extension](https://marketplace.visualstudio.com/items?itemName=VeryGoodVentures.dart-frog) to easily create new routes within your IDE.
+:::
+
 ## Requests 📥
 
 All route handlers have access to information regarding the inbound request. In this section, we'll take a look at various ways in which we can interact with the inbound request.
