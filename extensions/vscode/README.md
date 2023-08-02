@@ -1,6 +1,4 @@
-<p align="center">
-    <img src="https://raw.githubusercontent.com/VeryGoodOpenSource/dart_frog/main/assets/dart_frog_logo_black.png" height="100" alt="Dart Frog" />
-</p>
+[![Dart Frog Logo][logo_black]][dart_frog_link_light]
 
 This is the [Dart Frog](https://dartfrog.vgv.dev/) [VS Code](https://code.visualstudio.com/) extension, which provides tools for effectively managing Dart Frog projects.
 
@@ -25,7 +23,7 @@ Dart Frog can be installed from the [VS Code Marketplace](https://marketplace.vi
 ![demonstration](https://raw.githubusercontent.com/VeryGoodOpenSource/dart_frog/main/extensions/vscode/assets/new-route-middleware-usage.gif)
 
 [ci_link]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/main.yaml
-[dart_frog_link_light]: https://github.com/verygoodopensource/dart_frog#gh-light-mode-only
+[dart_frog_link_light]: https://github.com/verygoodopensource/dart_frog
 [license_link]: https://opensource.org/licenses/MIT
-[logo_black]: https://raw.githubusercontent.com/VeryGoodOpenSource/dart_frog/main/assets/dart_frog_logo_black.png#gh-light-mode-only
+[logo_black]: https://raw.githubusercontent.com/VeryGoodOpenSource/dart_frog/main/assets/dart_frog_logo_black.png
 [very_good_ventures_link]: https://verygood.ventures
