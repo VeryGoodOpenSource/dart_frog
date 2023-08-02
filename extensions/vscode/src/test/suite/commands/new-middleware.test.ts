@@ -53,7 +53,7 @@ suite("new-middleware command", () => {
 
   suite("file open dialog", () => {
     test("is shown when Uri is undefined and fails to resolve a path from workspace", async () => {
-      vscodeStub.window.showOpenDialog.returns(Promise.resolve(undefined));
+      vscodeStub.window.showOpenDialog.resolves(undefined);
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
 
       await command.newMiddleware();
@@ -89,7 +89,7 @@ suite("new-middleware command", () => {
     const errorMessage = "Please select a valid directory";
 
     test("is shown when Uri is undefined and selected file is undefined", async () => {
-      vscodeStub.window.showOpenDialog.returns(Promise.resolve(undefined));
+      vscodeStub.window.showOpenDialog.resolves(undefined);
 
       await command.newMiddleware();
 
@@ -97,7 +97,7 @@ suite("new-middleware command", () => {
     });
 
     test("is not shown when Uri is undefined and selected file is given", async () => {
-      vscodeStub.window.showOpenDialog.returns(Promise.resolve([invalidUri]));
+      vscodeStub.window.showOpenDialog.resolves([invalidUri]);
 
       await command.newMiddleware();
 
@@ -115,7 +115,7 @@ suite("new-middleware command", () => {
         "No Dart Frog project found in the selected directory";
 
       test("is shown when Uri is undefined and selected file is invalid", async () => {
-        vscodeStub.window.showOpenDialog.returns(Promise.resolve([invalidUri]));
+        vscodeStub.window.showOpenDialog.resolves([invalidUri]);
 
         await command.newMiddleware();
 
