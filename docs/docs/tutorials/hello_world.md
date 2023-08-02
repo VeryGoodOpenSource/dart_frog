@@ -58,6 +58,10 @@ cd ./hello_world
 dart_frog dev
 ```
 
+:::tip
+Install and use the [Dart Frog VS Code extension](https://marketplace.visualstudio.com/items?itemName=VeryGoodVentures.dart-frog) to easily create Dart Frog apps within your IDE.
+:::
+
 ## Running the development server
 
 You should now have a directory called `hello_world` -- `cd` into it:

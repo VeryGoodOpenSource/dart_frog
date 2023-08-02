@@ -45,3 +45,7 @@ To create new middleware on a Dart Frog project, run the following command:
 # Creates routes/hello/_middleware.dart
 dart_frog new middleware "/hello"
 ```
+
+:::tip
+Install and use the [Dart Frog VS Code extension](https://marketplace.visualstudio.com/items?itemName=VeryGoodVentures.dart-frog) to easily create new middleware within your IDE.
+:::

@@ -76,6 +76,10 @@ cd ./todos
 dart_frog dev
 ```
 
+:::tip
+Install and use the [Dart Frog VS Code extension](https://marketplace.visualstudio.com/items?itemName=VeryGoodVentures.dart-frog) to easily create Dart Frog apps within your IDE.
+:::
+
 ## Running the development server
 
 You should now have a directory called `todos` -- `cd` into it:
@@ -489,6 +493,10 @@ We're providing a single instance of the `TodosDataSource` so we have a single s
 In addition, we're using the `requestLogger` middleware from `package:dart_frog` to log all requests for debugging.
 :::
 
+:::tip
+Install and use the [Dart Frog VS Code extension](https://marketplace.visualstudio.com/items?itemName=VeryGoodVentures.dart-frog) to easily create new middleware within your IDE.
+:::
+
 ## Creating the `/todos` route
 
 Next, delete the root route handler at `routes/index.dart` and create a route handler for the `/todos` endpoint by creating `routes/todos/index.dart`:
@@ -531,6 +539,10 @@ Future<Response> _post(RequestContext context) async {
   );
 }
 ```
+
+:::tip
+Install and use the [Dart Frog VS Code extension](https://marketplace.visualstudio.com/items?itemName=VeryGoodVentures.dart-frog) to easily create new routes within your IDE.
+:::
 
 :::note
 We're using `context.read<TodosDataSource>` to access the provided instance of the `TodosDataSource`.
