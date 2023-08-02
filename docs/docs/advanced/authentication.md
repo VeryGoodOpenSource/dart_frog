@@ -15,7 +15,7 @@ layering the foundation for more advanced authentication. See below for more det
 ## Dart Frog Auth
 
 The authentication methods provided in `dart_frog_auth` are based on `Authorization` specification,
-as defined in [`General HTTP`][general_http]. Here you will find support
+as defined in [`General HTTP`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication). Here you will find support
 for `Basic` and `Bearer` authentications, which are common authentication methods used by many developers.
 
 ## Basic Authentication
