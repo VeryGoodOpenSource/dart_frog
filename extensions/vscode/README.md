@@ -1,4 +1,6 @@
-[![Dart Frog Logo][logo_black]][dart_frog_link_light]
+<p align="center">
+    <img src="https://raw.githubusercontent.com/VeryGoodOpenSource/dart_frog/main/assets/dart_frog_logo_black.png" height="100" alt="Dart Frog" />
+</p>
 
 This is the [Dart Frog](https://dartfrog.vgv.dev/) [VS Code](https://code.visualstudio.com/) extension, which provides tools for effectively managing Dart Frog projects.
 
