@@ -6,7 +6,7 @@ const semver = require("semver");
  * The semantic version constraints for Dart Frog CLI to be compatible with this
  * extension.
  */
-const compatibleCLIVersion = ">=0.3.7 <1.0.0";
+const compatibleCLIVersion = ">=0.3.7 <2.0.0";
 
 /**
  * Collects the version of Dart Frog CLI installed in the user's system.

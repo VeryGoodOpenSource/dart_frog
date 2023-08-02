@@ -24,7 +24,7 @@ class DartFrogCompatibilityException implements Exception {
 
 /// The version range of package:dart_frog
 /// supported by the current version of package:dart_frog_cli.
-const compatibleDartFrogVersion = '>=0.3.0 <0.4.0';
+const compatibleDartFrogVersion = '>=1.0.0 <2.0.0';
 
 /// Whether current version of package:dart_frog_cli is compatible
 /// with the provided [version] of package:dart_frog.
