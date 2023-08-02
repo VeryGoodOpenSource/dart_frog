@@ -177,9 +177,9 @@ dependencies:
 dev_dependencies:
   build_runner: ^2.2.0
   json_serializable: ^6.3.1
-  mocktail: ^0.3.0
+  mocktail: ^1.0.0
   test: ^1.19.2
-  very_good_analysis: ^4.0.0
+  very_good_analysis: ^5.0.0
 ```
 
 Install the newly added dependencies via:
@@ -376,9 +376,9 @@ dependencies:
   uuid: ^3.0.6
 
 dev_dependencies:
-  mocktail: ^0.3.0
+  mocktail: ^1.0.0
   test: ^1.19.2
-  very_good_analysis: ^4.0.0
+  very_good_analysis: ^5.0.0
 ```
 
 :::note
@@ -455,9 +455,9 @@ dependencies:
     path: packages/todos_data_source
 
 dev_dependencies:
-  mocktail: ^0.3.0
+  mocktail: ^1.0.0
   test: ^1.19.2
-  very_good_analysis: ^4.0.0
+  very_good_analysis: ^5.0.0
 ```
 
 Install the newly added dependencies via:

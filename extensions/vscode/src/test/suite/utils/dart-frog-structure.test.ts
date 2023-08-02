@@ -477,7 +477,7 @@ dependencies:
 
 dev_dependencies:
   test: ^1.19.2
-  very_good_analysis: ^4.0.0
+  very_good_analysis: ^5.0.0
 `;
 
 /**
@@ -501,5 +501,5 @@ dependencies:
 
 dev_dependencies:
   test: ^1.19.2
-  very_good_analysis: ^4.0.0
+  very_good_analysis: ^5.0.0
 `;
