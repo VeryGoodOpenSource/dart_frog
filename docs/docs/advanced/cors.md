@@ -10,7 +10,7 @@ This guide shows how the handling of CORS can be done in a Dart Frog project.
 To learn more about what CORS is, check out this [helpful documentation from MDN](https://developer.mozilla.org/docs/Web/HTTP/CORS).
 :::
 
-[Shelf](https://pub.dev/packages/shelf) already has a package in its ecosystem that handles CORS. 
+[Shelf](https://pub.dev/packages/shelf) already has a package in its ecosystem that handles CORS.
 Since Dart Frog is built on top of shelf, we can use it in Dart Frog as well. First add `shelf_cors_headers` to your project:
 
 ```bash
