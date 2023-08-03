@@ -8,8 +8,8 @@ environment:
 
 dependencies:
   crypto: ^3.0.3
-  dart_frog: ^0.3.0
-  dart_frog_auth: ^0.1.0-dev.1
+  dart_frog: ^1.0.0
+  dart_frog_auth: ^1.0.0
   equatable: ^2.0.5
   meta: ^1.9.1
 
