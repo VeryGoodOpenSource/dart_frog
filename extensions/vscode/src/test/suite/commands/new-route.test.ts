@@ -126,7 +126,7 @@ suite("new-route command", () => {
   suite("file open dialog", () => {
     test("is shown when Uri is undefined and fails to resolve a path from workspace", async () => {
       vscodeStub.window.showInputBox.returns(validRouteName);
-      vscodeStub.window.showOpenDialog.resolves(undefined);
+      vscodeStub.window.showOpenDialog.resolves();
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
 
       await command.newRoute();
@@ -164,7 +164,7 @@ suite("new-route command", () => {
 
     test("is shown when Uri is undefined and selected file is undefined", async () => {
       vscodeStub.window.showInputBox.returns(validRouteName);
-      vscodeStub.window.showOpenDialog.resolves(undefined);
+      vscodeStub.window.showOpenDialog.resolves();
 
       await command.newRoute();
 

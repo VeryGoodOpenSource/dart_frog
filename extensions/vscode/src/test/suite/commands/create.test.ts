@@ -45,7 +45,7 @@ suite("create command", () => {
 
   suite("file open dialog", () => {
     test("is shown when Uri is undefined", async () => {
-      vscodeStub.window.showOpenDialog.resolves(undefined);
+      vscodeStub.window.showOpenDialog.resolves();
 
       await command.create();
 
