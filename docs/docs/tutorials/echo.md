@@ -73,6 +73,10 @@ cd ./echo
 dart_frog dev
 ```
 
+:::tip
+Install and use the [Dart Frog VS Code extension](https://marketplace.visualstudio.com/items?itemName=VeryGoodVentures.dart-frog) to easily create Dart Frog apps within your IDE.
+:::
+
 ## Running the development server
 
 You should now have a directory called `echo` -- `cd` into it:
@@ -135,6 +139,10 @@ Response onRequest(RequestContext context, String message) {
 
 :::note
 Since this route handler corresponds to a dynamic route, we will received the parameter as an argument in `onRequest`.
+:::
+
+:::tip
+Install and use the [Dart Frog VS Code extension](https://marketplace.visualstudio.com/items?itemName=VeryGoodVentures.dart-frog) to easily create new dynamic routes within your IDE.
 :::
 
 Save the changes and hot reload should kick in ⚡️

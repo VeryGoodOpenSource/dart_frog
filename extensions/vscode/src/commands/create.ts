@@ -106,7 +106,7 @@ function promptProjectName(value: string): Thenable<string | undefined> {
 }
 
 async function executeDartFrogCreateCommand(
-  outputDirectory: String,
+  outputDirectory: string,
   projectName: string
 ): Promise<void> {
   return cp.exec(
@@ -114,7 +114,7 @@ async function executeDartFrogCreateCommand(
     {
       cwd: outputDirectory,
     },
-    function (error: Error, stdout: String, stderr: String) {
+    function (error: Error, stdout: string, stderr: string) {
       if (error) {
         window.showErrorMessage(error.message);
       }

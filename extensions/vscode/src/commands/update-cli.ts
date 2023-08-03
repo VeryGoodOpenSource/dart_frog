@@ -29,7 +29,7 @@ export const updateCLI = async (): Promise<void> => {
 async function updateDartFrogCLIVersion(): Promise<void> {
   await cp.exec(
     `dart_frog update`,
-    function (error: Error, stdout: String, stderr: String) {
+    function (error: Error, stdout: string, stderr: string) {
       if (error) {
         window.showErrorMessage(error.message);
       }
