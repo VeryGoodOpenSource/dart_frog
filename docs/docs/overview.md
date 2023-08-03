@@ -95,6 +95,8 @@ dart_frog build
 
 ✅ WebSocket Support 🔌
 
+✅ VS Code Extension 💻
+
 🚧 Generated Dart Client Package 📦
 
 🚧 Generated API Documentation 📔
