@@ -29,7 +29,10 @@ suite("new-middleware command", () => {
       nearestDartFrogProject: sinon.stub(),
       normalizeRoutePath: sinon.stub(),
       resolveDartFrogProjectPathFromWorkspace: sinon.stub(),
+      isDartFrogCLIInstalled: sinon.stub(),
+      suggestInstallingDartFrogCLI: sinon.stub(),
     };
+    utilsStub.isDartFrogCLIInstalled.returns(true);
 
     utilsStub.nearestDartFrogProject
       .withArgs(invalidUri.fsPath)
@@ -49,6 +52,25 @@ suite("new-middleware command", () => {
 
   afterEach(() => {
     sinon.restore();
+  });
+
+  test("suggests installing Dart Frog CLI when not installed", async () => {
+    utilsStub.isDartFrogCLIInstalled.returns(false);
+
+    await command.newMiddleware(validUri);
+
+    sinon.assert.calledWith(
+      utilsStub.suggestInstallingDartFrogCLI,
+      "Running this command requires Dart Frog CLI to be installed."
+    );
+  });
+
+  test("does not suggest installing Dart Frog CLI when installed", async () => {
+    utilsStub.isDartFrogCLIInstalled.returns(true);
+
+    await command.newMiddleware(validUri);
+
+    sinon.assert.notCalled(utilsStub.suggestInstallingDartFrogCLI);
   });
 
   suite("file open dialog", () => {

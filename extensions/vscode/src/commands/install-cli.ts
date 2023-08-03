@@ -23,12 +23,15 @@ export const installCLI = async (): Promise<void> => {
  * complete.
  */
 async function installDartFrogCliVersion(): Promise<void> {
-  await cp.exec(
-    `dart pub global activate dart_frog_cli`,
-    function (error: Error, stdout: string, stderr: string) {
-      if (error) {
-        window.showErrorMessage(error.message);
-      }
+  try {
+    await cp.execSync(`dart pub global activate dart_frog_cli`);
+  } catch (error: any) {
+    if (error instanceof Error) {
+      window.showErrorMessage(error.message);
+    } else {
+      window.showErrorMessage(
+        `An error occurred while installing Dart Frog CLI: ${error}`
+      );
     }
-  );
+  }
 }
