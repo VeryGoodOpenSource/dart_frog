@@ -29,6 +29,7 @@ class DaemonServer {
 
     addDomain(DaemonDomain(this));
     addDomain(DevServerDomain(this));
+    addDomain(RouteConfigDomain(this));
   }
 
   final Map<String, DomainBase> _domains = {};
