@@ -33,7 +33,8 @@ suite("create command", () => {
       vscode: vscodeStub,
       // eslint-disable-next-line @typescript-eslint/naming-convention
       child_process: childProcessStub,
-      utilsStub: utilsStub,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      "../utils": utilsStub,
     });
   });
 
