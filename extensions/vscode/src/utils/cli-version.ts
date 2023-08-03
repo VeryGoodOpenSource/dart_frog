@@ -6,15 +6,15 @@ const semver = require("semver");
  * The semantic version constraints for Dart Frog CLI to be compatible with this
  * extension.
  */
-const compatibleCLIVersion = ">=0.3.7 <1.0.0";
+const compatibleCLIVersion = ">=0.3.7 <2.0.0";
 
 /**
  * Collects the version of Dart Frog CLI installed in the user's system.
  *
- * @returns {String | undefined} The semantic version of Dart Frog CLI installed
+ * @returns {string | undefined} The semantic version of Dart Frog CLI installed
  * in the user's system, or null if Dart Frog CLI is not installed.
  */
-export function readDartFrogCLIVersion(): String | undefined {
+export function readDartFrogCLIVersion(): string | undefined {
   try {
     const result = cp.execSync(`dart_frog --version`);
     const decodedResult = new TextDecoder().decode(result);
@@ -27,10 +27,10 @@ export function readDartFrogCLIVersion(): String | undefined {
 /**
  * Collects the latest available version of Dart Frog CLI.
  *
- * @returns {String | undefined} The latest available semantic version of
+ * @returns {string | undefined} The latest available semantic version of
  * Dart Frog CLI, or undefined if Dart Frog CLI is not installed.
  */
-export function readLatestDartFrogCLIVersion(): String | undefined {
+export function readLatestDartFrogCLIVersion(): string | undefined {
   try {
     const result = cp.execSync(`dart_frog --version`);
     const decodedResult = new TextDecoder().decode(result);
@@ -48,13 +48,13 @@ export function readLatestDartFrogCLIVersion(): String | undefined {
  * Checks if the version of Dart Frog CLI installed in the user's system is
  * compatible with this extension.
  *
- * @param {String} version The semantic version of Dart Frog CLI installed in
+ * @param {string} version The semantic version of Dart Frog CLI installed in
  * the user's system.
  * @returns {Boolean} True if the version of Dart Frog CLI installed in the
  * user's system is compatible with this extension, false otherwise.
  * @see {@link readDartFrogCLIVersion}, to collect the version of Dart Frog CLI.
  */
-export function isCompatibleDartFrogCLIVersion(version: String): Boolean {
+export function isCompatibleDartFrogCLIVersion(version: string): Boolean {
   return semver.satisfies(version, compatibleCLIVersion);
 }
 
@@ -71,10 +71,10 @@ export function isDartFrogCLIInstalled(): boolean {
 /**
  * Opens the changelog for the specified version in a browser.
  *
- * @param {String} version The semantic version of Dart Frog CLI which changelog
+ * @param {string} version The semantic version of Dart Frog CLI which changelog
  * is requested to open.
  */
-export async function openChangelog(version: String): Promise<void> {
+export async function openChangelog(version: string): Promise<void> {
   vscode.commands.executeCommand(
     "vscode.open",
     vscode.Uri.parse(
