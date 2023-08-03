@@ -73,6 +73,7 @@ void main() {
               path: 'index.dart',
               route: '/',
               params: [],
+              wildcard: false,
             ),
           ],
           '/hello': [
@@ -81,12 +82,14 @@ void main() {
               path: 'hello.dart',
               route: '/hello',
               params: [],
+              wildcard: false,
             ),
             RouteFile(
               name: 'hello_index',
               path: 'hello/index.dart',
               route: '/',
               params: [],
+              wildcard: false,
             )
           ]
         },
@@ -118,6 +121,7 @@ void main() {
             path: 'hello.dart',
             route: '/hello',
             params: [],
+            wildcard: false,
           ),
         ],
         endpoints: {},
@@ -310,12 +314,14 @@ dev_dependencies:
                 path: 'index.dart',
                 route: '/',
                 params: [],
+                wildcard: false,
               ),
               RouteFile(
                 name: 'hello',
                 path: 'hello.dart',
                 route: '/hello',
                 params: [],
+                wildcard: false,
               ),
             ],
             params: [],
@@ -327,12 +333,14 @@ dev_dependencies:
             path: 'index.dart',
             route: '/',
             params: [],
+            wildcard: false,
           ),
           RouteFile(
             name: 'hello',
             path: 'hello.dart',
             route: '/hello',
             params: [],
+            wildcard: false,
           ),
         ],
         endpoints: {
@@ -342,6 +350,7 @@ dev_dependencies:
               path: 'index.dart',
               route: '/',
               params: [],
+              wildcard: false,
             ),
           ],
           '/hello': [
@@ -350,6 +359,7 @@ dev_dependencies:
               path: 'hello.dart',
               route: '/hello',
               params: [],
+              wildcard: false,
             ),
           ]
         },
@@ -379,12 +389,14 @@ dev_dependencies:
                   'path': 'index.dart',
                   'route': '/',
                   'file_params': <String>[],
+                  'wildcard': false,
                 },
                 {
                   'name': 'hello',
                   'path': 'hello.dart',
                   'route': '/hello',
                   'file_params': <String>[],
+                  'wildcard': false,
                 }
               ],
               'directory_params': <String>[],
@@ -396,12 +408,14 @@ dev_dependencies:
               'path': 'index.dart',
               'route': '/',
               'file_params': const <String>[],
+              'wildcard': false,
             },
             {
               'name': 'hello',
               'path': 'hello.dart',
               'route': '/hello',
               'file_params': const <String>[],
+              'wildcard': false,
             }
           ],
           'middleware': [

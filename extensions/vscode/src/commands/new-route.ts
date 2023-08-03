@@ -7,7 +7,11 @@ import {
   OpenDialogOptions,
   ProgressOptions,
 } from "vscode";
-import { nearestDartFrogProject, normalizeRoutePath } from "../utils";
+import {
+  nearestDartFrogProject,
+  normalizeRoutePath,
+  resolveDartFrogProjectPathFromWorkspace,
+} from "../utils";
 
 /**
  * Command to create a new route.
@@ -30,18 +34,22 @@ import { nearestDartFrogProject, normalizeRoutePath } from "../utils";
  * @param {Uri | undefined} uri
  */
 export const newRoute = async (uri: Uri | undefined): Promise<void> => {
-  let selectedUri;
+  let selectedPath;
   if (uri === undefined) {
-    selectedUri = await promptForTargetDirectory();
-    if (selectedUri === undefined) {
+    selectedPath = resolveDartFrogProjectPathFromWorkspace();
+
+    if (selectedPath === undefined) {
+      selectedPath = await promptForTargetDirectory();
+    }
+    if (selectedPath === undefined) {
       window.showErrorMessage("Please select a valid directory");
       return;
     }
   } else {
-    selectedUri = uri.fsPath;
+    selectedPath = uri.fsPath;
   }
 
-  const dartFrogProjectPath = nearestDartFrogProject(selectedUri);
+  const dartFrogProjectPath = nearestDartFrogProject(selectedPath);
   if (dartFrogProjectPath === undefined) {
     window.showErrorMessage(
       "No Dart Frog project found in the selected directory"
@@ -50,7 +58,7 @@ export const newRoute = async (uri: Uri | undefined): Promise<void> => {
   }
 
   const normalizedRoutePath = normalizeRoutePath(
-    selectedUri,
+    selectedPath,
     dartFrogProjectPath
   );
 
@@ -98,7 +106,7 @@ function promptRouteName(routePath: string): Thenable<string | undefined> {
 async function promptForTargetDirectory(): Promise<string | undefined> {
   const options: OpenDialogOptions = {
     canSelectMany: false,
-    openLabel: "Select a folder or file to create the Route in",
+    openLabel: "Select a folder or file to create the route in",
     canSelectFolders: true,
     canSelectFiles: true,
   };
@@ -115,18 +123,18 @@ async function promptForTargetDirectory(): Promise<string | undefined> {
  * Runs the `dart_frog new route` command with the given route path.
  *
  * @param {string} routePath, the path of the new route.
- * @param {String} dartFrogProjectPath, the root of the Dart Frog project.
+ * @param {string} dartFrogProjectPath, the root of the Dart Frog project.
  */
 function executeDartFrogNewRouteCommand(
-  routePath: String,
-  dartFrogProjectPath: String
+  routePath: string,
+  dartFrogProjectPath: string
 ): void {
   cp.exec(
     `dart_frog new route '${routePath}'`,
     {
       cwd: dartFrogProjectPath,
     },
-    function (error: Error, stdout: String, stderr: String) {
+    function (error: Error, stdout: string, stderr: string) {
       if (error) {
         window.showErrorMessage(error.message);
       }

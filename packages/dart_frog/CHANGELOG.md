@@ -1,3 +1,7 @@
+# 1.0.0
+
+- feat: stable 1.0.0 release 🎉
+
 # 0.3.8
 
 - feat: provider support nullable values

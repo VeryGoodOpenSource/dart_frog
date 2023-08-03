@@ -25,7 +25,7 @@ export const installCLI = async (): Promise<void> => {
 async function installDartFrogCliVersion(): Promise<void> {
   await cp.exec(
     `dart pub global activate dart_frog_cli`,
-    function (error: Error, stdout: String, stderr: String) {
+    function (error: Error, stdout: string, stderr: string) {
       if (error) {
         window.showErrorMessage(error.message);
       }

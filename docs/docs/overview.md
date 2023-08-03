@@ -111,6 +111,8 @@ dart pub global deactivate dart_frog_cli
 
 ✅ WebSocket Support 🔌
 
+✅ VS Code Extension 💻
+
 🚧 Generated Dart Client Package 📦
 
 🚧 Generated API Documentation 📔
