@@ -41,6 +41,7 @@ void main() {
           required devServerBundleGenerator,
           required dartVmServicePort,
           required workingDirectory,
+          void Function()? onHotReloadEnabled,
         }) {
           return runner;
         },
@@ -71,6 +72,7 @@ void main() {
             required devServerBundleGenerator,
             required dartVmServicePort,
             required workingDirectory,
+            void Function()? onHotReloadEnabled,
           }) {
             passedLogger = logger;
             passedPort = port;
@@ -446,6 +448,7 @@ void main() {
           required devServerBundleGenerator,
           required dartVmServicePort,
           required workingDirectory,
+          void Function()? onHotReloadEnabled,
         }) {
           final runner = calls == 0 ? runner1 : runner2;
           calls++;
