@@ -8,9 +8,11 @@ import {
   ProgressOptions,
 } from "vscode";
 import {
+  isDartFrogCLIInstalled,
   nearestDartFrogProject,
   normalizeRoutePath,
   resolveDartFrogProjectPathFromWorkspace,
+  suggestInstallingDartFrogCLI,
 } from "../utils";
 
 /**
@@ -34,6 +36,12 @@ import {
  * @param {Uri | undefined} uri
  */
 export const newRoute = async (uri: Uri | undefined): Promise<void> => {
+  if (!isDartFrogCLIInstalled()) {
+    await suggestInstallingDartFrogCLI(
+      "Running this command requires Dart Frog CLI to be installed."
+    );
+  }
+
   let selectedPath;
   if (uri === undefined) {
     selectedPath = resolveDartFrogProjectPathFromWorkspace();

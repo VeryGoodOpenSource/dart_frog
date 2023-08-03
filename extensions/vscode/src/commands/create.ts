@@ -8,6 +8,7 @@ import {
   ProgressOptions,
   OpenDialogOptions,
 } from "vscode";
+import { isDartFrogCLIInstalled, suggestInstallingDartFrogCLI } from "../utils";
 
 /**
  * Creates a new Dart Frog project.
@@ -33,6 +34,12 @@ import {
  * @see {@link https://github.com/VeryGoodOpenSource/dart_frog/blob/main/packages/dart_frog_cli/lib/src/commands/create/create.dart Dart Frog CLI `create` command implementation.}
  */
 export const create = async (uri: Uri | undefined): Promise<void> => {
+  if (!isDartFrogCLIInstalled()) {
+    await suggestInstallingDartFrogCLI(
+      "Running this command requires Dart Frog CLI to be installed."
+    );
+  }
+
   let outputDirectory =
     uri === undefined ? await promptForTargetDirectory() : uri.fsPath;
 

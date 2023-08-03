@@ -31,6 +31,8 @@ suite("new-route command", () => {
       nearestDartFrogProject: sinon.stub(),
       normalizeRoutePath: sinon.stub(),
       resolveDartFrogProjectPathFromWorkspace: sinon.stub(),
+      isDartFrogCLIInstalled: sinon.stub(),
+      suggestInstallingDartFrogCLI: sinon.stub(),
     };
 
     utilsStub.nearestDartFrogProject
@@ -39,6 +41,8 @@ suite("new-route command", () => {
     utilsStub.nearestDartFrogProject
       .withArgs(validUri.fsPath)
       .returns(validUri.fsPath);
+    utilsStub.isDartFrogCLIInstalled.returns(true);
+    utilsStub.suggestInstallingDartFrogCLI.resolves();
 
     command = proxyquire("../../../commands/new-route", {
       vscode: vscodeStub,
@@ -51,6 +55,27 @@ suite("new-route command", () => {
 
   afterEach(() => {
     sinon.restore();
+  });
+
+  test("suggests installing Dart Frog CLI when not installed", async () => {
+    utilsStub.isDartFrogCLIInstalled.returns(false);
+    utilsStub.normalizeRoutePath.returns("/");
+
+    await command.newRoute(validUri);
+
+    sinon.assert.calledWith(
+      utilsStub.suggestInstallingDartFrogCLI,
+      "Running this command requires Dart Frog CLI to be installed."
+    );
+  });
+
+  test("does not suggest installing Dart Frog CLI when installed", async () => {
+    utilsStub.isDartFrogCLIInstalled.returns(true);
+    utilsStub.normalizeRoutePath.returns("/");
+
+    await command.newRoute(validUri);
+
+    sinon.assert.notCalled(utilsStub.suggestInstallingDartFrogCLI);
   });
 
   suite("shows input box to input route path", () => {
