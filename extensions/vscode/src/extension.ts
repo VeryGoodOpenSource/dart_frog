@@ -83,11 +83,15 @@ export async function ensureCompatibleDartFrogCLI(): Promise<void> {
     return;
   }
 
+  const options = ["Update Dart Frog CLI", "Changelog", "Ignore"];
+  const shouldUpdate = isCompatibleDartFrogCLIVersion(latestVersion);
+  if (!shouldUpdate) {
+    options.shift();
+  }
+
   const selection = await vscode.window.showWarningMessage(
     `Dart Frog CLI version ${version} is not compatible with this extension.`,
-    "Update Dart Frog CLI",
-    "Changelog",
-    "Ignore"
+    ...options
   );
   switch (selection) {
     case "Update Dart Frog CLI":

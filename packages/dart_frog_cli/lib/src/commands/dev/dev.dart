@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io' as io;
 
 import 'package:dart_frog_cli/src/command.dart';
@@ -19,11 +20,12 @@ class DevCommand extends DartFrogCommand {
     DevServerRunnerBuilder? devServerRunnerBuilder,
     runtime_compatibility.RuntimeCompatibilityCallback?
         ensureRuntimeCompatibility,
+    io.Stdin? stdin,
   })  : _ensureRuntimeCompatibility = ensureRuntimeCompatibility ??
             runtime_compatibility.ensureRuntimeCompatibility,
         _generator = generator ?? MasonGenerator.fromBundle,
-        _devServerRunnerBuilder =
-            devServerRunnerBuilder ?? DevServerRunner.new {
+        _devServerRunnerBuilder = devServerRunnerBuilder ?? DevServerRunner.new,
+        _stdin = stdin ?? io.stdin {
     argParser
       ..addOption(
         'port',
@@ -45,12 +47,59 @@ class DevCommand extends DartFrogCommand {
   final DevServerRunnerBuilder _devServerRunnerBuilder;
   final runtime_compatibility.RuntimeCompatibilityCallback
       _ensureRuntimeCompatibility;
+  final io.Stdin _stdin;
 
   @override
   final String description = 'Run a local development server.';
 
   @override
   final String name = 'dev';
+
+  StreamSubscription<List<int>>? _stdinSubscription;
+
+  late final DevServerRunner _devServerRunner;
+
+  void _startListeningForHelpers() {
+    if (_stdinSubscription != null) return;
+    if (!_stdin.hasTerminal) return;
+
+    // listen for the R key
+    _stdin
+      ..echoMode = false
+      ..lineMode = false;
+
+    _stdinSubscription = _stdin.listen(
+      (event) {
+        if (event.length == 1 && event.first == 'R'.codeUnitAt(0)) {
+          _devServerRunner.reload();
+        }
+      },
+      onError: (dynamic error) {
+        logger.err(error.toString());
+        _stopListeningForHelpers();
+      },
+      cancelOnError: true,
+      onDone: _stopListeningForHelpers,
+    );
+
+    logger.info('Press R to reload');
+  }
+
+  void _stopListeningForHelpers() {
+    _stdinSubscription?.cancel();
+    _stdinSubscription = null;
+
+    // The command may lose terminal after sigint, even though
+    // the stdin subscription may have been created when the
+    // devserver started.
+    // That is why this check is made after the subscription
+    // is canceled, if existent.
+    if (!_stdin.hasTerminal) return;
+
+    _stdin
+      ..lineMode = true
+      ..echoMode = true;
+  }
 
   @override
   Future<int> run() async {
@@ -61,23 +110,23 @@ class DevCommand extends DartFrogCommand {
         _defaultDartVmServicePort;
     final generator = await _generator(dartFrogDevServerBundle);
 
-    final devServer = _devServerRunnerBuilder(
+    _devServerRunner = _devServerRunnerBuilder(
       devServerBundleGenerator: generator,
       logger: logger,
       workingDirectory: cwd,
       port: port,
       dartVmServicePort: dartVmServicePort,
+      onHotReloadEnabled: _startListeningForHelpers,
     );
 
     try {
-      await devServer.start();
-    } on DartFrogDevServerException catch (e) {
-      logger.err(e.message);
+      await _devServerRunner.start();
+      return (await _devServerRunner.exitCode).code;
+    } catch (e) {
+      logger.err(e.toString());
       return ExitCode.software.code;
+    } finally {
+      _stopListeningForHelpers();
     }
-
-    final result = await devServer.exitCode;
-
-    return result.code;
   }
 }

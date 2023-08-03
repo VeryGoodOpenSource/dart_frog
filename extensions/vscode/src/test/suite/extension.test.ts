@@ -216,11 +216,15 @@ suite("ensureCompatibleDartFrogCLI", () => {
 
   suite("incompatible CLI", () => {
     const version = "0.0.0";
+    const latestVersion = "2.0.0";
 
     beforeEach(() => {
       utilsStub.readDartFrogCLIVersion.returns(version);
-      utilsStub.isCompatibleDartFrogCLIVersion.returns(false);
-      utilsStub.readLatestDartFrogCLIVersion.returns(version);
+      utilsStub.readLatestDartFrogCLIVersion.returns(latestVersion);
+      utilsStub.isCompatibleDartFrogCLIVersion.withArgs(version).returns(false);
+      utilsStub.isCompatibleDartFrogCLIVersion
+        .withArgs(latestVersion)
+        .returns(true);
     });
 
     afterEach(() => {
@@ -239,6 +243,21 @@ suite("ensureCompatibleDartFrogCLI", () => {
       );
     });
 
+    test("shows warning without update action when latest version is not compatible", async () => {
+      utilsStub.isCompatibleDartFrogCLIVersion
+        .withArgs(latestVersion)
+        .returns(false);
+
+      await extension.ensureCompatibleDartFrogCLI();
+
+      sinon.assert.calledOnceWithExactly(
+        vscodeStub.window.showWarningMessage,
+        `Dart Frog CLI version ${version} is not compatible with this extension.`,
+        "Changelog",
+        "Ignore"
+      );
+    });
+
     test("updates CLI when selected", async () => {
       vscodeStub.window.showWarningMessage.returns("Update Dart Frog CLI");
 
@@ -252,7 +271,10 @@ suite("ensureCompatibleDartFrogCLI", () => {
 
       await extension.ensureCompatibleDartFrogCLI();
 
-      sinon.assert.calledOnceWithExactly(utilsStub.openChangelog, version);
+      sinon.assert.calledOnceWithExactly(
+        utilsStub.openChangelog,
+        latestVersion
+      );
       sinon.assert.notCalled(commandsStub.updateCLI);
     });
 
