@@ -5,9 +5,9 @@ import { isDartFrogCLIInstalled } from ".";
 /**
  * Suggests the user to install Dart Frog CLI.
  *
- * This method should be called upon activation of the extension whenever
- * Dart Frog CLI is not installed in the user's system, or when the user
- * attempts to run a command that requires Dart Frog CLI to be installed.
+ * This method should be called whenever Dart Frog CLI is not installed and it
+ * is recommended to install it. Like for example, upon the extension activation
+ * or when the user tries to run a command that requires Dart Frog CLI.
  *
  * It prompts the user to install Dart Frog CLI. This is optional, the user
  * can choose to install Dart Frog CLI at a later time but the extension may
