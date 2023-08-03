@@ -72,7 +72,7 @@ suite("create command", () => {
 
   suite("file open dialog", () => {
     test("is shown when Uri is undefined", async () => {
-      vscodeStub.window.showOpenDialog.returns(Promise.resolve(undefined));
+      vscodeStub.window.showOpenDialog.resolves();
 
       await command.create();
 
@@ -191,7 +191,7 @@ suite("create command", () => {
   });
 
   test("runs `dart_frog create` command when project name is valid and uri not defined", async () => {
-    vscodeStub.window.showOpenDialog.returns(Promise.resolve([targetUri]));
+    vscodeStub.window.showOpenDialog.resolves([targetUri]);
     vscodeStub.window.showInputBox.returns("my_project");
 
     await command.create();
