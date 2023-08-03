@@ -4,6 +4,7 @@ import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import styles from './index.module.css';
+import { useColorMode } from '@docusaurus/theme-common';
 
 export default function Home() {
   const { siteConfig } = useDocusaurusContext();
@@ -14,7 +15,6 @@ export default function Home() {
       <HomepageHeader />
       <main className={styles.main}>
         <HomepageFeatures />
-        <HomepageVideos />
         <HomepageBlogs />
       </main>
     </Layout>
@@ -22,9 +22,22 @@ export default function Home() {
 }
 
 function HomepageHeader() {
+  const { siteConfig } = useDocusaurusContext();
+  const { colorMode } = useColorMode();
   return (
     <Fragment>
       <header className={clsx('hero', styles.heroBanner)}>
+        <div className="container">
+          <img
+            className={clsx(styles.heroLogo)}
+            src={
+              colorMode == 'dark'
+                ? 'img/dart_frog_full_logo_dark.svg'
+                : 'img/dart_frog_full_logo.svg'
+            }
+            alt="Very Good Workflows Logo"
+          />
+        </div>
         <HeroImage />
         <CTAs />
       </header>
@@ -36,10 +49,6 @@ function HeroImage() {
   return (
     <div className="container">
       <picture>
-        <source
-          media="(max-width: 479px)"
-          srcSet="img/hero_image_dark_mobile.svg"
-        />
         <source media="(min-width: 480px)" srcSet="img/hero_image_dark.svg" />
         <img
           src="img/hero_image_dark.svg"
@@ -128,21 +137,6 @@ function HomepageFeatures() {
   );
 }
 
-function HomepageVideos() {
-  return (
-    <div className={`${styles.section}`}>
-      <iframe
-        className="video"
-        src="https://www.youtube.com/embed/videoseries?list=PLprI2satkVdGzVfC3WGCTJYFZVO95sql3"
-        title="Dart Frog: Dart on the Server"
-        frameBorder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
-      ></iframe>
-    </div>
-  );
-}
-
 function HomepageBlogs() {
   return (
     <div className={`${styles.section}`}>
@@ -150,23 +144,23 @@ function HomepageBlogs() {
         <div className={styles.column}>
           <img
             style={{ height: 'auto' }}
-            src="https://uploads-ssl.webflow.com/5ee12d8e99cde2e20255c16c/628d211e83529f3a59ce7854_Dart%20Frog%200.5.jpg"
-            alt="Dart on the server with Dart Frog"
+            src="https://uploads-ssl.webflow.com/5ee12d8e99cde2e20255c16c/64c7f8b7022291aa80ec30bd_DF1.png"
+            alt="Dart Frog 1.0 is here"
             width="452"
             height="254"
           />
         </div>
         <div className={styles.column}>
           <div className={styles.content}>
-            <h2>Dart on the server with Dart Frog</h2>
+            <h2>Dart Frog 1.0 is here! 🎉</h2>
             <p>
-              Dart Frog can help Flutter and Dart developers maximize their
-              productivity by having a unified tech stack that enables sharing
-              tooling, models, and more! Here's how to get started.
+              Announcing Dart Frog 1.0! Learn about the main features of this
+              release, the history of Dart Frog, and why you should consider
+              using it in your projects.
             </p>
             <Link
               style={{ fontWeight: 'bold' }}
-              to="https://verygood.ventures/blog/dart-frog?utm_source=dartfrog&utm_medium=docs&utm_campaign=df_blog"
+              to="https://verygood.ventures/blog/dart-frog-1-0-release"
             >
               Read the Blog <ExternalLinkIcon />
             </Link>
@@ -178,23 +172,22 @@ function HomepageBlogs() {
         <div className={styles.column}>
           <img
             style={{ height: 'auto' }}
-            src="https://uploads-ssl.webflow.com/5ee12d8e99cde2e20255c16c/62fa66a12a4c4e37c353db07_Dart%20Frog%20stable%20release%20announcement.png"
-            alt="Dart Frog is now stable"
+            src="https://uploads-ssl.webflow.com/5ee12d8e99cde2e20255c16c/63befc9d00bc927526667313_Full%20Stack%20DF.png"
+            alt="Dart on the server with Dart Frog"
             width="452"
             height="254"
           />
         </div>
         <div className={styles.column}>
           <div className={styles.content}>
-            <h2>Dart Frog is now stable 🎉</h2>
+            <h2>Dart Frog full stack tutorial</h2>
             <p>
-              Announcing the stable v0.1.0 release, including hot reload
-              improvements, interoperability with the shelf package, a custom
-              entrypoint, and four new tutorials.
+              Learn how to build a real-time Flutter counter app using
+              WebSockets and Dart Frog.
             </p>
             <Link
               style={{ fontWeight: 'bold' }}
-              to="https://verygood.ventures/blog/dart-frog-stable?utm_source=dartfrog&utm_medium=docs&utm_campaign=df_stable"
+              to="https://verygood.ventures/blog/dart-frog-full-stack-tutorial"
             >
               Read the Blog <ExternalLinkIcon />
             </Link>

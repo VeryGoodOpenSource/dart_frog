@@ -63,6 +63,10 @@ cd ./web_socket_counter
 dart_frog dev
 ```
 
+:::tip
+Install and use the [Dart Frog VS Code extension](https://marketplace.visualstudio.com/items?itemName=VeryGoodVentures.dart-frog) to easily create Dart Frog apps within your IDE.
+:::
+
 ## Running the development server
 
 You should now have a directory called `web_socket_counter`. Let's change directories into the newly created project:
@@ -108,6 +112,10 @@ Response onRequest(RequestContext context) {
 ```
 
 We can also delete the root endpoint at `routes/index.dart` since we won't be needing it for this example.
+
+:::tip
+Install and use the [Dart Frog VS Code extension](https://marketplace.visualstudio.com/items?itemName=VeryGoodVentures.dart-frog) to easily create new routes within your IDE.
+:::
 
 Save the changes and hot reload should kick in ⚡️
 
@@ -183,10 +191,10 @@ name: example
 publish_to: none
 
 environment:
-  sdk: '>=2.18.0 <3.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
-  web_socket_channel: ^2.0.0
+  web_socket_channel: ^2.4.0
 ```
 
 Next, install the dependencies:
@@ -305,6 +313,10 @@ Handler middleware(Handler handler) => handler.use(counterProvider);
 
 :::info
 For more information, refer to the [middleware documentation](/docs/basics/middleware).
+:::
+
+:::tip
+Install and use the [Dart Frog VS Code extension](https://marketplace.visualstudio.com/items?itemName=VeryGoodVentures.dart-frog) to easily create new middleware within your IDE.
 :::
 
 ## Using the Counter

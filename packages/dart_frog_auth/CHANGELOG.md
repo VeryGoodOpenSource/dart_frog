@@ -1,3 +1,7 @@
-# 0.1.0-dev.1
+# 1.0.0
 
-- feat: initial dev release 🎉
+- feat: stable release 🎉
+
+# 0.1.0
+
+- feat: initial release 🎉

@@ -1,7 +1,17 @@
 const cp = require("child_process");
-const path = require("node:path");
 
-import { InputBoxOptions, Uri, window, OpenDialogOptions } from "vscode";
+import {
+  InputBoxOptions,
+  Uri,
+  window,
+  OpenDialogOptions,
+  ProgressOptions,
+} from "vscode";
+import {
+  nearestDartFrogProject,
+  normalizeRoutePath,
+  resolveDartFrogProjectPathFromWorkspace,
+} from "../utils";
 
 /**
  * Command to create a new route.
@@ -24,32 +34,48 @@ import { InputBoxOptions, Uri, window, OpenDialogOptions } from "vscode";
  * @param {Uri | undefined} uri
  */
 export const newRoute = async (uri: Uri | undefined): Promise<void> => {
-  const routeName = await promptRouteName();
-  if (routeName === undefined || routeName.trim() === "") {
-    window.showErrorMessage("Please enter a valid route name");
-    return;
-  }
-
-  let workingDirectory;
+  let selectedPath;
   if (uri === undefined) {
-    const selectedUri = await promptForTargetDirectory();
-    if (selectedUri === undefined) {
+    selectedPath = resolveDartFrogProjectPathFromWorkspace();
+
+    if (selectedPath === undefined) {
+      selectedPath = await promptForTargetDirectory();
+    }
+    if (selectedPath === undefined) {
       window.showErrorMessage("Please select a valid directory");
       return;
     }
-    workingDirectory = selectedUri;
   } else {
-    workingDirectory = uri.fsPath;
+    selectedPath = uri.fsPath;
   }
 
-  if (!isValidWorkingPath(workingDirectory)) {
+  const dartFrogProjectPath = nearestDartFrogProject(selectedPath);
+  if (dartFrogProjectPath === undefined) {
     window.showErrorMessage(
-      "No 'routes' directory found in the selected directory"
+      "No Dart Frog project found in the selected directory"
     );
     return;
   }
 
-  executeDartFrogNewRouteCommand(routeName, workingDirectory);
+  const normalizedRoutePath = normalizeRoutePath(
+    selectedPath,
+    dartFrogProjectPath
+  );
+
+  const separator = normalizedRoutePath.endsWith("/") ? "" : "/";
+  const routePath = await promptRouteName(`${normalizedRoutePath}${separator}`);
+  if (routePath === undefined || routePath.trim() === "") {
+    window.showErrorMessage("Please enter a valid route path");
+    return;
+  }
+
+  const options: ProgressOptions = {
+    location: 15,
+    title: `Creating '${routePath}' route...`,
+  };
+  window.withProgress(options, async function () {
+    executeDartFrogNewRouteCommand(routePath, dartFrogProjectPath);
+  });
 };
 
 /**
@@ -58,9 +84,10 @@ export const newRoute = async (uri: Uri | undefined): Promise<void> => {
  *
  * @returns The route name the user provided or undefined if the user canceled.
  */
-function promptRouteName(): Thenable<string | undefined> {
+function promptRouteName(routePath: string): Thenable<string | undefined> {
   const inputBoxOptions: InputBoxOptions = {
-    prompt: "Route name",
+    prompt: "Route path",
+    value: routePath,
     placeHolder: "index",
   };
   return window.showInputBox(inputBoxOptions);
@@ -79,7 +106,7 @@ function promptRouteName(): Thenable<string | undefined> {
 async function promptForTargetDirectory(): Promise<string | undefined> {
   const options: OpenDialogOptions = {
     canSelectMany: false,
-    openLabel: "Select a folder or file to create the Route in",
+    openLabel: "Select a folder or file to create the route in",
     canSelectFolders: true,
     canSelectFiles: true,
   };
@@ -93,59 +120,21 @@ async function promptForTargetDirectory(): Promise<string | undefined> {
 }
 
 /**
- * Checks if the given path is a valid working directory.
+ * Runs the `dart_frog new route` command with the given route path.
  *
- * A valid working directory is a directory that contains a `routes` directory.
- *
- * @param {String} workingDirectory
- * @returns Whether or not the given path is a valid working directory.
- **/
-function isValidWorkingPath(workingDirectory: String) {
-  const workingDirectorySplits = workingDirectory.split(path.sep);
-  const routesIndex = workingDirectorySplits.findIndex((e) => e === "routes");
-  return routesIndex !== -1;
-}
-
-/**
- * Runs the `dart_frog new route` command with the given route name.
- *
- * @param {string} routeName
- * @param {String} workingDirectory
+ * @param {string} routePath, the path of the new route.
+ * @param {string} dartFrogProjectPath, the root of the Dart Frog project.
  */
 function executeDartFrogNewRouteCommand(
-  routeName: String,
-  workingDirectory: String
+  routePath: string,
+  dartFrogProjectPath: string
 ): void {
-  let workingDirectorySplits = workingDirectory.split(path.sep);
-
-  const lastWorkingDirectoryElement =
-    workingDirectorySplits[workingDirectorySplits.length - 1];
-  const isFile = lastWorkingDirectoryElement.includes(".");
-  if (isFile) {
-    const lastDotIndex = lastWorkingDirectoryElement.lastIndexOf(".");
-    workingDirectorySplits[workingDirectorySplits.length - 1] =
-      lastWorkingDirectoryElement.substring(0, lastDotIndex);
-
-    if (workingDirectorySplits[workingDirectorySplits.length - 1] === "index") {
-      workingDirectorySplits.pop();
-    }
-  }
-
-  const routesIndex = workingDirectorySplits.findIndex((e) => e === "routes");
-  const dartProjectDirectory = workingDirectorySplits
-    .slice(0, routesIndex)
-    .join(path.sep);
-  const normalizedRouteName = path.join(
-    workingDirectorySplits.slice(routesIndex + 1).join(path.sep),
-    routeName
-  );
-
   cp.exec(
-    `dart_frog new route '${normalizedRouteName}'`,
+    `dart_frog new route '${routePath}'`,
     {
-      cwd: dartProjectDirectory,
+      cwd: dartFrogProjectPath,
     },
-    function (error: Error, stdout: String, stderr: String) {
+    function (error: Error, stdout: string, stderr: string) {
       if (error) {
         window.showErrorMessage(error.message);
       }

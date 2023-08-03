@@ -3,68 +3,9 @@ import 'package:mason/mason.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
-class _TestDomain extends Domain {
-  @override
-  Future<void> dispose() async {}
-
-  @override
-  String get domainName => 'test';
-}
-
 class _MockDaemonServer extends Mock implements DaemonServer {}
 
 void main() {
-  group('$Domain', () {
-    Future<DaemonResponse> myHandler(DaemonRequest request) async {
-      return DaemonResponse.success(
-        id: request.id,
-        result: {
-          'foo': 'bar',
-          if (request.params != null) ...request.params!,
-        },
-      );
-    }
-
-    test('routes requests to handlers', () async {
-      final domain = _TestDomain()..addHandler('myHandler', myHandler);
-      final response = await domain.handleRequest(
-        const DaemonRequest(
-          id: '1',
-          method: 'myHandler',
-          domain: 'test',
-          params: {'baz': 'qux'},
-        ),
-      );
-
-      expect(
-        response,
-        const DaemonResponse.success(
-          id: '1',
-          result: {'foo': 'bar', 'baz': 'qux'},
-        ),
-      );
-    });
-
-    test('handles invalid requests', () async {
-      final domain = _TestDomain()..addHandler('myHandler', myHandler);
-      final response = await domain.handleRequest(
-        const DaemonRequest(
-          id: '1',
-          method: 'invalidHandler',
-          domain: 'test',
-        ),
-      );
-
-      expect(
-        response,
-        const DaemonResponse.error(
-          id: '1',
-          error: {'message': 'Method not found: invalidHandler'},
-        ),
-      );
-    });
-  });
-
   group('$DaemonDomain', () {
     late DaemonServer daemonServer;
 
@@ -115,9 +56,11 @@ void main() {
 
         expect(
           response,
-          const DaemonResponse.success(
-            id: '12',
-            result: {'version': '1.0.0'},
+          equals(
+            const DaemonResponse.success(
+              id: '12',
+              result: {'version': '1.0.0'},
+            ),
           ),
         );
       });
@@ -142,11 +85,13 @@ void main() {
 
         expect(
           response,
-          const DaemonResponse.success(
-            id: '12',
-            result: {
-              'message': 'Hogarth. You stay, I go. No following.',
-            },
+          equals(
+            const DaemonResponse.success(
+              id: '12',
+              result: {
+                'message': 'Hogarth. You stay, I go. No following.',
+              },
+            ),
           ),
         );
       });
