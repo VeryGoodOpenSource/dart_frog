@@ -171,7 +171,7 @@ version: 0.1.0+1
 publish_to: none
 
 environment:
-  sdk: '>=2.19.0 <3.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   equatable: ^2.0.3
@@ -372,7 +372,7 @@ version: 0.1.0+1
 publish_to: none
 
 environment:
-  sdk: '>=2.19.0 <3.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   todos_data_source:
@@ -449,7 +449,7 @@ version: 1.0.0+1
 publish_to: none
 
 environment:
-  sdk: '>=2.19.0 <3.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   dart_frog: ^0.3.0
