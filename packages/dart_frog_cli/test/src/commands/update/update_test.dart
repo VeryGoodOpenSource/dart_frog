@@ -23,6 +23,8 @@ class _MockArgResults extends Mock implements ArgResults {}
 
 class _MockProcessSignal extends Mock implements ProcessSignal {}
 
+class _MockStdin extends Mock implements Stdin {}
+
 const expectedUsage = [
   'Update the Dart Frog CLI.\n'
       '\n'
@@ -76,6 +78,7 @@ void main() {
         pubUpdater: _MockPubUpdater(),
         exit: (_) {},
         sigint: sigint,
+        stdin: _MockStdin(),
       );
     });
 

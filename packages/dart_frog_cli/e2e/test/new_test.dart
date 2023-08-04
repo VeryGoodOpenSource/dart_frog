@@ -356,8 +356,10 @@ void main() {
       );
 
       expect(
-        fileAt('prefix/[existing_dynamic_route]/index.dart',
-            on: routesDirectory),
+        fileAt(
+          'prefix/[existing_dynamic_route]/index.dart',
+          on: routesDirectory,
+        ),
         exists,
       );
 
