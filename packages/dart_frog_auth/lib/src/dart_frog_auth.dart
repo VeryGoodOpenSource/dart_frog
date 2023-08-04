@@ -47,27 +47,42 @@ Future<bool> _defaultApplies(RequestContext context) async => true;
 /// [RequestContext]. If the function returns false, the middleware will not
 /// apply to the route and the call will have authentication validation.
 Middleware basicAuthentication<T extends Object>({
-  required Future<T?> Function(String, String) userFromCredentials,
+  Future<T?> Function(String, String)? userFromCredentials,
+  Future<T?> Function(String, String, RequestContext)? userFromContext,
   Applies applies = _defaultApplies,
-}) =>
-    (handler) => (context) async {
-          if (!await applies(context)) {
-            return handler(context);
+}) {
+  assert(
+    userFromCredentials != null || userFromContext != null,
+    'You must provide either a userFromCredentials or a '
+    'userFromContext function',
+  );
+  return (handler) => (context) async {
+        if (!await applies(context)) {
+          return handler(context);
+        }
+
+        Future<T?> call(String username, String password) async {
+          if (userFromCredentials != null) {
+            return userFromCredentials(username, password);
+          } else {
+            return userFromContext!(username, password, context);
           }
+        }
 
-          final authorization = context.request.headers.basic();
-          if (authorization != null) {
-            final [username, password] =
-                String.fromCharCodes(base64Decode(authorization)).split(':');
+        final authorization = context.request.headers.basic();
+        if (authorization != null) {
+          final [username, password] =
+              String.fromCharCodes(base64Decode(authorization)).split(':');
 
-            final user = await userFromCredentials(username, password);
-            if (user != null) {
-              return handler(context.provide(() => user));
-            }
+          final user = await call(username, password);
+          if (user != null) {
+            return handler(context.provide(() => user));
           }
+        }
 
-          return Response(statusCode: HttpStatus.unauthorized);
-        };
+        return Response(statusCode: HttpStatus.unauthorized);
+      };
+}
 
 /// Authentication that uses the `Authorization` header with the `Bearer`
 /// scheme.
@@ -90,21 +105,37 @@ Middleware basicAuthentication<T extends Object>({
 /// [RequestContext]. If the function returns false, the middleware will not
 /// apply to the route and the call will have no authentication validation.
 Middleware bearerAuthentication<T extends Object>({
-  required Future<T?> Function(String) userFromToken,
+  Future<T?> Function(String)? userFromToken,
+  Future<T?> Function(String, RequestContext)? userFromContext,
   Applies applies = _defaultApplies,
-}) =>
-    (handler) => (context) async {
-          if (!await applies(context)) {
-            return handler(context);
-          }
+}) {
+  assert(
+    userFromToken != null || userFromContext != null,
+    'You must provide either a userFromToken or a '
+    'userFromContext function',
+  );
 
-          final authorization = context.request.headers.bearer();
-          if (authorization != null) {
-            final user = await userFromToken(authorization);
-            if (user != null) {
-              return handler(context.provide(() => user));
-            }
-          }
+  return (handler) => (context) async {
+        if (!await applies(context)) {
+          return handler(context);
+        }
 
-          return Response(statusCode: HttpStatus.unauthorized);
-        };
+        Future<T?> call(String token) async {
+          if (userFromToken != null) {
+            return userFromToken(token);
+          } else {
+            return userFromContext!(token, context);
+          }
+        }
+
+        final authorization = context.request.headers.bearer();
+        if (authorization != null) {
+          final user = await call(authorization);
+          if (user != null) {
+            return handler(context.provide(() => user));
+          }
+        }
+
+        return Response(statusCode: HttpStatus.unauthorized);
+      };
+}
