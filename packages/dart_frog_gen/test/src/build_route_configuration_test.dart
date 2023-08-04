@@ -1287,6 +1287,202 @@ Future<void>init(InternetAddress ip,int port)async{}
       );
     });
   });
+
+  group('RouteConfiguration', () {
+    test('toJson transforms everything into json', () {
+      const configuration = RouteConfiguration(
+        globalMiddleware: MiddlewareFile(
+          name: 'middleware',
+          path: '../routes/_middleware.dart',
+        ),
+        middleware: [
+          MiddlewareFile(
+            name: 'middleware',
+            path: '../routes/_middleware.dart',
+          ),
+          MiddlewareFile(
+            name: r'$id__middleware',
+            path: '../routes/[id]/_middleware.dart',
+          ),
+        ],
+        directories: [
+          RouteDirectory(
+            name: '_',
+            route: '/',
+            middleware: [],
+            files: [],
+            params: [],
+          ),
+          RouteDirectory(
+            name: r'_$id',
+            route: '/<id>',
+            middleware: [],
+            files: [],
+            params: [],
+          ),
+          RouteDirectory(
+            name: r'_$id_existing_as_directory',
+            route: '/<id>/existing_as_dir',
+            files: [],
+            middleware: [],
+            params: [],
+          )
+        ],
+        routes: [
+          RouteFile(
+            name: 'index',
+            path: '../routes/index.dart',
+            route: '/',
+            params: [],
+            wildcard: false,
+          ),
+          RouteFile(
+            name: r'$id_existing_as_file',
+            path: '../routes/[id]/existing_as_file.dart',
+            route: '/existing_as_file',
+            params: [],
+            wildcard: false,
+          ),
+          RouteFile(
+            name: r'$id_existing_as_dir_index',
+            path: '../routes/[id]/existing_as_dir/index.dart',
+            route: '/',
+            params: [],
+            wildcard: false,
+          )
+        ],
+        endpoints: {
+          '/': <RouteFile>[
+            RouteFile(
+              name: 'index',
+              path: '../routes/index.dart',
+              route: '/',
+              params: [],
+              wildcard: false,
+            )
+          ],
+          '/<id>/existing_as_file': <RouteFile>[
+            RouteFile(
+              name: r'$id_existing_as_file',
+              path: '../routes/[id]/existing_as_file.dart',
+              route: '/existing_as_file',
+              params: [],
+              wildcard: false,
+            )
+          ],
+          '/<id>/existing_as_dir': <RouteFile>[
+            RouteFile(
+              name: r'$id_existing_as_dir_index',
+              path: '../routes/[id]/existing_as_dir/index.dart',
+              route: '/',
+              params: [],
+              wildcard: false,
+            )
+          ],
+        },
+        rogueRoutes: [],
+        serveStaticFiles: true,
+      );
+
+      expect(
+        configuration.toJson(),
+        equals(
+          {
+            'invokeCustomEntrypoint': false,
+            'invokeCustomInit': false,
+            'serveStaticFiles': true,
+            'globalMiddleware': {
+              'name': 'middleware',
+              'path': '../routes/_middleware.dart'
+            },
+            'middleware': [
+              {'name': 'middleware', 'path': '../routes/_middleware.dart'},
+              {
+                'name': r'$id__middleware',
+                'path': '../routes/[id]/_middleware.dart'
+              }
+            ],
+            'directories': [
+              {
+                'name': '_',
+                'route': '/',
+                'middleware': [],
+                'files': [],
+                'directory_params': []
+              },
+              {
+                'name': r'_$id',
+                'route': '/<id>',
+                'middleware': [],
+                'files': [],
+                'directory_params': []
+              },
+              {
+                'name': r'_$id_existing_as_directory',
+                'route': '/<id>/existing_as_dir',
+                'middleware': [],
+                'files': [],
+                'directory_params': []
+              }
+            ],
+            'routes': [
+              {
+                'name': 'index',
+                'path': '../routes/index.dart',
+                'route': '/',
+                'file_params': [],
+                'wildcard': false
+              },
+              {
+                'name': r'$id_existing_as_file',
+                'path': '../routes/[id]/existing_as_file.dart',
+                'route': '/existing_as_file',
+                'file_params': [],
+                'wildcard': false
+              },
+              {
+                'name': r'$id_existing_as_dir_index',
+                'path': '../routes/[id]/existing_as_dir/index.dart',
+                'route': '/',
+                'file_params': [],
+                'wildcard': false
+              }
+            ],
+            'endpoints': {
+              '/': [
+                {
+                  'name': 'index',
+                  'path': '../routes/index.dart',
+                  'route': '/',
+                  'file_params': [],
+                  'wildcard': false
+                }
+              ],
+              '/<id>/existing_as_file': [
+                {
+                  'name': r'$id_existing_as_file',
+                  'path': '../routes/[id]/existing_as_file.dart',
+                  'route': '/existing_as_file',
+                  'file_params': [],
+                  'wildcard': false
+                }
+              ],
+              '/<id>/existing_as_dir': [
+                {
+                  'name': r'$id_existing_as_dir_index',
+                  'path': '../routes/[id]/existing_as_dir/index.dart',
+                  'route': '/',
+                  'file_params': [],
+                  'wildcard': false
+                }
+              ]
+            },
+            'rogueRoutes': []
+          },
+        ),
+      );
+    });
+  });
 }
 
 Directory createTempDir({
