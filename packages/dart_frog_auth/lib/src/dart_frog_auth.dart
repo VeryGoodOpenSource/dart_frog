@@ -49,7 +49,7 @@ Future<bool> _defaultApplies(RequestContext context) async => true;
 Middleware basicAuthentication<T extends Object>({
   @Deprecated(
     'Deprecated in favor of readUser. '
-    'This might be removed in future versions',
+    'This will be removed in future versions',
   )
   Future<T?> Function(
     String username,
@@ -118,7 +118,7 @@ Middleware basicAuthentication<T extends Object>({
 Middleware bearerAuthentication<T extends Object>({
   @Deprecated(
     'Deprecated in favor of readUser. '
-    'This might be removed in future versions',
+    'This will be removed in future versions',
   )
   Future<T?> Function(String token)? userFromToken,
   Future<T?> Function(RequestContext context, String token)? readUser,
