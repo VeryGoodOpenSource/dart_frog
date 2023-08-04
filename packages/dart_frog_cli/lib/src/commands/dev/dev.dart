@@ -20,12 +20,11 @@ class DevCommand extends DartFrogCommand {
     DevServerRunnerBuilder? devServerRunnerBuilder,
     runtime_compatibility.RuntimeCompatibilityCallback?
         ensureRuntimeCompatibility,
-    io.Stdin? stdin,
   })  : _ensureRuntimeCompatibility = ensureRuntimeCompatibility ??
             runtime_compatibility.ensureRuntimeCompatibility,
         _generator = generator ?? MasonGenerator.fromBundle,
-        _devServerRunnerBuilder = devServerRunnerBuilder ?? DevServerRunner.new,
-        _stdin = stdin ?? io.stdin {
+        _devServerRunnerBuilder =
+            devServerRunnerBuilder ?? DevServerRunner.new {
     argParser
       ..addOption(
         'port',
@@ -47,7 +46,6 @@ class DevCommand extends DartFrogCommand {
   final DevServerRunnerBuilder _devServerRunnerBuilder;
   final runtime_compatibility.RuntimeCompatibilityCallback
       _ensureRuntimeCompatibility;
-  final io.Stdin _stdin;
 
   @override
   final String description = 'Run a local development server.';
@@ -61,14 +59,14 @@ class DevCommand extends DartFrogCommand {
 
   void _startListeningForHelpers() {
     if (_stdinSubscription != null) return;
-    if (!_stdin.hasTerminal) return;
+    if (!stdin.hasTerminal) return;
 
     // listen for the R key
-    _stdin
+    stdin
       ..echoMode = false
       ..lineMode = false;
 
-    _stdinSubscription = _stdin.listen(
+    _stdinSubscription = stdin.listen(
       (event) {
         if (event.length == 1 && event.first == 'R'.codeUnitAt(0)) {
           _devServerRunner.reload();
@@ -94,9 +92,9 @@ class DevCommand extends DartFrogCommand {
     // devserver started.
     // That is why this check is made after the subscription
     // is canceled, if existent.
-    if (!_stdin.hasTerminal) return;
+    if (!stdin.hasTerminal) return;
 
-    _stdin
+    stdin
       ..lineMode = true
       ..echoMode = true;
   }

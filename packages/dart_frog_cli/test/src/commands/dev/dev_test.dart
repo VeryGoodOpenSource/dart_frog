@@ -62,8 +62,9 @@ void main() {
           return runner;
         },
         logger: logger,
-        stdin: stdin,
-      )..testArgResults = argResults;
+      )
+        ..testArgResults = argResults
+        ..testStdin = stdin;
 
       expect(
         command.run(),
@@ -107,8 +108,8 @@ void main() {
           return runner;
         },
         logger: logger,
-        stdin: stdin,
       )
+        ..testStdin = stdin
         ..testArgResults = argResults
         ..testCwd = cwd;
 
@@ -138,8 +139,14 @@ void main() {
           return runner;
         },
         logger: logger,
-        stdin: stdin,
-      )..testArgResults = argResults;
+      )
+        ..testArgResults = argResults
+        ..testStdin = stdin;
+
+      when(() => runner.start()).thenAnswer((_) => Future.value());
+      when(() => runner.exitCode).thenAnswer(
+        (_) => Future.value(ExitCode.success),
+      );
 
       when(() => runner.start()).thenAnswer((_) => Future.value());
       when(() => runner.exitCode).thenAnswer((_) async => ExitCode.unavailable);
@@ -162,8 +169,9 @@ void main() {
           return runner;
         },
         logger: logger,
-        stdin: stdin,
-      )..testArgResults = argResults;
+      )
+        ..testArgResults = argResults
+        ..testStdin = stdin;
 
       when(() => runner.start()).thenAnswer((_) async {
         throw DartFrogDevServerException('oops');
@@ -229,8 +237,9 @@ void main() {
             return runner;
           },
           logger: logger,
-          stdin: stdin,
-        )..testArgResults = argResults;
+        )
+          ..testArgResults = argResults
+          ..testStdin = stdin;
       });
 
       test('listens for R on hot reload enabled', () async {
