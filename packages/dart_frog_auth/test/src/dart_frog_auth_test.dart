@@ -1,4 +1,5 @@
-// ignore_for_file: prefer_const_constructors, deprecated_member_use_from_same_package
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: deprecated_member_use_from_same_package
 import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
