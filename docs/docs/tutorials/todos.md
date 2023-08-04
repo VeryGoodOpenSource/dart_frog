@@ -171,7 +171,7 @@ version: 0.1.0+1
 publish_to: none
 
 environment:
-  sdk: '>=2.19.0 <3.0.0'
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   equatable: ^2.0.3
@@ -372,7 +372,7 @@ version: 0.1.0+1
 publish_to: none
 
 environment:
-  sdk: '>=2.19.0 <3.0.0'
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   todos_data_source:
@@ -449,16 +449,17 @@ version: 1.0.0+1
 publish_to: none
 
 environment:
-  sdk: '>=2.19.0 <3.0.0'
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
-  dart_frog: ^0.3.0
+  dart_frog: ^1.0.0
   in_memory_todos_data_source:
     path: packages/in_memory_todos_data_source
   todos_data_source:
     path: packages/todos_data_source
 
 dev_dependencies:
+  http: ^1.0.0
   mocktail: ^1.0.0
   test: ^1.19.2
   very_good_analysis: ^5.0.0

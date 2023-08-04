@@ -18,7 +18,7 @@ Dart Frog provides a simple core with a small API surface area in order to reduc
 In order to use Dart Frog you must have the [Dart SDK][dart_installation_link] installed on your machine.
 
 :::info
-Dart Frog requires Dart `">=2.19.0 <3.0.0"`
+Dart Frog requires Dart `">=3.0.0 <4.0.0"`
 :::
 
 ### Installing 🧑‍💻
