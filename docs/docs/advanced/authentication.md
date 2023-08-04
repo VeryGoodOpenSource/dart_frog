@@ -82,16 +82,13 @@ Handler middleware(Handler handler) {
       .use(requestLogger())
       .use(
         basicAuthentication<User>(
-          authenticator: (context, username, password) {
-            final userRepository = context.read<UserRepository>();
-            return userRepository.fetchFromCredentials(username, password);
-          },
+          userFromCredentials: userRepository.fetchFromCredentials,
         ),
       );
 }
 ```
 
-The `authenticator` parameter must be a method that receives three positional arguments (context, username
+The `userFromCredentials` parameter must be a method that receives two positional arguments (username
 and password) and returns a user if any is found for those credentials, otherwise it should return null.
 
 If a user is returned (authenticated), it will be set in the request context and can be read by request handlers, for example:
@@ -125,18 +122,14 @@ Handler middleware(Handler handler) {
       .use(requestLogger())
       .use(
         bearerTokenAuthentication<User>(
-          authenticator: (context, token) {
-            final userRepository = context.read<UserRepository>();
-            return userRepository.fetchFromAccessToken(token);
-          }
+          userFromToken: userRepository.fetchFromAccessToken,
         ),
       );
 }
 ```
 
-The `authenticator` parameter must be a function that receives two positional argument the
-context and the token sent on the authorization header and returns a user if any is found
-for that token.
+The `userFromToken` parameter must be a function that receives one positional argument (the
+token sent on the authorization header) and returns a user if any is found for that token.
 
 Again, just like in the basic method, if a user is returned, it will be set in the request
 context and can be read on request handlers, for example:
@@ -192,10 +185,7 @@ Handler middleware(Handler handler) {
       .use(provider<UserRepository>((_) => userRepository))
       .use(
         basicAuthentication<User>(
-          authenticator: (context, username, password) {
-            final userRepository = context.read<UserRepository>();
-            return userRepository.userFromCredentials(username, password);
-          },
+          userFromCredentials: userFromCredentials(userRepository),
           applies: (RequestContext context) async =>
               context.request.method != HttpMethod.post,
         ),
