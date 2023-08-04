@@ -8,6 +8,7 @@ suite("create command", () => {
 
   let vscodeStub: any;
   let childProcessStub: any;
+  let utilsStub: any;
   let command: any;
 
   beforeEach(() => {
@@ -22,16 +23,42 @@ suite("create command", () => {
     childProcessStub = {
       exec: sinon.stub(),
     };
+    utilsStub = {
+      isDartFrogCLIInstalled: sinon.stub(),
+      suggestInstallingDartFrogCLI: sinon.stub(),
+    };
+    utilsStub.isDartFrogCLIInstalled.returns(true);
 
     command = proxyquire("../../../commands/create", {
       vscode: vscodeStub,
       // eslint-disable-next-line @typescript-eslint/naming-convention
       child_process: childProcessStub,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      "../utils": utilsStub,
     });
   });
 
   afterEach(() => {
     sinon.restore();
+  });
+
+  test("suggests installing Dart Frog CLI when not installed", async () => {
+    utilsStub.isDartFrogCLIInstalled.returns(false);
+
+    await command.create(targetUri);
+
+    sinon.assert.calledWith(
+      utilsStub.suggestInstallingDartFrogCLI,
+      "Running this command requires Dart Frog CLI to be installed."
+    );
+  });
+
+  test("does not suggest installing Dart Frog CLI when installed", async () => {
+    utilsStub.isDartFrogCLIInstalled.returns(true);
+
+    await command.create(targetUri);
+
+    sinon.assert.notCalled(utilsStub.suggestInstallingDartFrogCLI);
   });
 
   test("project input box is shown with directory name as value", async () => {
@@ -45,7 +72,7 @@ suite("create command", () => {
 
   suite("file open dialog", () => {
     test("is shown when Uri is undefined", async () => {
-      vscodeStub.window.showOpenDialog.returns(Promise.resolve(undefined));
+      vscodeStub.window.showOpenDialog.resolves();
 
       await command.create();
 
@@ -164,7 +191,7 @@ suite("create command", () => {
   });
 
   test("runs `dart_frog create` command when project name is valid and uri not defined", async () => {
-    vscodeStub.window.showOpenDialog.returns(Promise.resolve([targetUri]));
+    vscodeStub.window.showOpenDialog.resolves([targetUri]);
     vscodeStub.window.showInputBox.returns("my_project");
 
     await command.create();

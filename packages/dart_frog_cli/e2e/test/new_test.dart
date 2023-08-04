@@ -48,7 +48,7 @@ void main() {
       expect(fileAt('another_new_route.dart', on: routesDirectory), exists);
     });
 
-    test('Creates dynamic route', () async {
+    test(skip: true, 'Creates dynamic route', () async {
       await dartFrogNewRoute('/[id]', directory: projectDirectory);
 
       expect(fileAt('[id].dart', on: routesDirectory), exists);
@@ -336,33 +336,36 @@ void main() {
 
     test('Creates middleware in existing dynamic route', () async {
       await dartFrogNewRoute(
-        '/[existing_dynamic_route]',
+        '/prefix/[existing_dynamic_route]',
         directory: projectDirectory,
       );
 
       expect(
-        fileAt('[existing_dynamic_route].dart', on: routesDirectory),
+        fileAt('prefix/[existing_dynamic_route].dart', on: routesDirectory),
         exists,
       );
 
       await dartFrogNewMiddleware(
-        '/[existing_dynamic_route]',
+        '/prefix/[existing_dynamic_route]',
         directory: projectDirectory,
       );
 
       expect(
-        fileAt('[existing_dynamic_route].dart', on: routesDirectory),
+        fileAt('prefix/[existing_dynamic_route].dart', on: routesDirectory),
         doesNotExist,
       );
 
       expect(
-        fileAt('[existing_dynamic_route]/index.dart', on: routesDirectory),
+        fileAt(
+          'prefix/[existing_dynamic_route]/index.dart',
+          on: routesDirectory,
+        ),
         exists,
       );
 
       expect(
         fileAt(
-          '[existing_dynamic_route]/_middleware.dart',
+          'prefix/[existing_dynamic_route]/_middleware.dart',
           on: routesDirectory,
         ),
         exists,

@@ -30,6 +30,9 @@ suite("new-route command", () => {
     utilsStub = {
       nearestDartFrogProject: sinon.stub(),
       normalizeRoutePath: sinon.stub(),
+      resolveDartFrogProjectPathFromWorkspace: sinon.stub(),
+      isDartFrogCLIInstalled: sinon.stub(),
+      suggestInstallingDartFrogCLI: sinon.stub(),
     };
 
     utilsStub.nearestDartFrogProject
@@ -38,6 +41,8 @@ suite("new-route command", () => {
     utilsStub.nearestDartFrogProject
       .withArgs(validUri.fsPath)
       .returns(validUri.fsPath);
+    utilsStub.isDartFrogCLIInstalled.returns(true);
+    utilsStub.suggestInstallingDartFrogCLI.resolves();
 
     command = proxyquire("../../../commands/new-route", {
       vscode: vscodeStub,
@@ -50,6 +55,27 @@ suite("new-route command", () => {
 
   afterEach(() => {
     sinon.restore();
+  });
+
+  test("suggests installing Dart Frog CLI when not installed", async () => {
+    utilsStub.isDartFrogCLIInstalled.returns(false);
+    utilsStub.normalizeRoutePath.returns("/");
+
+    await command.newRoute(validUri);
+
+    sinon.assert.calledWith(
+      utilsStub.suggestInstallingDartFrogCLI,
+      "Running this command requires Dart Frog CLI to be installed."
+    );
+  });
+
+  test("does not suggest installing Dart Frog CLI when installed", async () => {
+    utilsStub.isDartFrogCLIInstalled.returns(true);
+    utilsStub.normalizeRoutePath.returns("/");
+
+    await command.newRoute(validUri);
+
+    sinon.assert.notCalled(utilsStub.suggestInstallingDartFrogCLI);
   });
 
   suite("shows input box to input route path", () => {
@@ -123,18 +149,30 @@ suite("new-route command", () => {
   });
 
   suite("file open dialog", () => {
-    test("is shown when Uri is undefined", async () => {
+    test("is shown when Uri is undefined and fails to resolve a path from workspace", async () => {
       vscodeStub.window.showInputBox.returns(validRouteName);
-      vscodeStub.window.showOpenDialog.returns(Promise.resolve(undefined));
+      vscodeStub.window.showOpenDialog.resolves();
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
 
       await command.newRoute();
 
       sinon.assert.calledWith(vscodeStub.window.showOpenDialog, {
         canSelectMany: false,
-        openLabel: "Select a folder or file to create the Route in",
+        openLabel: "Select a folder or file to create the route in",
         canSelectFolders: true,
         canSelectFiles: true,
       });
+    });
+
+    test("is not shown when Uri is undefined but resolves a path from workspace", async () => {
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+        validUri.fsPath
+      );
+      utilsStub.normalizeRoutePath.returns("/");
+
+      await command.newRoute();
+
+      sinon.assert.notCalled(vscodeStub.window.showOpenDialog);
     });
 
     test("is not shown when Uri is defined", async () => {
@@ -151,7 +189,7 @@ suite("new-route command", () => {
 
     test("is shown when Uri is undefined and selected file is undefined", async () => {
       vscodeStub.window.showInputBox.returns(validRouteName);
-      vscodeStub.window.showOpenDialog.returns(Promise.resolve(undefined));
+      vscodeStub.window.showOpenDialog.resolves();
 
       await command.newRoute();
 
@@ -160,7 +198,7 @@ suite("new-route command", () => {
 
     test("is not shown when Uri is undefined and selected file is given", async () => {
       vscodeStub.window.showInputBox.returns(validRouteName);
-      vscodeStub.window.showOpenDialog.returns(Promise.resolve([invalidUri]));
+      vscodeStub.window.showOpenDialog.resolves([invalidUri]);
 
       await command.newRoute();
 
@@ -179,7 +217,7 @@ suite("new-route command", () => {
 
       test("is shown when Uri is undefined and selected file is invalid", async () => {
         vscodeStub.window.showInputBox.returns(validRouteName);
-        vscodeStub.window.showOpenDialog.returns(Promise.resolve([invalidUri]));
+        vscodeStub.window.showOpenDialog.resolves([invalidUri]);
 
         await command.newRoute();
 
