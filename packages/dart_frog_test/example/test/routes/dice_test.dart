@@ -13,14 +13,15 @@ class _MockRandom extends Mock implements Random {}
 void main() {
   testRouteHandler(
     'responds with a 200 and the rolled number.',
-    request: Request('POST', Uri.parse('https://example/dice')),
-    onRequest: route.onRequest,
-    setUp: (context) {
+    route.onRequest,
+    TestRequest(path: '/dice', method: HttpMethod.post),
+    (tester) async {
       final random = _MockRandom();
       when(() => random.nextInt(6)).thenReturn(2);
-      when(() => context.read<Random>()).thenReturn(random);
-    },
-    expect: (response) {
+
+      tester.mockDependency<Random>(random);
+
+      final response = await tester.response();
       expect(response.statusCode, equals(HttpStatus.ok));
       expect(
         response.json(),
@@ -29,16 +30,16 @@ void main() {
     },
   );
 
-  final notAllowedMethods = HttpMethod.values
-      .where((v) => v != HttpMethod.post)
-      .map((e) => e.name.toUpperCase());
+  final notAllowedMethods =
+      HttpMethod.values.where((v) => v != HttpMethod.post);
 
   for (final method in notAllowedMethods) {
     testRouteHandler(
       'responds with method not allowed.',
-      request: Request(method, Uri.parse('https://example/dice')),
-      onRequest: route.onRequest,
-      expect: (response) {
+      route.onRequest,
+      TestRequest(path: '/dice', method: method),
+      (tester) async {
+        final response = await tester.response();
         expect(response.statusCode, equals(HttpStatus.methodNotAllowed));
       },
     );
