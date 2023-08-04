@@ -7,7 +7,7 @@ Handler middleware(Handler handler) {
   return handler
       .use(
         bearerAuthentication<User>(
-          readUser: (context, token) async {
+          authenticator: (context, token) async {
             final sessionRepository = context.read<SessionRepository>();
             final userRepository = context.read<UserRepository>();
             final session = await sessionRepository.sessionFromToken(token);

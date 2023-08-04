@@ -8,7 +8,7 @@ Handler middleware(Handler handler) {
   return handler
       .use(
         basicAuthentication<User>(
-          readUser: (context, username, password) {
+          authenticator: (context, username, password) {
             final repository = context.read<UserRepository>();
             return repository.userFromCredentials(username, password);
           },
