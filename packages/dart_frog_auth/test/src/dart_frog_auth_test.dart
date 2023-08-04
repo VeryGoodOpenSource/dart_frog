@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, deprecated_member_use_from_same_package
 import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
@@ -29,26 +29,113 @@ void main() {
       when(() => context.request).thenReturn(request);
     });
 
-    test('returns 401 when Authorization header is not present', () async {
-      final middleware = basicAuthentication<_User>(
-        userFromCredentials: (_, __) async => user,
+    group('using older API', () {
+      test('returns 401 when Authorization header is not present', () async {
+        final middleware = basicAuthentication<_User>(
+          userFromCredentials: (_, __) async => user,
+        );
+        expect(
+          await middleware((_) async => Response())(context),
+          isA<Response>().having(
+            (r) => r.statusCode,
+            'statusCode',
+            HttpStatus.unauthorized,
+          ),
+        );
+      });
+
+      test(
+        'returns 401 when Authorization header is present but invalid',
+        () async {
+          when(() => request.headers)
+              .thenReturn({'Authorization': 'not valid'});
+          final middleware = basicAuthentication<_User>(
+            userFromCredentials: (_, __) async => user,
+          );
+          expect(
+            await middleware((_) async => Response())(context),
+            isA<Response>().having(
+              (r) => r.statusCode,
+              'statusCode',
+              HttpStatus.unauthorized,
+            ),
+          );
+        },
       );
-      expect(
-        await middleware((_) async => Response())(context),
-        isA<Response>().having(
-          (r) => r.statusCode,
-          'statusCode',
-          HttpStatus.unauthorized,
-        ),
+
+      test(
+        'returns 401 when Authorization header is present and valid but no '
+        'user is returned',
+        () async {
+          when(() => request.headers).thenReturn({
+            'Authorization': 'Basic dXNlcjpwYXNz',
+          });
+          final middleware = basicAuthentication<_User>(
+            userFromCredentials: (_, __) async => null,
+          );
+          expect(
+            await middleware((_) async => Response())(context),
+            isA<Response>().having(
+              (r) => r.statusCode,
+              'statusCode',
+              HttpStatus.unauthorized,
+            ),
+          );
+        },
       );
+
+      test(
+        'sets the user when everything is valid',
+        () async {
+          user = _User('');
+          when(() => request.headers).thenReturn({
+            'Authorization': 'Basic dXNlcjpwYXNz',
+          });
+          final middleware = basicAuthentication<_User>(
+            userFromCredentials: (_, __) async => user,
+          );
+          expect(
+            await middleware((_) async => Response())(context),
+            isA<Response>().having(
+              (r) => r.statusCode,
+              'statusCode',
+              HttpStatus.ok,
+            ),
+          );
+          final captured = verify(() => context.provide<_User>(captureAny()))
+              .captured
+              .single;
+          expect(
+            (captured as _User Function()).call(),
+            equals(user),
+          );
+        },
+      );
+
+      test("skips routes that doesn't match the custom predicate", () async {
+        var called = false;
+
+        final middleware = basicAuthentication<_User>(
+          userFromCredentials: (_, __) async {
+            called = true;
+            return null;
+          },
+          applies: (_) async => false,
+        );
+
+        final response = await middleware((_) async => Response())(context);
+
+        expect(called, isFalse);
+        // By returning null on the userFromCredentials, if the middleware had
+        // run we should have gotten a 401 response.
+        expect(response.statusCode, equals(HttpStatus.ok));
+      });
     });
 
-    test(
-      'returns 401 when Authorization header is present but invalid',
-      () async {
-        when(() => request.headers).thenReturn({'Authorization': 'not valid'});
+    group('using the new API', () {
+      test('returns 401 when Authorization header is not present', () async {
         final middleware = basicAuthentication<_User>(
-          userFromCredentials: (_, __) async => user,
+          readUser: (_, __, ___) async => user,
         );
         expect(
           await middleware((_) async => Response())(context),
@@ -58,74 +145,94 @@ void main() {
             HttpStatus.unauthorized,
           ),
         );
-      },
-    );
+      });
 
-    test(
-      'returns 401 when Authorization header is present and valid but no '
-      'user is returned',
-      () async {
-        when(() => request.headers).thenReturn({
-          'Authorization': 'Basic dXNlcjpwYXNz',
-        });
-        final middleware = basicAuthentication<_User>(
-          userFromCredentials: (_, __) async => null,
-        );
-        expect(
-          await middleware((_) async => Response())(context),
-          isA<Response>().having(
-            (r) => r.statusCode,
-            'statusCode',
-            HttpStatus.unauthorized,
-          ),
-        );
-      },
-    );
-
-    test(
-      'sets the user when everything is valid',
-      () async {
-        user = _User('');
-        when(() => request.headers).thenReturn({
-          'Authorization': 'Basic dXNlcjpwYXNz',
-        });
-        final middleware = basicAuthentication<_User>(
-          userFromCredentials: (_, __) async => user,
-        );
-        expect(
-          await middleware((_) async => Response())(context),
-          isA<Response>().having(
-            (r) => r.statusCode,
-            'statusCode',
-            HttpStatus.ok,
-          ),
-        );
-        final captured =
-            verify(() => context.provide<_User>(captureAny())).captured.single;
-        expect(
-          (captured as _User Function()).call(),
-          equals(user),
-        );
-      },
-    );
-
-    test("skips routes that doesn't match the custom predicate", () async {
-      var called = false;
-
-      final middleware = basicAuthentication<_User>(
-        userFromCredentials: (_, __) async {
-          called = true;
-          return null;
+      test(
+        'returns 401 when Authorization header is present but invalid',
+        () async {
+          when(() => request.headers)
+              .thenReturn({'Authorization': 'not valid'});
+          final middleware = basicAuthentication<_User>(
+            readUser: (_, __, ___) async => user,
+          );
+          expect(
+            await middleware((_) async => Response())(context),
+            isA<Response>().having(
+              (r) => r.statusCode,
+              'statusCode',
+              HttpStatus.unauthorized,
+            ),
+          );
         },
-        applies: (_) async => false,
       );
 
-      final response = await middleware((_) async => Response())(context);
+      test(
+        'returns 401 when Authorization header is present and valid but no '
+        'user is returned',
+        () async {
+          when(() => request.headers).thenReturn({
+            'Authorization': 'Basic dXNlcjpwYXNz',
+          });
+          final middleware = basicAuthentication<_User>(
+            readUser: (_, __, ___) async => null,
+          );
+          expect(
+            await middleware((_) async => Response())(context),
+            isA<Response>().having(
+              (r) => r.statusCode,
+              'statusCode',
+              HttpStatus.unauthorized,
+            ),
+          );
+        },
+      );
 
-      expect(called, isFalse);
-      // By returning null on the userFromCredentials, if the middleware had run
-      // we should have gotten a 401 response.
-      expect(response.statusCode, equals(HttpStatus.ok));
+      test(
+        'sets the user when everything is valid',
+        () async {
+          user = _User('');
+          when(() => request.headers).thenReturn({
+            'Authorization': 'Basic dXNlcjpwYXNz',
+          });
+          final middleware = basicAuthentication<_User>(
+            readUser: (_, __, ___) async => user,
+          );
+          expect(
+            await middleware((_) async => Response())(context),
+            isA<Response>().having(
+              (r) => r.statusCode,
+              'statusCode',
+              HttpStatus.ok,
+            ),
+          );
+          final captured = verify(() => context.provide<_User>(captureAny()))
+              .captured
+              .single;
+          expect(
+            (captured as _User Function()).call(),
+            equals(user),
+          );
+        },
+      );
+
+      test("skips routes that doesn't match the custom predicate", () async {
+        var called = false;
+
+        final middleware = basicAuthentication<_User>(
+          readUser: (_, __, ___) async {
+            called = true;
+            return null;
+          },
+          applies: (_) async => false,
+        );
+
+        final response = await middleware((_) async => Response())(context);
+
+        expect(called, isFalse);
+        // By returning null on the userFromCredentials, if the middleware had
+        // run we should have gotten a 401 response.
+        expect(response.statusCode, equals(HttpStatus.ok));
+      });
     });
   });
 
@@ -142,26 +249,113 @@ void main() {
       when(() => context.request).thenReturn(request);
     });
 
-    test('returns 401 when Authorization header is not present', () async {
-      final middleware = bearerAuthentication<_User>(
-        userFromToken: (_) async => user,
+    group('using older API', () {
+      test('returns 401 when Authorization header is not present', () async {
+        final middleware = bearerAuthentication<_User>(
+          userFromToken: (_) async => user,
+        );
+        expect(
+          await middleware((_) async => Response())(context),
+          isA<Response>().having(
+            (r) => r.statusCode,
+            'statusCode',
+            HttpStatus.unauthorized,
+          ),
+        );
+      });
+
+      test(
+        'returns 401 when Authorization header is present but invalid',
+        () async {
+          when(() => request.headers)
+              .thenReturn({'Authorization': 'not valid'});
+          final middleware = bearerAuthentication<_User>(
+            userFromToken: (_) async => user,
+          );
+          expect(
+            await middleware((_) async => Response())(context),
+            isA<Response>().having(
+              (r) => r.statusCode,
+              'statusCode',
+              HttpStatus.unauthorized,
+            ),
+          );
+        },
       );
-      expect(
-        await middleware((_) async => Response())(context),
-        isA<Response>().having(
-          (r) => r.statusCode,
-          'statusCode',
-          HttpStatus.unauthorized,
-        ),
+
+      test(
+        'returns 401 when Authorization header is present and valid but no '
+        'user is returned',
+        () async {
+          when(() => request.headers).thenReturn({
+            'Authorization': 'Bearer 1234',
+          });
+          final middleware = bearerAuthentication<_User>(
+            userFromToken: (_) async => null,
+          );
+          expect(
+            await middleware((_) async => Response())(context),
+            isA<Response>().having(
+              (r) => r.statusCode,
+              'statusCode',
+              HttpStatus.unauthorized,
+            ),
+          );
+        },
       );
+
+      test(
+        'sets the user when everything is valid',
+        () async {
+          user = _User('');
+          when(() => request.headers).thenReturn({
+            'Authorization': 'Bearer 1234',
+          });
+          final middleware = bearerAuthentication<_User>(
+            userFromToken: (_) async => user,
+          );
+          expect(
+            await middleware((_) async => Response())(context),
+            isA<Response>().having(
+              (r) => r.statusCode,
+              'statusCode',
+              HttpStatus.ok,
+            ),
+          );
+          final captured = verify(() => context.provide<_User>(captureAny()))
+              .captured
+              .single;
+          expect(
+            (captured as _User Function()).call(),
+            equals(user),
+          );
+        },
+      );
+
+      test("skips routes that doesn't match the custom predicate", () async {
+        var called = false;
+
+        final middleware = bearerAuthentication<_User>(
+          userFromToken: (_) async {
+            called = true;
+            return null;
+          },
+          applies: (_) async => false,
+        );
+
+        final response = await middleware((_) async => Response())(context);
+
+        expect(called, isFalse);
+        // By returning null on the userFromCredentials, if the middleware had
+        // run we should have gotten a 401 response.
+        expect(response.statusCode, equals(HttpStatus.ok));
+      });
     });
 
-    test(
-      'returns 401 when Authorization header is present but invalid',
-      () async {
-        when(() => request.headers).thenReturn({'Authorization': 'not valid'});
+    group('using the new API', () {
+      test('returns 401 when Authorization header is not present', () async {
         final middleware = bearerAuthentication<_User>(
-          userFromToken: (_) async => user,
+          readUser: (_, __) async => user,
         );
         expect(
           await middleware((_) async => Response())(context),
@@ -171,74 +365,94 @@ void main() {
             HttpStatus.unauthorized,
           ),
         );
-      },
-    );
+      });
 
-    test(
-      'returns 401 when Authorization header is present and valid but no '
-      'user is returned',
-      () async {
-        when(() => request.headers).thenReturn({
-          'Authorization': 'Bearer 1234',
-        });
-        final middleware = bearerAuthentication<_User>(
-          userFromToken: (_) async => null,
-        );
-        expect(
-          await middleware((_) async => Response())(context),
-          isA<Response>().having(
-            (r) => r.statusCode,
-            'statusCode',
-            HttpStatus.unauthorized,
-          ),
-        );
-      },
-    );
-
-    test(
-      'sets the user when everything is valid',
-      () async {
-        user = _User('');
-        when(() => request.headers).thenReturn({
-          'Authorization': 'Bearer 1234',
-        });
-        final middleware = bearerAuthentication<_User>(
-          userFromToken: (_) async => user,
-        );
-        expect(
-          await middleware((_) async => Response())(context),
-          isA<Response>().having(
-            (r) => r.statusCode,
-            'statusCode',
-            HttpStatus.ok,
-          ),
-        );
-        final captured =
-            verify(() => context.provide<_User>(captureAny())).captured.single;
-        expect(
-          (captured as _User Function()).call(),
-          equals(user),
-        );
-      },
-    );
-
-    test("skips routes that doesn't match the custom predicate", () async {
-      var called = false;
-
-      final middleware = bearerAuthentication<_User>(
-        userFromToken: (_) async {
-          called = true;
-          return null;
+      test(
+        'returns 401 when Authorization header is present but invalid',
+        () async {
+          when(() => request.headers)
+              .thenReturn({'Authorization': 'not valid'});
+          final middleware = bearerAuthentication<_User>(
+            readUser: (_, __) async => user,
+          );
+          expect(
+            await middleware((_) async => Response())(context),
+            isA<Response>().having(
+              (r) => r.statusCode,
+              'statusCode',
+              HttpStatus.unauthorized,
+            ),
+          );
         },
-        applies: (_) async => false,
       );
 
-      final response = await middleware((_) async => Response())(context);
+      test(
+        'returns 401 when Authorization header is present and valid but no '
+        'user is returned',
+        () async {
+          when(() => request.headers).thenReturn({
+            'Authorization': 'Bearer 1234',
+          });
+          final middleware = bearerAuthentication<_User>(
+            readUser: (_, __) async => null,
+          );
+          expect(
+            await middleware((_) async => Response())(context),
+            isA<Response>().having(
+              (r) => r.statusCode,
+              'statusCode',
+              HttpStatus.unauthorized,
+            ),
+          );
+        },
+      );
 
-      expect(called, isFalse);
-      // By returning null on the userFromCredentials, if the middleware had run
-      // we should have gotten a 401 response.
-      expect(response.statusCode, equals(HttpStatus.ok));
+      test(
+        'sets the user when everything is valid',
+        () async {
+          user = _User('');
+          when(() => request.headers).thenReturn({
+            'Authorization': 'Bearer 1234',
+          });
+          final middleware = bearerAuthentication<_User>(
+            readUser: (_, __) async => user,
+          );
+          expect(
+            await middleware((_) async => Response())(context),
+            isA<Response>().having(
+              (r) => r.statusCode,
+              'statusCode',
+              HttpStatus.ok,
+            ),
+          );
+          final captured = verify(() => context.provide<_User>(captureAny()))
+              .captured
+              .single;
+          expect(
+            (captured as _User Function()).call(),
+            equals(user),
+          );
+        },
+      );
+
+      test("skips routes that doesn't match the custom predicate", () async {
+        var called = false;
+
+        final middleware = bearerAuthentication<_User>(
+          readUser: (_, __) async {
+            called = true;
+            return null;
+          },
+          applies: (_) async => false,
+        );
+
+        final response = await middleware((_) async => Response())(context);
+
+        expect(called, isFalse);
+        // By returning null on the userFromCredentials, if the middleware had
+        // run we should have gotten a 401 response.
+        expect(response.statusCode, equals(HttpStatus.ok));
+      });
     });
   });
 }
