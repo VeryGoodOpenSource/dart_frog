@@ -82,7 +82,7 @@ Handler middleware(Handler handler) {
       .use(requestLogger())
       .use(
         basicAuthentication<User>(
-          readUser: (context, username, password) {
+          authenticator: (context, username, password) {
             final userRepository = context.read<UserRepository>();
             return userRepository.fetchFromCredentials(username, password);
           },
@@ -91,7 +91,7 @@ Handler middleware(Handler handler) {
 }
 ```
 
-The `readUser` parameter must be a method that receives three positional arguments (context, username
+The `authenticator` parameter must be a method that receives three positional arguments (context, username
 and password) and returns a user if any is found for those credentials, otherwise it should return null.
 
 If a user is returned (authenticated), it will be set in the request context and can be read by request handlers, for example:
@@ -125,16 +125,16 @@ Handler middleware(Handler handler) {
       .use(requestLogger())
       .use(
         bearerTokenAuthentication<User>(
-          readUser: (context, token) {
+          authenticator: (context, token) {
             final userRepository = context.read<UserRepository>();
             return userRepository.fetchFromAccessToken(token);
           }
-        ).build(),
+        ),
       );
 }
 ```
 
-The `readUser` parameter must be a function that receives two positional argument the
+The `authenticator` parameter must be a function that receives two positional argument the
 context and the token sent on the authorization header and returns a user if any is found
 for that token.
 
@@ -192,7 +192,7 @@ Handler middleware(Handler handler) {
       .use(provider<UserRepository>((_) => userRepository))
       .use(
         basicAuthentication<User>(
-          readUser: (context, username, password) {
+          authenticator: (context, username, password) {
             final userRepository = context.read<UserRepository>();
             return userRepository.userFromCredentials(username, password);
           },

@@ -48,7 +48,7 @@ Future<bool> _defaultApplies(RequestContext context) async => true;
 /// apply to the route and the call will have authentication validation.
 Middleware basicAuthentication<T extends Object>({
   @Deprecated(
-    'Deprecated in favor of readUser. '
+    'Deprecated in favor of authenticator. '
     'This will be removed in future versions',
   )
   Future<T?> Function(
@@ -59,13 +59,13 @@ Middleware basicAuthentication<T extends Object>({
     RequestContext context,
     String username,
     String password,
-  )? readUser,
+  )? authenticator,
   Applies applies = _defaultApplies,
 }) {
   assert(
-    userFromCredentials != null || readUser != null,
+    userFromCredentials != null || authenticator != null,
     'You must provide either a userFromCredentials or a '
-    'readUser function',
+    'authenticator function',
   );
   return (handler) => (context) async {
         if (!await applies(context)) {
@@ -76,7 +76,7 @@ Middleware basicAuthentication<T extends Object>({
           if (userFromCredentials != null) {
             return userFromCredentials(username, password);
           } else {
-            return readUser!(context, username, password);
+            return authenticator!(context, username, password);
           }
         }
 
@@ -117,17 +117,17 @@ Middleware basicAuthentication<T extends Object>({
 /// apply to the route and the call will have no authentication validation.
 Middleware bearerAuthentication<T extends Object>({
   @Deprecated(
-    'Deprecated in favor of readUser. '
+    'Deprecated in favor of authenticator. '
     'This will be removed in future versions',
   )
   Future<T?> Function(String token)? userFromToken,
-  Future<T?> Function(RequestContext context, String token)? readUser,
+  Future<T?> Function(RequestContext context, String token)? authenticator,
   Applies applies = _defaultApplies,
 }) {
   assert(
-    userFromToken != null || readUser != null,
+    userFromToken != null || authenticator != null,
     'You must provide either a userFromToken or a '
-    'readUser function',
+    'authenticator function',
   );
 
   return (handler) => (context) async {
@@ -139,7 +139,7 @@ Middleware bearerAuthentication<T extends Object>({
           if (userFromToken != null) {
             return userFromToken(token);
           } else {
-            return readUser!(context, token);
+            return authenticator!(context, token);
           }
         }
 

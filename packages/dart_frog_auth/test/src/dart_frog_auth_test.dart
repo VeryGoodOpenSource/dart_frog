@@ -136,7 +136,7 @@ void main() {
     group('using the new API', () {
       test('returns 401 when Authorization header is not present', () async {
         final middleware = basicAuthentication<_User>(
-          readUser: (_, __, ___) async => user,
+          authenticator: (_, __, ___) async => user,
         );
         expect(
           await middleware((_) async => Response())(context),
@@ -154,7 +154,7 @@ void main() {
           when(() => request.headers)
               .thenReturn({'Authorization': 'not valid'});
           final middleware = basicAuthentication<_User>(
-            readUser: (_, __, ___) async => user,
+            authenticator: (_, __, ___) async => user,
           );
           expect(
             await middleware((_) async => Response())(context),
@@ -175,7 +175,7 @@ void main() {
             'Authorization': 'Basic dXNlcjpwYXNz',
           });
           final middleware = basicAuthentication<_User>(
-            readUser: (_, __, ___) async => null,
+            authenticator: (_, __, ___) async => null,
           );
           expect(
             await middleware((_) async => Response())(context),
@@ -196,7 +196,7 @@ void main() {
             'Authorization': 'Basic dXNlcjpwYXNz',
           });
           final middleware = basicAuthentication<_User>(
-            readUser: (_, __, ___) async => user,
+            authenticator: (_, __, ___) async => user,
           );
           expect(
             await middleware((_) async => Response())(context),
@@ -220,7 +220,7 @@ void main() {
         var called = false;
 
         final middleware = basicAuthentication<_User>(
-          readUser: (_, __, ___) async {
+          authenticator: (_, __, ___) async {
             called = true;
             return null;
           },
@@ -356,7 +356,7 @@ void main() {
     group('using the new API', () {
       test('returns 401 when Authorization header is not present', () async {
         final middleware = bearerAuthentication<_User>(
-          readUser: (_, __) async => user,
+          authenticator: (_, __) async => user,
         );
         expect(
           await middleware((_) async => Response())(context),
@@ -374,7 +374,7 @@ void main() {
           when(() => request.headers)
               .thenReturn({'Authorization': 'not valid'});
           final middleware = bearerAuthentication<_User>(
-            readUser: (_, __) async => user,
+            authenticator: (_, __) async => user,
           );
           expect(
             await middleware((_) async => Response())(context),
@@ -395,7 +395,7 @@ void main() {
             'Authorization': 'Bearer 1234',
           });
           final middleware = bearerAuthentication<_User>(
-            readUser: (_, __) async => null,
+            authenticator: (_, __) async => null,
           );
           expect(
             await middleware((_) async => Response())(context),
@@ -416,7 +416,7 @@ void main() {
             'Authorization': 'Bearer 1234',
           });
           final middleware = bearerAuthentication<_User>(
-            readUser: (_, __) async => user,
+            authenticator: (_, __) async => user,
           );
           expect(
             await middleware((_) async => Response())(context),
@@ -440,7 +440,7 @@ void main() {
         var called = false;
 
         final middleware = bearerAuthentication<_User>(
-          readUser: (_, __) async {
+          authenticator: (_, __) async {
             called = true;
             return null;
           },
