@@ -17,6 +17,8 @@ class _MockPubUpdater extends Mock implements PubUpdater {}
 
 class _MockProcessSignal extends Mock implements ProcessSignal {}
 
+class _MockStdin extends Mock implements Stdin {}
+
 const expectedUsage = [
   'A fast, minimalistic backend framework for Dart.\n'
       '\n'
@@ -78,6 +80,7 @@ void main() {
         pubUpdater: pubUpdater,
         exit: (_) {},
         sigint: sigint,
+        stdin: _MockStdin(),
       );
     });
 
@@ -114,6 +117,7 @@ void main() {
           pubUpdater: pubUpdater,
           exit: exitCalls.add,
           sigint: sigint,
+          stdin: _MockStdin(),
         );
         when(() => sigint.watch()).thenAnswer((_) => Stream.value(sigint));
         await commandRunner.run(['--version']);
