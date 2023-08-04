@@ -32,10 +32,12 @@ class DartFrogCommandRunner extends CompletionCommandRunner<int> {
     PubUpdater? pubUpdater,
     io.ProcessSignal? sigint,
     Exit? exit,
+    io.Stdin? stdin,
   })  : _logger = logger ?? Logger(),
         _pubUpdater = pubUpdater ?? PubUpdater(),
         _sigint = sigint ?? io.ProcessSignal.sigint,
         _exit = exit ?? io.exit,
+        stdin = stdin ?? io.stdin,
         super(executableName, executableDescription) {
     argParser.addFlags();
     addCommand(BuildCommand(logger: _logger));
@@ -52,6 +54,9 @@ class DartFrogCommandRunner extends CompletionCommandRunner<int> {
   final PubUpdater _pubUpdater;
   final io.ProcessSignal _sigint;
   final Exit _exit;
+
+  /// The [io.Stdin] instance to be used by the commands.
+  final io.Stdin stdin;
 
   @override
   Future<int> run(Iterable<String> args) async {

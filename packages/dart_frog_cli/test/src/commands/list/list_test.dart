@@ -28,6 +28,8 @@ class _FakeDirectoryGeneratorTarget extends Fake
 
 class _MockRouteConfiguration extends Mock implements RouteConfiguration {}
 
+class _MockStdin extends Mock implements Stdin {}
+
 const expectedUsage = [
   'Lists the routes on a Dart Frog project.\n'
       '\n'
@@ -76,6 +78,7 @@ void main() {
         pubUpdater: _MockPubUpdater(),
         exit: (_) {},
         sigint: sigint,
+        stdin: _MockStdin(),
       );
     });
 
