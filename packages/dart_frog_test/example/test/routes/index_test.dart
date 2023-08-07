@@ -6,12 +6,11 @@ import 'package:test/test.dart';
 import '../../routes/index.dart' as route;
 
 void main() {
-  testRouteHandler(
+  test(
     'responds with a 200 and "Welcome to Dart Frog!".',
-    route.onRequest,
-    TestRequest(path: '/'),
-    (tester) async {
-      final response = await tester.response();
+    () async {
+      final testContext = DartFrogTestContext(path: '/');
+      final response = route.onRequest(testContext.context);
       expect(response.statusCode, equals(HttpStatus.ok));
       expect(
         response.body(),

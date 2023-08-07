@@ -11,17 +11,18 @@ import '../../routes/dice.dart' as route;
 class _MockRandom extends Mock implements Random {}
 
 void main() {
-  testRouteHandler(
+  test(
     'responds with a 200 and the rolled number.',
-    route.onRequest,
-    TestRequest(path: '/dice', method: HttpMethod.post),
-    (tester) async {
+    () async {
       final random = _MockRandom();
       when(() => random.nextInt(6)).thenReturn(2);
 
-      tester.mockDependency<Random>(random);
+      final testContext = DartFrogTestContext(
+        path: '/dice',
+        method: HttpMethod.post,
+      )..provide<Random>(random);
 
-      final response = await tester.response();
+      final response = route.onRequest(testContext.context);
       expect(response.statusCode, equals(HttpStatus.ok));
       expect(
         response.json(),
@@ -34,12 +35,14 @@ void main() {
       HttpMethod.values.where((v) => v != HttpMethod.post);
 
   for (final method in notAllowedMethods) {
-    testRouteHandler(
+    test(
       'responds with method not allowed.',
-      route.onRequest,
-      TestRequest(path: '/dice', method: method),
-      (tester) async {
-        final response = await tester.response();
+      () async {
+        final testContext = DartFrogTestContext(
+          path: '/dice',
+          method: method,
+        );
+        final response = route.onRequest(testContext.context);
         expect(response.statusCode, equals(HttpStatus.methodNotAllowed));
       },
     );
