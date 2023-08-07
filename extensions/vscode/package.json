@@ -35,40 +35,40 @@
   "contributes": {
     "commands": [
       {
-        "command": "extension.create",
+        "command": "dart-frog.create",
         "title": "Dart Frog: Create Project"
       },
       {
-        "command": "extension.install-cli",
+        "command": "dart-frog.install-cli",
         "title": "Dart Frog: Install CLI"
       },
       {
-        "command": "extension.update-cli",
+        "command": "dart-frog.update-cli",
         "title": "Dart Frog: Update CLI"
       },
       {
-        "command": "extension.new-route",
+        "command": "dart-frog.new-route",
         "title": "Dart Frog: New Route"
       },
       {
-        "command": "extension.new-middleware",
+        "command": "dart-frog.new-middleware",
         "title": "Dart Frog: New Middleware"
       }
     ],
     "menus": {
       "explorer/context": [
         {
-          "command": "extension.new-route",
+          "command": "dart-frog.new-route",
           "group": "dartFrogGroup@1",
           "when": "(resourceDirname =~ /routes/ && (explorerResourceIsFolder || resourceExtname == .dart)) || (explorerResourceIsFolder && resourceFilename == routes)"
         },
         {
-          "command": "extension.new-middleware",
+          "command": "dart-frog.new-middleware",
           "group": "dartFrogGroup@1",
           "when": "(resourceDirname =~ /routes/ && (explorerResourceIsFolder || resourceExtname == .dart)) || (explorerResourceIsFolder && resourceFilename == routes)"
         },
         {
-          "command": "extension.create",
+          "command": "dart-frog.create",
           "group": "dartFrogGroup@2",
           "when": "!(resourceDirname =~ /routes/) && !(explorerResourceIsFolder && resourceFilename == routes)"
         }
@@ -90,7 +90,7 @@
     "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "20.4.6",
-    "@types/vscode": "^1.79.0",
+    "@types/vscode": "^1.81.0",
     "@typescript-eslint/eslint-plugin": "^6.2.1",
     "@typescript-eslint/parser": "^6.2.1",
     "@vscode/test-electron": "^2.3.2",

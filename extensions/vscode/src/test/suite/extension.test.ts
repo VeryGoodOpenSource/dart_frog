@@ -59,7 +59,7 @@ suite("activate", () => {
 
       sinon.assert.calledWith(
         vscodeStub.commands.registerCommand,
-        "extension.install-cli",
+        "dart-frog.install-cli",
         installCLI
       );
     });
@@ -69,7 +69,7 @@ suite("activate", () => {
 
       sinon.assert.calledWith(
         vscodeStub.commands.registerCommand,
-        "extension.update-cli",
+        "dart-frog.update-cli",
         updateCLI
       );
     });
@@ -79,7 +79,7 @@ suite("activate", () => {
 
       sinon.assert.calledWith(
         vscodeStub.commands.registerCommand,
-        "extension.new-route",
+        "dart-frog.new-route",
         newRoute
       );
     });
@@ -89,7 +89,7 @@ suite("activate", () => {
 
       sinon.assert.calledWith(
         vscodeStub.commands.registerCommand,
-        "extension.new-middleware",
+        "dart-frog.new-middleware",
         newMiddleware
       );
     });
