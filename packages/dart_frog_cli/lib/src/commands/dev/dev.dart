@@ -82,7 +82,7 @@ class DevCommand extends DartFrogCommand {
       onDone: _stopListeningForHelpers,
     );
 
-    logger.info('Press R to reload');
+    logger.info('Press either R or r to reload');
   }
 
   void _stopListeningForHelpers() {
