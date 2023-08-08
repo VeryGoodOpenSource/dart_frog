@@ -16,6 +16,7 @@ Future<HttpServer> serve(
   int port, {
   String? poweredByHeader = 'Dart with package:dart_frog',
   SecurityContext? securityContext,
+  bool shared = false,
 }) {
   return shelf_io.serve(
     (shelf.Request request) async {
@@ -26,5 +27,6 @@ Future<HttpServer> serve(
     port,
     poweredByHeader: poweredByHeader,
     securityContext: securityContext,
+    shared: shared,
   );
 }
