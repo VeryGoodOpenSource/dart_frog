@@ -162,7 +162,7 @@ void main() {
     });
 
     test(
-      'bundles external dependencies with external dependencies',
+      'works with external dependencies',
       () async {
         const configuration = RouteConfiguration(
           middleware: [],
