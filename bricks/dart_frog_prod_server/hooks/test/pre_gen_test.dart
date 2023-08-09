@@ -9,6 +9,7 @@ import 'package:test/test.dart';
 
 import '../pre_gen.dart';
 import '../src/exit_overrides.dart';
+import 'pubspeck_locks.dart';
 
 class _FakeHookContext extends Fake implements HookContext {
   _FakeHookContext({Logger? logger}) : _logger = logger ?? _MockLogger();
@@ -36,6 +37,14 @@ void main() {
     late HookContext context;
     late Logger logger;
 
+    Future<ProcessResult> successRunProcess(
+      executable,
+      args, {
+      String? workingDirectory,
+      bool? runInShell,
+    }) =>
+        Future.value(ProcessResult(0, 0, '', ''));
+
     setUp(() {
       logger = _MockLogger();
       context = _FakeHookContext(logger: logger)
@@ -61,6 +70,7 @@ void main() {
         context,
         buildConfiguration: (_) => throw exception,
         exit: exitCalls.add,
+        runProcess: successRunProcess,
       );
       expect(exitCalls, equals([1]));
       verify(() => logger.err(exception.toString())).called(1);
@@ -106,6 +116,7 @@ void main() {
         context,
         buildConfiguration: (_) => configuration,
         exit: exitCalls.add,
+        runProcess: successRunProcess,
       );
 
       verify(
@@ -139,6 +150,7 @@ void main() {
         context,
         buildConfiguration: (_) => configuration,
         exit: exitCalls.add,
+        runProcess: successRunProcess,
       );
 
       verify(
@@ -149,18 +161,20 @@ void main() {
       expect(exitCalls, equals([1]));
     });
 
-    test('exit(1) for external dependencies', () async {
-      const configuration = RouteConfiguration(
-        middleware: [],
-        directories: [],
-        routes: [],
-        rogueRoutes: [],
-        endpoints: {},
-      );
+    test(
+      'bundles external dependencies with external dependencies',
+      () async {
+        const configuration = RouteConfiguration(
+          middleware: [],
+          directories: [],
+          routes: [],
+          rogueRoutes: [],
+          endpoints: {},
+        );
 
-      final directory = Directory.systemTemp.createTempSync();
-      File(path.join(directory.path, 'pubspec.yaml')).writeAsStringSync(
-        '''
+        final directory = Directory.systemTemp.createTempSync();
+        File(path.join(directory.path, 'pubspec.yaml')).writeAsStringSync(
+          '''
 name: example
 version: 0.1.0
 environment:
@@ -172,28 +186,24 @@ dependencies:
 dev_dependencies:
   test: any
 ''',
-      );
+        );
+        File(path.join(directory.path, 'pubspec.lock')).writeAsStringSync(
+          fooPath,
+        );
+        final exitCalls = <int>[];
+        await preGen(
+          context,
+          buildConfiguration: (_) => configuration,
+          exit: exitCalls.add,
+          directory: directory,
+          runProcess: successRunProcess,
+          copyPath: (_, __) async {},
+        );
 
-      final exitCalls = <int>[];
-      await preGen(
-        context,
-        buildConfiguration: (_) => configuration,
-        exit: exitCalls.add,
-        directory: directory,
-      );
-
-      expect(exitCalls, equals([1]));
-      verify(
-        () => logger.err('All path dependencies must be within the project.'),
-      ).called(1);
-      verify(
-        () => logger.err('External path dependencies detected:'),
-      ).called(1);
-      verify(
-        () => logger.err('  \u{2022} foo from ../../foo'),
-      ).called(1);
-      directory.delete(recursive: true).ignore();
-    });
+        expect(exitCalls, isEmpty);
+        directory.delete(recursive: true).ignore();
+      },
+    );
 
     test('retains invokeCustomEntrypoint (true)', () async {
       const configuration = RouteConfiguration(
@@ -209,6 +219,7 @@ dev_dependencies:
         context,
         buildConfiguration: (_) => configuration,
         exit: exitCalls.add,
+        runProcess: successRunProcess,
       );
       expect(exitCalls, isEmpty);
       verifyNever(() => logger.err(any()));
@@ -251,6 +262,10 @@ dependencies:
   test: any
 ''',
       );
+
+      File(path.join(directory.path, 'pubspec.lock')).writeAsStringSync(
+        noPathDependencies,
+      );
       File(path.join(directory.path, 'Dockerfile')).writeAsStringSync(
         '',
       );
@@ -261,6 +276,7 @@ dependencies:
         buildConfiguration: (_) => configuration,
         exit: exitCalls.add,
         directory: directory,
+        runProcess: successRunProcess,
       );
 
       expect(
@@ -295,6 +311,7 @@ dependencies:
         context,
         buildConfiguration: (_) => configuration,
         exit: exitCalls.add,
+        runProcess: successRunProcess,
       );
       expect(exitCalls, isEmpty);
       verifyNever(() => logger.err(any()));
@@ -397,6 +414,7 @@ dependencies:
           context,
           buildConfiguration: (_) => configuration,
           exit: exitCalls.add,
+          runProcess: successRunProcess,
         );
         expect(exitCalls, isEmpty);
         verifyNever(() => logger.err(any()));

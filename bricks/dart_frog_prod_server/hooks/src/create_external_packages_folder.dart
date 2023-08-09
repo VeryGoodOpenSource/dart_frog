@@ -1,27 +1,37 @@
 import 'dart:io';
 
-import 'package:io/io.dart';
+import 'package:io/io.dart' as io;
 import 'package:path/path.dart' as path;
+import 'package:pubspec_lock/pubspec_lock.dart';
 
-import 'get_path_dependencies.dart';
+Future<List<String>> createExternalPackagesFolder(
+  Directory directory, {
+  Future<void> Function(String from, String to) copyPath = io.copyPath,
+}) async {
+  final pubspecLock = await _getPubspecLock(directory.path);
 
-Future<List<String>> createExternalPackagesFolder(Directory directory) async {
-  // Get all the dependencies
-  final pathDependencies = await _getExternalDependencies(directory);
+  final pathDependencies = pubspecLock.packages
+      .map(
+        (p) => p.iswitch(
+          sdk: (_) => null,
+          hosted: (_) => null,
+          git: (_) => null,
+          path: (d) => d.path,
+        ),
+      )
+      .whereType<String>()
+      .where((dependencyPath) {
+    return !path.isWithin(directory.path, dependencyPath);
+  }).toList();
 
   if (pathDependencies.isNotEmpty) {
-    // Make sure the is no repeated dependencies, giving preference
-    // to the shortest path.
+    // Map the dependencies
     final mappedDependencies = pathDependencies
         .map(
       (dependencyPath) => (path.basename(dependencyPath), dependencyPath),
     )
         .fold(<String, String>{}, (map, dependency) {
-      if ((map[dependency.$1]?.length ?? double.infinity) >
-          dependency.$2.length) {
-        map[dependency.$1] = dependency.$2;
-      }
-
+      map[dependency.$1] = dependency.$2;
       return map;
     });
 
@@ -74,26 +84,13 @@ ${mappedPaths.entries.map((entry) => '  ${entry.key}:\n    path: ${entry.value}'
   return [];
 }
 
-Future<List<String>> _getExternalDependencies(Directory directory) async {
-  final dependencies = await getPathDependencies(directory);
+Future<PubspecLock> _getPubspecLock(String workingDirectory) async {
+  final pubspecLockFile = File(
+    workingDirectory.isEmpty
+        ? 'pubspec.lock'
+        : path.join(workingDirectory, 'pubspec.lock'),
+  );
 
-  final toAdd = <String>[];
-  for (final dependency in dependencies) {
-    final dependencyDirectory = Directory(
-      path.join(directory.path, dependency),
-    );
-
-    final relativePath =
-        path.relative(dependencyDirectory.path, from: directory.path);
-    final innerDependencies = await getPathDependencies(dependencyDirectory);
-    toAdd.addAll(
-      innerDependencies
-          .where((dependencyPath) => dependencyPath.startsWith('..'))
-          .map((innerDependency) => path.join(relativePath, innerDependency)),
-    );
-  }
-
-  dependencies.addAll(toAdd);
-
-  return dependencies;
+  final content = await pubspecLockFile.readAsString();
+  return content.loadPubspecLockFromYaml();
 }

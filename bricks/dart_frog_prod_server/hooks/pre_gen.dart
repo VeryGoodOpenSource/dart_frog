@@ -2,12 +2,14 @@ import 'dart:async';
 import 'dart:io' as io;
 
 import 'package:dart_frog_gen/dart_frog_gen.dart';
+import 'package:io/io.dart' as io_expanded;
 import 'package:mason/mason.dart'
     show HookContext, defaultForeground, lightCyan;
 import 'package:path/path.dart' as path;
 
 import 'src/create_bundle.dart';
 import 'src/create_external_packages_folder.dart';
+import 'src/dart_pub_get.dart';
 import 'src/exit_overrides.dart';
 import 'src/get_path_dependencies.dart';
 
@@ -22,10 +24,20 @@ Future<void> run(HookContext context) => preGen(context);
 Future<void> preGen(
   HookContext context, {
   io.Directory? directory,
+  ProcessRunner runProcess = io.Process.run,
   RouteConfigurationBuilder buildConfiguration = buildRouteConfiguration,
   void Function(int exitCode) exit = _defaultExit,
+  Future<void> Function(String from, String to) copyPath = io_expanded.copyPath,
 }) async {
   final projectDirectory = directory ?? io.Directory.current;
+
+  // We need to make sure that the pubspec.lock file is up to date
+  await dartPubGet(
+    context,
+    workingDirectory: projectDirectory.path,
+    runProcess: runProcess,
+    exit: exit,
+  );
 
   await createBundle(context, projectDirectory, exit);
 
@@ -76,8 +88,10 @@ Future<void> preGen(
 
   // Then create the external packages folder
   // and add it to the list of path packages.
-  final externalDependencies =
-      await createExternalPackagesFolder(projectDirectory);
+  final externalDependencies = await createExternalPackagesFolder(
+    projectDirectory,
+    copyPath: copyPath,
+  );
   pathDependencies.addAll(externalDependencies);
 
   final addDockerfile = !customDockerFile.existsSync();
