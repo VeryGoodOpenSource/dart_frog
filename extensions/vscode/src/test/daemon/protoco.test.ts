@@ -2,7 +2,7 @@ import * as assert from "assert";
 import { isDeamonEvent, isDeamonRequest, isDeamonResponse } from "../../daemon";
 
 suite("isDeamonRequest", () => {
-  suite("returns true when object is a valid isDeamonRequest", () => {
+  suite("returns true when object is a valid DeamonRequest", () => {
     test("with all fields", () => {
       const request = {
         id: "1",
@@ -42,7 +42,7 @@ suite("isDeamonRequest", () => {
       assert.equal(isDeamonRequest(request), false);
     });
 
-    test("when object is a valid isDeamonResponse", () => {
+    test("when object is a valid DeamonResponse", () => {
       const response = {
         id: "1",
         result: {},
@@ -66,7 +66,7 @@ suite("isDeamonRequest", () => {
 });
 
 suite("isDeamonResponse", () => {
-  suite("returns true when object is a valid isDeamonResponse", () => {
+  suite("returns true when object is a valid DeamonResponse", () => {
     test("with all fields", () => {
       const response = {
         id: "1",
@@ -138,7 +138,7 @@ suite("isDeamonResponse", () => {
 });
 
 suite("isDeamonEvent", () => {
-  suite("returns true when object is a valid isDeamonEvent", () => {
+  suite("returns true when object is a valid DeamonEvent", () => {
     test("with all fields", () => {
       const event = {
         event: "event",
