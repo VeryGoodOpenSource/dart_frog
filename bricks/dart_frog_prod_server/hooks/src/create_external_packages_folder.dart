@@ -6,9 +6,11 @@ import 'package:pubspec_lock/pubspec_lock.dart';
 
 Future<List<String>> createExternalPackagesFolder(
   Directory directory, {
+  path.Context? pathContext,
   Future<void> Function(String from, String to) copyPath = io.copyPath,
 }) async {
-  final pubspecLock = await _getPubspecLock(directory.path);
+  final pathResolver = pathContext ?? path.context;
+  final pubspecLock = await _getPubspecLock(directory.path, pathResolver);
 
   final pathDependencies = pubspecLock.packages
       .map(
@@ -21,14 +23,17 @@ Future<List<String>> createExternalPackagesFolder(
       )
       .whereType<String>()
       .where((dependencyPath) {
-    return !path.isWithin(directory.path, dependencyPath);
+    return !pathResolver.isWithin('', dependencyPath);
   }).toList();
 
   if (pathDependencies.isNotEmpty) {
     // Map the dependencies
     final mappedDependencies = pathDependencies
         .map(
-      (dependencyPath) => (path.basename(dependencyPath), dependencyPath),
+      (dependencyPath) => (
+        pathResolver.basename(dependencyPath),
+        dependencyPath,
+      ),
     )
         .fold(<String, String>{}, (map, dependency) {
       map[dependency.$1] = dependency.$2;
@@ -36,7 +41,7 @@ Future<List<String>> createExternalPackagesFolder(
     });
 
     final buildDirectory = Directory(
-      path.join(
+      pathResolver.join(
         directory.path,
         'build',
       ),
@@ -44,7 +49,7 @@ Future<List<String>> createExternalPackagesFolder(
 
     // Create the packages directory
     final packagesDirectory = Directory(
-      path.join(
+      pathResolver.join(
         buildDirectory.path,
         '.dart_frog_path_dependencies',
       ),
@@ -52,8 +57,8 @@ Future<List<String>> createExternalPackagesFolder(
 
     // Copy all the dependencies to the packages directory
     for (final entry in mappedDependencies.entries) {
-      final from = path.join(directory.path, entry.value);
-      final to = path.join(packagesDirectory.path, entry.key);
+      final from = pathResolver.join(directory.path, entry.value);
+      final to = pathResolver.join(packagesDirectory.path, entry.key);
 
       await copyPath(from, to);
     }
@@ -61,7 +66,7 @@ Future<List<String>> createExternalPackagesFolder(
     final mappedPaths = mappedDependencies.map(
       (key, value) => MapEntry(
         key,
-        path.relative(
+        pathResolver.relative(
           path.join(packagesDirectory.path, key),
           from: buildDirectory.path,
         ),
@@ -69,7 +74,7 @@ Future<List<String>> createExternalPackagesFolder(
     );
 
     await File(
-      path.join(
+      pathResolver.join(
         buildDirectory.path,
         'pubspec_overrides.yaml',
       ),
@@ -84,11 +89,12 @@ ${mappedPaths.entries.map((entry) => '  ${entry.key}:\n    path: ${entry.value}'
   return [];
 }
 
-Future<PubspecLock> _getPubspecLock(String workingDirectory) async {
+Future<PubspecLock> _getPubspecLock(
+    String workingDirectory, path.Context pathResolver) async {
   final pubspecLockFile = File(
     workingDirectory.isEmpty
         ? 'pubspec.lock'
-        : path.join(workingDirectory, 'pubspec.lock'),
+        : pathResolver.join(workingDirectory, 'pubspec.lock'),
   );
 
   final content = await pubspecLockFile.readAsString();

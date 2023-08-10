@@ -50,6 +50,67 @@ dev_dependencies:
       },
     );
 
-    // TODO(erickzanardo): test to check that internal dependencies are not bundled
+    test(
+      "don't bundle internal path dependencies",
+      () async {
+        final directory = Directory.systemTemp.createTempSync();
+        File(path.join(directory.path, 'pubspec.yaml')).writeAsStringSync(
+          '''
+name: example
+version: 0.1.0
+environment:
+  sdk: ^2.17.0
+dependencies:
+  mason: any
+  foo:
+    path: ../../foo
+  bar:
+    path: packages/bar
+dev_dependencies:
+  test: any
+''',
+        );
+        File(path.join(directory.path, 'pubspec.lock')).writeAsStringSync(
+          fooPathWithInternalDependency,
+        );
+        final copyCalls = <String>[];
+
+        File(
+          path.join(
+            directory.path,
+            'packages',
+            'bar',
+            'pubspec.yaml',
+          ),
+        )
+          ..createSync(recursive: true)
+          ..writeAsStringSync(
+            '''
+
+name: bar
+version: 0.1.0
+environment:
+  sdk: ^2.17.0
+            ''',
+          );
+
+        await createExternalPackagesFolder(
+          directory,
+          copyPath: (from, to) {
+            copyCalls.add('$from -> $to');
+            return Future.value();
+          },
+        );
+
+        final from = path.join(directory.path, '../../foo');
+        final to = path.join(
+          directory.path,
+          'build',
+          '.dart_frog_path_dependencies',
+          'foo',
+        );
+        expect(copyCalls, ['$from -> $to']);
+      },
+    );
   });
 }

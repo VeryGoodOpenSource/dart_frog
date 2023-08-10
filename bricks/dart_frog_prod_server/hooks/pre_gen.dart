@@ -83,7 +83,10 @@ Future<void> preGen(
 
   // Get all the internal path packages
   final pathDependencies = (await getPathDependencies(projectDirectory))
-      .where((dependencyPath) => !dependencyPath.startsWith('..'))
+      .where(
+        (dependencyPath) =>
+            path.isWithin(projectDirectory.path, dependencyPath),
+      )
       .toList();
 
   // Then create the external packages folder
