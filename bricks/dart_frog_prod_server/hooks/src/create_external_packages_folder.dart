@@ -90,7 +90,9 @@ ${mappedPaths.entries.map((entry) => '  ${entry.key}:\n    path: ${entry.value}'
 }
 
 Future<PubspecLock> _getPubspecLock(
-    String workingDirectory, path.Context pathResolver) async {
+  String workingDirectory,
+  path.Context pathResolver,
+) async {
   final pubspecLockFile = File(
     workingDirectory.isEmpty
         ? 'pubspec.lock'
