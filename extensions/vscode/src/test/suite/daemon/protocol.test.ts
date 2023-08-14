@@ -52,7 +52,37 @@ suite("DaemonMessage", () => {
       assert.deepEqual(DaemonMessage.decode(data), [responseObject]);
     });
 
-    test("decodes multiple messages", () => {
+    test("decodes multiple batch messages", () => {
+      const request = `{"method": "daemon.requestVersion", "id": "12"}`;
+      const event = `{"event":"daemon.ready","params":{"version":"0.0.1","processId":75941}}`;
+      const response = `{"id":"12","result":{"version":"0.0.1"}}`;
+      const data = Buffer.from(`[${request},${event},${response}]`);
+
+      const requestObject = {
+        method: "daemon.requestVersion",
+        id: "12",
+      };
+      const eventObject = {
+        event: "daemon.ready",
+        params: {
+          version: "0.0.1",
+          processId: 75941,
+        },
+      };
+      const responseObject = {
+        id: "12",
+        result: {
+          version: "0.0.1",
+        },
+      };
+      assert.deepEqual(DaemonMessage.decode(data), [
+        requestObject,
+        eventObject,
+        responseObject,
+      ]);
+    });
+
+    test("decodes multiple buffered messages", () => {
       const request = `[{"method": "daemon.requestVersion", "id": "12"}]`;
       const event = `[{"event":"daemon.ready","params":{"version":"0.0.1","processId":75941}}]`;
       const response = `[{"id":"12","result":{"version":"0.0.1"}}]`;
