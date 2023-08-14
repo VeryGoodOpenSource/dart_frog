@@ -82,7 +82,7 @@ Future<void> preGen(
   );
 
   // Get all the internal path packages
-  final pathDependencies = (await getPathDependencies(projectDirectory))
+  final internalPathDependencies = (await getPathDependencies(projectDirectory))
       .where(
         (dependencyPath) =>
             path.isWithin(projectDirectory.path, dependencyPath),
@@ -95,7 +95,11 @@ Future<void> preGen(
     projectDirectory,
     copyPath: copyPath,
   );
-  pathDependencies.addAll(externalDependencies);
+
+  final pathDependencies = [
+    ...internalPathDependencies,
+    ...externalDependencies,
+  ];
 
   final addDockerfile = !customDockerFile.existsSync();
 
