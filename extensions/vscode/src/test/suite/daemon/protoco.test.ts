@@ -1,5 +1,9 @@
 import * as assert from "assert";
-import { isDeamonEvent, isDeamonRequest, isDeamonResponse } from "../../daemon";
+import {
+  isDeamonEvent,
+  isDeamonRequest,
+  isDeamonResponse,
+} from "../../../daemon";
 
 suite("isDeamonRequest", () => {
   suite("returns true when object is a valid DeamonRequest", () => {
