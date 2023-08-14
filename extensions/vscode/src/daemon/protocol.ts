@@ -7,10 +7,10 @@
 
 export class DaemonMessage {
   /**
-   * Decodes messages, that follow the protocol, sent over stdout from
-   * the Dart Frog daemon.
+   * Decodes messages that follow the protocol.
    *
-   * @param data The data to decode (from stdout of the Dart Frog daemon).
+   * @param data The data to decode (usually from stdout of the Dart Frog
+   * daemon and in JSON format).
    * @returns The decoded messages received from the Dart Frog daemon.
    */
   public static decode(data: Buffer): DaemonMessage[] {
