@@ -1,2 +1,2 @@
-export * from "./protocol/protocol";
+export * from "./protocol";
 export * from "./dart-frog-daemon";
