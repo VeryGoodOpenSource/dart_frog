@@ -29,7 +29,7 @@ export class RequestVersionDaemonRequest extends DaemonRequest {
 
 export function isRequestVersionDaemonRequest(
   object: any
-): object is DaemonRequest {
+): object is RequestVersionDaemonRequest {
   return isDaemonRequest(object) && object.method === requestVersionMethodName;
 }
 
@@ -46,7 +46,7 @@ export class KillDaemonRequest extends DaemonRequest {
   public readonly params: any = undefined;
 }
 
-export function isKillDaemonRequest(object: any): object is DaemonRequest {
+export function isKillDaemonRequest(object: any): object is KillDaemonRequest {
   return isDaemonRequest(object) && object.method === killMethodName;
 }
 
@@ -60,7 +60,7 @@ export interface ReadyDaemonEvent extends DaemonEvent {
   };
 }
 
-export function isReadyDaemonEvent(object: any): object is DaemonEvent {
+export function isReadyDaemonEvent(object: any): object is ReadyDaemonEvent {
   return (
     isDaemonEvent(object) &&
     object.event === readyEventName &&
