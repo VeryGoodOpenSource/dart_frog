@@ -1,9 +1,88 @@
 import * as assert from "assert";
 import {
+  DaemonMessage,
   isDeamonEvent,
   isDeamonRequest,
   isDeamonResponse,
 } from "../../../daemon";
+
+suite("DaemonMessage", () => {
+  suite("decode", () => {
+    test("returns an empty array when data is empty", () => {
+      const data = Buffer.from("");
+
+      assert.deepEqual(DaemonMessage.decode(data), []);
+    });
+
+    test("decodes request", () => {
+      const request = `[{"method": "daemon.requestVersion", "id": "12"}]`;
+      const data = Buffer.from(request);
+
+      const requestObject = {
+        method: "daemon.requestVersion",
+        id: "12",
+      };
+      assert.deepEqual(DaemonMessage.decode(data), [requestObject]);
+    });
+
+    test("decodes event", () => {
+      const event = `[{"event":"daemon.ready","params":{"version":"0.0.1","processId":75941}}]`;
+      const data = Buffer.from(event);
+
+      const eventObject = {
+        event: "daemon.ready",
+        params: {
+          version: "0.0.1",
+          processId: 75941,
+        },
+      };
+      assert.deepEqual(DaemonMessage.decode(data), [eventObject]);
+    });
+
+    test("decodes response", () => {
+      const response = `[{"id":"12","result":{"version":"0.0.1"}}]`;
+      const data = Buffer.from(response);
+
+      const responseObject = {
+        id: "12",
+        result: {
+          version: "0.0.1",
+        },
+      };
+      assert.deepEqual(DaemonMessage.decode(data), [responseObject]);
+    });
+
+    test("decodes multiple messages", () => {
+      const request = `[{"method": "daemon.requestVersion", "id": "12"}]`;
+      const event = `[{"event":"daemon.ready","params":{"version":"0.0.1","processId":75941}}]`;
+      const response = `[{"id":"12","result":{"version":"0.0.1"}}]`;
+      const data = Buffer.from(`${request}\n${event}\n${response}`);
+
+      const requestObject = {
+        method: "daemon.requestVersion",
+        id: "12",
+      };
+      const eventObject = {
+        event: "daemon.ready",
+        params: {
+          version: "0.0.1",
+          processId: 75941,
+        },
+      };
+      const responseObject = {
+        id: "12",
+        result: {
+          version: "0.0.1",
+        },
+      };
+      assert.deepEqual(DaemonMessage.decode(data), [
+        requestObject,
+        eventObject,
+        responseObject,
+      ]);
+    });
+  });
+});
 
 suite("isDeamonRequest", () => {
   suite("returns true when object is a valid DeamonRequest", () => {

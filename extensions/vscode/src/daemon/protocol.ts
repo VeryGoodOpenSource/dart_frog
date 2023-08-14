@@ -5,7 +5,29 @@
  * @see {@link https://github.com/VeryGoodOpenSource/dart_frog/blob/main/packages/dart_frog_cli/lib/src/daemon/protocol.dart Dart Frog dart's protocol}
  */
 
-export interface DaemonMessage {}
+export class DaemonMessage {
+  /**
+   * Decodes messages, that follow the protocol, sent over stdout from
+   * the Dart Frog daemon.
+   *
+   * @param data The data to decode (from stdout of the Dart Frog daemon).
+   * @returns The decoded messages received from the Dart Frog daemon.
+   */
+  public static decode(data: Buffer): DaemonMessage[] {
+    const stringData = data.toString();
+    const messages = stringData.split("\n").filter((s) => s.trim().length > 0);
+    const parsedMessages = messages.map((message) => JSON.parse(message));
+
+    let deamonMessages: DaemonMessage[] = [];
+    for (const parsedMessage of parsedMessages) {
+      for (const message of parsedMessage) {
+        deamonMessages.push(message as DaemonMessage);
+      }
+    }
+
+    return deamonMessages;
+  }
+}
 
 export abstract class DaemonRequest implements DaemonMessage {
   abstract method: string;
