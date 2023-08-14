@@ -52,7 +52,7 @@ suite("DaemonMessage", () => {
       assert.deepEqual(DaemonMessage.decode(data), [responseObject]);
     });
 
-    test("decodes multiple batch messages", () => {
+    test("decodes multiple batched messages", () => {
       const request = `{"method": "daemon.requestVersion", "id": "12"}`;
       const event = `{"event":"daemon.ready","params":{"version":"0.0.1","processId":75941}}`;
       const response = `{"id":"12","result":{"version":"0.0.1"}}`;
