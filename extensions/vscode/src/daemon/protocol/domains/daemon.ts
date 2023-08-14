@@ -24,7 +24,7 @@ export class RequestVersionDaemonRequest extends DaemonRequest {
 
   public readonly id: string;
   public readonly method: string = requestVersionMethodName;
-  public readonly params: undefined = undefined;
+  public readonly params: undefined;
 }
 
 export function isRequestVersionDaemonRequest(
@@ -43,7 +43,7 @@ export class KillDaemonRequest extends DaemonRequest {
 
   public readonly id: string;
   public readonly method: string = killMethodName;
-  public readonly params: undefined = undefined;
+  public readonly params: undefined;
 }
 
 export function isKillDaemonRequest(object: any): object is KillDaemonRequest {
