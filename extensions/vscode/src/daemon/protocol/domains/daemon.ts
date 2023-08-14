@@ -14,11 +14,7 @@ import {
 
 const domainName = "daemon";
 
-export enum DaemonMessageName {
-  requestVersion = `${domainName}.requestVersion`,
-  kill = `${domainName}.kill`,
-  ready = `${domainName}.ready`,
-}
+const requestVersionMethodName = `${domainName}.requestVersion`;
 
 export class RequestVersionDaemonRequest extends DaemonRequest {
   constructor(id: string) {
@@ -26,7 +22,7 @@ export class RequestVersionDaemonRequest extends DaemonRequest {
     this.id = id;
   }
 
-  public readonly method: string = DaemonMessageName.requestVersion;
+  public readonly method: string = requestVersionMethodName;
   public readonly id: string;
   public readonly params: undefined = undefined;
 }
@@ -37,9 +33,11 @@ export function isRequestVersionDaemonRequest(
   return (
     isDaemonRequest(object) &&
     typeof object.id === "string" &&
-    typeof object.method === DaemonMessageName.requestVersion.toString()
+    typeof object.method === requestVersionMethodName
   );
 }
+
+const killMethodName = `${domainName}.kill`;
 
 export class KillDaemonRequest extends DaemonRequest {
   constructor(id: string) {
@@ -47,7 +45,7 @@ export class KillDaemonRequest extends DaemonRequest {
     this.id = id;
   }
 
-  public readonly method: string = DaemonMessageName.kill;
+  public readonly method: string = killMethodName;
   public readonly id: string;
   public readonly params: any = undefined;
 }
@@ -56,12 +54,14 @@ export function isKillDaemonRequest(object: any): object is DaemonRequest {
   return (
     isDaemonRequest(object) &&
     typeof object.id === "string" &&
-    typeof object.method === DaemonMessageName.kill.toString()
+    typeof object.method === killMethodName
   );
 }
 
+const readyEventName = `${domainName}.ready`;
+
 export interface ReadyDaemonEvent extends DaemonEvent {
-  event: DaemonMessageName.ready;
+  event: string;
   params: {
     version: string;
     processId: number;
@@ -71,7 +71,7 @@ export interface ReadyDaemonEvent extends DaemonEvent {
 export function isReadyDaemonEvent(object: any): object is DaemonEvent {
   return (
     isDaemonEvent(object) &&
-    object.event === DaemonMessageName.ready &&
+    object.event === readyEventName &&
     typeof object.params.version === "string" &&
     typeof object.params.processId === "number"
   );
