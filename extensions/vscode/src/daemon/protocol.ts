@@ -11,7 +11,7 @@ export class DaemonMessage {
    *
    * @param data The data to decode (usually from stdout of the Dart Frog
    * daemon and in JSON format).
-   * @returns The decoded messages received from the Dart Frog daemon.
+   * @returns The decoded messages.
    */
   public static decode(data: Buffer): DaemonMessage[] {
     const stringData = data.toString();
