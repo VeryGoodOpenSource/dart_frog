@@ -1,9 +1,9 @@
 import * as assert from "assert";
 import {
   DaemonMessage,
-  isDeamonEvent,
-  isDeamonRequest,
-  isDeamonResponse,
+  isDaemonEvent,
+  isDaemonRequest,
+  isDaemonResponse,
 } from "../../../daemon";
 
 suite("DaemonMessage", () => {
@@ -114,8 +114,8 @@ suite("DaemonMessage", () => {
   });
 });
 
-suite("isDeamonRequest", () => {
-  suite("returns true when object is a valid DeamonRequest", () => {
+suite("isDaemonRequest", () => {
+  suite("returns true when object is a valid DaemonRequest", () => {
     test("with all fields", () => {
       const request = {
         id: "1",
@@ -123,7 +123,7 @@ suite("isDeamonRequest", () => {
         params: {},
       };
 
-      assert.equal(isDeamonRequest(request), true);
+      assert.equal(isDaemonRequest(request), true);
     });
 
     test("when missing params only", () => {
@@ -132,7 +132,7 @@ suite("isDeamonRequest", () => {
         method: "method",
       };
 
-      assert.equal(isDeamonRequest(request), true);
+      assert.equal(isDaemonRequest(request), true);
     });
   });
 
@@ -143,7 +143,7 @@ suite("isDeamonRequest", () => {
         params: {},
       };
 
-      assert.equal(isDeamonRequest(request), false);
+      assert.equal(isDaemonRequest(request), false);
     });
 
     test("when missing method only", () => {
@@ -152,34 +152,34 @@ suite("isDeamonRequest", () => {
         params: {},
       };
 
-      assert.equal(isDeamonRequest(request), false);
+      assert.equal(isDaemonRequest(request), false);
     });
 
-    test("when object is a valid DeamonResponse", () => {
+    test("when object is a valid DaemonResponse", () => {
       const response = {
         id: "1",
         result: {},
         error: {},
       };
 
-      assert.equal(isDeamonResponse(response), true);
-      assert.equal(isDeamonRequest(response), false);
+      assert.equal(isDaemonResponse(response), true);
+      assert.equal(isDaemonRequest(response), false);
     });
 
-    test("when object is a valid DeamonEvent", () => {
+    test("when object is a valid DaemonEvent", () => {
       const event = {
         event: "event",
         params: {},
       };
 
-      assert.equal(isDeamonEvent(event), true);
-      assert.equal(isDeamonRequest(event), false);
+      assert.equal(isDaemonEvent(event), true);
+      assert.equal(isDaemonRequest(event), false);
     });
   });
 });
 
-suite("isDeamonResponse", () => {
-  suite("returns true when object is a valid DeamonResponse", () => {
+suite("isDaemonResponse", () => {
+  suite("returns true when object is a valid DaemonResponse", () => {
     test("with all fields", () => {
       const response = {
         id: "1",
@@ -187,7 +187,7 @@ suite("isDeamonResponse", () => {
         error: {},
       };
 
-      assert.equal(isDeamonResponse(response), true);
+      assert.equal(isDaemonResponse(response), true);
     });
 
     test("when missing error only", () => {
@@ -196,7 +196,7 @@ suite("isDeamonResponse", () => {
         result: {},
       };
 
-      assert.equal(isDeamonResponse(response), true);
+      assert.equal(isDaemonResponse(response), true);
     });
 
     test("when missing result only", () => {
@@ -205,7 +205,7 @@ suite("isDeamonResponse", () => {
         error: {},
       };
 
-      assert.equal(isDeamonResponse(response), true);
+      assert.equal(isDaemonResponse(response), true);
     });
 
     test("when missing result and errror only", () => {
@@ -213,7 +213,7 @@ suite("isDeamonResponse", () => {
         id: "1",
       };
 
-      assert.equal(isDeamonResponse(response), true);
+      assert.equal(isDaemonResponse(response), true);
     });
   });
 
@@ -224,41 +224,41 @@ suite("isDeamonResponse", () => {
         error: {},
       };
 
-      assert.equal(isDeamonResponse(response), false);
+      assert.equal(isDaemonResponse(response), false);
     });
 
-    test("when object is a valid DeamonRequest", () => {
+    test("when object is a valid DaemonRequest", () => {
       const request = {
         id: "1",
         method: "method",
         params: {},
       };
 
-      assert.equal(isDeamonRequest(request), true);
-      assert.equal(isDeamonResponse(request), false);
+      assert.equal(isDaemonRequest(request), true);
+      assert.equal(isDaemonResponse(request), false);
     });
 
-    test("when object is a valid DeamonEvent", () => {
+    test("when object is a valid DaemonEvent", () => {
       const event = {
         event: "event",
         params: {},
       };
 
-      assert.equal(isDeamonEvent(event), true);
-      assert.equal(isDeamonResponse(event), false);
+      assert.equal(isDaemonEvent(event), true);
+      assert.equal(isDaemonResponse(event), false);
     });
   });
 });
 
-suite("isDeamonEvent", () => {
-  suite("returns true when object is a valid DeamonEvent", () => {
+suite("isDaemonEvent", () => {
+  suite("returns true when object is a valid DaemonEvent", () => {
     test("with all fields", () => {
       const event = {
         event: "event",
         params: {},
       };
 
-      assert.equal(isDeamonEvent(event), true);
+      assert.equal(isDaemonEvent(event), true);
     });
 
     test("when missing params only", () => {
@@ -266,7 +266,7 @@ suite("isDeamonEvent", () => {
         event: "event",
       };
 
-      assert.equal(isDeamonEvent(event), true);
+      assert.equal(isDaemonEvent(event), true);
     });
   });
 
@@ -276,29 +276,29 @@ suite("isDeamonEvent", () => {
         params: {},
       };
 
-      assert.equal(isDeamonEvent(event), false);
+      assert.equal(isDaemonEvent(event), false);
     });
 
-    test("when object is a valid DeamonRequest", () => {
+    test("when object is a valid DaemonRequest", () => {
       const request = {
         id: "1",
         method: "method",
         params: {},
       };
 
-      assert.equal(isDeamonRequest(request), true);
-      assert.equal(isDeamonEvent(request), false);
+      assert.equal(isDaemonRequest(request), true);
+      assert.equal(isDaemonEvent(request), false);
     });
 
-    test("when object is a valid DeamonResponse", () => {
+    test("when object is a valid DaemonResponse", () => {
       const response = {
         id: "1",
         result: {},
         error: {},
       };
 
-      assert.equal(isDeamonResponse(response), true);
-      assert.equal(isDeamonEvent(response), false);
+      assert.equal(isDaemonResponse(response), true);
+      assert.equal(isDaemonEvent(response), false);
     });
   });
 });

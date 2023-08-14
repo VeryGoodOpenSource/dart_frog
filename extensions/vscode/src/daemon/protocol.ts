@@ -18,14 +18,14 @@ export class DaemonMessage {
     const messages = stringData.split("\n").filter((s) => s.trim().length > 0);
     const parsedMessages = messages.map((message) => JSON.parse(message));
 
-    let deamonMessages: DaemonMessage[] = [];
+    let daemonMessages: DaemonMessage[] = [];
     for (const parsedMessage of parsedMessages) {
       for (const message of parsedMessage) {
-        deamonMessages.push(message as DaemonMessage);
+        daemonMessages.push(message as DaemonMessage);
       }
     }
 
-    return deamonMessages;
+    return daemonMessages;
   }
 }
 
@@ -35,25 +35,25 @@ export abstract class DaemonRequest implements DaemonMessage {
   abstract params: any;
 }
 
-export function isDeamonRequest(object: any): object is DaemonRequest {
+export function isDaemonRequest(object: any): object is DaemonRequest {
   return typeof object.id === "string" && typeof object.method === "string";
 }
 
-export interface DeamonResponse extends DaemonMessage {
+export interface DaemonResponse extends DaemonMessage {
   id: string;
   result: any;
   error: any;
 }
 
-export function isDeamonResponse(object: any): object is DeamonResponse {
+export function isDaemonResponse(object: any): object is DaemonResponse {
   return typeof object.id === "string" && !("method" in object);
 }
 
-export interface DeamonEvent extends DaemonMessage {
+export interface DaemonEvent extends DaemonMessage {
   event: string;
   params: any;
 }
 
-export function isDeamonEvent(object: any): object is DeamonEvent {
+export function isDaemonEvent(object: any): object is DaemonEvent {
   return typeof object.event === "string";
 }
