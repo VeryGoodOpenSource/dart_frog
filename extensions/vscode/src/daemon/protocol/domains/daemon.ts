@@ -30,11 +30,7 @@ export class RequestVersionDaemonRequest extends DaemonRequest {
 export function isRequestVersionDaemonRequest(
   object: any
 ): object is DaemonRequest {
-  return (
-    isDaemonRequest(object) &&
-    typeof object.id === "string" &&
-    typeof object.method === requestVersionMethodName
-  );
+  return isDaemonRequest(object) && object.method === requestVersionMethodName;
 }
 
 const killMethodName = `${domainName}.kill`;
@@ -51,11 +47,7 @@ export class KillDaemonRequest extends DaemonRequest {
 }
 
 export function isKillDaemonRequest(object: any): object is DaemonRequest {
-  return (
-    isDaemonRequest(object) &&
-    typeof object.id === "string" &&
-    typeof object.method === killMethodName
-  );
+  return isDaemonRequest(object) && object.method === killMethodName;
 }
 
 const readyEventName = `${domainName}.ready`;
