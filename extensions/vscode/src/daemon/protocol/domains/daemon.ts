@@ -22,8 +22,8 @@ export class RequestVersionDaemonRequest extends DaemonRequest {
     this.id = id;
   }
 
-  public readonly method: string = requestVersionMethodName;
   public readonly id: string;
+  public readonly method: string = requestVersionMethodName;
   public readonly params: undefined = undefined;
 }
 
@@ -41,9 +41,9 @@ export class KillDaemonRequest extends DaemonRequest {
     this.id = id;
   }
 
-  public readonly method: string = killMethodName;
   public readonly id: string;
-  public readonly params: any = undefined;
+  public readonly method: string = killMethodName;
+  public readonly params: undefined = undefined;
 }
 
 export function isKillDaemonRequest(object: any): object is KillDaemonRequest {
