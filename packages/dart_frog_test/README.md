@@ -5,7 +5,7 @@
 [![License: MIT][license_badge]][license_link]
 
 A testing library that makes it easy to test Dart Frog services. It offers helpers to mock requests as well as
-custom matchers in order to write easier to read expections.
+custom matchers in order to write easier to read expectations.
 
 ## Installation 💻
 
@@ -65,7 +65,7 @@ test('returns ok', () {
 });
 ```
 
-Check the `DartFrogTestContext` constructor for all the avaialbe context attributes that can be mocked.
+Check the `DartFrogTestContext` constructor for all the available context attributes that can be mocked.
 
 ## Matchers
 
