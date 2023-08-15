@@ -44,7 +44,7 @@ export class DartFrogDaemon {
     return this._instance || (this._instance = new this());
   }
 
-  private _deamonMessagesEventEmitter = new EventEmitter();
+  private _daemonMessagesEventEmitter = new EventEmitter();
 
   /**
    * The process that is running the Dart Frog Daemon.
@@ -110,28 +110,28 @@ export class DartFrogDaemon {
 
   /**
    * Decodes the stdout and emits events accordingly via the
-   * {@link deamonMessagesEventEmitter}.
+   * {@link daemonMessagesEventEmitter}.
    *
    * @param data The data that was received from the stdout of the Dart Frog
    * Daemon.
-   * @see {@link deamonMessagesEventEmitter} for listening to the events that
+   * @see {@link daemonMessagesEventEmitter} for listening to the events that
    * are emitted.
    */
   private stdoutDataListener(data: Buffer): void {
-    const deamonMessages = DaemonMessage.decode(data);
-    for (const message of deamonMessages) {
+    const daemonMessages = DaemonMessage.decode(data);
+    for (const message of daemonMessages) {
       if (isDaemonEvent(message)) {
-        this._deamonMessagesEventEmitter.emit(
+        this._daemonMessagesEventEmitter.emit(
           DartFrogDaemonEventEmitterTypes.event,
           message
         );
       } else if (isDaemonResponse(message)) {
-        this._deamonMessagesEventEmitter.emit(
+        this._daemonMessagesEventEmitter.emit(
           DartFrogDaemonEventEmitterTypes.response,
           message
         );
       } else if (isDaemonRequest(message)) {
-        this._deamonMessagesEventEmitter.emit(
+        this._daemonMessagesEventEmitter.emit(
           DartFrogDaemonEventEmitterTypes.request,
           message
         );
@@ -151,7 +151,7 @@ export class DartFrogDaemon {
     type: DartFrogDaemonEventEmitterTypes,
     listener: (...args: any[]) => void
   ): DartFrogDaemon {
-    this._deamonMessagesEventEmitter.on(type, listener);
+    this._daemonMessagesEventEmitter.on(type, listener);
     return this;
   }
 
@@ -167,7 +167,7 @@ export class DartFrogDaemon {
     type: DartFrogDaemonEventEmitterTypes,
     listener: (...args: any[]) => void
   ): DartFrogDaemon {
-    this._deamonMessagesEventEmitter.off(type, listener);
+    this._daemonMessagesEventEmitter.off(type, listener);
     return this;
   }
 }
