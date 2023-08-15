@@ -140,7 +140,7 @@ suite("DartFrogDaemon", () => {
         callback
       );
 
-      const request = `[{"id":1,"method":"testRequest","params":{}}]`;
+      const request = `[{"id":"1","method":"testRequest","params":{}}]`;
       stdout.emit("data", request);
 
       sinon.assert.calledOnce(callback);
@@ -153,7 +153,7 @@ suite("DartFrogDaemon", () => {
         callback
       );
 
-      const response = `[{"id":1,"result":{}}]`;
+      const response = `[{"id":"1","result":{}}]`;
       stdout.emit("data", response);
 
       sinon.assert.calledOnce(callback);
