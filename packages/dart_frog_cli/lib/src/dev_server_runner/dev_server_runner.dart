@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io' as io;
 
 import 'package:dart_frog_cli/src/dev_server_runner/restorable_directory_generator_target.dart';
