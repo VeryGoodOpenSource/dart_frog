@@ -37,10 +37,16 @@ class DevCommand extends DartFrogCommand {
         abbr: 'd',
         defaultsTo: _defaultDartVmServicePort,
         help: 'Which port number the dart vm service should listen on.',
+      )
+      ..addOption(
+        'host',
+        defaultsTo: _defaultHost,
+        help: 'Which host the server should bind to.',
       );
   }
 
   static const _defaultDartVmServicePort = '8181';
+  static const _defaultHost = '127.0.0.1';
 
   final GeneratorBuilder _generator;
   final DevServerRunnerBuilder _devServerRunnerBuilder;
@@ -103,12 +109,14 @@ class DevCommand extends DartFrogCommand {
   Future<int> run() async {
     _ensureRuntimeCompatibility(cwd);
 
+    final host = (results['host'] as String?) ?? _defaultHost;
     final port = io.Platform.environment['PORT'] ?? results['port'] as String;
     final dartVmServicePort = (results['dart-vm-service-port'] as String?) ??
         _defaultDartVmServicePort;
     final generator = await _generator(dartFrogDevServerBundle);
 
     _devServerRunner = _devServerRunnerBuilder(
+      host: host,
       devServerBundleGenerator: generator,
       logger: logger,
       workingDirectory: cwd,

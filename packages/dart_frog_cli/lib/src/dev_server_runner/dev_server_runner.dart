@@ -43,6 +43,7 @@ final _dartVmServiceAlreadyInUseErrorRegex = RegExp(
 /// Typedef for [DevServerRunner.new].
 typedef DevServerRunnerBuilder = DevServerRunner Function({
   required Logger logger,
+  required String host,
   required String port,
   required MasonGenerator devServerBundleGenerator,
   required String dartVmServicePort,
@@ -67,6 +68,7 @@ class DevServerRunner {
   /// {@macro dev_server_runner}
   DevServerRunner({
     required this.logger,
+    required this.host,
     required this.port,
     required this.devServerBundleGenerator,
     required this.dartVmServicePort,
@@ -86,6 +88,7 @@ class DevServerRunner {
         _runProcess = runProcess ?? io.Process.run,
         _generatorTarget =
             generatorTarget ?? RestorableDirectoryGeneratorTarget.new,
+        assert(host.isNotEmpty, 'host cannot be empty'),
         assert(port.isNotEmpty, 'port cannot be empty'),
         assert(
           dartVmServicePort.isNotEmpty,
@@ -94,6 +97,9 @@ class DevServerRunner {
 
   /// [Logger] instance used to wrap stdout.
   final Logger logger;
+
+  /// Which host the server should start on.
+  final String host;
 
   /// Which port number the server should start on.
   final String port;
@@ -233,6 +239,7 @@ class DevServerRunner {
 
     Future<void> serve() async {
       var isHotReloadingEnabled = false;
+      final servingHost = '--host=$host';
       final enableVmServiceFlag = '--enable-vm-service=$dartVmServicePort';
 
       final serverDartFilePath = path.join(
@@ -246,7 +253,12 @@ class DevServerRunner {
 
       final process = _serverProcess = await _startProcess(
         'dart',
-        [enableVmServiceFlag, '--enable-asserts', serverDartFilePath],
+        [
+          servingHost,
+          enableVmServiceFlag,
+          '--enable-asserts',
+          serverDartFilePath
+        ],
         runInShell: true,
       );
 
@@ -325,7 +337,7 @@ class DevServerRunner {
     await _codegen();
     await serve();
 
-    final localhost = link(uri: Uri.parse('http://localhost:$port'));
+    final localhost = link(uri: Uri.parse('http://$host:$port'));
     progress.complete('Running on $localhost');
 
     final cwdPath = workingDirectory.path;

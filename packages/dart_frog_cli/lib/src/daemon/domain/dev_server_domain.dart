@@ -43,6 +43,11 @@ class DevServerDomain extends DomainBase {
       );
     }
 
+    final host = request.params?['host'];
+    if (!_isValidHost(host)) {
+      throw const DartFrogDaemonMalformedMessageException('invalid host');
+    }
+
     final port = request.params?['port'];
     if (port is! int) {
       throw const DartFrogDaemonMalformedMessageException('invalid port');
@@ -83,6 +88,7 @@ class DevServerDomain extends DomainBase {
 
     final devServerRunner = _devServerRunnerBuilder(
       logger: logger,
+      host: '$host',
       port: '$port',
       devServerBundleGenerator: devServerBundleGenerator,
       dartVmServicePort: '$dartVmServicePort',
@@ -215,5 +221,10 @@ class DevServerDomain extends DomainBase {
       await runner.stop();
     }
     _devServerRunners.clear();
+  }
+
+  bool _isValidHost(dynamic host) {
+    return host is String &&
+        RegExp(r'^(?:[0-2][0-5]{0,2}\.){3}[0-2][0-5]{0,2}$').hasMatch(host);
   }
 }

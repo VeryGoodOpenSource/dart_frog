@@ -35,6 +35,7 @@ void main() {
     registerFallbackValue(_FakeDirectoryGeneratorTarget());
   });
 
+  const host = '127.0.0.1';
   const port = '8080';
   const dartVmServicePort = '8081';
 
@@ -72,6 +73,7 @@ void main() {
 
     devServerRunner = DevServerRunner(
       logger: logger,
+      host: host,
       port: port,
       devServerBundleGenerator: generator,
       dartVmServicePort: dartVmServicePort,
@@ -117,6 +119,7 @@ void main() {
       expect(
         DevServerRunner(
           logger: Logger(),
+          host: '127.0.0.1',
           port: '8080',
           devServerBundleGenerator: _MockMasonGenerator(),
           dartVmServicePort: '8081',
@@ -180,11 +183,48 @@ void main() {
         );
       });
 
+      test('custom host ip', () async {
+        late List<String> receivedArgs;
+        devServerRunner = DevServerRunner(
+          logger: logger,
+          host: '0.0.0.0',
+          port: port,
+          devServerBundleGenerator: generator,
+          dartVmServicePort: dartVmServicePort,
+          workingDirectory: Directory.current,
+          directoryWatcher: (_) => directoryWatcher,
+          generatorTarget: (_, {createFile, logger}) => generatorTarget,
+          isWindows: isWindows,
+          startProcess: (
+            String executable,
+            List<String> arguments, {
+            bool runInShell = false,
+          }) async {
+            receivedArgs = arguments;
+            return process;
+          },
+          sigint: sigint,
+          runProcess: (_, __) async => processResult,
+        );
+
+        await expectLater(devServerRunner.start(), completes);
+
+        expect(devServerRunner.isWatching, isTrue);
+        expect(devServerRunner.isServerRunning, isTrue);
+        expect(devServerRunner.isCompleted, isFalse);
+
+        expect(
+          receivedArgs,
+          contains('--host=0.0.0.0'),
+        );
+      });
+
       test('custom port numbers', () async {
         late List<String> receivedArgs;
 
         devServerRunner = DevServerRunner(
           logger: logger,
+          host: host,
           port: '4242',
           devServerBundleGenerator: generator,
           dartVmServicePort: '4343',
@@ -237,6 +277,7 @@ void main() {
           when(() => sigint.watch()).thenAnswer((_) => const Stream.empty());
           devServerRunner = DevServerRunner(
             logger: logger,
+            host: host,
             port: port,
             devServerBundleGenerator: generator,
             dartVmServicePort: dartVmServicePort,
@@ -388,6 +429,7 @@ void main() {
         late List<String> receivedArgs;
         devServerRunner = DevServerRunner(
           logger: logger,
+          host: '127.0.0.1',
           port: '4242',
           devServerBundleGenerator: generator,
           dartVmServicePort: '4343',
@@ -718,6 +760,7 @@ runs codegen with debounce when changes are made to the public or routes directo
           when(() => sigint.watch()).thenAnswer((_) => Stream.value(sigint));
 
           devServerRunner = DevServerRunner(
+            host: host,
             logger: logger,
             port: port,
             devServerBundleGenerator: generator,
@@ -820,6 +863,7 @@ runs codegen with debounce when changes are made to the public or routes directo
 
           devServerRunner = DevServerRunner(
             logger: logger,
+            host: host,
             port: port,
             devServerBundleGenerator: generator,
             dartVmServicePort: dartVmServicePort,
@@ -860,6 +904,7 @@ lib/my_model.g.dart:53:20: Warning: Operand of null-aware operation '!' has type
           );
           devServerRunner = DevServerRunner(
             logger: logger,
+            host: host,
             port: port,
             devServerBundleGenerator: generator,
             dartVmServicePort: dartVmServicePort,
@@ -901,6 +946,7 @@ Could not start the VM service: localhost:8181 is already in use.''';
           when(() => sigint.watch()).thenAnswer((_) => const Stream.empty());
           devServerRunner = DevServerRunner(
             logger: logger,
+            host: host,
             port: port,
             devServerBundleGenerator: generator,
             dartVmServicePort: dartVmServicePort,

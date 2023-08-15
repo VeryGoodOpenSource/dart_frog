@@ -37,6 +37,7 @@ void main() {
         generator: (_) async => generator,
         devServerRunnerBuilder: ({
           required logger,
+          required host,
           required port,
           required devServerBundleGenerator,
           required dartVmServicePort,
@@ -58,6 +59,7 @@ void main() {
     group('start', () {
       test('starts application', () async {
         late Logger passedLogger;
+        late String passedHost;
         late String passedPort;
         late MasonGenerator passedDevServerBundleGenerator;
         late String passedDartVmServicePort;
@@ -68,6 +70,7 @@ void main() {
           generator: (_) async => generator,
           devServerRunnerBuilder: ({
             required logger,
+            required host,
             required port,
             required devServerBundleGenerator,
             required dartVmServicePort,
@@ -75,6 +78,7 @@ void main() {
             void Function()? onHotReloadEnabled,
           }) {
             passedLogger = logger;
+            passedHost = host;
             passedPort = port;
             passedDevServerBundleGenerator = devServerBundleGenerator;
             passedDartVmServicePort = dartVmServicePort;
@@ -91,6 +95,7 @@ void main() {
               method: 'start',
               params: {
                 'workingDirectory': '/',
+                'host': '0.0.0.0',
                 'port': 3000,
                 'dartVmServicePort': 3001,
               },
@@ -105,6 +110,7 @@ void main() {
         );
 
         expect(passedLogger, isA<DaemonLogger>());
+        expect(passedHost, equals('0.0.0.0'));
         expect(passedPort, equals('3000'));
         expect(passedDevServerBundleGenerator, same(generator));
         expect(passedDartVmServicePort, equals('3001'));
@@ -143,6 +149,28 @@ void main() {
           );
         });
 
+        test('host', () async {
+          expect(
+            await domain.handleRequest(
+              const DaemonRequest(
+                id: '12',
+                domain: 'dev_server',
+                method: 'start',
+                params: {
+                  'workingDirectory': '/',
+                  'host': 'lol',
+                },
+              ),
+            ),
+            equals(
+              const DaemonResponse.error(
+                id: '12',
+                error: {'message': 'Malformed message, invalid host'},
+              ),
+            ),
+          );
+        });
+
         test('port', () async {
           expect(
             await domain.handleRequest(
@@ -152,6 +180,7 @@ void main() {
                 method: 'start',
                 params: {
                   'workingDirectory': '/',
+                  'host': '0.0.0.0',
                   'port': 'lol',
                 },
               ),
@@ -174,6 +203,7 @@ void main() {
                 method: 'start',
                 params: {
                   'workingDirectory': '/',
+                  'host': '0.0.0.0',
                   'port': 3000,
                   'dartVmServicePort': 'lol',
                 },
@@ -201,6 +231,7 @@ void main() {
               method: 'start',
               params: {
                 'workingDirectory': '/',
+                'host': '0.0.0.0',
                 'port': 3000,
                 'dartVmServicePort': 3001,
               },
@@ -226,6 +257,7 @@ void main() {
             method: 'start',
             params: {
               'workingDirectory': '/',
+              'host': '0.0.0.0',
               'port': 3000,
               'dartVmServicePort': 3001,
             },
@@ -332,6 +364,7 @@ void main() {
             method: 'start',
             params: {
               'workingDirectory': '/',
+              'host': '0.0.0.0',
               'port': 3000,
               'dartVmServicePort': 3001,
             },
@@ -444,6 +477,7 @@ void main() {
         generator: (_) async => generator,
         devServerRunnerBuilder: ({
           required logger,
+          required host,
           required port,
           required devServerBundleGenerator,
           required dartVmServicePort,
@@ -463,6 +497,7 @@ void main() {
           method: 'start',
           params: {
             'workingDirectory': '/',
+            'host': '0.0.0.0',
             'port': 3000,
             'dartVmServicePort': 3001,
           },
@@ -476,6 +511,7 @@ void main() {
           method: 'start',
           params: {
             'workingDirectory': '/',
+            'host': '10.0.0.0',
             'port': 6000,
             'dartVmServicePort': 6001,
           },

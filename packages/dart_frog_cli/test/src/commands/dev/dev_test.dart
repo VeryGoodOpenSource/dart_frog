@@ -34,6 +34,7 @@ void main() {
       logger = _MockLogger();
       stdin = _MockStdin();
 
+      when<dynamic>(() => argResults['host']).thenReturn('127.0.0.1');
       when<dynamic>(() => argResults['port']).thenReturn('8080');
       when<dynamic>(() => argResults['dart-vm-service-port'])
           .thenReturn('8181');
@@ -53,6 +54,7 @@ void main() {
         },
         devServerRunnerBuilder: ({
           required logger,
+          required host,
           required port,
           required devServerBundleGenerator,
           required dartVmServicePort,
@@ -78,11 +80,13 @@ void main() {
         (_) => Future.value(ExitCode.success),
       );
 
+      when(() => argResults['host']).thenReturn('0.0.0.0');
       when(() => argResults['port']).thenReturn('1234');
       when(() => argResults['dart-vm-service-port']).thenReturn('5678');
 
       final cwd = Directory.systemTemp;
 
+      late String givenHost;
       late String givenPort;
       late String givenDartVmServicePort;
       late MasonGenerator givenDevServerBundleGenerator;
@@ -94,12 +98,14 @@ void main() {
         ensureRuntimeCompatibility: (_) {},
         devServerRunnerBuilder: ({
           required logger,
+          required host,
           required port,
           required devServerBundleGenerator,
           required dartVmServicePort,
           required workingDirectory,
           void Function()? onHotReloadEnabled,
         }) {
+          givenHost = host;
           givenPort = port;
           givenDartVmServicePort = dartVmServicePort;
           givenDevServerBundleGenerator = devServerBundleGenerator;
@@ -117,6 +123,7 @@ void main() {
 
       verify(() => runner.start()).called(1);
 
+      expect(givenHost, equals('0.0.0.0'));
       expect(givenPort, equals('1234'));
       expect(givenDartVmServicePort, equals('5678'));
       expect(givenDevServerBundleGenerator, same(generator));
@@ -130,6 +137,7 @@ void main() {
         ensureRuntimeCompatibility: (_) {},
         devServerRunnerBuilder: ({
           required logger,
+          required host,
           required port,
           required devServerBundleGenerator,
           required dartVmServicePort,
@@ -160,6 +168,7 @@ void main() {
         ensureRuntimeCompatibility: (_) {},
         devServerRunnerBuilder: ({
           required logger,
+          required host,
           required port,
           required devServerBundleGenerator,
           required dartVmServicePort,
@@ -227,6 +236,7 @@ void main() {
           ensureRuntimeCompatibility: (_) {},
           devServerRunnerBuilder: ({
             required logger,
+            required host,
             required port,
             required devServerBundleGenerator,
             required dartVmServicePort,
