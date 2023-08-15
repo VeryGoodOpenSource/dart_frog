@@ -226,6 +226,7 @@ class DevServerDomain extends DomainBase {
 
   bool _isValidHost(dynamic host) {
     return host is String &&
-        RegExp(r'^(?:[0-2][0-5]{0,2}\.){3}[0-2][0-5]{0,2}$').hasMatch(host);
+        RegExp(r'^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$')
+            .hasMatch(host);
   }
 }

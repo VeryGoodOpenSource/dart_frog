@@ -26,6 +26,10 @@ void main() {
   const projectName1 = 'example1';
   const projectName2 = 'example2';
 
+  const project1Server1Host = '127.0.0.1';
+  const project2ServerHost = '0.0.0.0';
+  const project1Server2Host = '0.0.0.0';
+
   const project1Server1Port = 8080;
   const project2ServerPort = 8090;
   const project1Server2Port = 9090;
@@ -85,6 +89,7 @@ void main() {
           method: 'start',
           params: {
             'workingDirectory': projectDirectory1.path,
+            'host': project1Server1Host,
             'port': project1Server1Port,
             'dartVmServicePort': project1Server1Port + 1
           },
@@ -115,6 +120,7 @@ void main() {
           method: 'start',
           params: {
             'workingDirectory': projectDirectory2.path,
+            'host': project2ServerHost,
             'port': project2ServerPort,
             'dartVmServicePort': project2ServerPort + 1
           },
@@ -145,6 +151,7 @@ void main() {
           method: 'start',
           params: {
             'workingDirectory': projectDirectory1.path,
+            'host': project1Server2Host,
             'port': project1Server2Port,
             'dartVmServicePort': project1Server2Port + 1,
           },
