@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dart_frog_test/dart_frog_test.dart';
 import 'package:test/test.dart';
 
@@ -11,11 +9,8 @@ void main() {
     () async {
       final testContext = DartFrogTestContext(path: '/');
       final response = route.onRequest(testContext.context);
-      expect(response.statusCode, equals(HttpStatus.ok));
-      expect(
-        response.body(),
-        completion(equals('Welcome to Dart Frog!')),
-      );
+      expect(response, isOk);
+      expectBody(response, 'Welcome to Dart Frog!');
     },
   );
 }

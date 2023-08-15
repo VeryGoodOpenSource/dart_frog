@@ -23,11 +23,8 @@ void main() {
       )..provide<Random>(random);
 
       final response = route.onRequest(testContext.context);
-      expect(response.statusCode, equals(HttpStatus.ok));
-      expect(
-        response.json(),
-        completion(equals({'value': 3})),
-      );
+      expect(response, isOk);
+      expectJsonBody(response, {'value': 3});
     },
   );
 
@@ -43,7 +40,7 @@ void main() {
           method: method,
         );
         final response = route.onRequest(testContext.context);
-        expect(response.statusCode, equals(HttpStatus.methodNotAllowed));
+        expect(response, hasStatus(HttpStatus.methodNotAllowed));
       },
     );
   }
