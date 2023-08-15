@@ -85,22 +85,19 @@ export class DartFrogDaemon {
       return Promise.resolve();
     }
 
-    let resolveReadyPromise: () => void;
     const readyPromise = new Promise<void>((resolve) => {
-      resolveReadyPromise = resolve;
+      const readyEventListener = (message: DaemonEvent) => {
+        if (!this._isReady && isReadyDaemonEvent(message)) {
+          this._isReady = true;
+          resolve();
+          this.off(DartFrogDaemonEventEmitterTypes.event, readyEventListener);
+        }
+      };
+      this.on(
+        DartFrogDaemonEventEmitterTypes.event,
+        readyEventListener.bind(this)
+      );
     });
-
-    const readyEventListener = (message: DaemonEvent) => {
-      if (!this._isReady && isReadyDaemonEvent(message)) {
-        this._isReady = true;
-        resolveReadyPromise();
-        this.off(DartFrogDaemonEventEmitterTypes.event, readyEventListener);
-      }
-    };
-    this.on(
-      DartFrogDaemonEventEmitterTypes.event,
-      readyEventListener.bind(this)
-    );
 
     this.process = spawn("dart_frog", ["daemon"], {
       cwd: workingDirectory,
