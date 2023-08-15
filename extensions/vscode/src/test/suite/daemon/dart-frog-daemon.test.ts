@@ -217,5 +217,79 @@ suite("DartFrogDaemon", () => {
     });
   });
 
-  suite("off", () => {});
+  suite("off", () => {
+    let daemon: any;
+    let stdout: any;
+
+    const event = `[{"event":"testEvent","params":{}}]`;
+    const response = `[{"id":"1","result":{}}]`;
+    const request = `[{"id":"1","method":"testRequest","params":{}}]`;
+
+    beforeEach(() => {
+      const workingDirectory = "workingDirectory";
+
+      const daemonProcess = sinon.stub();
+      const daemonStdoutEventEmitter = new EventEmitter();
+      daemonProcess.stdout = stdout = daemonStdoutEventEmitter;
+      childProcessStub.spawn
+        .withArgs("dart_frog", ["daemon"], {
+          cwd: workingDirectory,
+        })
+        .returns(daemonProcess);
+
+      daemon = new dartFrogDaemon.DartFrogDaemon();
+
+      const invokePromise = daemon.invoke(workingDirectory);
+
+      const readyMessage = `[{"event":"daemon.ready","params":{"version":"0.0.1","processId":94799}}]`;
+      daemonStdoutEventEmitter.emit("data", readyMessage);
+
+      return invokePromise;
+    });
+
+    test("disposes events callback", () => {
+      const callback = sinon.stub();
+      daemon.on(dartFrogDaemon.DartFrogDaemonEventEmitterTypes.event, callback);
+      daemon.off(
+        dartFrogDaemon.DartFrogDaemonEventEmitterTypes.event,
+        callback
+      );
+
+      stdout.emit("data", event);
+
+      sinon.assert.notCalled(callback);
+    });
+
+    test("disposes requests callback", () => {
+      const callback = sinon.stub();
+      daemon.on(
+        dartFrogDaemon.DartFrogDaemonEventEmitterTypes.request,
+        callback
+      );
+      daemon.off(
+        dartFrogDaemon.DartFrogDaemonEventEmitterTypes.request,
+        callback
+      );
+
+      stdout.emit("data", request);
+
+      sinon.assert.notCalled(callback);
+    });
+
+    test("disposes responses callback", () => {
+      const callback = sinon.stub();
+      daemon.on(
+        dartFrogDaemon.DartFrogDaemonEventEmitterTypes.response,
+        callback
+      );
+      daemon.off(
+        dartFrogDaemon.DartFrogDaemonEventEmitterTypes.response,
+        callback
+      );
+
+      stdout.emit("data", response);
+
+      sinon.assert.notCalled(callback);
+    });
+  });
 });
