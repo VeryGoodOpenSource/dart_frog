@@ -85,5 +85,25 @@ suite("DartFrogDaemon", () => {
 
       sinon.assert.calledOnce(childProcessStub.spawn);
     });
+
+    test("doesn't start daemon when already waiting", async () => {
+      const daemonProcess = sinon.stub();
+      const daemonStdoutEventEmitter = new EventEmitter();
+      daemonProcess.stdout = daemonStdoutEventEmitter;
+      childProcessStub.spawn
+        .withArgs("dart_frog", ["daemon"], {
+          cwd: workingDirectory,
+        })
+        .returns(daemonProcess);
+
+      const daemon = new DartFrogDaemon();
+
+      daemon.invoke(workingDirectory);
+      daemonStdoutEventEmitter.emit("data", readyMessage);
+
+      daemon.invoke(workingDirectory);
+
+      sinon.assert.calledOnce(childProcessStub.spawn);
+    });
   });
 });

@@ -79,7 +79,7 @@ export class DartFrogDaemon {
    * usually the root directory of the Dart Frog project.
    */
   public async invoke(workingDirectory: string): Promise<void> {
-    if (this.isReady) {
+    if (this.isReady || this.process) {
       return Promise.resolve();
     }
 
