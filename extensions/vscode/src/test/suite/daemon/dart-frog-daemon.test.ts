@@ -111,6 +111,10 @@ suite("DartFrogDaemon", () => {
     let daemon: any;
     let stdout: any;
 
+    const event = `[{"event":"testEvent","params":{}}]`;
+    const response = `[{"id":"1","result":{}}]`;
+    const request = `[{"id":"1","method":"testRequest","params":{}}]`;
+
     beforeEach(() => {
       const workingDirectory = "workingDirectory";
 
@@ -133,40 +137,85 @@ suite("DartFrogDaemon", () => {
       return invokePromise;
     });
 
-    test("invokes callback when request is emitted", () => {
-      const callback = sinon.stub();
-      daemon.on(
-        dartFrogDaemon.DartFrogDaemonEventEmitterTypes.request,
-        callback
-      );
+    suite("invokes callback", () => {
+      test("when request is emitted", () => {
+        const callback = sinon.stub();
+        daemon.on(
+          dartFrogDaemon.DartFrogDaemonEventEmitterTypes.request,
+          callback
+        );
 
-      const request = `[{"id":"1","method":"testRequest","params":{}}]`;
-      stdout.emit("data", request);
+        stdout.emit("data", request);
 
-      sinon.assert.calledOnce(callback);
+        sinon.assert.calledOnce(callback);
+      });
+
+      test("when response is emitted", () => {
+        const callback = sinon.stub();
+        daemon.on(
+          dartFrogDaemon.DartFrogDaemonEventEmitterTypes.response,
+          callback
+        );
+
+        stdout.emit("data", response);
+
+        sinon.assert.calledOnce(callback);
+      });
+
+      test("when event is emitted", () => {
+        const callback = sinon.stub();
+        daemon.on(
+          dartFrogDaemon.DartFrogDaemonEventEmitterTypes.event,
+          callback
+        );
+
+        stdout.emit("data", event);
+
+        sinon.assert.calledOnce(callback);
+      });
     });
 
-    test("invokes callback when response is emitted", () => {
-      const callback = sinon.stub();
-      daemon.on(
-        dartFrogDaemon.DartFrogDaemonEventEmitterTypes.response,
-        callback
-      );
+    suite("doesn't invoke callback", () => {
+      test("when listening to events and received request and response", () => {
+        const callback = sinon.stub();
+        daemon.on(
+          dartFrogDaemon.DartFrogDaemonEventEmitterTypes.event,
+          callback
+        );
 
-      const response = `[{"id":"1","result":{}}]`;
-      stdout.emit("data", response);
+        stdout.emit("data", request);
+        stdout.emit("data", response);
 
-      sinon.assert.calledOnce(callback);
-    });
+        sinon.assert.notCalled(callback);
+      });
 
-    test("invokes callback when event is emitted", () => {
-      const callback = sinon.stub();
-      daemon.on(dartFrogDaemon.DartFrogDaemonEventEmitterTypes.event, callback);
+      test("when listening to requests and received event and response", () => {
+        const callback = sinon.stub();
+        daemon.on(
+          dartFrogDaemon.DartFrogDaemonEventEmitterTypes.request,
+          callback
+        );
 
-      const event = `[{"event":"testEvent","params":{}}]`;
-      stdout.emit("data", event);
+        stdout.emit("data", event);
+        stdout.emit("data", response);
 
-      sinon.assert.calledOnce(callback);
+        sinon.assert.notCalled(callback);
+      });
+
+      test("when listening to responses and received request and events", () => {
+        const callback = sinon.stub();
+        daemon.on(
+          dartFrogDaemon.DartFrogDaemonEventEmitterTypes.response,
+          callback
+        );
+
+        stdout.emit("data", request);
+        stdout.emit("data", event);
+
+        sinon.assert.notCalled(callback);
+      });
     });
   });
+
+  suite("off", () => {});
 });
