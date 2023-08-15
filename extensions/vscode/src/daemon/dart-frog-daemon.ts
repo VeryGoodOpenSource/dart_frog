@@ -46,7 +46,7 @@ export class DartFrogDaemon {
     return this._instance || (this._instance = new this());
   }
 
-  private _daemonMessagesEventEmitter = new EventEmitter();
+  private daemonMessagesEventEmitter = new EventEmitter();
 
   /**
    * The process that is running the Dart Frog daemon.
@@ -123,17 +123,17 @@ export class DartFrogDaemon {
     const daemonMessages = DaemonMessage.decode(data);
     for (const message of daemonMessages) {
       if (isDaemonEvent(message)) {
-        this._daemonMessagesEventEmitter.emit(
+        this.daemonMessagesEventEmitter.emit(
           DartFrogDaemonEventEmitterTypes.event,
           message
         );
       } else if (isDaemonResponse(message)) {
-        this._daemonMessagesEventEmitter.emit(
+        this.daemonMessagesEventEmitter.emit(
           DartFrogDaemonEventEmitterTypes.response,
           message
         );
       } else if (isDaemonRequest(message)) {
-        this._daemonMessagesEventEmitter.emit(
+        this.daemonMessagesEventEmitter.emit(
           DartFrogDaemonEventEmitterTypes.request,
           message
         );
@@ -153,7 +153,7 @@ export class DartFrogDaemon {
     type: DartFrogDaemonEventEmitterTypes,
     listener: (...args: any[]) => void
   ): DartFrogDaemon {
-    this._daemonMessagesEventEmitter.on(type, listener);
+    this.daemonMessagesEventEmitter.on(type, listener);
     return this;
   }
 
@@ -169,7 +169,7 @@ export class DartFrogDaemon {
     type: DartFrogDaemonEventEmitterTypes,
     listener: (...args: any[]) => void
   ): DartFrogDaemon {
-    this._daemonMessagesEventEmitter.off(type, listener);
+    this.daemonMessagesEventEmitter.off(type, listener);
     return this;
   }
 }
