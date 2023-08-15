@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io' as io;
 
 import 'package:dart_frog_cli/src/dev_server_runner/restorable_directory_generator_target.dart';
@@ -239,7 +240,6 @@ class DevServerRunner {
 
     Future<void> serve() async {
       var isHotReloadingEnabled = false;
-      final servingHost = '--host=$host';
       final enableVmServiceFlag = '--enable-vm-service=$dartVmServicePort';
 
       final serverDartFilePath = path.join(
@@ -253,12 +253,7 @@ class DevServerRunner {
 
       final process = _serverProcess = await _startProcess(
         'dart',
-        [
-          servingHost,
-          enableVmServiceFlag,
-          '--enable-asserts',
-          serverDartFilePath
-        ],
+        [enableVmServiceFlag, '--enable-asserts', serverDartFilePath],
         runInShell: true,
       );
 
@@ -280,8 +275,8 @@ class DevServerRunner {
         if (_isReloading) return;
 
         final message = utf8.decode(_).trim();
-        if (message.isEmpty) return;
 
+        if (message.isEmpty) return;
         final isDartVMServiceAlreadyInUseError =
             _dartVmServiceAlreadyInUseErrorRegex.hasMatch(message);
         final isSDKWarning = _warningRegex.hasMatch(message);

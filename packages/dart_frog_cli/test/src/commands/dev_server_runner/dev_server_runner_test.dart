@@ -184,7 +184,6 @@ void main() {
       });
 
       test('custom host ip', () async {
-        late List<String> receivedArgs;
         devServerRunner = DevServerRunner(
           logger: logger,
           host: '0.0.0.0',
@@ -200,7 +199,6 @@ void main() {
             List<String> arguments, {
             bool runInShell = false,
           }) async {
-            receivedArgs = arguments;
             return process;
           },
           sigint: sigint,
@@ -212,11 +210,6 @@ void main() {
         expect(devServerRunner.isWatching, isTrue);
         expect(devServerRunner.isServerRunning, isTrue);
         expect(devServerRunner.isCompleted, isFalse);
-
-        expect(
-          receivedArgs,
-          contains('--host=0.0.0.0'),
-        );
       });
 
       test('custom port numbers', () async {

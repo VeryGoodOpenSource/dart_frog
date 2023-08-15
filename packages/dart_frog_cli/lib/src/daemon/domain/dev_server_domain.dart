@@ -44,6 +44,7 @@ class DevServerDomain extends DomainBase {
     }
 
     final host = request.params?['host'];
+
     if (!_isValidHost(host)) {
       throw const DartFrogDaemonMalformedMessageException('invalid host');
     }
