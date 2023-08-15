@@ -60,4 +60,30 @@ suite("DartFrogDaemon", () => {
       assert.equal(daemon.isReady, true);
     });
   });
+
+  suite("invoke", () => {
+    const workingDirectory = "workingDirectory";
+    const readyMessage = `[{"event":"daemon.ready","params":{"version":"0.0.1","processId":94799}}]`;
+
+    test("doesn't start daemon when already ready", async () => {
+      const daemonProcess = sinon.stub();
+      const daemonStdoutEventEmitter = new EventEmitter();
+      daemonProcess.stdout = daemonStdoutEventEmitter;
+      childProcessStub.spawn
+        .withArgs("dart_frog", ["daemon"], {
+          cwd: workingDirectory,
+        })
+        .returns(daemonProcess);
+
+      const daemon = new DartFrogDaemon();
+
+      const invokePromise = daemon.invoke(workingDirectory);
+      daemonStdoutEventEmitter.emit("data", readyMessage);
+      await invokePromise;
+
+      daemon.invoke(workingDirectory);
+
+      sinon.assert.calledOnce(childProcessStub.spawn);
+    });
+  });
 });
