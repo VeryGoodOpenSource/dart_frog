@@ -2,6 +2,8 @@ import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 import {
   DaemonEvent,
   DaemonMessage,
+  DaemonRequest,
+  DaemonResponse,
   isDaemonEvent,
   isDaemonRequest,
   isDaemonResponse,
@@ -13,11 +15,11 @@ import { EventEmitter } from "events";
  * The types of events that are emitted by the {@link DartFrogDaemon}.
  *
  * The possible types of events are:
- * - "request": When a request is sent to the Dart Frog Daemon. The
+ * - "request": When a request is sent to the Dart Frog daemon. The
  * {@link DaemonRequest} is passed as an argument to the event handler.
- * - "response": When a response is received from the Dart Frog Daemon. The
- * {@link DeamonResponse} is passed as an argument to the event handler.
- * - "event": When an event is received from the Dart Frog Daemon. The
+ * - "response": When a response is received from the Dart Frog daemon. The
+ * {@link DaemonResponse} is passed as an argument to the event handler.
+ * - "event": When an event is received from the Dart Frog daemon. The
  * {@link DaemonEvent} is passed as an argument to the event handler.
  */
 export enum DartFrogDaemonEventEmitterTypes {
@@ -47,35 +49,35 @@ export class DartFrogDaemon {
   private _daemonMessagesEventEmitter = new EventEmitter();
 
   /**
-   * The process that is running the Dart Frog Daemon.
+   * The process that is running the Dart Frog daemon.
    *
-   * Undefined until the Dart Frog Daemon is {@link invoke}d.
+   * Undefined until the Dart Frog daemon is {@link invoke}d.
    */
   private process: ChildProcessWithoutNullStreams | undefined;
 
   private _isReady: boolean = false;
 
   /**
-   * Whether the Dart Frog Daemon is ready to accept requests.
+   * Whether the Dart Frog daemon is ready to accept requests.
    *
-   * The Dart Frog Daemon is ready to accept requests when it has emmitted
+   * The Dart Frog daemon is ready to accept requests when it has emmitted
    * the "ready" event after being {@link invoke}d.
    *
-   * @see {@link invoke} to invoke the Dart Frog Daemon.
+   * @see {@link invoke} to invoke the Dart Frog daemon.
    */
   public get isReady(): boolean {
     return this._isReady;
   }
 
   /**
-   * Invokes the Dart Frog Daemon.
+   * Invokes the Dart Frog daemon.
    *
-   * If the Dart Frog Daemon is already running, this method will immediately
+   * If the Dart Frog daemon is already running, this method will immediately
    * return.
    *
-   * After invoking the Dart Frog Daemon, it will be ready to accept requests.
+   * After invoking the Dart Frog daemon, it will be ready to accept requests.
    *
-   * @param workingDirectory The working directory of the Dart Frog Daemon,
+   * @param workingDirectory The working directory of the Dart Frog daemon,
    * usually the root directory of the Dart Frog project.
    */
   public async invoke(workingDirectory: string): Promise<void> {
@@ -140,9 +142,9 @@ export class DartFrogDaemon {
   }
 
   /**
-   * Starts listening to events related to this Dart Frog Daemon.
+   * Starts listening to events related to this Dart Frog daemon.
    *
-   * @returns A reference to this Dart Frog Daemon, so that calls can be
+   * @returns A reference to this Dart Frog daemon, so that calls can be
    * chained.
    * @see {@link DartFrogDaemonEventEmitterTypes} for the types of events that
    * are emitted.
@@ -156,11 +158,11 @@ export class DartFrogDaemon {
   }
 
   /**
-   * Unsubscribes a listener from events related to this Dart Frog Daemon.
+   * Unsubscribes a listener from events related to this Dart Frog daemon.
    *
    * @param type The type of event to unsubscribe from.
    * @param listener The listener to unsubscribe.
-   * @returns A reference to this Dart Frog Daemon, so that calls can be
+   * @returns A reference to this Dart Frog daemon, so that calls can be
    * chained.
    */
   public off(
