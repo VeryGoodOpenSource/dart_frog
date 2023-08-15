@@ -1,3 +1,8 @@
+# 1.1.0
+
+- chore(deps): bump `package:mocktail` and `very_good_analysis` ([#855](https://github.com/VeryGoodOpenSource/dart_frog/pull/855))
+- feat(dart_frog_gen): add `toJson` to `RouteConfig` ([#872](https://github.com/VeryGoodOpenSource/dart_frog/pull/872))
+
 # 1.0.0
 
 - feat: detect conflict between dynamic routes and non dynamic ones

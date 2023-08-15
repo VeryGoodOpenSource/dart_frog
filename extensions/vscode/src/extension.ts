@@ -37,11 +37,11 @@ export function activate(
   }
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("extension.create", create),
-    vscode.commands.registerCommand("extension.install-cli", installCLI),
-    vscode.commands.registerCommand("extension.update-cli", updateCLI),
-    vscode.commands.registerCommand("extension.new-route", newRoute),
-    vscode.commands.registerCommand("extension.new-middleware", newMiddleware)
+    vscode.commands.registerCommand("dart-frog.create", create),
+    vscode.commands.registerCommand("dart-frog.install-cli", installCLI),
+    vscode.commands.registerCommand("dart-frog.update-cli", updateCLI),
+    vscode.commands.registerCommand("dart-frog.new-route", newRoute),
+    vscode.commands.registerCommand("dart-frog.new-middleware", newMiddleware)
   );
   return context;
 }
