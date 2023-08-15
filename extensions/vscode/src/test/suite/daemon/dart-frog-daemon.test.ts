@@ -8,17 +8,17 @@ import assert = require("assert");
 suite("DartFrogDaemon", () => {
   let childProcessStub: any;
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  let DartFrogDaemon: any;
+  let dartFrogDaemon: any;
 
   beforeEach(() => {
     childProcessStub = {
       spawn: sinon.stub(),
     };
 
-    DartFrogDaemon = proxyquire("../../../daemon/dart-frog-daemon", {
+    dartFrogDaemon = proxyquire("../../../daemon/dart-frog-daemon", {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       child_process: childProcessStub,
-    }).DartFrogDaemon;
+    });
   });
 
   afterEach(() => {
@@ -26,8 +26,8 @@ suite("DartFrogDaemon", () => {
   });
 
   test("instance retrieves a singleton", () => {
-    const daemon = DartFrogDaemon.instance;
-    const daemon2 = DartFrogDaemon.instance;
+    const daemon = dartFrogDaemon.DartFrogDaemon.instance;
+    const daemon2 = dartFrogDaemon.DartFrogDaemon.instance;
 
     assert.equal(daemon, daemon2);
   });
@@ -37,7 +37,7 @@ suite("DartFrogDaemon", () => {
     const readyMessage = `[{"event":"daemon.ready","params":{"version":"0.0.1","processId":94799}}]`;
 
     test("initially false", () => {
-      const daemon = new DartFrogDaemon();
+      const daemon = new dartFrogDaemon.DartFrogDaemon();
       assert.equal(daemon.isReady, false);
     });
 
@@ -51,7 +51,7 @@ suite("DartFrogDaemon", () => {
         })
         .returns(daemonProcess);
 
-      const daemon = new DartFrogDaemon();
+      const daemon = new dartFrogDaemon.DartFrogDaemon();
 
       const invokePromise = daemon.invoke(workingDirectory);
       daemonStdoutEventEmitter.emit("data", readyMessage);
@@ -75,7 +75,7 @@ suite("DartFrogDaemon", () => {
         })
         .returns(daemonProcess);
 
-      const daemon = new DartFrogDaemon();
+      const daemon = new dartFrogDaemon.DartFrogDaemon();
 
       const invokePromise = daemon.invoke(workingDirectory);
       daemonStdoutEventEmitter.emit("data", readyMessage);
@@ -96,7 +96,7 @@ suite("DartFrogDaemon", () => {
         })
         .returns(daemonProcess);
 
-      const daemon = new DartFrogDaemon();
+      const daemon = new dartFrogDaemon.DartFrogDaemon();
 
       daemon.invoke(workingDirectory);
       daemonStdoutEventEmitter.emit("data", readyMessage);
@@ -104,6 +104,69 @@ suite("DartFrogDaemon", () => {
       daemon.invoke(workingDirectory);
 
       sinon.assert.calledOnce(childProcessStub.spawn);
+    });
+  });
+
+  suite("on", () => {
+    let daemon: any;
+    let stdout: any;
+
+    beforeEach(() => {
+      const workingDirectory = "workingDirectory";
+
+      const daemonProcess = sinon.stub();
+      const daemonStdoutEventEmitter = new EventEmitter();
+      daemonProcess.stdout = stdout = daemonStdoutEventEmitter;
+      childProcessStub.spawn
+        .withArgs("dart_frog", ["daemon"], {
+          cwd: workingDirectory,
+        })
+        .returns(daemonProcess);
+
+      const daemon = new dartFrogDaemon.DartFrogDaemon();
+
+      const invokePromise = daemon.invoke(workingDirectory);
+
+      const readyMessage = `[{"event":"daemon.ready","params":{"version":"0.0.1","processId":94799}}]`;
+      daemonStdoutEventEmitter.emit("data", readyMessage);
+
+      return invokePromise;
+    });
+
+    test("invokes callback when request is emitted", () => {
+      const callback = sinon.stub();
+      daemon.on(
+        dartFrogDaemon.DartFrogDaemonEventEmitterTypes.request,
+        callback
+      );
+
+      const request = `[{"id":1,"method":"testRequest","params":{}}]`;
+      stdout.emit("data", request);
+
+      sinon.assert.calledOnce(callback);
+    });
+
+    test("invokes callback when response is emitted", () => {
+      const callback = sinon.stub();
+      daemon.on(
+        dartFrogDaemon.DartFrogDaemonEventEmitterTypes.response,
+        callback
+      );
+
+      const response = `[{"id":1,"result":{}}]`;
+      stdout.emit("data", response);
+
+      sinon.assert.calledOnce(callback);
+    });
+
+    test("invokes callback when event is emitted", () => {
+      const callback = sinon.stub();
+      daemon.on(dartFrogDaemon.DartFrogDaemonEventEmitterTypes.event, callback);
+
+      const event = `[{"event":"testEvent","params":{}}]`;
+      stdout.emit("data", event);
+
+      sinon.assert.calledOnce(callback);
     });
   });
 });
