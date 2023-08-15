@@ -4,7 +4,8 @@
 [![Powered by Mason](https://img.shields.io/endpoint?url=https%3A%2F%2Ftinyurl.com%2Fmason-badge)](https://github.com/felangel/mason)
 [![License: MIT][license_badge]][license_link]
 
-A testing library that makes it easy to test Dart Frog services
+A testing library that makes it easy to test Dart Frog services. It offers helpers to mock requests as well as
+custom matchers in order to write easier to read expections.
 
 ## Installation 💻
 
@@ -23,35 +24,69 @@ Install it:
 dart pub get
 ```
 
----
+## DartFrogTestContext
 
-## Continuous Integration 🤖
+This class makes it simple to mock a `RequestContext` for a Dart Frog request handler. To use it, simply import it
+and use its constructor and methods to create the mocker context.
 
-Dart Frog Test comes with a built-in [GitHub Actions workflow][github_actions_link] powered by [Very Good Workflows][very_good_workflows_link] but you can also add your preferred CI/CD solution.
+A simple example:
 
-Out of the box, on each pull request and push, the CI `formats`, `lints`, and `tests` the code. This ensures the code remains consistent and behaves correctly as you add functionality or make changes. The project uses [Very Good Analysis][very_good_analysis_link] for a strict set of analysis options used by our team. Code coverage is enforced using the [Very Good Workflows][very_good_coverage_link].
+```dart
+// Mocking a get request, which is the default
+import '../../../routes/users/[id].dart' as route;
 
----
+test('returns ok', () {
+  final context - DartFrogTestContext(
+    path: '/users/1',
+  );
 
-## Running Tests 🧪
-
-To run all unit tests:
-
-```sh
-dart pub global activate coverage 1.2.0
-dart test --coverage=coverage
-dart pub global run coverage:format_coverage --lcov --in=coverage --out=coverage/lcov.info
+  final response = route.onRequest(context);
+  expect(response.statusCode, equals(200));
+});
 ```
 
-To view the generated coverage report you can use [lcov](https://github.com/linux-test-project/lcov).
+If the route handler function reads a [dependency injected via context](https://dartfrog.vgv.dev/docs/basics/dependency-injection), that can also be mocked:
 
-```sh
-# Generate Coverage Report
-genhtml coverage/lcov.info -o coverage/
+```dart
+// Mocking a get request, which is the default
+import '../../../routes/users/index.dart' as route;
 
-# Open Coverage Report
-open coverage/index.html
+test('returns ok', () {
+  final context - DartFrogTestContext(
+    path: '/users',
+  );
+
+  final userRepository = /** Create Mock */;
+
+  context.provide<UserRepository>(userRepository);
+
+  final response = route.onRequest(context);
+  expect(response.statusCode, equals(200));
+});
 ```
+
+Check the `DartFrogTestContext` constructor for all the avaialbe context attributes that can be mocked.
+
+## Matchers
+
+This package also provide test matchers that can be used to do expectation/assertions on top of
+Dart Frog's `Response`s:
+
+```dart
+expectJsonBody(response, {'name': 'Hank'});
+expectBody(response, 'Hank');
+
+expect(response, isOk);
+expect(response, isBadRequest);
+expect(response, isCreated);
+expect(response, isNotFound);
+expect(response, isUnauthorized);
+expect(response, isForbidden);
+expect(response, isInternalServerError);
+expect(response, hasStatus(301));
+```
+
+---
 
 [dart_install_link]: https://dart.dev/get-dart
 [github_actions_link]: https://docs.github.com/en/actions/learn-github-actions
