@@ -123,7 +123,7 @@ suite("DartFrogDaemon", () => {
         })
         .returns(daemonProcess);
 
-      const daemon = new dartFrogDaemon.DartFrogDaemon();
+      daemon = new dartFrogDaemon.DartFrogDaemon();
 
       const invokePromise = daemon.invoke(workingDirectory);
 
