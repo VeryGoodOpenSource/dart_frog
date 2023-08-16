@@ -231,16 +231,18 @@ void main() {
       verifyNever(() => logger.err(any()));
       expect(
         context.vars,
-        equals({
-          'port': customPort,
-          'directories': <RouteDirectory>[],
-          'routes': <RouteFile>[],
-          'middleware': <MiddlewareFile>[],
-          'globalMiddleware': false,
-          'serveStaticFiles': false,
-          'invokeCustomEntrypoint': false,
-          'invokeCustomInit': true
-        }),
+        equals(
+          {
+            'port': customPort,
+            'directories': <RouteDirectory>[],
+            'routes': <RouteFile>[],
+            'middleware': <MiddlewareFile>[],
+            'globalMiddleware': false,
+            'serveStaticFiles': false,
+            'invokeCustomEntrypoint': false,
+            'invokeCustomInit': true,
+          },
+        ),
       );
     });
 
@@ -381,7 +383,7 @@ void main() {
             ],
             'globalMiddleware': {
               'name': 'middleware',
-              'path': 'middleware.dart'
+              'path': 'middleware.dart',
             },
             'serveStaticFiles': true,
             'invokeCustomEntrypoint': false,
