@@ -193,9 +193,6 @@ export class DartFrogDaemon {
   /**
    * Sends a request to the Dart Frog daemon.
    *
-   * If the Dart Frog daemon is not ready to accept requests, this method
-   * will do nothing.
-   *
    * @param request The request to send to the Dart Frog daemon.
    * @throws {DartFrogDaemonWaiveError} If the Dart Frog daemon has not yet
    * been {@link invoke}d.
