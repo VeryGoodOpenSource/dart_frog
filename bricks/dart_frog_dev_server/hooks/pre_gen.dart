@@ -57,18 +57,6 @@ Future<void> preGen(
       );
     },
   );
-  await reportExternalPathDependencies(
-    projectDirectory,
-    onViolationStart: () {
-      context.logger
-        ..info('')
-        ..err('All path dependencies must be within the project.')
-        ..err('External path dependencies detected:');
-    },
-    onExternalPathDependency: (dependencyName, dependencyPath) {
-      context.logger.err('  \u{2022} $dependencyName from $dependencyPath');
-    },
-  );
 
   context.vars = {
     'port': context.vars['port'] ?? '8080',

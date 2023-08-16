@@ -142,53 +142,6 @@ void main() {
       expect(exitCalls, isEmpty);
     });
 
-    test('complains about r external dependencies', () async {
-      const configuration = RouteConfiguration(
-        middleware: [],
-        directories: [],
-        routes: [],
-        rogueRoutes: [],
-        endpoints: {},
-      );
-
-      final directory = Directory.systemTemp.createTempSync();
-      File(path.join(directory.path, 'pubspec.yaml')).writeAsStringSync(
-        '''
-name: example
-version: 0.1.0
-environment:
-  sdk: ^2.17.0
-dependencies:
-  mason: any
-  foo:
-    path: ../../foo
-dev_dependencies:
-  test: any
-''',
-      );
-
-      final exitCalls = <int>[];
-      await preGen(
-        context,
-        buildConfiguration: (_) => configuration,
-        exit: exitCalls.add,
-        directory: directory,
-      );
-
-      verify(
-        () => logger.err('All path dependencies must be within the project.'),
-      ).called(1);
-      verify(
-        () => logger.err('External path dependencies detected:'),
-      ).called(1);
-      verify(
-        () => logger.err('  \u{2022} foo from ../../foo'),
-      ).called(1);
-      expect(exitCalls, isEmpty);
-
-      directory.delete(recursive: true).ignore();
-    });
-
     test('retains custom port if specified', () async {
       const customPort = '8081';
       context.vars['port'] = customPort;
