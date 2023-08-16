@@ -12,6 +12,26 @@ import {
 import { EventEmitter } from "events";
 
 /**
+ * An error that is thrown when the Dart Frog Daemon has not yet been invoked
+ * but a request is made to it.
+ */
+export class DartFrogDaemonWaiveError extends Error {
+  constructor() {
+    super("The Dart Frog Daemon is yet to be invoked.");
+  }
+}
+
+/**
+ * An error that is thrown when the Dart Frog Daemon is invoked but is not yet
+ * ready to accept requests.
+ */
+export class DartFrogDaemonReadyError extends Error {
+  constructor() {
+    super("The Dart Frog Daemon is not yet ready to accept requests.");
+  }
+}
+
+/**
  * The types of events that are emitted by the {@link DartFrogDaemon}.
  *
  * The possible types of events are:
@@ -168,5 +188,52 @@ export class DartFrogDaemon {
   ): DartFrogDaemon {
     this.daemonMessagesEventEmitter.off(type, listener);
     return this;
+  }
+
+  /**
+   * Sends a request to the Dart Frog daemon.
+   *
+   * If the Dart Frog daemon is not ready to accept requests, this method
+   * will do nothing.
+   *
+   * @param request The request to send to the Dart Frog daemon.
+   * @throws {DartFrogDaemonWaiveError} If the Dart Frog daemon has not yet
+   * been {@link invoke}d.
+   * @throws {DartFrogDaemonReadyError} If the Dart Frog daemon is not yet
+   * ready to accept requests.
+   * @returns A promise that resolves to the response from the Dart Frog
+   * daemon to the request.
+   *
+   * @see {@link isReady} to check if the Dart Frog daemon is ready to accept
+   * requests.
+   */
+  public send(request: DaemonRequest): Promise<DaemonResponse> {
+    if (!this.process) {
+      throw new DartFrogDaemonWaiveError();
+    } else if (!this.isReady) {
+      throw new DartFrogDaemonReadyError();
+    }
+
+    const responsePromise = new Promise<DaemonResponse>((resolve) => {
+      const responseListener = (message: DaemonResponse) => {
+        if (message.id === request.id && message.result) {
+          resolve(message);
+          this.off(DartFrogDaemonEventEmitterTypes.response, responseListener);
+        }
+      };
+      this.on(
+        DartFrogDaemonEventEmitterTypes.response,
+        responseListener.bind(this)
+      );
+    });
+
+    const encodedRequest = `${JSON.stringify([request])}\n`;
+    this.process!.stdin.write(encodedRequest);
+    this.daemonMessagesEventEmitter.emit(
+      DartFrogDaemonEventEmitterTypes.request,
+      request
+    );
+
+    return responsePromise;
   }
 }
