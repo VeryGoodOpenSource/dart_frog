@@ -10,6 +10,10 @@ import {
   isReadyDaemonEvent,
 } from "./protocol";
 import { EventEmitter } from "events";
+import {
+  AscendingNumericalIdentifierGenerator,
+  IdentifierGenerator,
+} from "../utils";
 
 /**
  * The types of events that are emitted by the {@link DartFrogDaemon}.
@@ -45,6 +49,16 @@ export class DartFrogDaemon {
   public static get instance() {
     return this._instance || (this._instance = new this());
   }
+
+  /**
+   * Generates unique and valid identifiers for requests.
+   *
+   * Should not be used as a request counter, since it is not guaranteed to
+   * be called the same number of times as the number of requests sent.
+   */
+  // eslint-disable-next-line max-len
+  public readonly requestIdentifierGenerator: IdentifierGenerator =
+    new AscendingNumericalIdentifierGenerator();
 
   private daemonMessagesEventEmitter = new EventEmitter();
 
