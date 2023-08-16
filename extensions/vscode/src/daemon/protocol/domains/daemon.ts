@@ -34,14 +34,6 @@ export function isRequestVersionDaemonRequest(
   return isDaemonRequest(object) && object.method === requestVersionMethodName;
 }
 
-export interface RequestVersionDaemonResponse extends DaemonResponse {
-  id: string;
-  result: {
-    version: string;
-  };
-  error: undefined;
-}
-
 const killMethodName = `${domainName}.kill`;
 
 export class KillDaemonRequest extends DaemonRequest {
