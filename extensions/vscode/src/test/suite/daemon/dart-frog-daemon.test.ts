@@ -380,13 +380,13 @@ suite("DartFrogDaemon", () => {
       test("emits request event", async () => {
         const request = new RequestVersionDaemonRequest("1");
 
-        daemon.send(request);
-
         const callback = sinon.stub();
         daemon.on(
           dartFrogDaemon.DartFrogDaemonEventEmitterTypes.request,
           callback
         );
+
+        daemon.send(request);
 
         sinon.assert.calledOnceWithExactly(callback, request);
       });
