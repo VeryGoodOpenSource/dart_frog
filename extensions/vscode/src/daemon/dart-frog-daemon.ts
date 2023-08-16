@@ -109,8 +109,8 @@ export class DartFrogDaemon {
       const readyEventListener = (message: DaemonEvent) => {
         if (!this._isReady && isReadyDaemonEvent(message)) {
           this._isReady = true;
-          resolve();
           this.off(DartFrogDaemonEventEmitterTypes.event, readyEventListener);
+          resolve();
         }
       };
       this.on(
@@ -214,8 +214,8 @@ export class DartFrogDaemon {
     const responsePromise = new Promise<DaemonResponse>((resolve) => {
       const responseListener = (message: DaemonResponse) => {
         if (message.id === request.id && message.result) {
-          resolve(message);
           this.off(DartFrogDaemonEventEmitterTypes.response, responseListener);
+          resolve(message);
         }
       };
       this.on(
