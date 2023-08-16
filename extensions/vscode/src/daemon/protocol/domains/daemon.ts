@@ -10,6 +10,7 @@ import {
   DaemonEvent,
   isDaemonEvent,
   isDaemonRequest,
+  DaemonResponse,
 } from "../protocol";
 
 const domainName = "daemon";
@@ -31,6 +32,13 @@ export function isRequestVersionDaemonRequest(
   object: any
 ): object is RequestVersionDaemonRequest {
   return isDaemonRequest(object) && object.method === requestVersionMethodName;
+}
+
+export interface RequestVersionDaemonResponse extends DaemonResponse {
+  id: string;
+  result: {
+    version: string;
+  };
 }
 
 const killMethodName = `${domainName}.kill`;
