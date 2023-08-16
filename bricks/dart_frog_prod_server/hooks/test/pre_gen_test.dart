@@ -106,8 +106,8 @@ void main() {
               route: '/',
               params: [],
               wildcard: false,
-            )
-          ]
+            ),
+          ],
         },
       );
 
@@ -350,7 +350,7 @@ dependencies:
             MiddlewareFile(
               name: 'hello_middleware',
               path: 'hello/middleware.dart',
-            )
+            ),
           ],
           directories: [
             RouteDirectory(
@@ -374,7 +374,7 @@ dependencies:
                 ),
               ],
               params: [],
-            )
+            ),
           ],
           routes: [
             RouteFile(
@@ -411,7 +411,7 @@ dependencies:
                 params: [],
                 wildcard: false,
               ),
-            ]
+            ],
           },
           serveStaticFiles: true,
         );
@@ -468,11 +468,14 @@ dependencies:
               }
             ],
             'middleware': [
-              {'name': 'hello_middleware', 'path': 'hello/middleware.dart'}
+              {
+                'name': 'hello_middleware',
+                'path': 'hello/middleware.dart',
+              },
             ],
             'globalMiddleware': {
               'name': 'middleware',
-              'path': 'middleware.dart'
+              'path': 'middleware.dart',
             },
             'serveStaticFiles': true,
             'invokeCustomEntrypoint': false,
