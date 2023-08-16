@@ -4,10 +4,7 @@ import { EventEmitter } from "events";
 
 import { afterEach, beforeEach } from "mocha";
 import assert = require("assert");
-import {
-  RequestVersionDaemonRequest,
-  RequestVersionDaemonResponse,
-} from "../../../daemon";
+import { RequestVersionDaemonRequest } from "../../../daemon";
 
 suite("DartFrogDaemon", () => {
   let childProcessStub: any;
