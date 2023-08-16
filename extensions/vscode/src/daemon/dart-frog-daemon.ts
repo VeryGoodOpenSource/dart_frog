@@ -56,7 +56,6 @@ export class DartFrogDaemon {
    * Should not be used as a request counter, since it is not guaranteed to
    * be called the same number of times as the number of requests sent.
    */
-  // eslint-disable-next-line max-len
   public readonly requestIdentifierGenerator: IdentifierGenerator =
     new AscendingNumericalIdentifierGenerator();
 
