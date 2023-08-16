@@ -1,9 +1,6 @@
-import 'dart:io';
-
 import 'package:dart_frog_gen/dart_frog_gen.dart';
 import 'package:mason/mason.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
 import '../pre_gen.dart';
