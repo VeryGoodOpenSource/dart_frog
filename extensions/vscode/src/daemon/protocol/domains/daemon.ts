@@ -39,6 +39,7 @@ export interface RequestVersionDaemonResponse extends DaemonResponse {
   result: {
     version: string;
   };
+  error: undefined;
 }
 
 const killMethodName = `${domainName}.kill`;

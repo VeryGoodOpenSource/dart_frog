@@ -402,7 +402,7 @@ suite("DartFrogDaemon", () => {
         const response = `[{"id":"1","result":{"version":"0.0.1"}}]`;
         stdout.emit("data", response);
 
-        await responsePromise;
+        const actualResponse = await responsePromise;
 
         const expectedResponse = {
           id: "1",
@@ -411,7 +411,7 @@ suite("DartFrogDaemon", () => {
           },
         };
 
-        assert.deepEqual(responsePromise, expectedResponse);
+        assert.deepEqual(actualResponse, expectedResponse);
       });
     });
   });
