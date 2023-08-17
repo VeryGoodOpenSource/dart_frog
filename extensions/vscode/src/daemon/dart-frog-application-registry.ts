@@ -31,8 +31,7 @@ const vmServiceUriMessagePrefix = "The Dart VM service is listening on ";
 const applicationStartingMessagePrefix = "Running on ";
 
 /**
- * The regular expression that is used to extract the address of the Dart Frog
- * application from the progress message that is sent by the Dart Frog daemon.
+ * The regular expression that is used to extract an address from a message.
  *
  * @example
  * "Running on \u001b]8;;http://localhost:8080\u001b\\http://localhost:8080\u001b]8;;\u001b\\" -> "http://localhost:8080"
