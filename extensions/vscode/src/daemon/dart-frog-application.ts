@@ -104,6 +104,8 @@ export class DartFrogApplication {
    *
    * This method should only be called once, when the application is started and
    * has been assigned an address by the Dart Frog daemon.
+   *
+   * If the application already has an address, this method will do nothing.
    */
   public set address(value: string) {
     if (this._address) {
