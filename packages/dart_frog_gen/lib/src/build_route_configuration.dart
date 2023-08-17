@@ -25,7 +25,7 @@ RouteConfiguration buildRouteConfiguration(Directory directory) {
 
   final endpoints = <String, List<RouteFile>>{};
   final middleware = <MiddlewareFile>[
-    if (globalMiddleware != null) globalMiddleware
+    if (globalMiddleware != null) globalMiddleware,
   ];
   final routes = <RouteFile>[];
   final rogueRoutes = <RouteFile>[];
