@@ -44,11 +44,11 @@ const addressRegex = /http(s?):\/\/[^\u001b\\]+/;
  *
  * The possible types of events are:
  * - "add": When a new {@link DartFrogApplication} is added to the registry.
- * The associated {@link DartFrogApplication} is passed as an argument to the
- * event handler.
+ * The {@link DartFrogApplication} is passed as an argument to the event
+ * handler.
  * - "remove": When a {@link DartFrogApplication} is removed from the registry.
- * The associated {@link DartFrogApplication} is passed as an argument to the
- * event handler.
+ * The {@link DartFrogApplication} is passed as an argument to the event
+ * handler.
  */
 export enum DartFrogApplicationRegistryEventEmitterTypes {
   add = "add",
