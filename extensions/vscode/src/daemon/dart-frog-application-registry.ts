@@ -101,6 +101,38 @@ export class DartFrogApplicationRegistry {
     return this.runningApplications.get(id);
   }
 
+  /**
+   * Starts listening to events related to this application registry
+   *
+   * @returns A reference to this Dart Frog daemon, so that calls can be
+   * chained.
+   * @see {@link DartFrogDaemonEventEmitterTypes} for the types of events that
+   * are emitted.
+   */
+  public on(
+    type: DartFrogApplicationRegistryEventEmitterTypes,
+    listener: (...args: any[]) => void
+  ): DartFrogApplicationRegistry {
+    this.runningApplicationsEventEmitter.on(type, listener);
+    return this;
+  }
+
+  /**
+   * Unsubscribes a listener from events related to this application registry.
+   *
+   * @param type The type of event to unsubscribe from.
+   * @param listener The listener to unsubscribe.
+   * @returns A reference to this Dart Frog daemon application registry,
+   * so that calls can be chained.
+   */
+  public off(
+    type: DartFrogApplicationRegistryEventEmitterTypes,
+    listener: (...args: any[]) => void
+  ): DartFrogApplicationRegistry {
+    this.runningApplicationsEventEmitter.off(type, listener);
+    return this;
+  }
+
   private async startRequestListener(request: DaemonRequest): Promise<void> {
     if (!isStartDaemonRequest(request)) {
       return;
