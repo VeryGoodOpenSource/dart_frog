@@ -101,7 +101,7 @@ export class DartFrogApplicationRegistry {
     return this.runningApplications.get(id);
   }
 
-  private async startRequestListener(request: DaemonRequest) {
+  private async startRequestListener(request: DaemonRequest): Promise<void> {
     if (!isStartDaemonRequest(request)) {
       return;
     }
@@ -212,7 +212,7 @@ export class DartFrogApplicationRegistry {
     });
   }
 
-  private applicationExitEventListener(event: DaemonEvent) {
+  private applicationExitEventListener(event: DaemonEvent): void {
     if (!isApplicationExitDaemonEvent(event)) {
       return;
     }
@@ -223,7 +223,7 @@ export class DartFrogApplicationRegistry {
     }
   }
 
-  private register(application: DartFrogApplication) {
+  private register(application: DartFrogApplication): void {
     if (!application.id) {
       return;
     } else if (this.runningApplications.has(application.id)) {
@@ -237,7 +237,7 @@ export class DartFrogApplicationRegistry {
     );
   }
 
-  private deregister(application: DartFrogApplication) {
+  private deregister(application: DartFrogApplication): void {
     if (!application.id) {
       return;
     } else if (!this.runningApplications.has(application.id)) {
