@@ -58,7 +58,7 @@ export class DartFrogDaemon {
 
   /**
    * A registry of the Dart Frog applications that are currently running on
-   * this Dart Frog Daemon.
+   * this Dart Frog daemon.
    */
   public readonly applicationRegistry: DartFrogApplicationRegistry =
     new DartFrogApplicationRegistry(this);
