@@ -61,8 +61,8 @@ void main() {
             route: '/hello',
             params: [],
             wildcard: false,
-          )
-        ]
+          ),
+        ],
       });
 
       reportRouteConflicts(
@@ -109,8 +109,8 @@ void main() {
             route: '/',
             params: [],
             wildcard: false,
-          )
-        ]
+          ),
+        ],
       });
 
       reportRouteConflicts(
@@ -158,7 +158,7 @@ void main() {
             route: '/',
             params: [],
             wildcard: false,
-          )
+          ),
         ],
         '/echo': const [
           RouteFile(
@@ -174,8 +174,8 @@ void main() {
             route: '/',
             params: [],
             wildcard: false,
-          )
-        ]
+          ),
+        ],
       });
 
       reportRouteConflicts(
@@ -331,7 +331,7 @@ void main() {
           conflicts,
           [
             '${path.normalize('/turtles/<id>')} and ${path.normalize('/turtles/random')} -> /turtles/<id>',
-            '${path.normalize('/turtles/<id>/<name>')} and ${path.normalize('/turtles/<id>/bla')} -> /turtles/<id>/<name>'
+            '${path.normalize('/turtles/<id>/<name>')} and ${path.normalize('/turtles/<id>/bla')} -> /turtles/<id>/<name>',
           ],
         );
       },
