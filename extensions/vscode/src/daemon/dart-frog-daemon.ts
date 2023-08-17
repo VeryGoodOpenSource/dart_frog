@@ -10,6 +10,7 @@ import {
   isReadyDaemonEvent,
 } from "./protocol";
 import { EventEmitter } from "events";
+import { DartFrogApplicationRegistry } from ".";
 
 /**
  * The types of events that are emitted by the {@link DartFrogDaemon}.
@@ -54,6 +55,13 @@ export class DartFrogDaemon {
    * Undefined until the Dart Frog daemon is {@link invoke}d.
    */
   private process: ChildProcessWithoutNullStreams | undefined;
+
+  /**
+   * A registry of the Dart Frog applications that are currently running on
+   * this Dart Frog Daemon.
+   */
+  public readonly applicationsRegistry: DartFrogApplicationRegistry =
+    new DartFrogApplicationRegistry(this);
 
   private _isReady: boolean = false;
 
