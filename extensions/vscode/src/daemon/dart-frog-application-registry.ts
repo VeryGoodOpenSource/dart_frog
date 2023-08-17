@@ -60,8 +60,8 @@ export enum DartFrogApplicationRegistryEventEmitterTypes {
  * Frog daemon.
  */
 export class DartFrogApplicationRegistry {
-  constructor(dartFrogdaemon: DartFrogDaemon) {
-    this.dartFrogDaemon = dartFrogdaemon;
+  constructor(dartFrogDaemon: DartFrogDaemon) {
+    this.dartFrogDaemon = dartFrogDaemon;
 
     this.dartFrogDaemon.on(
       DartFrogDaemonEventEmitterTypes.request,
