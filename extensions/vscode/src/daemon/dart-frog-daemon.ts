@@ -200,7 +200,6 @@ export class DartFrogDaemon {
    * ready to accept requests.
    * @returns A promise that resolves to the response from the Dart Frog
    * daemon to the request.
-   *
    * @see {@link isReady} to check if the Dart Frog daemon is ready to accept
    * requests.
    */

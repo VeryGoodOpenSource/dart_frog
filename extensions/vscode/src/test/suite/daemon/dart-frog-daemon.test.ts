@@ -295,8 +295,6 @@ suite("DartFrogDaemon", () => {
   });
 
   suite("send", () => {
-    const workingDirectory = "workingDirectory";
-
     test("throws a DartFrogDaemonWaiveError when not invoked", async () => {
       const daemon = new dartFrogDaemon.DartFrogDaemon();
 
@@ -313,7 +311,10 @@ suite("DartFrogDaemon", () => {
 
       const daemonProcess = sinon.stub();
       const daemonStdoutEventEmitter = new EventEmitter();
+
       daemonProcess.stdout = daemonStdoutEventEmitter;
+      const workingDirectory = "workingDirectory";
+
       childProcessStub.spawn
         .withArgs("dart_frog", ["daemon"], {
           cwd: workingDirectory,
