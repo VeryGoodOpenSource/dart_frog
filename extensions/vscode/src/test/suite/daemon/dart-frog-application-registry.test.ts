@@ -366,7 +366,6 @@ function simulateApplicationStart(
  *
  * @example
  * `Running on \u001b]8;;http://localhost:8080\u001b\\http://localhost:8080\u001b]8;;\u001b\\`
- *
  * @param address The HTTP address that should be used in the message.
  * @returns The formatted message, just like the Dart Frog Daemon would send it.
  */
