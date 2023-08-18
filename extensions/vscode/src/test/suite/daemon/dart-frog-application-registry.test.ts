@@ -2,6 +2,7 @@ const sinon = require("sinon");
 
 import * as assert from "assert";
 import {
+  ApplicationExitDaemonEvent,
   ApplicationStartingDaemonEvent,
   DartFrogApplication,
   DartFrogApplicationRegistry,
@@ -45,7 +46,7 @@ suite("DartFrogApplicationRegistry", () => {
       expectedApplication.vmServiceUri = "http://127.0.0.1:8081/2xwOzt-QUmY=/";
       expectedApplication.address = "http://localhost:8080";
 
-      const applicationPromise = new Promise((resolve) => {
+      const applicationAddPromise = new Promise((resolve) => {
         const addedListener = (application: DartFrogApplication) => {
           if (application.id === expectedApplication.id) {
             registry.off(
@@ -62,11 +63,72 @@ suite("DartFrogApplicationRegistry", () => {
       });
 
       simulateApplicationStart(expectedApplication, daemonEventEmitter);
-      await applicationPromise;
+      await applicationAddPromise;
 
       const actualApplication = registry.get(expectedApplication.id);
 
       assert.deepEqual(actualApplication, expectedApplication);
+    });
+
+    test("does not return application when it has been deregistered", async () => {
+      const daemon = sinon.stub();
+
+      const daemonEventEmitter = new EventEmitter();
+      daemon.on = daemonEventEmitter.on.bind(daemonEventEmitter);
+      daemon.off = daemonEventEmitter.off.bind(daemonEventEmitter);
+
+      const registry = new DartFrogApplicationRegistry(daemon);
+
+      const expectedApplication = new DartFrogApplication(
+        "workingDirectory",
+        8080,
+        8081
+      );
+      expectedApplication.id = "a";
+      expectedApplication.vmServiceUri = "http://127.0.0.1:8081/2xwOzt-QUmY=/";
+      expectedApplication.address = "http://localhost:8080";
+
+      const applicationAddPromise = new Promise((resolve) => {
+        const addedListener = (application: DartFrogApplication) => {
+          if (application.id === expectedApplication.id) {
+            registry.off(
+              DartFrogApplicationRegistryEventEmitterTypes.add,
+              addedListener
+            );
+            resolve(application);
+          }
+        };
+        registry.on(
+          DartFrogApplicationRegistryEventEmitterTypes.add,
+          addedListener
+        );
+      });
+
+      simulateApplicationStart(expectedApplication, daemonEventEmitter);
+      await applicationAddPromise;
+
+      const applicationRemovePromise = new Promise((resolve) => {
+        const addedListener = (application: DartFrogApplication) => {
+          if (application.id === expectedApplication.id) {
+            registry.off(
+              DartFrogApplicationRegistryEventEmitterTypes.remove,
+              addedListener
+            );
+            resolve(application);
+          }
+        };
+        registry.on(
+          DartFrogApplicationRegistryEventEmitterTypes.remove,
+          addedListener
+        );
+      });
+
+      simulateApplicationExit(expectedApplication.id, daemonEventEmitter);
+      await applicationRemovePromise;
+
+      const actualApplication = registry.get(expectedApplication.id);
+
+      assert.equal(actualApplication, undefined);
     });
   });
 
@@ -176,7 +238,7 @@ suite("DartFrogApplicationRegistry", () => {
       const callback = sinon.stub();
       registry.on(DartFrogApplicationRegistryEventEmitterTypes.add, callback);
 
-      const applicationPromise = new Promise((resolve) => {
+      const applicationAddPromise = new Promise((resolve) => {
         const addedListener = (registeredApplication: DartFrogApplication) => {
           if (registeredApplication.id === registeredApplication.id) {
             registry.off(
@@ -193,7 +255,7 @@ suite("DartFrogApplicationRegistry", () => {
       });
 
       simulateApplicationStart(application, daemonEventEmitter);
-      await applicationPromise;
+      await applicationAddPromise;
 
       sinon.assert.calledOnceWithExactly(callback, application);
     });
@@ -219,7 +281,7 @@ suite("DartFrogApplicationRegistry", () => {
       const callback = sinon.stub();
       registry.on(DartFrogApplicationRegistryEventEmitterTypes.add, callback);
 
-      const applicationPromise = new Promise((resolve) => {
+      const applicationAddPromise = new Promise((resolve) => {
         const addedListener = (registeredApplication: DartFrogApplication) => {
           if (registeredApplication.id === registeredApplication.id) {
             registry.off(
@@ -237,7 +299,184 @@ suite("DartFrogApplicationRegistry", () => {
 
       simulateApplicationStart(application, daemonEventEmitter);
       simulateApplicationStart(application, daemonEventEmitter);
-      await applicationPromise;
+      await applicationAddPromise;
+
+      sinon.assert.calledOnceWithExactly(callback, application);
+    });
+
+    test("emits remove event when application is deregistered", async () => {
+      const daemon = sinon.stub();
+
+      const daemonEventEmitter = new EventEmitter();
+      daemon.on = daemonEventEmitter.on.bind(daemonEventEmitter);
+      daemon.off = daemonEventEmitter.off.bind(daemonEventEmitter);
+
+      const registry = new DartFrogApplicationRegistry(daemon);
+
+      const application = new DartFrogApplication(
+        "workingDirectory",
+        8080,
+        8081
+      );
+      application.id = "a";
+      application.vmServiceUri = "http://127.0.0.1:8081/2xwOzt-QUmY=/";
+      application.address = "http://localhost:8080";
+
+      const callback = sinon.stub();
+      registry.on(
+        DartFrogApplicationRegistryEventEmitterTypes.remove,
+        callback
+      );
+
+      const applicationAddPromise = new Promise((resolve) => {
+        const addedListener = (registeredApplication: DartFrogApplication) => {
+          if (registeredApplication.id === registeredApplication.id) {
+            registry.off(
+              DartFrogApplicationRegistryEventEmitterTypes.add,
+              addedListener
+            );
+            resolve(registeredApplication);
+          }
+        };
+        registry.on(
+          DartFrogApplicationRegistryEventEmitterTypes.add,
+          addedListener
+        );
+      });
+
+      simulateApplicationStart(application, daemonEventEmitter);
+      await applicationAddPromise;
+
+      const applicationRemovePromise = new Promise((resolve) => {
+        const addedListener = (registeredApplication: DartFrogApplication) => {
+          if (registeredApplication.id === registeredApplication.id) {
+            registry.off(
+              DartFrogApplicationRegistryEventEmitterTypes.remove,
+              addedListener
+            );
+            resolve(registeredApplication);
+          }
+        };
+        registry.on(
+          DartFrogApplicationRegistryEventEmitterTypes.remove,
+          addedListener
+        );
+      });
+
+      simulateApplicationExit(application.id, daemonEventEmitter);
+      await applicationRemovePromise;
+
+      sinon.assert.calledOnceWithExactly(callback, application);
+    });
+
+    test("does not emit remove event when application is not registered but exited", async () => {
+      const daemon = sinon.stub();
+
+      const daemonEventEmitter = new EventEmitter();
+      daemon.on = daemonEventEmitter.on.bind(daemonEventEmitter);
+      daemon.off = daemonEventEmitter.off.bind(daemonEventEmitter);
+
+      const registry = new DartFrogApplicationRegistry(daemon);
+
+      const application = new DartFrogApplication(
+        "workingDirectory",
+        8080,
+        8081
+      );
+      application.id = "a";
+      application.vmServiceUri = "http://127.0.0.1:8081/2xwOzt-QUmY=/";
+      application.address = "http://localhost:8080";
+
+      const callback = sinon.stub();
+      registry.on(
+        DartFrogApplicationRegistryEventEmitterTypes.remove,
+        callback
+      );
+
+      const applicationRemovePromise = new Promise((resolve) => {
+        const addedListener = (registeredApplication: DartFrogApplication) => {
+          if (registeredApplication.id === registeredApplication.id) {
+            registry.off(
+              DartFrogApplicationRegistryEventEmitterTypes.remove,
+              addedListener
+            );
+            resolve(registeredApplication);
+          }
+        };
+        registry.on(
+          DartFrogApplicationRegistryEventEmitterTypes.remove,
+          addedListener
+        );
+      });
+
+      simulateApplicationExit(application.id, daemonEventEmitter);
+      await applicationRemovePromise;
+
+      sinon.assert.notCalled(callback);
+    });
+
+    test("only emits remove event once when application with the same id is already deregistered", async () => {
+      const daemon = sinon.stub();
+
+      const daemonEventEmitter = new EventEmitter();
+      daemon.on = daemonEventEmitter.on.bind(daemonEventEmitter);
+      daemon.off = daemonEventEmitter.off.bind(daemonEventEmitter);
+
+      const registry = new DartFrogApplicationRegistry(daemon);
+
+      const application = new DartFrogApplication(
+        "workingDirectory",
+        8080,
+        8081
+      );
+      application.id = "a";
+      application.vmServiceUri = "http://127.0.0.1:8081/2xwOzt-QUmY=/";
+      application.address = "http://localhost:8080";
+
+      const callback = sinon.stub();
+      registry.on(
+        DartFrogApplicationRegistryEventEmitterTypes.remove,
+        callback
+      );
+
+      const applicationAddPromise = new Promise((resolve) => {
+        const addedListener = (registeredApplication: DartFrogApplication) => {
+          if (registeredApplication.id === registeredApplication.id) {
+            registry.off(
+              DartFrogApplicationRegistryEventEmitterTypes.add,
+              addedListener
+            );
+            resolve(registeredApplication);
+          }
+        };
+        registry.on(
+          DartFrogApplicationRegistryEventEmitterTypes.add,
+          addedListener
+        );
+      });
+
+      simulateApplicationStart(application, daemonEventEmitter);
+      await applicationAddPromise;
+
+      const applicationRemovePromise = new Promise((resolve) => {
+        const addedListener = (registeredApplication: DartFrogApplication) => {
+          if (registeredApplication.id === registeredApplication.id) {
+            registry.off(
+              DartFrogApplicationRegistryEventEmitterTypes.remove,
+              addedListener
+            );
+            resolve(registeredApplication);
+          }
+        };
+        registry.on(
+          DartFrogApplicationRegistryEventEmitterTypes.remove,
+          addedListener
+        );
+      });
+
+      simulateApplicationExit(application.id, daemonEventEmitter);
+      simulateApplicationExit(application.id, daemonEventEmitter);
+      await applicationRemovePromise;
 
       sinon.assert.calledOnceWithExactly(callback, application);
     });
@@ -266,7 +505,7 @@ suite("DartFrogApplicationRegistry", () => {
       registry.on(DartFrogApplicationRegistryEventEmitterTypes.add, callback);
       registry.off(DartFrogApplicationRegistryEventEmitterTypes.add, callback);
 
-      const applicationPromise = new Promise((resolve) => {
+      const applicationAddPromise = new Promise((resolve) => {
         const addedListener = (registeredApplication: DartFrogApplication) => {
           if (registeredApplication.id === registeredApplication.id) {
             registry.off(
@@ -283,7 +522,76 @@ suite("DartFrogApplicationRegistry", () => {
       });
 
       simulateApplicationStart(application, daemonEventEmitter);
-      await applicationPromise;
+      await applicationAddPromise;
+
+      sinon.assert.notCalled(callback);
+    });
+
+    test("doesn't emit remove event when application is deregistered", async () => {
+      const daemon = sinon.stub();
+
+      const daemonEventEmitter = new EventEmitter();
+      daemon.on = daemonEventEmitter.on.bind(daemonEventEmitter);
+      daemon.off = daemonEventEmitter.off.bind(daemonEventEmitter);
+
+      const registry = new DartFrogApplicationRegistry(daemon);
+
+      const application = new DartFrogApplication(
+        "workingDirectory",
+        8080,
+        8081
+      );
+      application.id = "a";
+      application.vmServiceUri = "http://127.0.0.1:8081/2xwOzt-QUmY=/";
+      application.address = "http://localhost:8080";
+
+      const callback = sinon.stub();
+      registry.on(
+        DartFrogApplicationRegistryEventEmitterTypes.remove,
+        callback
+      );
+      registry.off(
+        DartFrogApplicationRegistryEventEmitterTypes.remove,
+        callback
+      );
+
+      const applicationAddPromise = new Promise((resolve) => {
+        const addedListener = (registeredApplication: DartFrogApplication) => {
+          if (registeredApplication.id === registeredApplication.id) {
+            registry.off(
+              DartFrogApplicationRegistryEventEmitterTypes.add,
+              addedListener
+            );
+            resolve(registeredApplication);
+          }
+        };
+        registry.on(
+          DartFrogApplicationRegistryEventEmitterTypes.add,
+          addedListener
+        );
+      });
+
+      simulateApplicationStart(application, daemonEventEmitter);
+      await applicationAddPromise;
+
+      const applicationRemovePromise = new Promise((resolve) => {
+        const addedListener = (registeredApplication: DartFrogApplication) => {
+          if (registeredApplication.id === registeredApplication.id) {
+            registry.off(
+              DartFrogApplicationRegistryEventEmitterTypes.remove,
+              addedListener
+            );
+            resolve(registeredApplication);
+          }
+        };
+        registry.on(
+          DartFrogApplicationRegistryEventEmitterTypes.remove,
+          addedListener
+        );
+      });
+
+      simulateApplicationExit(application.id, daemonEventEmitter);
+      await applicationRemovePromise;
 
       sinon.assert.notCalled(callback);
     });
@@ -384,4 +692,28 @@ function formatRunningOnMessage(address: string) {
  */
 function formatVmServiceMessage(address: string) {
   return `The Dart VM service is listening on ${address}`;
+}
+
+/**
+ * Simulates the exit of a Dart Frog application so that it can be deregistered.
+ *
+ * @param application The application that should terminate. The address, VM
+ * service URI and ID should already be set.
+ */
+function simulateApplicationExit(
+  applicationId: string,
+  daemonEventEmitter: EventEmitter
+) {
+  const applicationExitEvent: ApplicationExitDaemonEvent = {
+    event: "dev_server.applicationExit",
+    params: {
+      applicationId: applicationId,
+      exitCode: 0,
+      requestId: "0",
+    },
+  };
+  daemonEventEmitter.emit(
+    DartFrogDaemonEventEmitterTypes.event,
+    applicationExitEvent
+  );
 }
