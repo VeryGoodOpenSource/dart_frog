@@ -161,7 +161,9 @@ export class DartFrogApplicationRegistry {
 
     await Promise.all([applicationId, vmServiceUri, address]);
 
-    this.register(application);
+    if (!this.runningApplications.has(application.id!)) {
+      this.register(application);
+    }
   }
 
   private async retrieveApplicationId(requestId: string): Promise<string> {
@@ -258,13 +260,7 @@ export class DartFrogApplicationRegistry {
   }
 
   private register(application: DartFrogApplication): void {
-    if (!application.id) {
-      return;
-    } else if (this.runningApplications.has(application.id)) {
-      return;
-    }
-
-    this.runningApplications.set(application.id, application);
+    this.runningApplications.set(application.id!, application);
     this.runningApplicationsEventEmitter.emit(
       DartFrogApplicationRegistryEventEmitterTypes.add,
       application
@@ -272,13 +268,7 @@ export class DartFrogApplicationRegistry {
   }
 
   private deregister(application: DartFrogApplication): void {
-    if (!application.id) {
-      return;
-    } else if (!this.runningApplications.has(application.id)) {
-      return;
-    }
-
-    this.runningApplications.delete(application.id);
+    this.runningApplications.delete(application.id!);
     this.runningApplicationsEventEmitter.emit(
       DartFrogApplicationRegistryEventEmitterTypes.remove,
       application

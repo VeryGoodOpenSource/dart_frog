@@ -108,18 +108,18 @@ suite("DartFrogApplicationRegistry", () => {
       await applicationAddPromise;
 
       const applicationRemovePromise = new Promise((resolve) => {
-        const addedListener = (application: DartFrogApplication) => {
+        const removeListener = (application: DartFrogApplication) => {
           if (application.id === expectedApplication.id) {
             registry.off(
               DartFrogApplicationRegistryEventEmitterTypes.remove,
-              addedListener
+              removeListener
             );
             resolve(application);
           }
         };
         registry.on(
           DartFrogApplicationRegistryEventEmitterTypes.remove,
-          addedListener
+          removeListener
         );
       });
 
@@ -240,7 +240,7 @@ suite("DartFrogApplicationRegistry", () => {
 
       const applicationAddPromise = new Promise((resolve) => {
         const addedListener = (registeredApplication: DartFrogApplication) => {
-          if (registeredApplication.id === registeredApplication.id) {
+          if (registeredApplication.id === application.id) {
             registry.off(
               DartFrogApplicationRegistryEventEmitterTypes.add,
               addedListener
@@ -283,7 +283,7 @@ suite("DartFrogApplicationRegistry", () => {
 
       const applicationAddPromise = new Promise((resolve) => {
         const addedListener = (registeredApplication: DartFrogApplication) => {
-          if (registeredApplication.id === registeredApplication.id) {
+          if (registeredApplication.id === application.id) {
             registry.off(
               DartFrogApplicationRegistryEventEmitterTypes.add,
               addedListener
@@ -330,7 +330,7 @@ suite("DartFrogApplicationRegistry", () => {
 
       const applicationAddPromise = new Promise((resolve) => {
         const addedListener = (registeredApplication: DartFrogApplication) => {
-          if (registeredApplication.id === registeredApplication.id) {
+          if (registeredApplication.id === application.id) {
             registry.off(
               DartFrogApplicationRegistryEventEmitterTypes.add,
               addedListener
@@ -348,18 +348,18 @@ suite("DartFrogApplicationRegistry", () => {
       await applicationAddPromise;
 
       const applicationRemovePromise = new Promise((resolve) => {
-        const addedListener = (registeredApplication: DartFrogApplication) => {
-          if (registeredApplication.id === registeredApplication.id) {
+        const removeListener = (registeredApplication: DartFrogApplication) => {
+          if (registeredApplication.id === application.id) {
             registry.off(
               DartFrogApplicationRegistryEventEmitterTypes.remove,
-              addedListener
+              removeListener
             );
             resolve(registeredApplication);
           }
         };
         registry.on(
           DartFrogApplicationRegistryEventEmitterTypes.remove,
-          addedListener
+          removeListener
         );
       });
 
@@ -393,24 +393,7 @@ suite("DartFrogApplicationRegistry", () => {
         callback
       );
 
-      const applicationRemovePromise = new Promise((resolve) => {
-        const addedListener = (registeredApplication: DartFrogApplication) => {
-          if (registeredApplication.id === registeredApplication.id) {
-            registry.off(
-              DartFrogApplicationRegistryEventEmitterTypes.remove,
-              addedListener
-            );
-            resolve(registeredApplication);
-          }
-        };
-        registry.on(
-          DartFrogApplicationRegistryEventEmitterTypes.remove,
-          addedListener
-        );
-      });
-
       simulateApplicationExit(application.id, daemonEventEmitter);
-      await applicationRemovePromise;
 
       sinon.assert.notCalled(callback);
     });
@@ -441,7 +424,7 @@ suite("DartFrogApplicationRegistry", () => {
 
       const applicationAddPromise = new Promise((resolve) => {
         const addedListener = (registeredApplication: DartFrogApplication) => {
-          if (registeredApplication.id === registeredApplication.id) {
+          if (registeredApplication.id === application.id) {
             registry.off(
               DartFrogApplicationRegistryEventEmitterTypes.add,
               addedListener
@@ -459,18 +442,18 @@ suite("DartFrogApplicationRegistry", () => {
       await applicationAddPromise;
 
       const applicationRemovePromise = new Promise((resolve) => {
-        const addedListener = (registeredApplication: DartFrogApplication) => {
-          if (registeredApplication.id === registeredApplication.id) {
+        const removeListener = (registeredApplication: DartFrogApplication) => {
+          if (registeredApplication.id === application.id) {
             registry.off(
               DartFrogApplicationRegistryEventEmitterTypes.remove,
-              addedListener
+              removeListener
             );
             resolve(registeredApplication);
           }
         };
         registry.on(
           DartFrogApplicationRegistryEventEmitterTypes.remove,
-          addedListener
+          removeListener
         );
       });
 
@@ -507,7 +490,7 @@ suite("DartFrogApplicationRegistry", () => {
 
       const applicationAddPromise = new Promise((resolve) => {
         const addedListener = (registeredApplication: DartFrogApplication) => {
-          if (registeredApplication.id === registeredApplication.id) {
+          if (registeredApplication.id === application.id) {
             registry.off(
               DartFrogApplicationRegistryEventEmitterTypes.add,
               addedListener
@@ -557,7 +540,7 @@ suite("DartFrogApplicationRegistry", () => {
 
       const applicationAddPromise = new Promise((resolve) => {
         const addedListener = (registeredApplication: DartFrogApplication) => {
-          if (registeredApplication.id === registeredApplication.id) {
+          if (registeredApplication.id === application.id) {
             registry.off(
               DartFrogApplicationRegistryEventEmitterTypes.add,
               addedListener
@@ -575,18 +558,18 @@ suite("DartFrogApplicationRegistry", () => {
       await applicationAddPromise;
 
       const applicationRemovePromise = new Promise((resolve) => {
-        const addedListener = (registeredApplication: DartFrogApplication) => {
-          if (registeredApplication.id === registeredApplication.id) {
+        const removeListener = (registeredApplication: DartFrogApplication) => {
+          if (registeredApplication.id === application.id) {
             registry.off(
               DartFrogApplicationRegistryEventEmitterTypes.remove,
-              addedListener
+              removeListener
             );
             resolve(registeredApplication);
           }
         };
         registry.on(
           DartFrogApplicationRegistryEventEmitterTypes.remove,
-          addedListener
+          removeListener
         );
       });
 
@@ -639,6 +622,20 @@ function simulateApplicationStart(
     DartFrogDaemonEventEmitterTypes.event,
     applicationStartingEvent
   );
+  const anotherProgressCompleteEvent: ProgressCompleteDaemonEvent = {
+    event: "dev_server.progressComplete",
+    params: {
+      requestId: startRequest.id,
+      applicationId: applicationStartingEvent.params.applicationId,
+      workingDirectory: startRequest.params.workingDirectory,
+      progressId: requestId,
+      progressMessage: `Wrongly formatted progress complete message`,
+    },
+  };
+  daemonEventEmitter.emit(
+    DartFrogDaemonEventEmitterTypes.event,
+    anotherProgressCompleteEvent
+  );
   const progressCompleteEvent: ProgressCompleteDaemonEvent = {
     event: "dev_server.progressComplete",
     params: {
@@ -653,7 +650,7 @@ function simulateApplicationStart(
     DartFrogDaemonEventEmitterTypes.event,
     progressCompleteEvent
   );
-  const loggerInfoEvent: LoggerInfoDaemonEvent = {
+  const loggerInfoVMServiceEvent: LoggerInfoDaemonEvent = {
     event: "dev_server.loggerInfo",
     params: {
       requestId: startRequest.id,
@@ -664,7 +661,20 @@ function simulateApplicationStart(
   };
   daemonEventEmitter.emit(
     DartFrogDaemonEventEmitterTypes.event,
-    loggerInfoEvent
+    loggerInfoVMServiceEvent
+  );
+  const loggerInfoHotReloadEvent: LoggerInfoDaemonEvent = {
+    event: "dev_server.loggerInfo",
+    params: {
+      requestId: startRequest.id,
+      applicationId: applicationStartingEvent.params.applicationId,
+      workingDirectory: startRequest.params.workingDirectory,
+      message: `[hotreload] Hot reload is enabled.`,
+    },
+  };
+  daemonEventEmitter.emit(
+    DartFrogDaemonEventEmitterTypes.event,
+    loggerInfoHotReloadEvent
   );
 }
 
