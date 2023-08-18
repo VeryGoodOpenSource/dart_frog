@@ -10,6 +10,10 @@ import {
   isReadyDaemonEvent,
 } from "./protocol";
 import { EventEmitter } from "events";
+import {
+  AscendingNumericalIdentifierGenerator,
+  IdentifierGenerator,
+} from "../utils";
 
 /**
  * An error that is thrown when the Dart Frog Daemon has not yet been invoked
@@ -65,6 +69,15 @@ export class DartFrogDaemon {
   public static get instance() {
     return this._instance || (this._instance = new this());
   }
+
+  /**
+   * Generates unique and valid identifiers for requests.
+   *
+   * Should not be used as a request counter, since it is not guaranteed to
+   * be called the same number of times as the number of requests sent.
+   */
+  public readonly requestIdentifierGenerator: IdentifierGenerator =
+    new AscendingNumericalIdentifierGenerator();
 
   private daemonMessagesEventEmitter = new EventEmitter();
 
