@@ -15,7 +15,7 @@ import { EventEmitter } from "events";
  * An error that is thrown when the Dart Frog Daemon has not yet been invoked
  * but a request is made to it.
  */
-export class DartFrogDaemonWaiveError extends Error {
+export class DartFrogDaemonNotInvokedError extends Error {
   constructor() {
     super("The Dart Frog Daemon is yet to be invoked.");
   }
@@ -194,7 +194,7 @@ export class DartFrogDaemon {
    * Sends a request to the Dart Frog daemon.
    *
    * @param request The request to send to the Dart Frog daemon.
-   * @throws {DartFrogDaemonWaiveError} If the Dart Frog daemon has not yet
+   * @throws {DartFrogDaemonNotInvokedError} If the Dart Frog daemon has not yet
    * been {@link invoke}d.
    * @throws {DartFrogDaemonReadyError} If the Dart Frog daemon is not yet
    * ready to accept requests.
@@ -205,7 +205,7 @@ export class DartFrogDaemon {
    */
   public send(request: DaemonRequest): Promise<DaemonResponse> {
     if (!this.process) {
-      throw new DartFrogDaemonWaiveError();
+      throw new DartFrogDaemonNotInvokedError();
     } else if (!this.isReady) {
       throw new DartFrogDaemonReadyError();
     }

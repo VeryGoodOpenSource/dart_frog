@@ -295,14 +295,14 @@ suite("DartFrogDaemon", () => {
   });
 
   suite("send", () => {
-    test("throws a DartFrogDaemonWaiveError when not invoked", async () => {
+    test("throws a DartFrogDaemonNotInvokedError when not invoked", async () => {
       const daemon = new dartFrogDaemon.DartFrogDaemon();
 
       const request = new RequestVersionDaemonRequest("1");
 
       assert.throws(
         () => daemon.send(request),
-        new dartFrogDaemon.DartFrogDaemonWaiveError()
+        new dartFrogDaemon.DartFrogDaemonNotInvokedError()
       );
     });
 
