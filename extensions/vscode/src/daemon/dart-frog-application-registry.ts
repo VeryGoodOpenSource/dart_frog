@@ -84,8 +84,9 @@ export class DartFrogApplicationRegistry {
    * Retrieves all the Dart Frog applications that are currently
    * registered with this Dart Frog daemon.
    */
-  public get all(): IterableIterator<DartFrogApplication> {
-    return this.runningApplications.values();
+  public all(): DartFrogApplication[] {
+    const interator = this.runningApplications.values();
+    return Array.from(interator);
   }
 
   /**
@@ -201,6 +202,7 @@ export class DartFrogApplicationRegistry {
         }
 
         const vmServiceUri = message.match(addressRegex)![0];
+
         this.dartFrogDaemon.off(
           DartFrogDaemonEventEmitterTypes.event,
           vmServiceUriEventListener
