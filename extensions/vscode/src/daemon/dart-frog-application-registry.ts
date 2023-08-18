@@ -192,9 +192,10 @@ export class DartFrogApplicationRegistry {
   private async retrieveVmServiceUri(requestId: string): Promise<string> {
     return new Promise<string>((resolve) => {
       const vmServiceUriEventListener = (event: DaemonEvent) => {
-        if (!isLoggerInfoDaemonEvent(event)) {
-          return;
-        } else if (event.params.requestId !== requestId) {
+        if (
+          !isLoggerInfoDaemonEvent(event) ||
+          event.params.requestId !== requestId
+        ) {
           return;
         }
 
@@ -222,9 +223,10 @@ export class DartFrogApplicationRegistry {
   private async retrieveAddress(requestId: string): Promise<string> {
     return new Promise<string>((resolve) => {
       const addressEventListener = (message: DaemonEvent) => {
-        if (!isProgressCompleteDaemonEvent(message)) {
-          return;
-        } else if (message.params.requestId !== requestId) {
+        if (
+          !isProgressCompleteDaemonEvent(message) ||
+          message.params.requestId !== requestId
+        ) {
           return;
         }
 
