@@ -4,7 +4,7 @@ import {
   isDaemonEvent,
   isDaemonRequest,
   isDaemonResponse,
-} from "../../../daemon";
+} from "../../../../daemon";
 
 suite("DaemonMessage", () => {
   suite("decode", () => {
