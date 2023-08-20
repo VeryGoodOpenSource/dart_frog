@@ -90,6 +90,38 @@ void main() {
       });
     });
 
+    group('shared', () {
+      test('is configured by default', () async {
+        final servers = <HttpServer>[];
+        try {
+          servers
+            ..add(await serve((_) => Response(), 'localhost', 3000))
+            ..add(await serve((_) => Response(), 'localhost', 3000));
+        } catch (_) {}
+        for (final i in servers) {
+          await i.close();
+        }
+        expect(servers.length, 1);
+      });
+
+      test('can be overridden', () async {
+        final servers = <HttpServer>[];
+        try {
+          servers
+            ..add(
+              await serve((_) => Response(), 'localhost', 3000, shared: true),
+            )
+            ..add(
+              await serve((_) => Response(), 'localhost', 3000, shared: true),
+            );
+        } catch (_) {}
+        for (final i in servers) {
+          await i.close();
+        }
+        expect(servers.length, 2);
+      });
+    });
+
     test('creates an HttpsServer on the provided securityContext', () async {
       const chain = '''
 -----BEGIN CERTIFICATE-----
