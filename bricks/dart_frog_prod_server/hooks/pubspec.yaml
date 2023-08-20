@@ -10,7 +10,6 @@ dependencies:
   mason: ^0.1.0-dev.39
   path: ^1.8.1
   pubspec_lock: ^3.0.2
-  pubspec_parse: ^1.2.0
 
 dev_dependencies:
   mocktail: ^1.0.0
