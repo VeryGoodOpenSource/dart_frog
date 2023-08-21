@@ -2,6 +2,7 @@ import { window } from "vscode";
 import { DartFrogDaemon } from "../daemon";
 import {
   isDartFrogCLIInstalled,
+  nearestDartFrogProject,
   resolveDartFrogProjectPathFromWorkspace,
   suggestInstallingDartFrogCLI,
 } from "../utils";
@@ -33,7 +34,10 @@ export const startDaemon = async (): Promise<void> => {
   }
 
   const dartFrogProjectPath = resolveDartFrogProjectPathFromWorkspace();
-  if (!dartFrogProjectPath) {
+  const rootDartFrogProjectPath = dartFrogProjectPath
+    ? nearestDartFrogProject(dartFrogProjectPath)
+    : undefined;
+  if (!rootDartFrogProjectPath) {
     window.showErrorMessage(
       "Failed to find a Dart Frog project within the current workspace."
     );
@@ -46,7 +50,7 @@ export const startDaemon = async (): Promise<void> => {
     },
     async function (progress) {
       progress.report({ message: `Starting daemon...` });
-      await daemon.invoke(dartFrogProjectPath);
+      await daemon.invoke(rootDartFrogProjectPath);
       progress.report({
         message: `Daemon successfully started.`,
         increment: 100,

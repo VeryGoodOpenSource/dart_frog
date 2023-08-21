@@ -22,6 +22,7 @@ suite("start-daemon command", () => {
       isDartFrogCLIInstalled: sinon.stub(),
       suggestInstallingDartFrogCLI: sinon.stub(),
       resolveDartFrogProjectPathFromWorkspace: sinon.stub(),
+      nearestDartFrogProject: sinon.stub(),
     };
     utilsStub.isDartFrogCLIInstalled.returns(true);
 
@@ -93,11 +94,26 @@ suite("start-daemon command", () => {
     );
   });
 
+  test("shows error when failed to find Dart Frog root project path", async () => {
+    utilsStub.isDartFrogCLIInstalled.returns(true);
+    dartFrogDaemon.DartFrogDaemon.instance.isReady = false;
+    utilsStub.resolveDartFrogProjectPathFromWorkspace.returns("path");
+    utilsStub.nearestDartFrogProject.returns(undefined);
+
+    await command.startDaemon();
+
+    sinon.assert.calledOnceWithExactly(
+      vscodeStub.window.showErrorMessage,
+      "Failed to find a Dart Frog project within the current workspace."
+    );
+  });
+
   test("starts daemon when found a Dart Frog project path", async () => {
     utilsStub.isDartFrogCLIInstalled.returns(true);
     dartFrogDaemon.DartFrogDaemon.instance.isReady = false;
     dartFrogDaemon.DartFrogDaemon.instance.invoke = sinon.stub();
     utilsStub.resolveDartFrogProjectPathFromWorkspace.returns("path");
+    utilsStub.nearestDartFrogProject.returns("path");
 
     await command.startDaemon();
 
@@ -117,6 +133,7 @@ suite("start-daemon command", () => {
     dartFrogDaemon.DartFrogDaemon.instance.isReady = false;
     dartFrogDaemon.DartFrogDaemon.instance.invoke = sinon.stub();
     utilsStub.resolveDartFrogProjectPathFromWorkspace.returns("path");
+    utilsStub.nearestDartFrogProject.returns("path");
 
     await command.startDaemon();
 
