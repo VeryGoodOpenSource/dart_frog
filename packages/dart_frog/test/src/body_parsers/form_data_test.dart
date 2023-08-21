@@ -44,7 +44,7 @@ Actual MIME type: "application/json"
     test('returns empty form data when body is empty', () async {
       final formData = await parseFormData(
         headers: {
-          HttpHeaders.contentTypeHeader: formUrlEncodedContentType.mimeType
+          HttpHeaders.contentTypeHeader: formUrlEncodedContentType.mimeType,
         },
         body: () async => '',
         bytes: () async* {},
@@ -59,7 +59,7 @@ Actual MIME type: "application/json"
         'when body contains single key/value', () async {
       final formData = await parseFormData(
         headers: {
-          HttpHeaders.contentTypeHeader: formUrlEncodedContentType.mimeType
+          HttpHeaders.contentTypeHeader: formUrlEncodedContentType.mimeType,
         },
         body: () async => 'foo=bar',
         bytes: () async* {},
@@ -74,7 +74,7 @@ Actual MIME type: "application/json"
         'when body contains multiple key/values', () async {
       final formData = await parseFormData(
         headers: {
-          HttpHeaders.contentTypeHeader: formUrlEncodedContentType.mimeType
+          HttpHeaders.contentTypeHeader: formUrlEncodedContentType.mimeType,
         },
         body: () async => 'foo=bar&bar=baz',
         bytes: () async* {},
@@ -89,7 +89,7 @@ Actual MIME type: "application/json"
         final formData = await parseFormData(
           headers: {
             HttpHeaders.contentTypeHeader:
-                'multipart/form-data; boundary=testing'
+                'multipart/form-data; boundary=testing',
           },
           body: () async => '',
           bytes: () async* {
@@ -108,7 +108,7 @@ Actual MIME type: "application/json"
         final formData = await parseFormData(
           headers: {
             HttpHeaders.contentTypeHeader:
-                'multipart/form-data; boundary=testing'
+                'multipart/form-data; boundary=testing',
           },
           body: () async => '',
           bytes: () async* {
@@ -133,7 +133,7 @@ Actual MIME type: "application/json"
               'my_file.txt',
               ContentType.text,
               'file content',
-            )
+            ),
           }),
         );
       });
@@ -142,7 +142,7 @@ Actual MIME type: "application/json"
         final formData = await parseFormData(
           headers: {
             HttpHeaders.contentTypeHeader:
-                'multipart/form-data; boundary=testing'
+                'multipart/form-data; boundary=testing',
           },
           body: () async => '',
           bytes: () async* {
@@ -180,7 +180,7 @@ Actual MIME type: "application/json"
               'my_other_file.txt',
               ContentType.text,
               'file content',
-            )
+            ),
           }),
         );
       });
@@ -215,7 +215,7 @@ Actual MIME type: "application/json"
   group('$UploadedFile', () {
     test('toString', () {
       final byteStream = Stream.fromIterable([
-        [1, 2, 3, 4]
+        [1, 2, 3, 4],
       ]);
       final file = UploadedFile('name', ContentType.text, byteStream);
 
@@ -227,7 +227,7 @@ Actual MIME type: "application/json"
 
     test('readAsBytes', () async {
       final byteStream = Stream.fromIterable([
-        [1, 2, 3, 4]
+        [1, 2, 3, 4],
       ]);
       final file = UploadedFile('name', ContentType.text, byteStream);
 
@@ -239,14 +239,14 @@ Actual MIME type: "application/json"
 
     test('openRead', () {
       final byteStream = Stream.fromIterable([
-        [1, 2, 3, 4]
+        [1, 2, 3, 4],
       ]);
       final file = UploadedFile('name', ContentType.text, byteStream);
 
       expect(
         file.openRead(),
         emitsInOrder([
-          [1, 2, 3, 4]
+          [1, 2, 3, 4],
         ]),
       );
     });
@@ -291,7 +291,7 @@ class MultiPartFormData {
           part.content,
         ],
         '--testing--',
-        ''
+        '',
       ].join('\r\n'),
     );
   }
