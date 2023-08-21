@@ -89,6 +89,7 @@ void main() {
             'dartVmServicePort': project1Server1Port + 1,
           },
         ),
+        timeout: const Duration(seconds: 30),
       );
 
       expect(response.isSuccess, isTrue);
@@ -119,6 +120,7 @@ void main() {
             'dartVmServicePort': project2ServerPort + 1,
           },
         ),
+        timeout: const Duration(seconds: 30),
       );
 
       expect(response.isSuccess, isTrue);
