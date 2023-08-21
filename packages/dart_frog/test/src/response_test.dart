@@ -111,7 +111,7 @@ void main() {
 
     group('formData', () {
       final contentTypeFormUrlEncoded = {
-        HttpHeaders.contentTypeHeader: formUrlEncodedContentType.mimeType
+        HttpHeaders.contentTypeHeader: formUrlEncodedContentType.mimeType,
       };
 
       test('throws StateError on invalid content-type', () async {
