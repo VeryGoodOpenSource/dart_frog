@@ -172,5 +172,17 @@ suite("start-daemon command", () => {
 
       sinon.assert.notCalled(dartFrogDaemon.DartFrogDaemon.instance.invoke);
     });
+
+    test("when failed to find Dart Frog root project path", async () => {
+      utilsStub.isDartFrogCLIInstalled.returns(true);
+      dartFrogDaemon.DartFrogDaemon.instance.isReady = false;
+      dartFrogDaemon.DartFrogDaemon.instance.invoke = sinon.stub();
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns("path");
+      utilsStub.nearestDartFrogProject.returns(undefined);
+
+      await command.startDaemon();
+
+      sinon.assert.notCalled(dartFrogDaemon.DartFrogDaemon.instance.invoke);
+    });
   });
 });
