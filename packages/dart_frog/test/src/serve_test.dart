@@ -91,17 +91,17 @@ void main() {
     });
 
     group('shared', () {
-      test('is configured by default', () async {
-        final servers = <HttpServer>[];
-        try {
-          servers
-            ..add(await serve((_) => Response(), 'localhost', 3000))
-            ..add(await serve((_) => Response(), 'localhost', 3000));
-        } catch (_) {}
-        for (final i in servers) {
-          await i.close();
-        }
-        expect(servers.length, 1);
+    test(
+          '''when false throws a SocketException when binding bind to the same combination of address and port''',
+          () async {
+        final server1 = await serve((_) => Response(), 'localhost', 3000);
+
+        await expectLater(
+          () async => serve((_) => Response(), 'localhost', 3000),
+          throwsA(isA<SocketException>()),
+        );
+
+        await server1.close();
       });
 
     test(
