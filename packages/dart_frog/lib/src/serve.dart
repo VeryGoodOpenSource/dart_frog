@@ -10,6 +10,9 @@ part of '_internal.dart';
 /// `"X-Powered-By": "Dart with package:dart_frog"`
 ///
 ///  If a [securityContext] is provided an HTTPS server will be started
+///
+/// Enable [shared] to allow additional [HttpServer] objects to bind to the
+/// same combination of [HttpServer.address] and [HttpServer.port].
 Future<HttpServer> serve(
   Handler handler,
   Object address,
