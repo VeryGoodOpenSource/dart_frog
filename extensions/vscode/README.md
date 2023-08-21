@@ -17,6 +17,7 @@ Dart Frog can be installed from the [VS Code Marketplace](https://marketplace.vi
 | `Dart Frog: Update CLI`     | Updates Dart Frog CLI       | Command palette                 |
 | `Dart Frog: New Route`      | Generates a new route       | Context menu or command palette |
 | `Dart Frog: New Middleware` | Generates a new middleware  | Context menu or command palette |
+| `Dart Frog: Start Daemon`   | Starts the Dart Frog daemon | Command palette                 |
 
 ## Demonstration
 

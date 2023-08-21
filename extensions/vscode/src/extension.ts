@@ -5,6 +5,7 @@ import {
   newMiddleware,
   updateCLI,
   create,
+  startDaemon,
 } from "./commands";
 import {
   readDartFrogCLIVersion,
@@ -41,7 +42,8 @@ export function activate(
     vscode.commands.registerCommand("dart-frog.install-cli", installCLI),
     vscode.commands.registerCommand("dart-frog.update-cli", updateCLI),
     vscode.commands.registerCommand("dart-frog.new-route", newRoute),
-    vscode.commands.registerCommand("dart-frog.new-middleware", newMiddleware)
+    vscode.commands.registerCommand("dart-frog.new-middleware", newMiddleware),
+    vscode.commands.registerCommand("dart-frog.start-daemon", startDaemon)
   );
   return context;
 }

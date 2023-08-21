@@ -52,6 +52,10 @@
       {
         "command": "dart-frog.new-middleware",
         "title": "Dart Frog: New Middleware"
+      },
+      {
+        "command": "dart-frog.start-daemon",
+        "title": "Dart Frog: Start Daemon"
       }
     ],
     "menus": {
