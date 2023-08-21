@@ -6,6 +6,18 @@ import {
   suggestInstallingDartFrogCLI,
 } from "../utils";
 
+/**
+ * Starts the Dart Frog daemon.
+ *
+ * This command can be launched from the Command Palette.
+ *
+ * Altough available in the Command Palette, this command is not intended to be
+ * used directly by the user, unless troubleshooting. Instead, it is used
+ * internally by the extension to start a Dart Frog application.
+ *
+ * @returns {Promise<void>} A Promise that resolves when the daemon is ready or
+ * upon failing to retrieve a Dart Frog project path.
+ */
 export const startDaemon = async (): Promise<void> => {
   if (!isDartFrogCLIInstalled()) {
     await suggestInstallingDartFrogCLI(
