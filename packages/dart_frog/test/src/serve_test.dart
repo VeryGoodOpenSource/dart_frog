@@ -104,21 +104,31 @@ void main() {
         expect(servers.length, 1);
       });
 
-      test('can be overridden', () async {
-        final servers = <HttpServer>[];
-        try {
-          servers
-            ..add(
-              await serve((_) => Response(), 'localhost', 3000, shared: true),
-            )
-            ..add(
-              await serve((_) => Response(), 'localhost', 3000, shared: true),
-            );
-        } catch (_) {}
-        for (final i in servers) {
-          await i.close();
-        }
-        expect(servers.length, 2);
+    test(
+          '''when true serves requests successfully when binding bind to the same combination of address and port''',
+          () async {
+        final server1 = await serve(
+          (_) => Response(headers: {'server': '1'}),
+          'localhost',
+          3200,
+          shared: true,
+        );
+        final server2 = wait serve(
+          (_) => Response(headers: {'server': '2'}),
+          'localhost',
+          3200,
+          shared: true,
+        );
+
+        final client = HttpClient();
+        final request =
+            await client.getUrl(Uri.parse('http://localhost:3200'));
+        final response = await request.close();
+
+        expect(response.headers.value('server'), equals('1'));
+
+        await server1.close();
+        await server2.close();
       });
     });
 
