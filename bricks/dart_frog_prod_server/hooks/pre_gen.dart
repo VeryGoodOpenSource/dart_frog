@@ -11,7 +11,7 @@ import 'src/create_bundle.dart';
 import 'src/create_external_packages_folder.dart';
 import 'src/dart_pub_get.dart';
 import 'src/exit_overrides.dart';
-import 'src/get_path_dependencies.dart';
+import 'src/get_internal_path_dependencies.dart';
 
 typedef RouteConfigurationBuilder = RouteConfiguration Function(
   io.Directory directory,
@@ -81,25 +81,14 @@ Future<void> preGen(
     path.join(projectDirectory.path, 'Dockerfile'),
   );
 
-  // Get all the internal path packages
-  final internalPathDependencies = (await getPathDependencies(projectDirectory))
-      .where(
-        (dependencyPath) =>
-            path.isWithin(projectDirectory.path, dependencyPath),
-      )
-      .toList();
+  final internalPathDependencies = await getInternalPathDependencies(
+    projectDirectory,
+  );
 
-  // Then create the external packages folder
-  // and add it to the list of path packages.
   final externalDependencies = await createExternalPackagesFolder(
     projectDirectory,
     copyPath: copyPath,
   );
-
-  final pathDependencies = [
-    ...internalPathDependencies,
-    ...externalDependencies,
-  ];
 
   final addDockerfile = !customDockerFile.existsSync();
 
@@ -117,7 +106,9 @@ Future<void> preGen(
     'serveStaticFiles': configuration.serveStaticFiles,
     'invokeCustomEntrypoint': configuration.invokeCustomEntrypoint,
     'invokeCustomInit': configuration.invokeCustomInit,
-    'pathDependencies': pathDependencies,
+    'pathDependencies': internalPathDependencies,
+    'hasExternalDependencies': externalDependencies.isNotEmpty,
+    'externalPathDependencies': externalDependencies,
     'dartVersion': context.vars['dartVersion'],
     'addDockerfile': addDockerfile,
   };
