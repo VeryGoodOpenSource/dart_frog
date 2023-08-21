@@ -86,7 +86,7 @@ void main() {
           params: {
             'workingDirectory': projectDirectory1.path,
             'port': project1Server1Port,
-            'dartVmServicePort': project1Server1Port + 1
+            'dartVmServicePort': project1Server1Port + 1,
           },
         ),
       );
@@ -116,7 +116,7 @@ void main() {
           params: {
             'workingDirectory': projectDirectory2.path,
             'port': project2ServerPort,
-            'dartVmServicePort': project2ServerPort + 1
+            'dartVmServicePort': project2ServerPort + 1,
           },
         ),
       );
