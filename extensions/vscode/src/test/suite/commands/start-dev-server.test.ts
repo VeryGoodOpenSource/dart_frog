@@ -275,6 +275,14 @@ suite("start-dev-server command", () => {
     });
 
     suite("with validation", () => {
+      const inputBoxArguements = {
+        prompt: "Which port number the server should start on",
+        placeHolder: "8080",
+        value: sinon.match.any,
+        ignoreFocusOut: true,
+        validateInput: sinon.match.any,
+      };
+
       beforeEach(() => {
         dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
           .stub()
@@ -285,8 +293,9 @@ suite("start-dev-server command", () => {
         test("empty port number", async () => {
           await command.startDevServer();
 
-          const validateInput =
-            vscodeStub.window.showInputBox.getCall(0).args[0].validateInput;
+          const validateInput = vscodeStub.window.showInputBox
+            .withArgs(inputBoxArguements)
+            .getCall(0).args[0].validateInput;
           const result = validateInput("");
 
           sinon.assert.match(result, "Port number cannot be empty");
@@ -295,8 +304,9 @@ suite("start-dev-server command", () => {
         test("white spaced port number", async () => {
           await command.startDevServer();
 
-          const validateInput =
-            vscodeStub.window.showInputBox.getCall(0).args[0].validateInput;
+          const validateInput = vscodeStub.window.showInputBox
+            .withArgs(inputBoxArguements)
+            .getCall(0).args[0].validateInput;
           const result = validateInput("  ");
 
           sinon.assert.match(result, "Port number cannot be empty");
@@ -305,8 +315,9 @@ suite("start-dev-server command", () => {
         test("non numeric inputs", async () => {
           await command.startDevServer();
 
-          const validateInput =
-            vscodeStub.window.showInputBox.getCall(0).args[0].validateInput;
+          const validateInput = vscodeStub.window.showInputBox
+            .withArgs(inputBoxArguements)
+            .getCall(0).args[0].validateInput;
           const result = validateInput("a");
 
           sinon.assert.match(result, "Port number must be a number");
@@ -318,8 +329,9 @@ suite("start-dev-server command", () => {
           test("smaller than 0", async () => {
             await command.startDevServer();
 
-            const validateInput =
-              vscodeStub.window.showInputBox.getCall(0).args[0].validateInput;
+            const validateInput = vscodeStub.window.showInputBox
+              .withArgs(inputBoxArguements)
+              .getCall(0).args[0].validateInput;
             const result = validateInput("-1");
 
             sinon.assert.match(result, message);
@@ -328,8 +340,9 @@ suite("start-dev-server command", () => {
           test("greater than 65535", async () => {
             await command.startDevServer();
 
-            const validateInput =
-              vscodeStub.window.showInputBox.getCall(0).args[0].validateInput;
+            const validateInput = vscodeStub.window.showInputBox
+              .withArgs(inputBoxArguements)
+              .getCall(0).args[0].validateInput;
             const result = validateInput("65536");
 
             sinon.assert.match(result, message);
@@ -351,8 +364,9 @@ suite("start-dev-server command", () => {
           test("by a running application port", async () => {
             await command.startDevServer();
 
-            const validateInput =
-              vscodeStub.window.showInputBox.getCall(0).args[0].validateInput;
+            const validateInput = vscodeStub.window.showInputBox
+              .withArgs(inputBoxArguements)
+              .getCall(0).args[0].validateInput;
             const result = validateInput("8080");
 
             sinon.assert.match(result, message);
@@ -361,8 +375,9 @@ suite("start-dev-server command", () => {
           test("by a running application Dart VM service port", async () => {
             await command.startDevServer();
 
-            const validateInput =
-              vscodeStub.window.showInputBox.getCall(0).args[0].validateInput;
+            const validateInput = vscodeStub.window.showInputBox
+              .withArgs(inputBoxArguements)
+              .getCall(0).args[0].validateInput;
             const result = validateInput("8181");
 
             sinon.assert.match(result, message);
