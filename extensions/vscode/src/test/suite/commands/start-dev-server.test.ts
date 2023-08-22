@@ -289,6 +289,17 @@ suite("start-dev-server command", () => {
           .returns([]);
       });
 
+      test("that accepts valid port number", async () => {
+        await command.startDevServer();
+
+        const validateInput = vscodeStub.window.showInputBox
+          .withArgs(inputBoxArguements)
+          .getCall(0).args[0].validateInput;
+        const result = validateInput("8080");
+
+        sinon.assert.match(result, undefined);
+      });
+
       suite("that rejects", () => {
         test("empty port number", async () => {
           await command.startDevServer();
