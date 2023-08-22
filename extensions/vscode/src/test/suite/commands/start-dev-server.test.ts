@@ -16,6 +16,7 @@ suite("start-dev-server command", () => {
         showInformationMessage: sinon.stub(),
         showErrorMessage: sinon.stub(),
         withProgress: sinon.stub(),
+        showInputBox: sinon.stub(),
       },
       commands: {
         executeCommand: sinon.stub(),
@@ -184,9 +185,62 @@ suite("start-dev-server command", () => {
     });
   });
 
-  suite("does not start server", () => {
-    test("when user cancelled confirmation when there is already a running server", async () => {});
+  suite("asks for port number", () => {
+    beforeEach(() => {
+      utilsStub.isDartFrogCLIInstalled.returns(true);
+      dartFrogDaemon.DartFrogDaemon.instance.isReady = true;
+      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry = sinon.stub();
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns("path");
+      utilsStub.nearestDartFrogProject.returns("path");
+    });
 
-    test("when user cancelled confirmation when there is already more than one running server", async () => {});
+    test("with prefilled default value when there are no running servers", async () => {
+      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
+        .stub()
+        .returns([]);
+
+      await command.startDevServer();
+
+      sinon.assert.calledOnceWithMatch(vscodeStub.window.showInputBox, {
+        prompt: "Which port number the server should start on",
+        placeHolder: "8080",
+        value: "8080",
+        ignoreFocusOut: true,
+      });
+    });
+
+    test("without prefilled default value when there is already a running server", async () => {
+      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
+        .stub()
+        .returns([new DartFrogApplication("test", 8080, 8181)]);
+      vscodeStub.window.showInformationMessage.resolves("Start another server");
+
+      await command.startDevServer();
+
+      sinon.assert.calledOnceWithMatch(vscodeStub.window.showInputBox, {
+        prompt: "Which port number the server should start on",
+        placeHolder: "8080",
+        value: undefined,
+        ignoreFocusOut: true,
+      });
+    });
+  });
+
+  suite("does not start server", () => {
+    test("when there is already a running server and user cancelled confirmation", async () => {});
+
+    test("when there is already more than one running server and user cancelled confirmation", async () => {});
+
+    test("when Dart Frog project path failed to be retrieved", async () => {});
+
+    test("when port number is escaped", async () => {});
+
+    test("when Dart VM service port number is escaped", async () => {});
+  });
+
+  suite("starts server", () => {
+    test("when user confirmed when there is already a running server", async () => {});
+
+    test("when user confirmed when there is already more than one running server", async () => {});
   });
 });
