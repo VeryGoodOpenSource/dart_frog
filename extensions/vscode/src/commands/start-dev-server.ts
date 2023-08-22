@@ -79,6 +79,8 @@ export const startDevServer = async (): Promise<void> => {
   }
   usedPorts.push(Number(portNumber));
 
+  console.log("@@@@ portNumber", portNumber);
+
   const vmServicePortNumber = await promptPortNumber(
     "Which port number the Dart VM service should listen on",
     "8181",

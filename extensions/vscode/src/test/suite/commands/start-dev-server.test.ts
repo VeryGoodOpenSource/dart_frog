@@ -226,10 +226,66 @@ suite("start-dev-server command", () => {
     });
   });
 
-  suite("does not start server", () => {
-    test("when there is already a running server and user cancelled confirmation", async () => {});
+  suite("asks for Dart VM service port number", () => {
+    beforeEach(() => {
+      utilsStub.isDartFrogCLIInstalled.returns(true);
+      dartFrogDaemon.DartFrogDaemon.instance.isReady = true;
+      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry = sinon.stub();
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns("path");
+      utilsStub.nearestDartFrogProject.returns("path");
+      vscodeStub.window.showInputBox
+        .withArgs({
+          prompt: "Which port number the server should start on",
+          placeHolder: "8080",
+          value: sinon.match.any,
+          ignoreFocusOut: true,
+          validateInput: sinon.match.any,
+        })
+        .resolves("8080");
+    });
 
-    test("when there is already more than one running server and user cancelled confirmation", async () => {});
+    test("with prefilled default value when there are no running servers", async () => {
+      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
+        .stub()
+        .returns([]);
+
+      await command.startDevServer();
+
+      sinon.assert.calledOnce(
+        vscodeStub.window.showInputBox.withArgs({
+          prompt: "Which port number the Dart VM service should listen on",
+          placeHolder: "8181",
+          value: "8181",
+          ignoreFocusOut: true,
+          validateInput: sinon.match.any,
+        })
+      );
+    });
+
+    test("without prefilled default value when there is already a running server", async () => {
+      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
+        .stub()
+        .returns([new DartFrogApplication("test", 8080, 8181)]);
+      vscodeStub.window.showInformationMessage.resolves("Start another server");
+
+      await command.startDevServer();
+
+      sinon.assert.calledOnce(
+        vscodeStub.window.showInputBox.withArgs({
+          prompt: "Which port number the Dart VM service should listen on",
+          placeHolder: "8181",
+          value: undefined,
+          ignoreFocusOut: true,
+          validateInput: sinon.match.any,
+        })
+      );
+    });
+  });
+
+  suite("does not start server", () => {
+    test("when there is already a running server and user cancelled confirmation prompt", async () => {});
+
+    test("when there is already more than one running server and user cancelled confirmation prompt", async () => {});
 
     test("when Dart Frog project path failed to be retrieved", async () => {});
 
@@ -239,8 +295,8 @@ suite("start-dev-server command", () => {
   });
 
   suite("starts server", () => {
-    test("when user confirmed when there is already a running server", async () => {});
+    test("when there is already a running server and user confirmed confirmation prompt", async () => {});
 
-    test("when user confirmed when there is already more than one running server", async () => {});
+    test("when there is already more than one running server and user confirmed confirmation prompt", async () => {});
   });
 });
