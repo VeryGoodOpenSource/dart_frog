@@ -224,6 +224,103 @@ suite("start-dev-server command", () => {
         ignoreFocusOut: true,
       });
     });
+
+    suite("with validation", () => {
+      beforeEach(() => {
+        dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
+          .stub()
+          .returns([]);
+      });
+
+      suite("that rejects", () => {
+        test("empty port number", async () => {
+          await command.startDevServer();
+
+          const validateInput =
+            vscodeStub.window.showInputBox.getCall(0).args[0].validateInput;
+          const result = validateInput("");
+
+          sinon.assert.match(result, "Port number cannot be empty");
+        });
+
+        test("white spaced port number", async () => {
+          await command.startDevServer();
+
+          const validateInput =
+            vscodeStub.window.showInputBox.getCall(0).args[0].validateInput;
+          const result = validateInput("  ");
+
+          sinon.assert.match(result, "Port number cannot be empty");
+        });
+
+        test("non numeric inputs", async () => {
+          await command.startDevServer();
+
+          const validateInput =
+            vscodeStub.window.showInputBox.getCall(0).args[0].validateInput;
+          const result = validateInput("a");
+
+          sinon.assert.match(result, "Port number must be a number");
+        });
+
+        suite("numeric inputs", () => {
+          const message = "Port number must be between 0 and 65535";
+
+          test("smaller than 0", async () => {
+            await command.startDevServer();
+
+            const validateInput =
+              vscodeStub.window.showInputBox.getCall(0).args[0].validateInput;
+            const result = validateInput("-1");
+
+            sinon.assert.match(result, message);
+          });
+
+          test("greater than 65535", async () => {
+            await command.startDevServer();
+
+            const validateInput =
+              vscodeStub.window.showInputBox.getCall(0).args[0].validateInput;
+            const result = validateInput("65536");
+
+            sinon.assert.match(result, message);
+          });
+        });
+
+        suite("port number that are already in use", () => {
+          const applications = [new DartFrogApplication("test", 8080, 8181)];
+          const message = "Port number is already in use by another server";
+
+          beforeEach(() => {
+            dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all =
+              sinon.stub().returns(applications);
+            vscodeStub.window.showInformationMessage.resolves(
+              "Start another server"
+            );
+          });
+
+          test("by a running application port", async () => {
+            await command.startDevServer();
+
+            const validateInput =
+              vscodeStub.window.showInputBox.getCall(0).args[0].validateInput;
+            const result = validateInput("8080");
+
+            sinon.assert.match(result, message);
+          });
+
+          test("by a running application Dart VM service port", async () => {
+            await command.startDevServer();
+
+            const validateInput =
+              vscodeStub.window.showInputBox.getCall(0).args[0].validateInput;
+            const result = validateInput("8181");
+
+            sinon.assert.match(result, message);
+          });
+        });
+      });
+    });
   });
 
   suite("asks for Dart VM service port number", () => {
@@ -281,6 +378,8 @@ suite("start-dev-server command", () => {
       );
     });
   });
+
+  // TODO(alestiago): Test line 59
 
   suite("does not start server", () => {
     test("when there is already a running server and user cancelled confirmation prompt", async () => {});

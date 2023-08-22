@@ -163,6 +163,10 @@ function promptPortNumber(
     value: value,
     ignoreFocusOut: true,
     validateInput: (value) => {
+      if (value.trim().length === 0) {
+        return "Port number cannot be empty";
+      }
+
       const port = Number(value);
       if (Number.isNaN(port)) {
         return "Port number must be a number";
