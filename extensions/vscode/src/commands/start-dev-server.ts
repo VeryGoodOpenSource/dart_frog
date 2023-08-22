@@ -6,7 +6,6 @@ import {
   suggestInstallingDartFrogCLI,
 } from "../utils";
 import {
-  DaemonResponse,
   DartFrogApplication,
   DartFrogApplicationRegistryEventEmitterTypes,
   DartFrogDaemon,
