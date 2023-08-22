@@ -11,7 +11,7 @@ import {
 suite("start-dev-server command", () => {
   let vscodeStub: any;
   let utilsStub: any;
-  let dartFrogDaemon: any;
+  let daemon: any;
   let command: any;
 
   beforeEach(() => {
@@ -35,11 +35,12 @@ suite("start-dev-server command", () => {
     };
     utilsStub.isDartFrogCLIInstalled.returns(true);
 
-    dartFrogDaemon = {
+    const dartFrogDaemon = {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       DartFrogDaemon: sinon.stub(),
     };
     dartFrogDaemon.DartFrogDaemon.instance = sinon.stub();
+    daemon = dartFrogDaemon.DartFrogDaemon.instance;
 
     command = proxyquire("../../../commands/start-dev-server", {
       vscode: vscodeStub,
@@ -56,11 +57,9 @@ suite("start-dev-server command", () => {
 
   suite("installing Dart Frog CLI", () => {
     beforeEach(() => {
-      dartFrogDaemon.DartFrogDaemon.instance.isReady = true;
-      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry = sinon.stub();
-      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
-        .stub()
-        .returns([]);
+      daemon.isReady = true;
+      daemon.applicationRegistry = sinon.stub();
+      daemon.applicationRegistry.all = sinon.stub().returns([]);
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
       utilsStub.nearestDartFrogProject.returns(undefined);
     });
@@ -88,11 +87,9 @@ suite("start-dev-server command", () => {
   suite("daemon", () => {
     test("is started if not ready", async () => {
       utilsStub.isDartFrogCLIInstalled.returns(true);
-      dartFrogDaemon.DartFrogDaemon.instance.isReady = false;
-      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry = sinon.stub();
-      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
-        .stub()
-        .returns([]);
+      daemon.isReady = false;
+      daemon.applicationRegistry = sinon.stub();
+      daemon.applicationRegistry.all = sinon.stub().returns([]);
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
       utilsStub.nearestDartFrogProject.returns(undefined);
 
@@ -106,11 +103,9 @@ suite("start-dev-server command", () => {
 
     test("is not started if already ready", async () => {
       utilsStub.isDartFrogCLIInstalled.returns(true);
-      dartFrogDaemon.DartFrogDaemon.instance.isReady = true;
-      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry = sinon.stub();
-      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
-        .stub()
-        .returns([]);
+      daemon.isReady = true;
+      daemon.applicationRegistry = sinon.stub();
+      daemon.applicationRegistry.all = sinon.stub().returns([]);
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
       utilsStub.nearestDartFrogProject.returns(undefined);
 
@@ -126,15 +121,15 @@ suite("start-dev-server command", () => {
   suite("confirmation information message before running", () => {
     beforeEach(() => {
       utilsStub.isDartFrogCLIInstalled.returns(true);
-      dartFrogDaemon.DartFrogDaemon.instance.isReady = true;
-      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry = sinon.stub();
+      daemon.isReady = true;
+      daemon.applicationRegistry = sinon.stub();
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
       utilsStub.nearestDartFrogProject.returns(undefined);
     });
 
     suite("is shown", () => {
       test("when there is already a running server", async () => {
-        dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
+        daemon.applicationRegistry.all = sinon
           .stub()
           .returns([new DartFrogApplication("test", 8080, 8181)]);
 
@@ -149,7 +144,7 @@ suite("start-dev-server command", () => {
       });
 
       test("when there is already more than one running server", async () => {
-        dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
+        daemon.applicationRegistry.all = sinon
           .stub()
           .returns([
             new DartFrogApplication("test", 8080, 8181),
@@ -168,9 +163,7 @@ suite("start-dev-server command", () => {
     });
 
     test("is not shown when there is no running server", async () => {
-      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
-        .stub()
-        .returns([]);
+      daemon.applicationRegistry.all = sinon.stub().returns([]);
 
       await command.startDevServer();
 
@@ -195,11 +188,9 @@ suite("start-dev-server command", () => {
 
     beforeEach(() => {
       utilsStub.isDartFrogCLIInstalled.returns(true);
-      dartFrogDaemon.DartFrogDaemon.instance.isReady = true;
-      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry = sinon.stub();
-      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
-        .stub()
-        .returns([]);
+      daemon.isReady = true;
+      daemon.applicationRegistry = sinon.stub();
+      daemon.applicationRegistry.all = sinon.stub().returns([]);
     });
 
     test("is shown when failed to find Dart Frog project path", async () => {
@@ -241,16 +232,14 @@ suite("start-dev-server command", () => {
   suite("port number prompt is shown", () => {
     beforeEach(() => {
       utilsStub.isDartFrogCLIInstalled.returns(true);
-      dartFrogDaemon.DartFrogDaemon.instance.isReady = true;
-      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry = sinon.stub();
+      daemon.isReady = true;
+      daemon.applicationRegistry = sinon.stub();
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns("path");
       utilsStub.nearestDartFrogProject.returns("path");
     });
 
     test("with prefilled default value when there are no running servers", async () => {
-      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
-        .stub()
-        .returns([]);
+      daemon.applicationRegistry.all = sinon.stub().returns([]);
 
       await command.startDevServer();
 
@@ -263,7 +252,7 @@ suite("start-dev-server command", () => {
     });
 
     test("without prefilled default value when there is already a running server", async () => {
-      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
+      daemon.applicationRegistry.all = sinon
         .stub()
         .returns([new DartFrogApplication("test", 8080, 8181)]);
       vscodeStub.window.showInformationMessage.resolves("Start another server");
@@ -288,9 +277,7 @@ suite("start-dev-server command", () => {
       };
 
       beforeEach(() => {
-        dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
-          .stub()
-          .returns([]);
+        daemon.applicationRegistry.all = sinon.stub().returns([]);
       });
 
       test("that accepts valid port number", async () => {
@@ -369,8 +356,7 @@ suite("start-dev-server command", () => {
           const message = "Port number is already in use by another server";
 
           beforeEach(() => {
-            dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all =
-              sinon.stub().returns(applications);
+            daemon.applicationRegistry.all = sinon.stub().returns(applications);
             vscodeStub.window.showInformationMessage.resolves(
               "Start another server"
             );
@@ -407,8 +393,8 @@ suite("start-dev-server command", () => {
 
     beforeEach(() => {
       utilsStub.isDartFrogCLIInstalled.returns(true);
-      dartFrogDaemon.DartFrogDaemon.instance.isReady = true;
-      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry = sinon.stub();
+      daemon.isReady = true;
+      daemon.applicationRegistry = sinon.stub();
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns("path");
       utilsStub.nearestDartFrogProject.returns("path");
       vscodeStub.window.showInputBox
@@ -423,9 +409,7 @@ suite("start-dev-server command", () => {
     });
 
     test("with prefilled default value when there are no running servers", async () => {
-      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
-        .stub()
-        .returns([]);
+      daemon.applicationRegistry.all = sinon.stub().returns([]);
 
       await command.startDevServer();
 
@@ -441,7 +425,7 @@ suite("start-dev-server command", () => {
     });
 
     test("without prefilled default value when there is already a running server", async () => {
-      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
+      daemon.applicationRegistry.all = sinon
         .stub()
         .returns([new DartFrogApplication("test", 8080, 8181)]);
       vscodeStub.window.showInformationMessage.resolves("Start another server");
@@ -469,9 +453,7 @@ suite("start-dev-server command", () => {
       };
 
       beforeEach(() => {
-        dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
-          .stub()
-          .returns([]);
+        daemon.applicationRegistry.all = sinon.stub().returns([]);
       });
 
       test("that accepts valid port number", async () => {
@@ -550,8 +532,7 @@ suite("start-dev-server command", () => {
           const message = "Port number is already in use by another server";
 
           beforeEach(() => {
-            dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all =
-              sinon.stub().returns(applications);
+            daemon.applicationRegistry.all = sinon.stub().returns(applications);
             vscodeStub.window.showInformationMessage.resolves(
               "Start another server"
             );
@@ -614,19 +595,15 @@ suite("start-dev-server command", () => {
 
     beforeEach(() => {
       utilsStub.isDartFrogCLIInstalled.returns(true);
-      dartFrogDaemon.DartFrogDaemon.instance.send = sinon.stub();
-      dartFrogDaemon.DartFrogDaemon.instance.isReady = true;
-      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry = sinon.stub();
-      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.on =
-        sinon.stub();
-      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.off =
-        sinon.stub();
-      dartFrogDaemon.DartFrogDaemon.instance.requestIdentifierGenerator =
-        sinon.stub();
-      // TODO(alestiago): Remove ignore.
-      // eslint-disable-next-line max-len
-      dartFrogDaemon.DartFrogDaemon.instance.requestIdentifierGenerator.generate =
-        sinon.stub().returns(requestIdentifier);
+      daemon.send = sinon.stub();
+      daemon.isReady = true;
+      daemon.applicationRegistry = sinon.stub();
+      daemon.applicationRegistry.on = sinon.stub();
+      daemon.applicationRegistry.off = sinon.stub();
+      daemon.requestIdentifierGenerator = sinon.stub();
+      daemon.requestIdentifierGenerator.generate = sinon
+        .stub()
+        .returns(requestIdentifier);
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
         workingDirectory
       );
@@ -652,9 +629,7 @@ suite("start-dev-server command", () => {
     });
 
     test("when there are no running applications", async () => {
-      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
-        .stub()
-        .returns([]);
+      daemon.applicationRegistry.all = sinon.stub().returns([]);
 
       const startRequest = new StartDaemonRequest(
         requestIdentifier,
@@ -667,9 +642,7 @@ suite("start-dev-server command", () => {
         result: "success",
         error: undefined,
       };
-      dartFrogDaemon.DartFrogDaemon.instance.send
-        .withArgs(startRequest)
-        .resolves(startResponse);
+      daemon.send.withArgs(startRequest).resolves(startResponse);
 
       await command.startDevServer();
 
@@ -678,10 +651,9 @@ suite("start-dev-server command", () => {
         startRequest.params.port,
         startRequest.params.dartVmServicePort
       );
-      const registrationListener =
-        dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.on
-          .withArgs("add", sinon.match.any)
-          .getCall(0).args[1];
+      const registrationListener = daemon.applicationRegistry.on
+        .withArgs("add", sinon.match.any)
+        .getCall(0).args[1];
       registrationListener(application);
 
       const progressFunction =
@@ -690,10 +662,7 @@ suite("start-dev-server command", () => {
       progress.report = sinon.stub();
       await progressFunction(progress);
 
-      sinon.assert.calledOnceWithExactly(
-        dartFrogDaemon.DartFrogDaemon.instance.send,
-        startRequest
-      );
+      sinon.assert.calledOnceWithExactly(daemon.send, startRequest);
     });
 
     test("when there is already a running server and user confirmed confirmation prompt", async () => {});
@@ -709,19 +678,15 @@ suite("start-dev-server command", () => {
 
     beforeEach(() => {
       utilsStub.isDartFrogCLIInstalled.returns(true);
-      dartFrogDaemon.DartFrogDaemon.instance.send = sinon.stub();
-      dartFrogDaemon.DartFrogDaemon.instance.isReady = true;
-      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry = sinon.stub();
-      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.on =
-        sinon.stub();
-      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.off =
-        sinon.stub();
-      dartFrogDaemon.DartFrogDaemon.instance.requestIdentifierGenerator =
-        sinon.stub();
-      // TODO(alestiago): Remove ignore.
-      // eslint-disable-next-line max-len
-      dartFrogDaemon.DartFrogDaemon.instance.requestIdentifierGenerator.generate =
-        sinon.stub().returns(requestIdentifier);
+      daemon.send = sinon.stub();
+      daemon.isReady = true;
+      daemon.applicationRegistry = sinon.stub();
+      daemon.applicationRegistry.on = sinon.stub();
+      daemon.applicationRegistry.off = sinon.stub();
+      daemon.requestIdentifierGenerator = sinon.stub();
+      daemon.requestIdentifierGenerator.generate = sinon
+        .stub()
+        .returns(requestIdentifier);
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
         workingDirectory
       );
@@ -744,9 +709,7 @@ suite("start-dev-server command", () => {
           validateInput: sinon.match.any,
         })
         .resolves(vmServicePortNumber);
-      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
-        .stub()
-        .returns([]);
+      daemon.applicationRegistry.all = sinon.stub().returns([]);
     });
 
     test("is shown when starting server", async () => {
