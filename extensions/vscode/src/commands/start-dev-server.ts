@@ -52,9 +52,10 @@ export const startDevServer = async (): Promise<void> => {
     }
   }
 
-  const workingDirectory = nearestDartFrogProject(
-    resolveDartFrogProjectPathFromWorkspace() ?? ""
-  );
+  const workingPath = resolveDartFrogProjectPathFromWorkspace();
+  const workingDirectory = workingPath
+    ? nearestDartFrogProject(workingPath)
+    : undefined;
   if (!workingDirectory) {
     await window.showErrorMessage(
       "Failed to find a Dart Frog project within the current workspace."

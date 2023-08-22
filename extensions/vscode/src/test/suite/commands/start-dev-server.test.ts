@@ -186,11 +186,52 @@ suite("start-dev-server command", () => {
   });
 
   suite("failed to find a Dart Frog project error message", () => {
-    test("is shown when failed to find Dart Frog project path", async () => {});
+    const errorMessage =
+      "Failed to find a Dart Frog project within the current workspace.";
 
-    test("is shown when failed to find Dart Frog root project path", async () => {});
+    beforeEach(() => {
+      utilsStub.isDartFrogCLIInstalled.returns(true);
+      dartFrogDaemon.DartFrogDaemon.instance.isReady = true;
+      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry = sinon.stub();
+      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
+        .stub()
+        .returns([]);
+    });
 
-    test("is not shown when found a Dart Frog project path", async () => {});
+    test("is shown when failed to find Dart Frog project path", async () => {
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
+
+      await command.startDevServer();
+
+      sinon.assert.calledOnceWithExactly(
+        vscodeStub.window.showErrorMessage,
+        errorMessage
+      );
+    });
+
+    test("is shown when failed to find Dart Frog root project path", async () => {
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns("path");
+      utilsStub.nearestDartFrogProject.returns(undefined);
+
+      await command.startDevServer();
+
+      sinon.assert.calledOnceWithExactly(
+        vscodeStub.window.showErrorMessage,
+        errorMessage
+      );
+    });
+
+    test("is not shown when found a Dart Frog project path", async () => {
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns("path");
+      utilsStub.nearestDartFrogProject.returns("path");
+
+      await command.startDevServer();
+
+      sinon.assert.neverCalledWith(
+        vscodeStub.window.showErrorMessage,
+        errorMessage
+      );
+    });
   });
 
   suite("port number prompt is shown", () => {
