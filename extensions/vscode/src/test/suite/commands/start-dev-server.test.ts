@@ -723,5 +723,37 @@ suite("start-dev-server command", () => {
         sinon.match.any
       );
     });
+
+    test("reports error when sever fails to start", async () => {
+      // TODO(alestiago): Finish test.
+      const startRequest = new StartDaemonRequest(
+        requestIdentifier,
+        workingDirectory,
+        Number(portNumber),
+        Number(vmServicePortNumber)
+      );
+      const startResponse: DaemonResponse = {
+        id: startRequest.id,
+        result: undefined,
+        error: {
+          message: "error",
+        },
+      };
+      daemon.send.withArgs(startRequest).resolves(startResponse);
+
+      await command.startDevServer();
+
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      const progress = sinon.stub();
+      progress.report = sinon.stub();
+      await progressFunction(progress);
+
+      sinon.assert.calledOnce(
+        progress.report.withArgs({
+          message: startResponse.error.message,
+        })
+      );
+    });
   });
 });
