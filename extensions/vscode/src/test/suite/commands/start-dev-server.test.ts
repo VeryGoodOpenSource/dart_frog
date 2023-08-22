@@ -2,7 +2,11 @@ const sinon = require("sinon");
 var proxyquire = require("proxyquire");
 
 import { afterEach, beforeEach } from "mocha";
-import { DartFrogApplication } from "../../../daemon";
+import {
+  DaemonResponse,
+  DartFrogApplication,
+  StartDaemonRequest,
+} from "../../../daemon";
 
 suite("start-dev-server command", () => {
   let vscodeStub: any;
@@ -590,7 +594,7 @@ suite("start-dev-server command", () => {
     });
   });
 
-  suite("does not start server", () => {
+  suite("does not send start request", () => {
     test("when there is already a running server and user cancelled confirmation prompt", async () => {});
 
     test("when there is already more than one running server and user cancelled confirmation prompt", async () => {});
@@ -602,7 +606,96 @@ suite("start-dev-server command", () => {
     test("when Dart VM service port number is escaped", async () => {});
   });
 
-  suite("starts server", () => {
+  suite("sends start request", () => {
+    const identifier = "test";
+    const portNumber = "8080";
+    const vmServicePortNumber = "8181";
+    const workingDirectory = "path";
+
+    beforeEach(() => {
+      utilsStub.isDartFrogCLIInstalled.returns(true);
+      dartFrogDaemon.DartFrogDaemon.instance.send = sinon.stub();
+      dartFrogDaemon.DartFrogDaemon.instance.isReady = true;
+      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry = sinon.stub();
+      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.on =
+        sinon.stub();
+      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.off =
+        sinon.stub();
+      dartFrogDaemon.DartFrogDaemon.instance.requestIdentifierGenerator =
+        sinon.stub();
+      // TODO(alestiago): Remove ignore.
+      // eslint-disable-next-line max-len
+      dartFrogDaemon.DartFrogDaemon.instance.requestIdentifierGenerator.generate =
+        sinon.stub().returns(identifier);
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+        workingDirectory
+      );
+      utilsStub.nearestDartFrogProject.returns(workingDirectory);
+      vscodeStub.window.showInputBox
+        .withArgs({
+          prompt: "Which port number the server should start on",
+          placeHolder: "8080",
+          value: sinon.match.any,
+          ignoreFocusOut: true,
+          validateInput: sinon.match.any,
+        })
+        .resolves(portNumber);
+      vscodeStub.window.showInputBox
+        .withArgs({
+          prompt: "Which port number the Dart VM service should listen on",
+          placeHolder: "8181",
+          value: sinon.match.any,
+          ignoreFocusOut: true,
+          validateInput: sinon.match.any,
+        })
+        .resolves(vmServicePortNumber);
+    });
+
+    test("when there are no running applications", async () => {
+      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
+        .stub()
+        .returns([]);
+
+      const startRequest = new StartDaemonRequest(
+        identifier,
+        workingDirectory,
+        Number(portNumber),
+        Number(vmServicePortNumber)
+      );
+      const startResponse: DaemonResponse = {
+        id: startRequest.id,
+        result: "success",
+        error: undefined,
+      };
+      dartFrogDaemon.DartFrogDaemon.instance.send
+        .withArgs(startRequest)
+        .resolves(startResponse);
+
+      await command.startDevServer();
+
+      const application = new DartFrogApplication(
+        startRequest.params.workingDirectory,
+        startRequest.params.port,
+        startRequest.params.dartVmServicePort
+      );
+      const registrationListener =
+        dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.on
+          .withArgs("add", sinon.match.any)
+          .getCall(0).args[1];
+      registrationListener(application);
+
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      const progress = sinon.stub();
+      progress.report = sinon.stub();
+      await progressFunction(progress);
+
+      sinon.assert.calledOnceWithExactly(
+        dartFrogDaemon.DartFrogDaemon.instance.send,
+        startRequest
+      );
+    });
+
     test("when there is already a running server and user confirmed confirmation prompt", async () => {});
 
     test("when there is already more than one running server and user confirmed confirmation prompt", async () => {});
