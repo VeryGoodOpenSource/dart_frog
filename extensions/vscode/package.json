@@ -13,7 +13,7 @@
     "url": "https://github.com/VeryGoodOpenSource/dart_frog"
   },
   "homepage": "https://dartfrog.vgv.dev/",
-  "license": "SEE LICENSE IN LICENSE FILE",
+  "license": "MIT",
   "engines": {
     "vscode": "^1.79.0"
   },
