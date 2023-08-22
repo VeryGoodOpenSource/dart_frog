@@ -106,8 +106,8 @@ void main() {
               route: '/',
               params: [],
               wildcard: false,
-            )
-          ]
+            ),
+          ],
         },
       );
 
@@ -234,6 +234,8 @@ dev_dependencies:
           'invokeCustomEntrypoint': true,
           'invokeCustomInit': false,
           'pathDependencies': <String>[],
+          'hasExternalDependencies': false,
+          'externalPathDependencies': <String>[],
           'dartVersion': 'stable',
           'addDockerfile': true,
         }),
@@ -289,6 +291,8 @@ dependencies:
           'serveStaticFiles': false,
           'invokeCustomEntrypoint': false,
           'invokeCustomInit': false,
+          'hasExternalDependencies': false,
+          'externalPathDependencies': <String>[],
           'pathDependencies': <String>[],
           'dartVersion': 'stable',
           'addDockerfile': false,
@@ -325,6 +329,8 @@ dependencies:
           'serveStaticFiles': false,
           'invokeCustomEntrypoint': false,
           'invokeCustomInit': true,
+          'hasExternalDependencies': false,
+          'externalPathDependencies': <String>[],
           'pathDependencies': <String>[],
           'dartVersion': 'stable',
           'addDockerfile': true,
@@ -344,7 +350,7 @@ dependencies:
             MiddlewareFile(
               name: 'hello_middleware',
               path: 'hello/middleware.dart',
-            )
+            ),
           ],
           directories: [
             RouteDirectory(
@@ -368,7 +374,7 @@ dependencies:
                 ),
               ],
               params: [],
-            )
+            ),
           ],
           routes: [
             RouteFile(
@@ -405,7 +411,7 @@ dependencies:
                 params: [],
                 wildcard: false,
               ),
-            ]
+            ],
           },
           serveStaticFiles: true,
         );
@@ -462,15 +468,20 @@ dependencies:
               }
             ],
             'middleware': [
-              {'name': 'hello_middleware', 'path': 'hello/middleware.dart'}
+              {
+                'name': 'hello_middleware',
+                'path': 'hello/middleware.dart',
+              },
             ],
             'globalMiddleware': {
               'name': 'middleware',
-              'path': 'middleware.dart'
+              'path': 'middleware.dart',
             },
             'serveStaticFiles': true,
             'invokeCustomEntrypoint': false,
             'invokeCustomInit': false,
+            'hasExternalDependencies': false,
+            'externalPathDependencies': <String>[],
             'pathDependencies': <String>[],
             'dartVersion': 'stable',
             'addDockerfile': true,

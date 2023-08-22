@@ -26,7 +26,7 @@ void main() {
             'file.txt',
             ContentType.text,
             Stream.fromIterable([[]]),
-          )
+          ),
         },
       );
       when(request.formData).thenAnswer((_) async => formData);
@@ -47,7 +47,7 @@ void main() {
             'picture.png',
             ContentType('image', 'png'),
             Stream.fromIterable([[]]),
-          )
+          ),
         },
       );
       when(request.formData).thenAnswer((_) async => formData);

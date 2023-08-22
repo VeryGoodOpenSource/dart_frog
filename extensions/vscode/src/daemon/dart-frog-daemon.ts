@@ -10,6 +10,31 @@ import {
   isReadyDaemonEvent,
 } from "./protocol";
 import { EventEmitter } from "events";
+import { DartFrogApplicationRegistry } from ".";
+import {
+  AscendingNumericalIdentifierGenerator,
+  IdentifierGenerator,
+} from "../utils";
+
+/**
+ * An error that is thrown when the Dart Frog Daemon has not yet been invoked
+ * but a request is made to it.
+ */
+export class DartFrogDaemonNotInvokedError extends Error {
+  constructor() {
+    super("The Dart Frog Daemon is yet to be invoked.");
+  }
+}
+
+/**
+ * An error that is thrown when the Dart Frog Daemon is invoked but is not yet
+ * ready to accept requests.
+ */
+export class DartFrogDaemonReadyError extends Error {
+  constructor() {
+    super("The Dart Frog Daemon is not yet ready to accept requests.");
+  }
+}
 
 /**
  * The types of events that are emitted by the {@link DartFrogDaemon}.
@@ -46,6 +71,15 @@ export class DartFrogDaemon {
     return this._instance || (this._instance = new this());
   }
 
+  /**
+   * Generates unique and valid identifiers for requests.
+   *
+   * Should not be used as a request counter, since it is not guaranteed to
+   * be called the same number of times as the number of requests sent.
+   */
+  public readonly requestIdentifierGenerator: IdentifierGenerator =
+    new AscendingNumericalIdentifierGenerator();
+
   private daemonMessagesEventEmitter = new EventEmitter();
 
   /**
@@ -54,6 +88,13 @@ export class DartFrogDaemon {
    * Undefined until the Dart Frog daemon is {@link invoke}d.
    */
   private process: ChildProcessWithoutNullStreams | undefined;
+
+  /**
+   * A registry of the Dart Frog applications that are currently running on
+   * this Dart Frog daemon.
+   */
+  public readonly applicationRegistry: DartFrogApplicationRegistry =
+    new DartFrogApplicationRegistry(this);
 
   private _isReady: boolean = false;
 
@@ -89,8 +130,8 @@ export class DartFrogDaemon {
       const readyEventListener = (message: DaemonEvent) => {
         if (!this._isReady && isReadyDaemonEvent(message)) {
           this._isReady = true;
-          resolve();
           this.off(DartFrogDaemonEventEmitterTypes.event, readyEventListener);
+          resolve();
         }
       };
       this.on(
@@ -168,5 +209,48 @@ export class DartFrogDaemon {
   ): DartFrogDaemon {
     this.daemonMessagesEventEmitter.off(type, listener);
     return this;
+  }
+
+  /**
+   * Sends a request to the Dart Frog daemon.
+   *
+   * @param request The request to send to the Dart Frog daemon.
+   * @throws {DartFrogDaemonNotInvokedError} If the Dart Frog daemon has not yet
+   * been {@link invoke}d.
+   * @throws {DartFrogDaemonReadyError} If the Dart Frog daemon is not yet
+   * ready to accept requests.
+   * @returns A promise that resolves to the response from the Dart Frog
+   * daemon to the request.
+   * @see {@link isReady} to check if the Dart Frog daemon is ready to accept
+   * requests.
+   */
+  public send(request: DaemonRequest): Promise<DaemonResponse> {
+    if (!this.process) {
+      throw new DartFrogDaemonNotInvokedError();
+    } else if (!this.isReady) {
+      throw new DartFrogDaemonReadyError();
+    }
+
+    const responsePromise = new Promise<DaemonResponse>((resolve) => {
+      const responseListener = (message: DaemonResponse) => {
+        if (message.id === request.id && message.result) {
+          this.off(DartFrogDaemonEventEmitterTypes.response, responseListener);
+          resolve(message);
+        }
+      };
+      this.on(
+        DartFrogDaemonEventEmitterTypes.response,
+        responseListener.bind(this)
+      );
+    });
+
+    const encodedRequest = `${JSON.stringify([request])}\n`;
+    this.process!.stdin.write(encodedRequest);
+    this.daemonMessagesEventEmitter.emit(
+      DartFrogDaemonEventEmitterTypes.request,
+      request
+    );
+
+    return responsePromise;
   }
 }

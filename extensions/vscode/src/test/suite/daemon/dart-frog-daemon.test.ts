@@ -4,6 +4,7 @@ import { EventEmitter } from "events";
 
 import { afterEach, beforeEach } from "mocha";
 import assert = require("assert");
+import { RequestVersionDaemonRequest } from "../../../daemon";
 
 suite("DartFrogDaemon", () => {
   let childProcessStub: any;
@@ -290,6 +291,126 @@ suite("DartFrogDaemon", () => {
       stdout.emit("data", response);
 
       sinon.assert.notCalled(callback);
+    });
+  });
+
+  suite("send", () => {
+    test("throws a DartFrogDaemonNotInvokedError when not invoked", async () => {
+      const daemon = new dartFrogDaemon.DartFrogDaemon();
+
+      const request = new RequestVersionDaemonRequest("1");
+
+      assert.throws(
+        () => daemon.send(request),
+        new dartFrogDaemon.DartFrogDaemonNotInvokedError()
+      );
+    });
+
+    test("throws a DartFrogDaemonReadyError when invoked but not ready", async () => {
+      const daemon = new dartFrogDaemon.DartFrogDaemon();
+
+      const daemonProcess = sinon.stub();
+      const daemonStdoutEventEmitter = new EventEmitter();
+
+      daemonProcess.stdout = daemonStdoutEventEmitter;
+      const workingDirectory = "workingDirectory";
+
+      childProcessStub.spawn
+        .withArgs("dart_frog", ["daemon"], {
+          cwd: workingDirectory,
+        })
+        .returns(daemonProcess);
+
+      daemon.invoke(workingDirectory);
+
+      const request = new RequestVersionDaemonRequest("1");
+
+      assert.throws(
+        () => daemon.send(request),
+        new dartFrogDaemon.DartFrogDaemonReadyError()
+      );
+    });
+
+    suite("when ready", () => {
+      let daemon: any;
+      let stdout: any;
+      let stdin: any;
+
+      beforeEach(() => {
+        const workingDirectory = "workingDirectory";
+
+        const daemonProcess = sinon.stub();
+
+        const daemonStdoutEventEmitter = new EventEmitter();
+        daemonProcess.stdout = stdout = daemonStdoutEventEmitter;
+
+        daemonProcess.stdin = stdin = {
+          write: sinon.stub(),
+        };
+
+        childProcessStub.spawn
+          .withArgs("dart_frog", ["daemon"], {
+            cwd: workingDirectory,
+          })
+          .returns(daemonProcess);
+
+        daemon = new dartFrogDaemon.DartFrogDaemon();
+
+        const invokePromise = daemon.invoke(workingDirectory);
+
+        const readyMessage = `[{"event":"daemon.ready","params":{"version":"0.0.1","processId":94799}}]`;
+        daemonStdoutEventEmitter.emit("data", readyMessage);
+
+        return invokePromise;
+      });
+
+      test("writes request in stdin", async () => {
+        const request = new RequestVersionDaemonRequest("1");
+
+        daemon.send(request);
+
+        sinon.assert.calledOnceWithExactly(
+          stdin.write,
+          `${JSON.stringify([request])}\n`
+        );
+      });
+
+      test("emits request event", async () => {
+        const request = new RequestVersionDaemonRequest("1");
+
+        const callback = sinon.stub();
+        daemon.on(
+          dartFrogDaemon.DartFrogDaemonEventEmitterTypes.request,
+          callback
+        );
+
+        daemon.send(request);
+
+        sinon.assert.calledOnceWithExactly(callback, request);
+      });
+
+      test("resolves correct response", async () => {
+        const request = new RequestVersionDaemonRequest("1");
+
+        const responsePromise = daemon.send(request);
+
+        const anotherResponse = `[{"id":"2","result":{"version":"0.0.1"}}]`;
+        stdout.emit("data", anotherResponse);
+
+        const response = `[{"id":"1","result":{"version":"0.0.1"}}]`;
+        stdout.emit("data", response);
+
+        const actualResponse = await responsePromise;
+
+        const expectedResponse = {
+          id: "1",
+          result: {
+            version: "0.0.1",
+          },
+        };
+
+        assert.deepEqual(actualResponse, expectedResponse);
+      });
     });
   });
 });
