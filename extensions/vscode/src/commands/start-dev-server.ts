@@ -47,6 +47,8 @@ export const startDevServer = async (): Promise<void> => {
         break;
       case "Cancel":
         return;
+      default:
+        return;
     }
   }
 
