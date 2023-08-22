@@ -607,7 +607,7 @@ suite("start-dev-server command", () => {
   });
 
   suite("sends start request", () => {
-    const identifier = "test";
+    const requestIdentifier = "test";
     const portNumber = "8080";
     const vmServicePortNumber = "8181";
     const workingDirectory = "path";
@@ -626,7 +626,7 @@ suite("start-dev-server command", () => {
       // TODO(alestiago): Remove ignore.
       // eslint-disable-next-line max-len
       dartFrogDaemon.DartFrogDaemon.instance.requestIdentifierGenerator.generate =
-        sinon.stub().returns(identifier);
+        sinon.stub().returns(requestIdentifier);
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
         workingDirectory
       );
@@ -657,7 +657,7 @@ suite("start-dev-server command", () => {
         .returns([]);
 
       const startRequest = new StartDaemonRequest(
-        identifier,
+        requestIdentifier,
         workingDirectory,
         Number(portNumber),
         Number(vmServicePortNumber)
@@ -699,5 +699,66 @@ suite("start-dev-server command", () => {
     test("when there is already a running server and user confirmed confirmation prompt", async () => {});
 
     test("when there is already more than one running server and user confirmed confirmation prompt", async () => {});
+  });
+
+  suite("progress", () => {
+    const requestIdentifier = "test";
+    const portNumber = "8080";
+    const vmServicePortNumber = "8181";
+    const workingDirectory = "path";
+
+    beforeEach(() => {
+      utilsStub.isDartFrogCLIInstalled.returns(true);
+      dartFrogDaemon.DartFrogDaemon.instance.send = sinon.stub();
+      dartFrogDaemon.DartFrogDaemon.instance.isReady = true;
+      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry = sinon.stub();
+      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.on =
+        sinon.stub();
+      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.off =
+        sinon.stub();
+      dartFrogDaemon.DartFrogDaemon.instance.requestIdentifierGenerator =
+        sinon.stub();
+      // TODO(alestiago): Remove ignore.
+      // eslint-disable-next-line max-len
+      dartFrogDaemon.DartFrogDaemon.instance.requestIdentifierGenerator.generate =
+        sinon.stub().returns(requestIdentifier);
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+        workingDirectory
+      );
+      utilsStub.nearestDartFrogProject.returns(workingDirectory);
+      vscodeStub.window.showInputBox
+        .withArgs({
+          prompt: "Which port number the server should start on",
+          placeHolder: "8080",
+          value: sinon.match.any,
+          ignoreFocusOut: true,
+          validateInput: sinon.match.any,
+        })
+        .resolves(portNumber);
+      vscodeStub.window.showInputBox
+        .withArgs({
+          prompt: "Which port number the Dart VM service should listen on",
+          placeHolder: "8181",
+          value: sinon.match.any,
+          ignoreFocusOut: true,
+          validateInput: sinon.match.any,
+        })
+        .resolves(vmServicePortNumber);
+      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
+        .stub()
+        .returns([]);
+    });
+
+    test("is shown when starting server", async () => {
+      await command.startDevServer();
+
+      sinon.assert.calledOnceWithExactly(
+        vscodeStub.window.withProgress,
+        {
+          location: 15,
+        },
+        sinon.match.any
+      );
+    });
   });
 });
