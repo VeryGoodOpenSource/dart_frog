@@ -91,7 +91,7 @@ void main() {
     });
 
     group('shared', () {
-    test(
+      test(
           '''when false throws a SocketException when binding bind to the same combination of address and port''',
           () async {
         final server1 = await serve((_) => Response(), 'localhost', 3000);
@@ -104,7 +104,7 @@ void main() {
         await server1.close();
       });
 
-    test(
+      test(
           '''when true serves requests successfully when binding bind to the same combination of address and port''',
           () async {
         final server1 = await serve(
@@ -121,8 +121,7 @@ void main() {
         );
 
         final client = HttpClient();
-        final request =
-            await client.getUrl(Uri.parse('http://localhost:3200'));
+        final request = await client.getUrl(Uri.parse('http://localhost:3200'));
         final response = await request.close();
 
         expect(response.headers.value('server'), equals('1'));
