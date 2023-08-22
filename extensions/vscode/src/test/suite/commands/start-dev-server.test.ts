@@ -50,76 +50,76 @@ suite("start-dev-server command", () => {
     sinon.restore();
   });
 
-  test("suggests installing Dart Frog CLI when not installed", async () => {
-    utilsStub.isDartFrogCLIInstalled.returns(false);
-    dartFrogDaemon.DartFrogDaemon.instance.isReady = true;
-    dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry = sinon.stub();
-    dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
-      .stub()
-      .returns([]);
-    utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
-    utilsStub.nearestDartFrogProject.returns(undefined);
+  suite("installing Dart Frog CLI", () => {
+    beforeEach(() => {
+      dartFrogDaemon.DartFrogDaemon.instance.isReady = true;
+      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry = sinon.stub();
+      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
+        .stub()
+        .returns([]);
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
+      utilsStub.nearestDartFrogProject.returns(undefined);
+    });
 
-    await command.startDevServer();
+    test("is suggested when not installed", async () => {
+      utilsStub.isDartFrogCLIInstalled.returns(false);
 
-    sinon.assert.calledOnceWithExactly(
-      utilsStub.suggestInstallingDartFrogCLI,
-      "Running this command requires Dart Frog CLI to be installed."
-    );
+      await command.startDevServer();
+
+      sinon.assert.calledOnceWithExactly(
+        utilsStub.suggestInstallingDartFrogCLI,
+        "Running this command requires Dart Frog CLI to be installed."
+      );
+    });
+
+    test("is not suggested when already installed", async () => {
+      utilsStub.isDartFrogCLIInstalled.returns(true);
+
+      await command.startDevServer();
+
+      sinon.assert.notCalled(utilsStub.suggestInstallingDartFrogCLI);
+    });
   });
 
-  test("does not suggest installing Dart Frog CLI when installed", async () => {
-    utilsStub.isDartFrogCLIInstalled.returns(true);
-    dartFrogDaemon.DartFrogDaemon.instance.isReady = true;
-    dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry = sinon.stub();
-    dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
-      .stub()
-      .returns([]);
-    utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
-    utilsStub.nearestDartFrogProject.returns(undefined);
+  suite("daemon", () => {
+    test("is started if not ready", async () => {
+      utilsStub.isDartFrogCLIInstalled.returns(true);
+      dartFrogDaemon.DartFrogDaemon.instance.isReady = false;
+      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry = sinon.stub();
+      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
+        .stub()
+        .returns([]);
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
+      utilsStub.nearestDartFrogProject.returns(undefined);
 
-    await command.startDevServer();
+      await command.startDevServer();
 
-    sinon.assert.notCalled(utilsStub.suggestInstallingDartFrogCLI);
+      sinon.assert.calledOnceWithExactly(
+        vscodeStub.commands.executeCommand,
+        "dart-frog.start-daemon"
+      );
+    });
+
+    test("is not started if already ready", async () => {
+      utilsStub.isDartFrogCLIInstalled.returns(true);
+      dartFrogDaemon.DartFrogDaemon.instance.isReady = true;
+      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry = sinon.stub();
+      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
+        .stub()
+        .returns([]);
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
+      utilsStub.nearestDartFrogProject.returns(undefined);
+
+      await command.startDevServer();
+
+      sinon.assert.neverCalledWith(
+        vscodeStub.commands.executeCommand,
+        "dart-frog.start-daemon"
+      );
+    });
   });
 
-  test("starts daemon if not ready", async () => {
-    utilsStub.isDartFrogCLIInstalled.returns(true);
-    dartFrogDaemon.DartFrogDaemon.instance.isReady = false;
-    dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry = sinon.stub();
-    dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
-      .stub()
-      .returns([]);
-    utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
-    utilsStub.nearestDartFrogProject.returns(undefined);
-
-    await command.startDevServer();
-
-    sinon.assert.calledOnceWithExactly(
-      vscodeStub.commands.executeCommand,
-      "dart-frog.start-daemon"
-    );
-  });
-
-  test("does not start daemon if already ready", async () => {
-    utilsStub.isDartFrogCLIInstalled.returns(true);
-    dartFrogDaemon.DartFrogDaemon.instance.isReady = true;
-    dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry = sinon.stub();
-    dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
-      .stub()
-      .returns([]);
-    utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
-    utilsStub.nearestDartFrogProject.returns(undefined);
-
-    await command.startDevServer();
-
-    sinon.assert.neverCalledWith(
-      vscodeStub.commands.executeCommand,
-      "dart-frog.start-daemon"
-    );
-  });
-
-  suite("confirmation before running", () => {
+  suite("confirmation information message before running", () => {
     beforeEach(() => {
       utilsStub.isDartFrogCLIInstalled.returns(true);
       dartFrogDaemon.DartFrogDaemon.instance.isReady = true;
@@ -185,7 +185,15 @@ suite("start-dev-server command", () => {
     });
   });
 
-  suite("asks for port number", () => {
+  suite("failed to find a Dart Frog project error message", () => {
+    test("is shown when failed to find Dart Frog project path", async () => {});
+
+    test("is shown when failed to find Dart Frog root project path", async () => {});
+
+    test("is not shown when found a Dart Frog project path", async () => {});
+  });
+
+  suite("port number prompt is shown", () => {
     beforeEach(() => {
       utilsStub.isDartFrogCLIInstalled.returns(true);
       dartFrogDaemon.DartFrogDaemon.instance.isReady = true;
@@ -323,7 +331,7 @@ suite("start-dev-server command", () => {
     });
   });
 
-  suite("asks for Dart VM service port number", () => {
+  suite("Dart VM service port number prompt is shown", () => {
     beforeEach(() => {
       utilsStub.isDartFrogCLIInstalled.returns(true);
       dartFrogDaemon.DartFrogDaemon.instance.isReady = true;
@@ -378,8 +386,6 @@ suite("start-dev-server command", () => {
       );
     });
   });
-
-  // TODO(alestiago): Test line 59
 
   suite("does not start server", () => {
     test("when there is already a running server and user cancelled confirmation prompt", async () => {});
