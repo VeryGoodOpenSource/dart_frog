@@ -113,7 +113,7 @@ void main() {
           3200,
           shared: true,
         );
-        final server2 = wait serve(
+        final server2 = await serve(
           (_) => Response(headers: {'server': '2'}),
           'localhost',
           3200,
