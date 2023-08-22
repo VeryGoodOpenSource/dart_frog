@@ -118,7 +118,7 @@ suite("start-dev-server command", () => {
     );
   });
 
-  suite("shows confirmation before running", () => {
+  suite("confirmation before running", () => {
     beforeEach(() => {
       utilsStub.isDartFrogCLIInstalled.returns(true);
       dartFrogDaemon.DartFrogDaemon.instance.isReady = true;
@@ -127,32 +127,55 @@ suite("start-dev-server command", () => {
       utilsStub.nearestDartFrogProject.returns(undefined);
     });
 
-    test("when there is already a running server", async () => {
+    suite("is shown", () => {
+      test("when there is already a running server", async () => {
+        dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
+          .stub()
+          .returns([new DartFrogApplication("test", 8080, 8181)]);
+
+        await command.startDevServer();
+
+        sinon.assert.calledOnceWithExactly(
+          vscodeStub.window.showInformationMessage,
+          "A server is already running, would you like to start another server?",
+          "Start another server",
+          "Cancel"
+        );
+      });
+
+      test("when there is already more than one running server", async () => {
+        dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
+          .stub()
+          .returns([
+            new DartFrogApplication("test", 8080, 8181),
+            new DartFrogApplication("test2", 8081, 8182),
+          ]);
+
+        await command.startDevServer();
+
+        sinon.assert.calledOnceWithExactly(
+          vscodeStub.window.showInformationMessage,
+          "There are 2 servers already running, would you like to start another server?",
+          "Start another server",
+          "Cancel"
+        );
+      });
+    });
+
+    test("is not shown when there is no running server", async () => {
       dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
         .stub()
-        .returns([new DartFrogApplication("test", 8080, 8181)]);
+        .returns([]);
 
       await command.startDevServer();
 
-      sinon.assert.calledOnceWithExactly(
+      sinon.assert.neverCalledWith(
         vscodeStub.window.showInformationMessage,
         "A server is already running, would you like to start another server?",
         "Start another server",
         "Cancel"
       );
-    });
-
-    test("when there is already more than one running server", async () => {
-      dartFrogDaemon.DartFrogDaemon.instance.applicationRegistry.all = sinon
-        .stub()
-        .returns([
-          new DartFrogApplication("test", 8080, 8181),
-          new DartFrogApplication("test2", 8081, 8182),
-        ]);
-
-      await command.startDevServer();
-
-      sinon.assert.calledOnceWithExactly(
+      sinon.assert.neverCalledWith(
         vscodeStub.window.showInformationMessage,
         "There are 2 servers already running, would you like to start another server?",
         "Start another server",
