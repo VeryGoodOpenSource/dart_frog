@@ -56,6 +56,10 @@
       {
         "command": "dart-frog.start-daemon",
         "title": "Dart Frog: Start Daemon"
+      },
+      {
+        "command": "dart-frog.start-dev-server",
+        "title": "Dart Frog: Start Development Server"
       }
     ],
     "menus": {
