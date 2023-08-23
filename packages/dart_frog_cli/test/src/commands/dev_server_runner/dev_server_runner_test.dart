@@ -261,7 +261,7 @@ void main() {
           expect(
             processRunCalls,
             equals([
-              ['taskkill', '/F', '/T', '/PID', '$processId']
+              ['taskkill', '/F', '/T', '/PID', '$processId'],
             ]),
           );
           verifyNever(() => process.kill());
@@ -742,7 +742,7 @@ runs codegen with debounce when changes are made to the public or routes directo
           expect(
             processRunCalls,
             equals([
-              ['taskkill', '/F', '/T', '/PID', '$processId']
+              ['taskkill', '/F', '/T', '/PID', '$processId'],
             ]),
           );
           verifyNever(() => process.kill());
