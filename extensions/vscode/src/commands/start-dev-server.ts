@@ -82,7 +82,7 @@ export const startDevServer = async (): Promise<void> => {
     usedPorts.push(server.vmServicePort);
   }
 
-  const portNumber = await promptPortNumber(
+  const portNumber = await promptForPortNumber(
     "Which port number the server should start on",
     "8080",
     runningServers.length === 0 ? "8080" : undefined,
@@ -93,7 +93,7 @@ export const startDevServer = async (): Promise<void> => {
   }
   usedPorts.push(Number(portNumber));
 
-  const vmServicePortNumber = await promptPortNumber(
+  const vmServicePortNumber = await promptForPortNumber(
     "Which port number the Dart VM service should listen on",
     "8181",
     runningServers.length === 0 ? "8181" : undefined,
@@ -177,7 +177,7 @@ export const startDevServer = async (): Promise<void> => {
  * @returns If the user cancels the prompt, `undefined` is returned. Otherwise,
  * the port number is returned as a string.
  */
-function promptPortNumber(
+function promptForPortNumber(
   prompt: string,
   placeHolder: string,
   value: string | undefined = undefined,
