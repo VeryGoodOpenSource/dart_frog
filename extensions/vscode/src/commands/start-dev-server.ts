@@ -16,6 +16,20 @@ import {
  * Starts the server.
  *
  * This command can be launched from the Command Palette.
+ *
+ * The user requires to have Dart Frog CLI installed in order to run this
+ * command. If they opt out of installing Dart Frog CLI, the command will
+ * run at their own risk.
+ *
+ * The user can start one or more servers. If there is already a server running,
+ * the user will be prompted to confirm if really want to start another server.
+ *
+ * To start a server the user must:
+ * - Have a Dart Frog project open in the current workspace.
+ * - Select a valid port number for the server to run on.
+ * - Select a valid port number for the Dart VM service to listen on.
+ *
+ * Otherwise, the command will not start the server.
  */
 export const startDevServer = async (): Promise<void> => {
   if (!isDartFrogCLIInstalled()) {
@@ -149,6 +163,20 @@ export const startDevServer = async (): Promise<void> => {
   );
 };
 
+/**
+ * Prompts the user for a port number.
+ *
+ * The input is verified to be a valid port number and that it is not already in
+ * use by another Dart Frog server.
+ *
+ * @param prompt The prompt to display to the user.
+ * @param placeHolder The placeholder to display in the input box.
+ * @param value The value to prefill the input box with.
+ * @param usedPorts The ports that are already in use. Usually only those that
+ * are currently in use by another Dart Frog server.
+ * @returns If the user cancels the prompt, `undefined` is returned. Otherwise,
+ * the port number is returned as a string.
+ */
 function promptPortNumber(
   prompt: string,
   placeHolder: string,
