@@ -90,6 +90,47 @@ void main() {
       });
     });
 
+    group('shared', () {
+      test(
+          '''when false throws a SocketException when binding bind to the same combination of address and port''',
+          () async {
+        final server1 = await serve((_) => Response(), 'localhost', 3000);
+
+        await expectLater(
+          () async => serve((_) => Response(), 'localhost', 3000),
+          throwsA(isA<SocketException>()),
+        );
+
+        await server1.close();
+      });
+
+      test(
+          '''when true serves requests successfully when binding bind to the same combination of address and port''',
+          () async {
+        final server1 = await serve(
+          (_) => Response(headers: {'server': '1'}),
+          'localhost',
+          3200,
+          shared: true,
+        );
+        final server2 = await serve(
+          (_) => Response(headers: {'server': '2'}),
+          'localhost',
+          3200,
+          shared: true,
+        );
+
+        final client = HttpClient();
+        final request = await client.getUrl(Uri.parse('http://localhost:3200'));
+        final response = await request.close();
+
+        expect(response.headers.value('server'), equals('1'));
+
+        await server1.close();
+        await server2.close();
+      });
+    });
+
     test('creates an HttpsServer on the provided securityContext', () async {
       const chain = '''
 -----BEGIN CERTIFICATE-----
