@@ -48,7 +48,7 @@ export const startDevServer = async (): Promise<void> => {
 
   if (
     runningApplications.length > 0 &&
-    !(await confirmStartServer(runningApplications.length))
+    !(await promptStartingServerConfirmation(runningApplications.length))
   ) {
     return;
   }
@@ -151,7 +151,17 @@ export const startDevServer = async (): Promise<void> => {
   );
 };
 
-async function confirmStartServer(
+/**
+ * Prompts the user to confirm if they want to start another server.
+ *
+ * Should be called when there is already a server running.
+ *
+ * @param totalRunningApplications The total number of servers that are already
+ * running.
+ * @returns `true` if the user confirms that they want to start another server,
+ * `false` otherwise.
+ */
+async function promptStartingServerConfirmation(
   totalRunningApplications: number
 ): Promise<boolean> {
   const message =
