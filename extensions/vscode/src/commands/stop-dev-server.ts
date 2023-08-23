@@ -150,7 +150,7 @@ async function quickPickApplication(
     quickPick.onDidChangeSelection((value) => {
       quickPick.dispose();
 
-      if (value.length === 0) {
+      if (!value || value.length === 0) {
         resolve(undefined);
       } else {
         resolve(value[0]!.application);

@@ -14,6 +14,7 @@ suite("stop-dev-server command", () => {
   let utilsStub: any;
   let daemon: any;
   let command: any;
+  let quickPick: any;
 
   beforeEach(() => {
     vscodeStub = {
@@ -21,11 +22,17 @@ suite("stop-dev-server command", () => {
         showInformationMessage: sinon.stub(),
         showErrorMessage: sinon.stub(),
         withProgress: sinon.stub(),
+        createQuickPick: sinon.stub(),
       },
       commands: {
         executeCommand: sinon.stub(),
       },
     };
+    quickPick = sinon.stub();
+    vscodeStub.window.createQuickPick.returns(quickPick);
+    quickPick.show = sinon.stub();
+    quickPick.dispose = sinon.stub();
+    quickPick.onDidChangeSelection = sinon.stub();
 
     utilsStub = {
       isDartFrogCLIInstalled: sinon.stub(),
@@ -41,6 +48,13 @@ suite("stop-dev-server command", () => {
     };
     dartFrogDaemon.DartFrogDaemon.instance = sinon.stub();
     daemon = dartFrogDaemon.DartFrogDaemon.instance;
+    daemon.applicationRegistry = sinon.stub();
+    daemon.applicationRegistry.all = sinon.stub();
+    daemon.applicationRegistry.on = sinon.stub();
+    daemon.applicationRegistry.off = sinon.stub();
+    daemon.requestIdentifierGenerator = sinon.stub();
+    daemon.requestIdentifierGenerator.generate = sinon.stub();
+    daemon.send = sinon.stub();
 
     command = proxyquire("../../../commands/stop-dev-server", {
       vscode: vscodeStub,
@@ -58,8 +72,7 @@ suite("stop-dev-server command", () => {
   suite("installing Dart Frog CLI", () => {
     beforeEach(() => {
       daemon.isReady = false;
-      daemon.applicationRegistry = sinon.stub();
-      daemon.applicationRegistry.all = sinon.stub().returns([]);
+      daemon.applicationRegistry.all.returns([]);
     });
 
     test("is suggested when not installed", async () => {
@@ -83,39 +96,185 @@ suite("stop-dev-server command", () => {
   });
 
   suite("no running servers information", () => {
+    const message = "No running servers found.";
+    const startOption = "Start server";
+    const cancelOption = "Cancel";
+
+    beforeEach(() => {
+      utilsStub.isDartFrogCLIInstalled.returns(true);
+    });
+
     suite("is shown", () => {
-      test("when daemon is not ready", async () => {});
+      test("when daemon is not ready", async () => {
+        daemon.isReady = false;
+        daemon.applicationRegistry.all.returns([]);
 
-      test("when no servers are running", async () => {});
+        await command.stopDevServer();
+
+        sinon.assert.calledOnceWithExactly(
+          vscodeStub.window.showInformationMessage,
+          message,
+          startOption,
+          cancelOption
+        );
+      });
+
+      test("when daemon is ready but no application is registered", async () => {
+        daemon.isReady = true;
+        daemon.applicationRegistry.all.returns([]);
+
+        await command.stopDevServer();
+
+        sinon.assert.calledOnceWithExactly(
+          vscodeStub.window.showInformationMessage,
+          message,
+          startOption,
+          cancelOption
+        );
+      });
     });
 
-    suite("is not shown", () => {
-      test("when daemon is ready", async () => {});
+    test("is not shown when daemon is ready and applications are registered", async () => {
+      daemon.isReady = true;
+      daemon.applicationRegistry.all.returns([
+        new DartFrogApplication("workingDirectory", 8080, 8181),
+      ]);
 
-      test("when a server is running", async () => {});
+      await command.stopDevServer();
+
+      sinon.assert.notCalled(
+        vscodeStub.window.showInformationMessage.withArgs(
+          message,
+          startOption,
+          cancelOption
+        )
+      );
     });
 
-    test("start server option runs start server command", async () => {});
+    test("start server option runs start server command", async () => {
+      daemon.isReady = false;
+      daemon.applicationRegistry.all.returns([]);
+
+      vscodeStub.window.showInformationMessage
+        .withArgs(message, startOption, cancelOption)
+        .resolves(startOption);
+
+      await command.stopDevServer();
+
+      sinon.assert.calledOnceWithExactly(
+        vscodeStub.commands.executeCommand,
+        "dart-frog.start-dev-server"
+      );
+    });
 
     suite("never stops the server", () => {
-      test("when `Start server` option is selected", async () => {});
+      beforeEach(() => {
+        daemon.isReady = false;
+        daemon.applicationRegistry.all.returns([]);
+      });
 
-      test("when `Cancel` option is selected", async () => {});
+      test("when `Start server` option is selected", async () => {
+        vscodeStub.window.showInformationMessage
+          .withArgs(message, startOption, cancelOption)
+          .resolves(startOption);
 
-      test("when dismissied", async () => {});
+        await command.stopDevServer();
+
+        sinon.assert.notCalled(daemon.send);
+      });
+
+      test("when `Cancel` option is selected", async () => {
+        vscodeStub.window.showInformationMessage
+          .withArgs(message, startOption, cancelOption)
+          .resolves(cancelOption);
+
+        await command.stopDevServer();
+
+        sinon.assert.notCalled(daemon.send);
+      });
+
+      test("when dismissed", async () => {
+        vscodeStub.window.showInformationMessage
+          .withArgs(message, startOption, cancelOption)
+          .resolves(undefined);
+
+        await command.stopDevServer();
+
+        sinon.assert.notCalled(daemon.send);
+      });
     });
   });
 
   suite("application quick pick", () => {
-    test("is not shown when there is a single running application", async () => {});
+    const application1 = new DartFrogApplication(
+      "workingDirectory",
+      8080,
+      8181
+    );
+    const application2 = new DartFrogApplication(
+      "workingDirectory",
+      8081,
+      8182
+    );
 
-    test("is shown when there is more than a single running application", async () => {});
+    beforeEach(() => {
+      daemon.isReady = true;
 
-    test("never stops the server when dismissed", async () => {});
+      application1.id = "application1";
+      application1.address = `http://localhost:${application1.port}`;
+
+      application2.id = "application2";
+      application2.address = `http://localhost:${application2.port}`;
+    });
+
+    test("is not shown when there is a single running application", async () => {
+      daemon.applicationRegistry.all.returns([application1]);
+
+      await command.stopDevServer();
+
+      sinon.assert.notCalled(vscodeStub.window.createQuickPick);
+    });
+
+    test("is shown when there is more than a single running application", async () => {
+      daemon.applicationRegistry.all.returns([application1, application2]);
+
+      const stopDevServer = command.stopDevServer();
+      const onDidChangeSelection =
+        quickPick.onDidChangeSelection.getCall(0).args[0];
+      onDidChangeSelection([]);
+
+      await stopDevServer;
+
+      sinon.assert.calledOnce(vscodeStub.window.createQuickPick);
+    });
+
+    test("never stops the server when dismissed", async () => {
+      daemon.applicationRegistry.all.returns([application1, application2]);
+
+      const stopDevServer = command.stopDevServer();
+      const onDidChangeSelection =
+        quickPick.onDidChangeSelection.getCall(0).args[0];
+      onDidChangeSelection(undefined);
+
+      await stopDevServer;
+
+      sinon.assert.notCalled(daemon.send);
+    });
 
     test("shows appropiate items for each running applications", async () => {});
 
-    test("is disposed after selection", async () => {});
+    test("is disposed after selection", async () => {
+      daemon.applicationRegistry.all.returns([application1, application2]);
+
+      const stopDevServer = command.stopDevServer();
+      const onDidChangeSelection =
+        quickPick.onDidChangeSelection.getCall(0).args[0];
+      onDidChangeSelection([application1]);
+
+      await stopDevServer;
+
+      sinon.assert.calledOnce(quickPick.dispose);
+    });
   });
 
   suite("progress", () => {
