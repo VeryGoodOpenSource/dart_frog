@@ -7,6 +7,7 @@ import {
   DartFrogApplication,
   StopDaemonRequest,
 } from "../../../daemon";
+import * as assert from "assert";
 
 suite("stop-dev-server command", () => {
   let vscodeStub: any;
@@ -380,6 +381,39 @@ suite("stop-dev-server command", () => {
         stopResponse.error.message
       );
       sinon.assert.calledOnce(progress.report);
+    });
+
+    test("takes at least 250ms before resolving", async () => {
+      const stopResponse: DaemonResponse = {
+        id: stopRequest.id,
+        result: "success",
+        error: undefined,
+      };
+      daemon.send.withArgs(stopRequest).resolves(stopResponse);
+
+      await command.stopDevServer();
+
+      sinon.assert.calledOnceWithExactly(
+        vscodeStub.window.withProgress,
+        {
+          location: 15,
+        },
+        sinon.match.any
+      );
+
+      const deregistrationListener =
+        daemon.applicationRegistry.on.getCall(0).args[1];
+      deregistrationListener(application);
+
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+
+      const start = Date.now();
+      await progressFunction(progress);
+      const end = Date.now();
+      const elapsed = end - start;
+
+      assert.ok(elapsed >= 250);
     });
   });
 
