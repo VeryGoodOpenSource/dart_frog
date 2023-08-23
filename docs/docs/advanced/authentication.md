@@ -9,7 +9,7 @@ There are many different approaches, protocols, and services when tackling authe
 
 Because of this Dart Frog does not bundle any feature, helpers or resources for authentication out of the box. This means that developers have full freedom to implement server authentication in the best way that fits their needs.
 
-Nevertheless, there are a few common patterns that can used in many different approaches to give the developer a head start. For example, there is a package called `dart_frog_auth`, which makes it easy for a simple authentication method to be implemented while also
+Nevertheless, there are a few common patterns that can used in many different approaches to give the developer a head start. For example, there is a package called [`dart_frog_auth`](https://pub.dev/packages/dart_frog_auth), which makes it easy for a simple authentication method to be implemented while also
 layering the foundation for more advanced authentication. See below for more details:
 
 ## Dart Frog Auth
