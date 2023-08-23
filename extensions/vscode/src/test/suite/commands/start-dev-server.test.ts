@@ -769,17 +769,26 @@ suite("start-dev-server command", () => {
   });
 
   suite("sends start request", () => {
-    const requestIdentifier = "test";
-    const portNumber = "8080";
-    const vmServicePortNumber = "8181";
-    const workingDirectory = "path";
+    const startRequest = new StartDaemonRequest(
+      "test",
+      "workingDirectory",
+      8080,
+      8181
+    );
+    const startResponse: DaemonResponse = {
+      id: startRequest.id,
+      result: "success",
+      error: undefined,
+    };
 
     beforeEach(() => {
       utilsStub.isDartFrogCLIInstalled.returns(true);
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
-        workingDirectory
+        startRequest.params.workingDirectory
       );
-      utilsStub.nearestDartFrogProject.returns(workingDirectory);
+      utilsStub.nearestDartFrogProject.returns(
+        startRequest.params.workingDirectory
+      );
 
       daemon.send = sinon.stub();
       daemon.isReady = true;
@@ -790,7 +799,8 @@ suite("start-dev-server command", () => {
       daemon.requestIdentifierGenerator = sinon.stub();
       daemon.requestIdentifierGenerator.generate = sinon
         .stub()
-        .returns(requestIdentifier);
+        .returns(startRequest.id);
+      daemon.send.withArgs(startRequest).resolves(startResponse);
 
       vscodeStub.window.showInputBox
         .withArgs({
@@ -800,7 +810,7 @@ suite("start-dev-server command", () => {
           ignoreFocusOut: true,
           validateInput: sinon.match.any,
         })
-        .resolves(portNumber);
+        .resolves(startRequest.params.port.toString());
       vscodeStub.window.showInputBox
         .withArgs({
           prompt: "Which port number the Dart VM service should listen on",
@@ -809,24 +819,11 @@ suite("start-dev-server command", () => {
           ignoreFocusOut: true,
           validateInput: sinon.match.any,
         })
-        .resolves(vmServicePortNumber);
+        .resolves(startRequest.params.dartVmServicePort.toString());
     });
 
     test("when there are no running applications", async () => {
       daemon.applicationRegistry.all.returns([]);
-
-      const startRequest = new StartDaemonRequest(
-        requestIdentifier,
-        workingDirectory,
-        Number(portNumber),
-        Number(vmServicePortNumber)
-      );
-      const startResponse: DaemonResponse = {
-        id: startRequest.id,
-        result: "success",
-        error: undefined,
-      };
-      daemon.send.withArgs(startRequest).resolves(startResponse);
 
       await command.startDevServer();
 
@@ -850,12 +847,6 @@ suite("start-dev-server command", () => {
     });
 
     test("when there is already a running server and user confirmed confirmation prompt", async () => {
-      const startRequest = new StartDaemonRequest(
-        requestIdentifier,
-        workingDirectory,
-        Number(portNumber),
-        Number(vmServicePortNumber)
-      );
       daemon.applicationRegistry.all.returns([
         new DartFrogApplication(
           "test",
@@ -864,13 +855,6 @@ suite("start-dev-server command", () => {
         ),
       ]);
       vscodeStub.window.showInformationMessage.resolves("Start another server");
-
-      const startResponse: DaemonResponse = {
-        id: startRequest.id,
-        result: "success",
-        error: undefined,
-      };
-      daemon.send.withArgs(startRequest).resolves(startResponse);
 
       await command.startDevServer();
 
@@ -894,12 +878,6 @@ suite("start-dev-server command", () => {
     });
 
     test("when there is already more than one running server and user confirmed confirmation prompt", async () => {
-      const startRequest = new StartDaemonRequest(
-        requestIdentifier,
-        workingDirectory,
-        Number(portNumber),
-        Number(vmServicePortNumber)
-      );
       daemon.applicationRegistry.all.returns([
         new DartFrogApplication(
           "test1",
@@ -913,13 +891,6 @@ suite("start-dev-server command", () => {
         ),
       ]);
       vscodeStub.window.showInformationMessage.resolves("Start another server");
-
-      const startResponse: DaemonResponse = {
-        id: startRequest.id,
-        result: "success",
-        error: undefined,
-      };
-      daemon.send.withArgs(startRequest).resolves(startResponse);
 
       await command.startDevServer();
 
@@ -944,19 +915,6 @@ suite("start-dev-server command", () => {
 
     test("then opens application", async () => {
       daemon.applicationRegistry.all.returns([]);
-
-      const startRequest = new StartDaemonRequest(
-        requestIdentifier,
-        workingDirectory,
-        Number(portNumber),
-        Number(vmServicePortNumber)
-      );
-      const startResponse: DaemonResponse = {
-        id: startRequest.id,
-        result: "success",
-        error: undefined,
-      };
-      daemon.send.withArgs(startRequest).resolves(startResponse);
 
       await command.startDevServer();
 
