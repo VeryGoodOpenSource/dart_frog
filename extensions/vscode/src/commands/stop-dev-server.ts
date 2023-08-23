@@ -26,8 +26,7 @@ import {
  * If there are no running servers or the daemon is not ready, the user will
  * be prompted to start a server and this command will not run.
  *
- * If there is more than one server running, the user will be prompted to
- * select which server to stop.
+ * If there is more than one server running, the user will be informed so.
  */
 export const stopDevServer = async (): Promise<void> => {
   if (!isDartFrogCLIInstalled()) {
