@@ -22,7 +22,8 @@ import {
  * run at their own risk.
  *
  * The user can start one or more servers. If there is already a server running,
- * the user will be prompted to confirm if really want to start another server.
+ * the user will be prompted to confirm if they really want to start another
+ * server.
  *
  * To start a server the user must:
  * - Have a Dart Frog project open in the current workspace.
