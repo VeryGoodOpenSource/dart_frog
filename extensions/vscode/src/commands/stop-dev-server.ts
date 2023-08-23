@@ -107,6 +107,28 @@ export const stopDevServer = async (): Promise<void> => {
   );
 };
 
+class PickableDartFrogApplication implements QuickPickItem {
+  constructor(dartFrogApplication: DartFrogApplication) {
+    const addressWithoutProtocol = dartFrogApplication.address!.replace(
+      /.*?:\/\//g,
+      ""
+    );
+    this.label = `$(globe) ${addressWithoutProtocol}`;
+    this.description = dartFrogApplication.id?.toString();
+    this.application = dartFrogApplication;
+  }
+
+  public readonly application: DartFrogApplication;
+
+  label: string;
+  kind?: QuickPickItemKind | undefined;
+  description?: string | undefined;
+  detail?: string | undefined;
+  picked?: boolean | undefined;
+  alwaysShow?: boolean | undefined;
+  buttons?: readonly QuickInputButton[] | undefined;
+}
+
 /**
  * Prompts the user to select a {@link DartFrogApplication} from a list of
  * running {@link DartFrogApplication}s.
@@ -129,7 +151,7 @@ async function quickPickApplication(
 
   return new Promise<DartFrogApplication | undefined>((resolve) => {
     quickPick.onDidChangeSelection((value) => {
-      quickPick.hide();
+      quickPick.dispose();
 
       if (value.length === 0) {
         resolve(undefined);
@@ -167,26 +189,4 @@ function onApplicationDeregistered(
     };
     registry.on(DartFrogApplicationRegistryEventEmitterTypes.remove, listener);
   });
-}
-
-class PickableDartFrogApplication implements QuickPickItem {
-  constructor(dartFrogApplication: DartFrogApplication) {
-    const addressWithoutProtocol = dartFrogApplication.address!.replace(
-      /.*?:\/\//g,
-      ""
-    );
-    this.label = `$(globe) ${addressWithoutProtocol}`;
-    this.description = dartFrogApplication.id?.toString();
-    this.application = dartFrogApplication;
-  }
-
-  public readonly application: DartFrogApplication;
-
-  label: string;
-  kind?: QuickPickItemKind | undefined;
-  description?: string | undefined;
-  detail?: string | undefined;
-  picked?: boolean | undefined;
-  alwaysShow?: boolean | undefined;
-  buttons?: readonly QuickInputButton[] | undefined;
 }
