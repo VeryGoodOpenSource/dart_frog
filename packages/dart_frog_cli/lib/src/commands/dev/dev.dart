@@ -68,7 +68,9 @@ class DevCommand extends DartFrogCommand {
 
     _stdinSubscription = stdin.listen(
       (event) {
-        if (event.length == 1 && event.first == 'R'.codeUnitAt(0)) {
+        if (event.length == 1 &&
+            (event.first == 'R'.codeUnitAt(0) ||
+                event.first == 'r'.codeUnitAt(0))) {
           _devServerRunner.reload();
         }
       },
@@ -80,7 +82,7 @@ class DevCommand extends DartFrogCommand {
       onDone: _stopListeningForHelpers,
     );
 
-    logger.info('Press R to reload');
+    logger.info('Press either R or r to reload');
   }
 
   void _stopListeningForHelpers() {

@@ -65,7 +65,7 @@ const validRouteConfiguration = RouteConfiguration(
       files: [],
       middleware: [],
       params: [],
-    )
+    ),
   ],
   routes: [
     RouteFile(
@@ -88,7 +88,7 @@ const validRouteConfiguration = RouteConfiguration(
       route: '/',
       params: [],
       wildcard: false,
-    )
+    ),
   ],
   endpoints: {
     '/': <RouteFile>[
@@ -98,7 +98,7 @@ const validRouteConfiguration = RouteConfiguration(
         route: '/',
         params: [],
         wildcard: false,
-      )
+      ),
     ],
     '/<id>/existing_as_file': <RouteFile>[
       RouteFile(
@@ -107,7 +107,7 @@ const validRouteConfiguration = RouteConfiguration(
         route: '/existing_as_file',
         params: [],
         wildcard: false,
-      )
+      ),
     ],
     '/<id>/existing_as_dir': <RouteFile>[
       RouteFile(
@@ -116,7 +116,7 @@ const validRouteConfiguration = RouteConfiguration(
         route: '/',
         params: [],
         wildcard: false,
-      )
+      ),
     ],
   },
   rogueRoutes: [],
