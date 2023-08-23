@@ -7,6 +7,7 @@ import {
 } from "../utils";
 import {
   DartFrogApplication,
+  DartFrogApplicationRegistry,
   DartFrogApplicationRegistryEventEmitterTypes,
   DartFrogDaemon,
   StartDaemonRequest,
@@ -99,7 +100,7 @@ export const startDevServer = async (): Promise<void> => {
   );
 
   const applicationPromise = onApplicationRegistered(
-    daemon,
+    daemon.applicationRegistry,
     startDaemonRequest
   );
 
@@ -195,13 +196,13 @@ function validatePortNumber(value: string, usedPorts: number[]) {
  * Waits for a {@link DartFrogApplication} to be registered by a
  * {@link start} request.
  *
- * @param daemon The daemon to listen to.
+ * @param registry The {@link DartFrogApplicationRegistry} to listen to.
  * @param start The start daemon request to listen for.
  * @returns A promise that resolves whit the application that has been
  * registered by the {@link start} daemon request.
  */
 function onApplicationRegistered(
-  daemon: DartFrogDaemon,
+  registry: DartFrogApplicationRegistry,
   start: StartDaemonRequest
 ): Promise<DartFrogApplication> {
   return new Promise<DartFrogApplication>((resolve) => {
@@ -211,16 +212,13 @@ function onApplicationRegistered(
         application.vmServicePort === start.params.dartVmServicePort &&
         application.projectPath === start.params.workingDirectory
       ) {
-        daemon.applicationRegistry.off(
+        registry.off(
           DartFrogApplicationRegistryEventEmitterTypes.add,
           listener
         );
         resolve(application);
       }
     };
-    daemon.applicationRegistry.on(
-      DartFrogApplicationRegistryEventEmitterTypes.add,
-      listener
-    );
+    registry.on(DartFrogApplicationRegistryEventEmitterTypes.add, listener);
   });
 }
