@@ -83,12 +83,8 @@ export const stopDevServer = async (): Promise<void> => {
 
       const stopDaemonResponse = await daemon.send(stopRequest);
       if (stopDaemonResponse.error) {
-        progress.report({
-          message: stopDaemonResponse.error.message,
-        });
-
-        // Add a small delay to allow the user to read the message.
-        return await new Promise((resolve) => setTimeout(resolve, 500));
+        window.showErrorMessage(stopDaemonResponse.error.message);
+        return;
       }
 
       progress.report({
