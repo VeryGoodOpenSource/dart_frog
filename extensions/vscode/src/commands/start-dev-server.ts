@@ -64,29 +64,29 @@ export const startDevServer = async (): Promise<void> => {
     return;
   }
 
-  const usedPorts = [];
+  const usedPorts: Array<number> = [];
   for (const application of runningApplications) {
     usedPorts.push(application.port);
     usedPorts.push(application.vmServicePort);
   }
 
-  const portNumber = await promptForPortNumber(
-    "Which port number the server should start on",
-    "8080",
-    runningApplications.length === 0 ? "8080" : undefined,
-    usedPorts
-  );
+  const portNumber = await window.showInputBox({
+    prompt: "Which port number the server should start on",
+    placeHolder: "8080",
+    ignoreFocusOut: true,
+    validateInput: (value) => validatePortNumber(value, usedPorts),
+  });
   if (!portNumber) {
     return;
   }
   usedPorts.push(Number(portNumber));
 
-  const vmServicePortNumber = await promptForPortNumber(
-    "Which port number the Dart VM service should listen on",
-    "8181",
-    runningApplications.length === 0 ? "8181" : undefined,
-    usedPorts
-  );
+  const vmServicePortNumber = await window.showInputBox({
+    prompt: "Which port number the Dart VM service should listen on",
+    placeHolder: "8181",
+    ignoreFocusOut: true,
+    validateInput: (value) => validatePortNumber(value, usedPorts),
+  });
   if (!vmServicePortNumber) {
     return;
   }
@@ -166,49 +166,29 @@ async function promptForStartingServerConfirmation(
 }
 
 /**
- * Prompts the user for a port number.
+ * Validates a port number.
  *
- * The input is verified to be a valid port number and that it is not already in
- * use by another Dart Frog server.
- *
- * @param prompt The prompt to display to the user.
- * @param placeHolder The placeholder to display in the input box.
- * @param value The value to prefill the input box with.
- * @param usedPorts The ports that are already in use. Usually only those that
- * are currently in use by another Dart Frog server.
- * @returns If the user cancels the prompt, `undefined` is returned. Otherwise,
- * the port number is returned as a string.
+ * @param value The input value to validate.
+ * @param usedPorts The list of ports that are already in use by other servers.
+ * @returns `undefined` if the port number is valid, an error message otherwise.
  */
-function promptForPortNumber(
-  prompt: string,
-  placeHolder: string,
-  value: string | undefined = undefined,
-  usedPorts: number[]
-): Thenable<string | undefined> {
-  return window.showInputBox({
-    prompt: prompt,
-    placeHolder: placeHolder,
-    value: value,
-    ignoreFocusOut: true,
-    validateInput: (value) => {
-      if (value.trim().length === 0) {
-        return "Port number cannot be empty";
-      }
+function validatePortNumber(value: string, usedPorts: number[]) {
+  if (value.trim().length === 0) {
+    return "Port number cannot be empty";
+  }
 
-      const port = Number(value);
-      if (Number.isNaN(port)) {
-        return "Port number must be a number";
-      }
-      if (port < 0 || port > 65535) {
-        return "Port number must be between 0 and 65535";
-      }
-      if (usedPorts.includes(port)) {
-        return "Port number is already in use by another server";
-      }
+  const port = Number(value);
+  if (Number.isNaN(port)) {
+    return "Port number must be a number";
+  }
+  if (port < 0 || port > 65535) {
+    return "Port number must be between 0 and 65535";
+  }
+  if (usedPorts.includes(port)) {
+    return "Port number is already in use by another server";
+  }
 
-      return undefined;
-    },
-  });
+  return undefined;
 }
 
 /**
