@@ -382,6 +382,7 @@ suite("stop-dev-server command", () => {
         vscodeStub.window.showErrorMessage,
         stopResponse.error.message
       );
+      sinon.assert.calledOnce(progress.report);
     });
   });
 
