@@ -98,27 +98,9 @@ export const startDevServer = async (): Promise<void> => {
     Number(vmServicePortNumber)
   );
 
-  const applicationRegistryPromise = new Promise<DartFrogApplication>(
-    (resolve) => {
-      const listener = (application: DartFrogApplication) => {
-        if (
-          application.port === startDaemonRequest.params.port &&
-          application.vmServicePort ===
-            startDaemonRequest.params.dartVmServicePort &&
-          application.projectPath === startDaemonRequest.params.workingDirectory
-        ) {
-          daemon.applicationRegistry.off(
-            DartFrogApplicationRegistryEventEmitterTypes.add,
-            listener
-          );
-          resolve(application);
-        }
-      };
-      daemon.applicationRegistry.on(
-        DartFrogApplicationRegistryEventEmitterTypes.add,
-        listener
-      );
-    }
+  const applicationPromise = onApplicationRegistered(
+    daemon,
+    startDaemonRequest
   );
 
   await window.withProgress(
@@ -139,7 +121,7 @@ export const startDevServer = async (): Promise<void> => {
         increment: 75,
       });
 
-      const application = await applicationRegistryPromise;
+      const application = await applicationPromise;
 
       progress.report({
         message: `Server successfully started`,
@@ -226,5 +208,39 @@ function promptForPortNumber(
 
       return undefined;
     },
+  });
+}
+
+/**
+ * Waits for a {@link DartFrogApplication} to be registered by a
+ * {@link start} request.
+ *
+ * @param daemon The daemon to listen to.
+ * @param start The start daemon request to listen for.
+ * @returns A promise that resolves whit the application that has been
+ * registered by the {@link start} daemon request.
+ */
+function onApplicationRegistered(
+  daemon: DartFrogDaemon,
+  start: StartDaemonRequest
+): Promise<DartFrogApplication> {
+  return new Promise<DartFrogApplication>((resolve) => {
+    const listener = (application: DartFrogApplication) => {
+      if (
+        application.port === start.params.port &&
+        application.vmServicePort === start.params.dartVmServicePort &&
+        application.projectPath === start.params.workingDirectory
+      ) {
+        daemon.applicationRegistry.off(
+          DartFrogApplicationRegistryEventEmitterTypes.add,
+          listener
+        );
+        resolve(application);
+      }
+    };
+    daemon.applicationRegistry.on(
+      DartFrogApplicationRegistryEventEmitterTypes.add,
+      listener
+    );
   });
 }
