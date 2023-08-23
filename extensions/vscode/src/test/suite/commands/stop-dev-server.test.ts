@@ -6,6 +6,7 @@ import {
   DaemonResponse,
   DartFrogApplication,
   StartDaemonRequest,
+  StopDaemonRequest,
 } from "../../../daemon";
 import { Uri } from "vscode";
 import { assert } from "console";
@@ -16,6 +17,7 @@ suite("stop-dev-server command", () => {
   let daemon: any;
   let command: any;
   let quickPick: any;
+  let progress: any;
 
   beforeEach(() => {
     vscodeStub = {
@@ -64,6 +66,9 @@ suite("stop-dev-server command", () => {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       "../daemon": dartFrogDaemon,
     });
+
+    progress = sinon.stub();
+    progress.report = sinon.stub();
   });
 
   afterEach(() => {
@@ -301,12 +306,111 @@ suite("stop-dev-server command", () => {
   });
 
   suite("progress", () => {
-    test("is shown when stopping server", async () => {});
+    const application = new DartFrogApplication("workingDirectory", 8080, 8181);
+    const stopRequest = new StopDaemonRequest("test", "application1");
 
-    test("shows error message when error occurs", async () => {});
+    beforeEach(() => {
+      application.id = stopRequest.params.applicationId;
 
-    test("stops when error occurs", async () => {});
+      daemon.isReady = true;
+      daemon.applicationRegistry.all.returns([application]);
+      daemon.requestIdentifierGenerator.generate.returns(stopRequest.id);
+    });
+
+    test("is shown when stopping server", async () => {
+      const stopResponse: DaemonResponse = {
+        id: stopRequest.id,
+        result: "success",
+        error: undefined,
+      };
+      daemon.send.withArgs(stopRequest).resolves(stopResponse);
+
+      await command.stopDevServer();
+
+      sinon.assert.calledOnceWithExactly(
+        vscodeStub.window.withProgress,
+        {
+          location: 15,
+        },
+        sinon.match.any
+      );
+
+      const deregistrationListener =
+        daemon.applicationRegistry.on.getCall(0).args[1];
+      deregistrationListener(application);
+
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      await progressFunction(progress);
+
+      sinon.assert.calledWith(progress.report.getCall(0), {
+        message: `Stopping server...`,
+      });
+
+      sinon.assert.calledWith(progress.report.getCall(1), {
+        message: `Deregistering server...`,
+        increment: 75,
+      });
+
+      sinon.assert.calledWith(progress.report.getCall(2), {
+        message: `Server stopped successfully`,
+        increment: 100,
+      });
+    });
+
+    test("shows error message when error occurs", async () => {
+      const stopResponse: DaemonResponse = {
+        id: stopRequest.id,
+        result: undefined,
+        error: {
+          message: "error message",
+        },
+      };
+      daemon.send.withArgs(stopRequest).resolves(stopResponse);
+
+      await command.stopDevServer();
+
+      const deregistrationListener =
+        daemon.applicationRegistry.on.getCall(0).args[1];
+      deregistrationListener(application);
+
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      await progressFunction(progress);
+
+      sinon.assert.calledWith(
+        vscodeStub.window.showErrorMessage,
+        stopResponse.error.message
+      );
+    });
   });
 
-  test("stops server", async () => {});
+  test("stops server", async () => {
+    const application = new DartFrogApplication("workingDirectory", 8080, 8181);
+    const stopRequest = new StopDaemonRequest("test", "application1");
+    const stopResponse: DaemonResponse = {
+      id: stopRequest.id,
+      result: "success",
+      error: undefined,
+    };
+
+    application.id = stopRequest.params.applicationId;
+
+    utilsStub.isDartFrogCLIInstalled.returns(true);
+    daemon.isReady = true;
+    daemon.applicationRegistry.all.returns([application]);
+    daemon.requestIdentifierGenerator.generate.returns(stopRequest.id);
+    daemon.send.withArgs(stopRequest).resolves(stopResponse);
+
+    await command.stopDevServer();
+
+    const deregistrationListener =
+      daemon.applicationRegistry.on.getCall(0).args[1];
+    deregistrationListener(application);
+
+    const progressFunction = vscodeStub.window.withProgress.getCall(0).args[1];
+    await progressFunction(progress);
+
+    sinon.assert.calledOnceWithExactly(daemon.send, stopRequest);
+  });
 });
