@@ -107,10 +107,18 @@ export const stopDevServer = async (): Promise<void> => {
   );
 };
 
+/**
+ * Prompts the user to select a {@link DartFrogApplication} from a list of
+ * running {@link DartFrogApplication}s.
+ *
+ * @param applications The running {@link DartFrogApplication}s to choose from.
+ * @returns The selected {@link DartFrogApplication} or `undefined` if the user
+ * cancelled the selection.
+ */
 async function quickPickApplication(
   applications: DartFrogApplication[]
 ): Promise<DartFrogApplication | undefined> {
-  const quickPick = window.createQuickPick();
+  const quickPick = window.createQuickPick<PickableDartFrogApplication>();
   quickPick.placeholder = "Select a server to stop";
   quickPick.busy = true;
   quickPick.ignoreFocusOut = true;
@@ -119,8 +127,17 @@ async function quickPickApplication(
   );
   quickPick.show();
 
-  // TODO(alestiago): Handle cancellation and selection.
-  return undefined;
+  return new Promise<DartFrogApplication | undefined>((resolve) => {
+    quickPick.onDidChangeSelection((value) => {
+      quickPick.hide();
+
+      if (value.length === 0) {
+        resolve(undefined);
+      } else {
+        resolve(value[0]!.application);
+      }
+    });
+  });
 }
 
 /**
@@ -160,7 +177,10 @@ class PickableDartFrogApplication implements QuickPickItem {
     );
     this.label = `$(globe) ${addressWithoutProtocol}`;
     this.description = dartFrogApplication.id?.toString();
+    this.application = dartFrogApplication;
   }
+
+  public readonly application: DartFrogApplication;
 
   label: string;
   kind?: QuickPickItemKind | undefined;
