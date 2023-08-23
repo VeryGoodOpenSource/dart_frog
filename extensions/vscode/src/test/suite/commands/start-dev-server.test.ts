@@ -724,8 +724,7 @@ suite("start-dev-server command", () => {
       );
     });
 
-    test("reports error when sever fails to start", async () => {
-      // TODO(alestiago): Finish test.
+    test("reports error when server fails to start", async () => {
       const startRequest = new StartDaemonRequest(
         requestIdentifier,
         workingDirectory,
