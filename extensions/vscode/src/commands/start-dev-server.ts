@@ -31,7 +31,6 @@ export const startDevServer = async (): Promise<void> => {
 
   const runningServers = daemon.applicationRegistry.all();
 
-  console.log(`@@@@ runningServer: ${runningServers}`);
   if (runningServers.length > 0) {
     const message =
       runningServers.length > 1
