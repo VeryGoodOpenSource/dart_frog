@@ -48,7 +48,7 @@ export const startDevServer = async (): Promise<void> => {
 
   if (
     runningApplications.length > 0 &&
-    !(await promptStartingServerConfirmation(runningApplications.length))
+    !(await promptForStartingServerConfirmation(runningApplications.length))
   ) {
     return;
   }
@@ -143,7 +143,7 @@ export const startDevServer = async (): Promise<void> => {
  * @returns `true` if the user confirms that they want to start another server,
  * `false` otherwise.
  */
-async function promptStartingServerConfirmation(
+async function promptForStartingServerConfirmation(
   totalRunningApplications: number
 ): Promise<boolean> {
   const message =
