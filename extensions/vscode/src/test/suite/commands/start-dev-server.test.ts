@@ -57,11 +57,12 @@ suite("start-dev-server command", () => {
 
   suite("installing Dart Frog CLI", () => {
     beforeEach(() => {
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
+      utilsStub.nearestDartFrogProject.returns(undefined);
+
       daemon.isReady = true;
       daemon.applicationRegistry = sinon.stub();
       daemon.applicationRegistry.all = sinon.stub().returns([]);
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
-      utilsStub.nearestDartFrogProject.returns(undefined);
     });
 
     test("is suggested when not installed", async () => {
@@ -121,10 +122,11 @@ suite("start-dev-server command", () => {
   suite("confirmation prompt before running", () => {
     beforeEach(() => {
       utilsStub.isDartFrogCLIInstalled.returns(true);
-      daemon.isReady = true;
-      daemon.applicationRegistry = sinon.stub();
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
       utilsStub.nearestDartFrogProject.returns(undefined);
+
+      daemon.isReady = true;
+      daemon.applicationRegistry = sinon.stub();
     });
 
     suite("is shown", () => {
@@ -188,6 +190,7 @@ suite("start-dev-server command", () => {
 
     beforeEach(() => {
       utilsStub.isDartFrogCLIInstalled.returns(true);
+
       daemon.isReady = true;
       daemon.applicationRegistry = sinon.stub();
       daemon.applicationRegistry.all = sinon.stub().returns([]);
@@ -232,10 +235,11 @@ suite("start-dev-server command", () => {
   suite("port number prompt is shown", () => {
     beforeEach(() => {
       utilsStub.isDartFrogCLIInstalled.returns(true);
-      daemon.isReady = true;
-      daemon.applicationRegistry = sinon.stub();
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns("path");
       utilsStub.nearestDartFrogProject.returns("path");
+
+      daemon.isReady = true;
+      daemon.applicationRegistry = sinon.stub();
     });
 
     test("with prefilled default value when there are no running servers", async () => {
@@ -393,10 +397,12 @@ suite("start-dev-server command", () => {
 
     beforeEach(() => {
       utilsStub.isDartFrogCLIInstalled.returns(true);
-      daemon.isReady = true;
-      daemon.applicationRegistry = sinon.stub();
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns("path");
       utilsStub.nearestDartFrogProject.returns("path");
+
+      daemon.isReady = true;
+      daemon.applicationRegistry = sinon.stub();
+
       vscodeStub.window.showInputBox
         .withArgs({
           prompt: "Which port number the server should start on",
@@ -633,6 +639,11 @@ suite("start-dev-server command", () => {
 
     beforeEach(() => {
       utilsStub.isDartFrogCLIInstalled.returns(true);
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+        workingDirectory
+      );
+      utilsStub.nearestDartFrogProject.returns(workingDirectory);
+
       daemon.send = sinon.stub();
       daemon.isReady = true;
       daemon.applicationRegistry = sinon.stub();
@@ -643,10 +654,7 @@ suite("start-dev-server command", () => {
       daemon.requestIdentifierGenerator.generate = sinon
         .stub()
         .returns(requestIdentifier);
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
-        workingDirectory
-      );
-      utilsStub.nearestDartFrogProject.returns(workingDirectory);
+
       vscodeStub.window.showInputBox
         .withArgs({
           prompt: "Which port number the server should start on",
@@ -806,19 +814,22 @@ suite("start-dev-server command", () => {
 
     beforeEach(() => {
       utilsStub.isDartFrogCLIInstalled.returns(true);
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+        workingDirectory
+      );
+      utilsStub.nearestDartFrogProject.returns(workingDirectory);
+
       daemon.send = sinon.stub();
       daemon.isReady = true;
       daemon.applicationRegistry = sinon.stub();
+      daemon.applicationRegistry.all = sinon.stub().returns([]);
       daemon.applicationRegistry.on = sinon.stub();
       daemon.applicationRegistry.off = sinon.stub();
       daemon.requestIdentifierGenerator = sinon.stub();
       daemon.requestIdentifierGenerator.generate = sinon
         .stub()
         .returns(requestIdentifier);
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
-        workingDirectory
-      );
-      utilsStub.nearestDartFrogProject.returns(workingDirectory);
+
       vscodeStub.window.showInputBox
         .withArgs({
           prompt: "Which port number the server should start on",
@@ -837,7 +848,6 @@ suite("start-dev-server command", () => {
           validateInput: sinon.match.any,
         })
         .resolves(vmServicePortNumber);
-      daemon.applicationRegistry.all = sinon.stub().returns([]);
     });
 
     test("is shown when starting server", async () => {
