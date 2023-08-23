@@ -111,7 +111,7 @@ class PickableDartFrogApplication implements QuickPickItem {
       ""
     );
     this.label = `$(globe) ${addressWithoutProtocol}`;
-    this.description = dartFrogApplication.id?.toString();
+    this.description = dartFrogApplication.id!.toString();
     this.application = dartFrogApplication;
   }
 
