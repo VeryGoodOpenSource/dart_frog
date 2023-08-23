@@ -10,7 +10,7 @@ Map<String, String> get _handshakeHeaders {
     'Upgrade': 'websocket',
     'Connection': 'Upgrade',
     'Sec-WebSocket-Key': 'x3JJHMbDL1EzLkh9GBhXDw==',
-    'Sec-WebSocket-Version': '13'
+    'Sec-WebSocket-Version': '13',
   };
 }
 

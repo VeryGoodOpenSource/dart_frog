@@ -8,7 +8,7 @@ final createDartFrogBundle = MasonBundle.fromJson(<String, dynamic>{
     {
       "path": ".gitignore",
       "data":
-          "IyBTZWUgaHR0cHM6Ly93d3cuZGFydGxhbmcub3JnL2d1aWRlcy9saWJyYXJpZXMvcHJpdmF0ZS1maWxlcwoKIyBGaWxlcyBhbmQgZGlyZWN0b3JpZXMgY3JlYXRlZCBieSBwdWIKLmRhcnRfdG9vbC8KLnBhY2thZ2VzCnB1YnNwZWMubG9jawoKIyBGaWxlcyBhbmQgZGlyZWN0b3JpZXMgY3JlYXRlZCBieSBkYXJ0X2Zyb2cKYnVpbGQvCi5kYXJ0X2Zyb2cKCiMgVGVzdCByZWxhdGVkIGZpbGVzCmNvdmVyYWdlLw==",
+          "IyBTZWUgaHR0cHM6Ly93d3cuZGFydGxhbmcub3JnL2d1aWRlcy9saWJyYXJpZXMvcHJpdmF0ZS1maWxlcwoKIyBGaWxlcyBhbmQgZGlyZWN0b3JpZXMgY3JlYXRlZCBieSB0aGUgT3BlcmF0aW5nIFN5c3RlbQouRFNfU3RvcmUKCiMgRmlsZXMgYW5kIGRpcmVjdG9yaWVzIGNyZWF0ZWQgYnkgcHViCi5kYXJ0X3Rvb2wvCi5wYWNrYWdlcwpwdWJzcGVjLmxvY2sKCiMgRmlsZXMgYW5kIGRpcmVjdG9yaWVzIGNyZWF0ZWQgYnkgZGFydF9mcm9nCmJ1aWxkLwouZGFydF9mcm9nCgojIFRlc3QgcmVsYXRlZCBmaWxlcwpjb3ZlcmFnZS8=",
       "type": "text"
     },
     {
