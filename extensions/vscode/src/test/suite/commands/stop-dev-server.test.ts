@@ -5,11 +5,8 @@ import { afterEach, beforeEach } from "mocha";
 import {
   DaemonResponse,
   DartFrogApplication,
-  StartDaemonRequest,
   StopDaemonRequest,
 } from "../../../daemon";
-import { Uri } from "vscode";
-import { assert } from "console";
 
 suite("stop-dev-server command", () => {
   let vscodeStub: any;
