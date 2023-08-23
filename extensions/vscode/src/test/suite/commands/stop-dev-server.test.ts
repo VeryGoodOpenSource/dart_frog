@@ -8,6 +8,7 @@ import {
   StartDaemonRequest,
 } from "../../../daemon";
 import { Uri } from "vscode";
+import { assert } from "console";
 
 suite("stop-dev-server command", () => {
   let vscodeStub: any;
@@ -205,7 +206,7 @@ suite("stop-dev-server command", () => {
     });
   });
 
-  suite("application quick pick", () => {
+  suite("applications quick pick", () => {
     const application1 = new DartFrogApplication(
       "workingDirectory",
       8080,
@@ -261,7 +262,29 @@ suite("stop-dev-server command", () => {
       sinon.assert.notCalled(daemon.send);
     });
 
-    test("shows appropiate items for each running applications", async () => {});
+    test("shows appropiate items for each running applications", async () => {
+      daemon.applicationRegistry.all.returns([application1, application2]);
+
+      const stopDevServer = command.stopDevServer();
+      const onDidChangeSelection =
+        quickPick.onDidChangeSelection.getCall(0).args[0];
+      onDidChangeSelection(undefined);
+
+      await stopDevServer;
+
+      const items = quickPick.items;
+
+      sinon.assert.match(items[0], {
+        label: `$(globe) localhost:${application1.port}`,
+        description: application1.id,
+        application: application1,
+      });
+      sinon.assert.match(items[1], {
+        label: `$(globe) localhost:${application2.port}`,
+        description: application2.id,
+        application: application2,
+      });
+    });
 
     test("is disposed after selection", async () => {
       daemon.applicationRegistry.all.returns([application1, application2]);
