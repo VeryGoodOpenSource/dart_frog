@@ -9,7 +9,7 @@ part of '_internal.dart';
 ///
 /// `"X-Powered-By": "Dart with package:dart_frog"`
 ///
-///  If a [securityContext] is provided an HTTPS server will be started
+/// If a [securityContext] is provided an HTTPS server will be started.
 Future<HttpServer> serve(
   Handler handler,
   Object address,
