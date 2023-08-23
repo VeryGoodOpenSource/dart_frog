@@ -10,6 +10,7 @@ import {
   DaemonEvent,
   isDaemonEvent,
   isDaemonRequest,
+  DaemonResponse,
 } from "../protocol";
 
 const domainName = "daemon";

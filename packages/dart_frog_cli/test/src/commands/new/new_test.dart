@@ -466,7 +466,7 @@ void main() {
             vars: {
               'route_path': '/user/[id]/posts/[post_id]/comments',
               'type': 'route',
-              'dir_path': '${directory.path}/routes/something'
+              'dir_path': '${directory.path}/routes/something',
             },
             workingDirectory: any(named: 'workingDirectory'),
             onVarsChanged: any(named: 'onVarsChanged'),
