@@ -1031,6 +1031,19 @@ suite("start-dev-server command", () => {
     });
 
     test("is shown when starting server", async () => {
+      const startRequest = new StartDaemonRequest(
+        requestIdentifier,
+        workingDirectory,
+        Number(portNumber),
+        Number(vmServicePortNumber)
+      );
+      const startResponse: DaemonResponse = {
+        id: startRequest.id,
+        result: "success",
+        error: undefined,
+      };
+      daemon.send.withArgs(startRequest).resolves(startResponse);
+
       await command.startDevServer();
 
       sinon.assert.calledOnceWithExactly(
@@ -1040,6 +1053,35 @@ suite("start-dev-server command", () => {
         },
         sinon.match.any
       );
+
+      const application = new DartFrogApplication(
+        startRequest.params.workingDirectory,
+        startRequest.params.port,
+        startRequest.params.dartVmServicePort
+      );
+      application.address = `https://localhost:${application.port}`;
+      const registrationListener = daemon.applicationRegistry.on
+        .withArgs("add", sinon.match.any)
+        .getCall(0).args[1];
+      registrationListener(application);
+
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      const progress = sinon.stub();
+      progress.report = sinon.stub();
+      await progressFunction(progress);
+
+      sinon.assert.calledWith(progress.report.getCall(0), {
+        message: "Starting server...",
+      });
+      sinon.assert.calledWith(progress.report.getCall(1), {
+        message: `Registering server...`,
+        increment: 75,
+      });
+      sinon.assert.calledWith(progress.report.getCall(2), {
+        message: `Server successfully started`,
+        increment: 100,
+      });
     });
 
     test("reports error when server fails to start", async () => {
