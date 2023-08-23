@@ -31,6 +31,7 @@ export const startDevServer = async (): Promise<void> => {
 
   const runningServers = daemon.applicationRegistry.all();
 
+  console.log(`@@@@ runningServer: ${runningServers}`);
   if (runningServers.length > 0) {
     const message =
       runningServers.length > 1
@@ -46,7 +47,6 @@ export const startDevServer = async (): Promise<void> => {
       case "Start another server":
         break;
       case "Cancel":
-        return;
       default:
         return;
     }
@@ -129,7 +129,6 @@ export const startDevServer = async (): Promise<void> => {
 
       const startDaemonResponse = await daemon.send(startDaemonRequest);
       if (startDaemonResponse.error) {
-        console.log(`@@@@ error: ${startDaemonResponse.error.message}`);
         progress.report({ message: startDaemonResponse.error.message });
         return;
       }

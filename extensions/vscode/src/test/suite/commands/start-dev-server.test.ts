@@ -118,7 +118,7 @@ suite("start-dev-server command", () => {
     });
   });
 
-  suite("confirmation information message before running", () => {
+  suite("confirmation prompt before running", () => {
     beforeEach(() => {
       utilsStub.isDartFrogCLIInstalled.returns(true);
       daemon.isReady = true;
@@ -576,7 +576,45 @@ suite("start-dev-server command", () => {
   });
 
   suite("does not send start request", () => {
-    test("when there is already a running server and user cancelled confirmation prompt", async () => {});
+    const requestIdentifier = "test";
+    const portNumber = "8080";
+    const vmServicePortNumber = "8181";
+    const workingDirectory = "path";
+
+    beforeEach(() => {
+      utilsStub.isDartFrogCLIInstalled.returns(true);
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+        workingDirectory
+      );
+      utilsStub.nearestDartFrogProject.returns(workingDirectory);
+
+      daemon.send = sinon.stub();
+      daemon.isReady = true;
+      daemon.applicationRegistry = sinon.stub();
+      daemon.applicationRegistry.all = sinon.stub();
+    });
+
+    test("when there is already a running server and user cancelled confirmation prompt", async () => {
+      // TODO(alestiago): Finish test.
+      const startRequest = new StartDaemonRequest(
+        requestIdentifier,
+        workingDirectory,
+        Number(portNumber),
+        Number(vmServicePortNumber)
+      );
+      daemon.applicationRegistry.all.returns([
+        new DartFrogApplication(
+          "test",
+          startRequest.params.port + 1,
+          startRequest.params.dartVmServicePort + 1
+        ),
+      ]);
+      vscodeStub.window.showInformationMessage.resolves("Cancel");
+
+      await command.startDevServer();
+
+      sinon.assert.neverCalledWith(daemon.send, startRequest);
+    });
 
     test("when there is already more than one running server and user cancelled confirmation prompt", async () => {});
 
@@ -598,6 +636,7 @@ suite("start-dev-server command", () => {
       daemon.send = sinon.stub();
       daemon.isReady = true;
       daemon.applicationRegistry = sinon.stub();
+      daemon.applicationRegistry.all = sinon.stub();
       daemon.applicationRegistry.on = sinon.stub();
       daemon.applicationRegistry.off = sinon.stub();
       daemon.requestIdentifierGenerator = sinon.stub();
@@ -629,7 +668,7 @@ suite("start-dev-server command", () => {
     });
 
     test("when there are no running applications", async () => {
-      daemon.applicationRegistry.all = sinon.stub().returns([]);
+      daemon.applicationRegistry.all.returns([]);
 
       const startRequest = new StartDaemonRequest(
         requestIdentifier,
@@ -665,9 +704,98 @@ suite("start-dev-server command", () => {
       sinon.assert.calledOnceWithExactly(daemon.send, startRequest);
     });
 
-    test("when there is already a running server and user confirmed confirmation prompt", async () => {});
+    test("when there is already a running server and user confirmed confirmation prompt", async () => {
+      const startRequest = new StartDaemonRequest(
+        requestIdentifier,
+        workingDirectory,
+        Number(portNumber),
+        Number(vmServicePortNumber)
+      );
+      daemon.applicationRegistry.returns([
+        new DartFrogApplication(
+          "test",
+          startRequest.params.port + 1,
+          startRequest.params.dartVmServicePort + 1
+        ),
+      ]);
+      vscodeStub.window.showInformationMessage.resolves("Start another server");
 
-    test("when there is already more than one running server and user confirmed confirmation prompt", async () => {});
+      const startResponse: DaemonResponse = {
+        id: startRequest.id,
+        result: "success",
+        error: undefined,
+      };
+      daemon.send.withArgs(startRequest).resolves(startResponse);
+
+      await command.startDevServer();
+
+      const application = new DartFrogApplication(
+        startRequest.params.workingDirectory,
+        startRequest.params.port,
+        startRequest.params.dartVmServicePort
+      );
+      const registrationListener = daemon.applicationRegistry.on
+        .withArgs("add", sinon.match.any)
+        .getCall(0).args[1];
+      registrationListener(application);
+
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      const progress = sinon.stub();
+      progress.report = sinon.stub();
+      await progressFunction(progress);
+
+      sinon.assert.calledOnceWithExactly(daemon.send, startRequest);
+    });
+
+    test("when there is already more than one running server and user confirmed confirmation prompt", async () => {
+      const startRequest = new StartDaemonRequest(
+        requestIdentifier,
+        workingDirectory,
+        Number(portNumber),
+        Number(vmServicePortNumber)
+      );
+      daemon.applicationRegistry.all.returns([
+        new DartFrogApplication(
+          "test1",
+          startRequest.params.port + 1,
+          startRequest.params.dartVmServicePort + 1
+        ),
+        new DartFrogApplication(
+          "test2",
+          startRequest.params.port + 2,
+          startRequest.params.dartVmServicePort + 2
+        ),
+      ]);
+      vscodeStub.window.showInformationMessage.resolves("Start another server");
+
+      const startResponse: DaemonResponse = {
+        id: startRequest.id,
+        result: "success",
+        error: undefined,
+      };
+      daemon.send.withArgs(startRequest).resolves(startResponse);
+
+      await command.startDevServer();
+
+      const application = new DartFrogApplication(
+        startRequest.params.workingDirectory,
+        startRequest.params.port,
+        startRequest.params.dartVmServicePort
+      );
+      const registrationListener = daemon.applicationRegistry.on
+        .withArgs("add", sinon.match.any)
+        .getCall(0).args[1];
+      registrationListener(application);
+
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      const progress = sinon.stub();
+      progress.report = sinon.stub();
+      await progressFunction(progress);
+
+      sinon.assert.calledOnceWithExactly(daemon.send, startRequest);
+    });
   });
 
   suite("progress", () => {
