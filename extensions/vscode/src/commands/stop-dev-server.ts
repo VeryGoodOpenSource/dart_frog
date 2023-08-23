@@ -88,7 +88,7 @@ export const stopDevServer = async (): Promise<void> => {
         });
 
         // Add a small delay to allow the user to read the message.
-        return await new Promise((resolve) => setTimeout(resolve, 250));
+        return await new Promise((resolve) => setTimeout(resolve, 500));
       }
 
       progress.report({
