@@ -13,6 +13,7 @@
     "url": "https://github.com/VeryGoodOpenSource/dart_frog"
   },
   "homepage": "https://dartfrog.vgv.dev/",
+  "license": "MIT",
   "engines": {
     "vscode": "^1.79.0"
   },
@@ -56,6 +57,10 @@
       {
         "command": "dart-frog.start-daemon",
         "title": "Dart Frog: Start Daemon"
+      },
+      {
+        "command": "dart-frog.start-dev-server",
+        "title": "Dart Frog: Start Development Server"
       }
     ],
     "menus": {
