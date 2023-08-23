@@ -1,4 +1,10 @@
-import { commands, window } from "vscode";
+import {
+  QuickInputButton,
+  QuickPickItem,
+  QuickPickItemKind,
+  commands,
+  window,
+} from "vscode";
 import { isDartFrogCLIInstalled, suggestInstallingDartFrogCLI } from "../utils";
 import {
   DartFrogApplication,
@@ -31,8 +37,8 @@ export const stopDevServer = async (): Promise<void> => {
   }
 
   const daemon = DartFrogDaemon.instance;
-  const runningApplications = daemon.applicationRegistry.all();
-  if (!daemon.isReady || runningApplications.length === 0) {
+  const applications = daemon.applicationRegistry.all();
+  if (!daemon.isReady || applications.length === 0) {
     const selection = await window.showInformationMessage(
       "No running servers found.",
       "Start server",
@@ -49,9 +55,12 @@ export const stopDevServer = async (): Promise<void> => {
   }
 
   const application =
-    runningApplications.length === 1
-      ? runningApplications[0]
-      : await quickPickApplication();
+    applications.length === 1
+      ? applications[0]
+      : await quickPickApplication(applications);
+  if (!application) {
+    return;
+  }
 
   const stopRequest = new StopDaemonRequest(
     daemon.requestIdentifierGenerator.generate(),
@@ -98,8 +107,20 @@ export const stopDevServer = async (): Promise<void> => {
   );
 };
 
-async function quickPickApplication(): Promise<DartFrogApplication> {
-  throw new Error("Not implemented");
+async function quickPickApplication(
+  applications: DartFrogApplication[]
+): Promise<DartFrogApplication | undefined> {
+  const quickPick = window.createQuickPick();
+  quickPick.placeholder = "Select a server to stop";
+  quickPick.busy = true;
+  quickPick.ignoreFocusOut = true;
+  quickPick.items = applications.map(
+    (application) => new PickableDartFrogApplication(application)
+  );
+  quickPick.show();
+
+  // TODO(alestiago): Handle cancellation and selection.
+  return undefined;
 }
 
 /**
@@ -129,4 +150,23 @@ function onApplicationDeregistered(
     };
     registry.on(DartFrogApplicationRegistryEventEmitterTypes.remove, listener);
   });
+}
+
+class PickableDartFrogApplication implements QuickPickItem {
+  constructor(dartFrogApplication: DartFrogApplication) {
+    const addressWithoutProtocol = dartFrogApplication.address!.replace(
+      /.*?:\/\//g,
+      ""
+    );
+    this.label = `$(globe) ${addressWithoutProtocol}`;
+    this.description = dartFrogApplication.id?.toString();
+  }
+
+  label: string;
+  kind?: QuickPickItemKind | undefined;
+  description?: string | undefined;
+  detail?: string | undefined;
+  picked?: boolean | undefined;
+  alwaysShow?: boolean | undefined;
+  buttons?: readonly QuickInputButton[] | undefined;
 }
