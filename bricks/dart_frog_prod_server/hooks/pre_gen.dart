@@ -2,13 +2,16 @@ import 'dart:async';
 import 'dart:io' as io;
 
 import 'package:dart_frog_gen/dart_frog_gen.dart';
+import 'package:io/io.dart' as io_expanded;
 import 'package:mason/mason.dart'
     show HookContext, defaultForeground, lightCyan;
 import 'package:path/path.dart' as path;
 
 import 'src/create_bundle.dart';
+import 'src/create_external_packages_folder.dart';
+import 'src/dart_pub_get.dart';
 import 'src/exit_overrides.dart';
-import 'src/get_path_dependencies.dart';
+import 'src/get_internal_path_dependencies.dart';
 
 typedef RouteConfigurationBuilder = RouteConfiguration Function(
   io.Directory directory,
@@ -21,10 +24,20 @@ Future<void> run(HookContext context) => preGen(context);
 Future<void> preGen(
   HookContext context, {
   io.Directory? directory,
+  ProcessRunner runProcess = io.Process.run,
   RouteConfigurationBuilder buildConfiguration = buildRouteConfiguration,
   void Function(int exitCode) exit = _defaultExit,
+  Future<void> Function(String from, String to) copyPath = io_expanded.copyPath,
 }) async {
   final projectDirectory = directory ?? io.Directory.current;
+
+  // We need to make sure that the pubspec.lock file is up to date
+  await dartPubGet(
+    context,
+    workingDirectory: projectDirectory.path,
+    runProcess: runProcess,
+    exit: exit,
+  );
 
   await createBundle(context, projectDirectory, exit);
 
@@ -64,23 +77,17 @@ Future<void> preGen(
     },
   );
 
-  await reportExternalPathDependencies(
-    projectDirectory,
-    onViolationStart: () {
-      context.logger
-        ..err('All path dependencies must be within the project.')
-        ..err('External path dependencies detected:');
-    },
-    onExternalPathDependency: (dependencyName, dependencyPath) {
-      context.logger.err('  \u{2022} $dependencyName from $dependencyPath');
-    },
-    onViolationEnd: () {
-      exit(1);
-    },
-  );
-
   final customDockerFile = io.File(
     path.join(projectDirectory.path, 'Dockerfile'),
+  );
+
+  final internalPathDependencies = await getInternalPathDependencies(
+    projectDirectory,
+  );
+
+  final externalDependencies = await createExternalPackagesFolder(
+    projectDirectory,
+    copyPath: copyPath,
   );
 
   final addDockerfile = !customDockerFile.existsSync();
@@ -99,7 +106,9 @@ Future<void> preGen(
     'serveStaticFiles': configuration.serveStaticFiles,
     'invokeCustomEntrypoint': configuration.invokeCustomEntrypoint,
     'invokeCustomInit': configuration.invokeCustomInit,
-    'pathDependencies': await getPathDependencies(projectDirectory),
+    'pathDependencies': internalPathDependencies,
+    'hasExternalDependencies': externalDependencies.isNotEmpty,
+    'externalPathDependencies': externalDependencies,
     'dartVersion': context.vars['dartVersion'],
     'addDockerfile': addDockerfile,
   };

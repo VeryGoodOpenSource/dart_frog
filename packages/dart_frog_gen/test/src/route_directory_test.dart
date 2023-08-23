@@ -55,7 +55,7 @@ void main() {
             route: '/route/<name>',
             params: ['name'],
             wildcard: false,
-          )
+          ),
         ],
         params: ['id'],
       );
