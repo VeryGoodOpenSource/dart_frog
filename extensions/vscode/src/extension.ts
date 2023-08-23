@@ -7,6 +7,7 @@ import {
   create,
   startDaemon,
   startDevServer,
+  stopDevServer,
 } from "./commands";
 import {
   readDartFrogCLIVersion,
@@ -48,7 +49,8 @@ export function activate(
     vscode.commands.registerCommand(
       "dart-frog.start-dev-server",
       startDevServer
-    )
+    ),
+    vscode.commands.registerCommand("dart-frog.stop-dev-server", stopDevServer)
   );
   return context;
 }
