@@ -46,24 +46,11 @@ export const startDevServer = async (): Promise<void> => {
 
   const runningApplications = daemon.applicationRegistry.all();
 
-  if (runningApplications.length > 0) {
-    const message =
-      runningApplications.length > 1
-        ? `There are ${runningApplications.length} servers already running, would you like to start another server?`
-        : "A server is already running, would you like to start another server?";
-
-    const selection = await window.showInformationMessage(
-      message,
-      "Start another server",
-      "Cancel"
-    );
-    switch (selection) {
-      case "Start another server":
-        break;
-      case "Cancel":
-      default:
-        return;
-    }
+  if (
+    runningApplications.length > 0 &&
+    !(await confirmStartServer(runningApplications.length))
+  ) {
+    return;
   }
 
   const workingPath = resolveDartFrogProjectPathFromWorkspace();
@@ -163,6 +150,28 @@ export const startDevServer = async (): Promise<void> => {
     }
   );
 };
+
+async function confirmStartServer(
+  totalRunningApplications: number
+): Promise<boolean> {
+  const message =
+    totalRunningApplications > 1
+      ? `There are ${totalRunningApplications} servers already running, would you like to start another server?`
+      : "A server is already running, would you like to start another server?";
+
+  const selection = await window.showInformationMessage(
+    message,
+    "Start another server",
+    "Cancel"
+  );
+  switch (selection) {
+    case "Start another server":
+      return true;
+    case "Cancel":
+    default:
+      return false;
+  }
+}
 
 /**
  * Prompts the user for a port number.
