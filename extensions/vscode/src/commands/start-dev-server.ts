@@ -16,7 +16,7 @@ import {
 /**
  * Starts a Dart Frog development server on the current workspace.
  *
- * This command can be launched from the Command Palette.
+ * This command can be launched from the command palette.
  *
  * The user requires to have Dart Frog CLI installed in order to run this
  * command. If they opt out of installing Dart Frog CLI, the command will
