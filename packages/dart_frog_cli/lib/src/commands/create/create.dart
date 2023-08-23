@@ -44,7 +44,7 @@ class CreateCommand extends DartFrogCommand {
     final generateProgress = logger.progress('Creating $projectName');
     final vars = <String, dynamic>{
       'name': projectName,
-      'output_directory': outputDirectory.absolute.path
+      'output_directory': outputDirectory.absolute.path,
     };
 
     logger.detail('[codegen] running generate...');
