@@ -43,12 +43,12 @@ export const startDevServer = async (): Promise<void> => {
     await commands.executeCommand("dart-frog.start-daemon");
   }
 
-  const runningServers = daemon.applicationRegistry.all();
+  const runningApplications = daemon.applicationRegistry.all();
 
-  if (runningServers.length > 0) {
+  if (runningApplications.length > 0) {
     const message =
-      runningServers.length > 1
-        ? `There are ${runningServers.length} servers already running, would you like to start another server?`
+      runningApplications.length > 1
+        ? `There are ${runningApplications.length} servers already running, would you like to start another server?`
         : "A server is already running, would you like to start another server?";
 
     const selection = await window.showInformationMessage(
@@ -77,15 +77,15 @@ export const startDevServer = async (): Promise<void> => {
   }
 
   const usedPorts = [];
-  for (const server of runningServers) {
-    usedPorts.push(server.port);
-    usedPorts.push(server.vmServicePort);
+  for (const application of runningApplications) {
+    usedPorts.push(application.port);
+    usedPorts.push(application.vmServicePort);
   }
 
   const portNumber = await promptForPortNumber(
     "Which port number the server should start on",
     "8080",
-    runningServers.length === 0 ? "8080" : undefined,
+    runningApplications.length === 0 ? "8080" : undefined,
     usedPorts
   );
   if (!portNumber) {
@@ -96,7 +96,7 @@ export const startDevServer = async (): Promise<void> => {
   const vmServicePortNumber = await promptForPortNumber(
     "Which port number the Dart VM service should listen on",
     "8181",
-    runningServers.length === 0 ? "8181" : undefined,
+    runningApplications.length === 0 ? "8181" : undefined,
     usedPorts
   );
   if (!vmServicePortNumber) {
