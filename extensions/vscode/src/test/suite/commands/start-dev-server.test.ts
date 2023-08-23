@@ -7,6 +7,7 @@ import {
   DartFrogApplication,
   StartDaemonRequest,
 } from "../../../daemon";
+import { Uri } from "vscode";
 
 suite("start-dev-server command", () => {
   let vscodeStub: any;
@@ -939,6 +940,49 @@ suite("start-dev-server command", () => {
       await progressFunction(progress);
 
       sinon.assert.calledOnceWithExactly(daemon.send, startRequest);
+    });
+
+    test("then opens application", async () => {
+      daemon.applicationRegistry.all.returns([]);
+
+      const startRequest = new StartDaemonRequest(
+        requestIdentifier,
+        workingDirectory,
+        Number(portNumber),
+        Number(vmServicePortNumber)
+      );
+      const startResponse: DaemonResponse = {
+        id: startRequest.id,
+        result: "success",
+        error: undefined,
+      };
+      daemon.send.withArgs(startRequest).resolves(startResponse);
+
+      await command.startDevServer();
+
+      const application = new DartFrogApplication(
+        startRequest.params.workingDirectory,
+        startRequest.params.port,
+        startRequest.params.dartVmServicePort
+      );
+      application.address = `https://localhost:${application.port}`;
+      const registrationListener = daemon.applicationRegistry.on
+        .withArgs("add", sinon.match.any)
+        .getCall(0).args[1];
+      registrationListener(application);
+
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      const progress = sinon.stub();
+      progress.report = sinon.stub();
+      await progressFunction(progress);
+
+      sinon.assert.calledOnceWithExactly(daemon.send, startRequest);
+      sinon.assert.calledOnceWithMatch(
+        vscodeStub.commands.executeCommand,
+        "vscode.open",
+        Uri.parse(application.address)
+      );
     });
   });
 
