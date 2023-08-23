@@ -13,7 +13,7 @@ import {
 } from "../daemon";
 
 /**
- * Starts the server.
+ * Starts a Dart Frog development server on the current workspace.
  *
  * This command can be launched from the Command Palette.
  *
