@@ -74,6 +74,7 @@ export const startDevServer = async (): Promise<void> => {
   const portNumber = await window.showInputBox({
     prompt: "Which port number the server should start on",
     placeHolder: "8080",
+    value: runningApplications.length > 0 ? "8080" : undefined,
     ignoreFocusOut: true,
     validateInput: (value) => validatePortNumber(value, usedPorts),
   });
@@ -85,6 +86,7 @@ export const startDevServer = async (): Promise<void> => {
   const vmServicePortNumber = await window.showInputBox({
     prompt: "Which port number the Dart VM service should listen on",
     placeHolder: "8181",
+    value: runningApplications.length > 0 ? "8181" : undefined,
     ignoreFocusOut: true,
     validateInput: (value) => validatePortNumber(value, usedPorts),
   });
