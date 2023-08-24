@@ -46,7 +46,7 @@ export const debugDevServer = async (): Promise<void> => {
         location: 15,
         title: `Activating Dart extension...`,
       },
-      async function () {
+      async () => {
         await dartExtension.activate();
       }
     );
