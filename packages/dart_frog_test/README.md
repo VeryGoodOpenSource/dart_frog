@@ -7,6 +7,10 @@
 A testing library that makes it easy to test Dart Frog services. It offers helpers to mock requests as well as
 custom matchers in order to write readable expectations.
 
+> [!NOTE]
+> This package is still experimental and although it is ready to be used, some/or all of its API
+> might change (with deprecations) in future versions.
+
 ## Installation 💻
 
 **❗ In order to start using Dart Frog Test you must have the [Dart SDK][dart_install_link] installed on your machine.**
