@@ -16,6 +16,7 @@ import { DartFrogApplication } from "../daemon";
  * Prompts the user to select a {@link DartFrogApplication} from a list of
  * running {@link DartFrogApplication}s.
  *
+ * @param options The options for the {@link QuickPick}.
  * @param applications The running {@link DartFrogApplication}s to choose from.
  * @returns The selected {@link DartFrogApplication} or `undefined` if the user
  * cancelled the selection.
