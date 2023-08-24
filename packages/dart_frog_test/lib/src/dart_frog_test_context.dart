@@ -28,7 +28,7 @@ class DartFrogTestContext {
   /// The request headers.
   final Map<String, String>? headers;
 
-  /// The request url.
+  /// The request body.
   final Object? body;
 
   final _requestContext = _MockRequestContext();

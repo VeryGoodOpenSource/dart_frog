@@ -5,7 +5,7 @@
 [![License: MIT][license_badge]][license_link]
 
 A testing library that makes it easy to test Dart Frog services. It offers helpers to mock requests as well as
-custom matchers in order to write easier to read expectations.
+custom matchers in order to write readable expectations.
 
 ## Installation 💻
 
@@ -36,7 +36,7 @@ A simple example:
 import '../../../routes/users/[id].dart' as route;
 
 test('returns ok', () {
-  final context - DartFrogTestContext(
+  final context = DartFrogTestContext(
     path: '/users/1',
   );
 
@@ -52,11 +52,11 @@ If the route handler function reads a [dependency injected via context](https://
 import '../../../routes/users/index.dart' as route;
 
 test('returns ok', () {
-  final context - DartFrogTestContext(
+  final context = DartFrogTestContext(
     path: '/users',
   );
 
-  final userRepository = /** Create Mock */;
+  final userRepository = /* Create Mock */;
 
   context.provide<UserRepository>(userRepository);
 
@@ -69,7 +69,7 @@ Check the `DartFrogTestContext` constructor for all the available context attrib
 
 ## Matchers
 
-This package also provide test matchers that can be used to do expectation/assertions on top of
+This package also provide test matchers that can be used to do expectation or assertions on top of
 Dart Frog's `Response`s:
 
 ```dart

@@ -11,7 +11,7 @@ Response onRequest(RequestContext context) {
 }
 
 Response _onPost(RequestContext context) {
-  final rng = context.read<Random>();
+  final random = context.read<Random>();
   return Response.json(
     body: {'value': rng.nextInt(6) + 1},
   );
