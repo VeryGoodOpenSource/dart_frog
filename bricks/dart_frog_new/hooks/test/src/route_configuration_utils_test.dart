@@ -67,8 +67,8 @@ void main() {
               route: '/',
               params: [],
               wildcard: false,
-            )
-          ]
+            ),
+          ],
         });
 
         expect(
@@ -96,7 +96,7 @@ void main() {
               route: '/',
               params: [],
               wildcard: false,
-            )
+            ),
           ],
           '/<id>': const <RouteFile>[
             RouteFile(
@@ -105,7 +105,7 @@ void main() {
               route: '/',
               params: [],
               wildcard: false,
-            )
+            ),
           ],
           '/<id>/existing_as_file': const <RouteFile>[
             RouteFile(
@@ -114,7 +114,7 @@ void main() {
               route: '/existing_as_file',
               params: [],
               wildcard: false,
-            )
+            ),
           ],
           '/<id>/existing_as_dir': const <RouteFile>[
             RouteFile(
@@ -123,7 +123,7 @@ void main() {
               route: '/',
               params: [],
               wildcard: false,
-            )
+            ),
           ],
         });
       });

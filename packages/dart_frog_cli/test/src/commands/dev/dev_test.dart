@@ -242,7 +242,7 @@ void main() {
           ..testStdin = stdin;
       });
 
-      test('listens for R on hot reload enabled', () async {
+      Future<void> hotReloadTest(int asciiValue, String character) async {
         command.run().ignore();
         await Future<void>.delayed(Duration.zero);
 
@@ -254,7 +254,7 @@ void main() {
             cancelOnError: true,
           ),
         );
-        verifyNever(() => logger.info('Press R to reload'));
+        verifyNever(() => logger.info('Press $character to reload'));
 
         givenOnHotReloadEnabled();
 
@@ -267,7 +267,8 @@ void main() {
             cancelOnError: true,
           ),
         ).called(1);
-        verify(() => logger.info('Press R to reload')).called(1);
+
+        verify(() => logger.info('Press either R or r to reload')).called(1);
 
         verify(() => stdin.echoMode = false).called(1);
         verify(() => stdin.lineMode = false).called(1);
@@ -277,19 +278,26 @@ void main() {
 
         verifyNever(() => runner.reload());
 
-        stdinController.add([82, 42]);
+        stdinController.add([asciiValue, 42]);
         await Future<void>.delayed(Duration.zero);
 
         verifyNever(() => runner.reload());
 
-        stdinController.add([82]);
+        stdinController.add([asciiValue]);
         await Future<void>.delayed(Duration.zero);
 
         verify(() => runner.reload()).called(1);
 
         exitCodeCompleter.complete(ExitCode.success);
+      }
+
+      test('listens for uppercase R on hot reload enabled', () async {
+        await hotReloadTest(82, 'R');
       });
 
+      test('listens for lowercase r on hot reload enabled', () async {
+        await hotReloadTest(114, 'r');
+      });
       test('cancels subscription when dev server stops', () async {
         command.run().ignore();
         await Future<void>.delayed(Duration.zero);
