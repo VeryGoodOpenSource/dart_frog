@@ -76,6 +76,10 @@ cd ./todos
 dart_frog dev
 ```
 
+:::tip
+Install and use the [Dart Frog VS Code extension](https://marketplace.visualstudio.com/items?itemName=VeryGoodVentures.dart-frog) to easily create Dart Frog apps within your IDE.
+:::
+
 ## Running the development server
 
 You should now have a directory called `todos` -- `cd` into it:
@@ -167,7 +171,7 @@ version: 0.1.0+1
 publish_to: none
 
 environment:
-  sdk: '>=2.19.0 <3.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   equatable: ^2.0.3
@@ -177,9 +181,9 @@ dependencies:
 dev_dependencies:
   build_runner: ^2.2.0
   json_serializable: ^6.3.1
-  mocktail: ^0.3.0
+  mocktail: ^1.0.0
   test: ^1.19.2
-  very_good_analysis: ^4.0.0
+  very_good_analysis: ^5.0.0
 ```
 
 Install the newly added dependencies via:
@@ -368,7 +372,7 @@ version: 0.1.0+1
 publish_to: none
 
 environment:
-  sdk: '>=2.19.0 <3.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   todos_data_source:
@@ -376,9 +380,9 @@ dependencies:
   uuid: ^3.0.6
 
 dev_dependencies:
-  mocktail: ^0.3.0
+  mocktail: ^1.0.0
   test: ^1.19.2
-  very_good_analysis: ^4.0.0
+  very_good_analysis: ^5.0.0
 ```
 
 :::note
@@ -445,19 +449,20 @@ version: 1.0.0+1
 publish_to: none
 
 environment:
-  sdk: '>=2.19.0 <3.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
-  dart_frog: ^0.3.0
+  dart_frog: ^1.0.0
   in_memory_todos_data_source:
     path: packages/in_memory_todos_data_source
   todos_data_source:
     path: packages/todos_data_source
 
 dev_dependencies:
-  mocktail: ^0.3.0
+  http: ^1.0.0
+  mocktail: ^1.0.0
   test: ^1.19.2
-  very_good_analysis: ^4.0.0
+  very_good_analysis: ^5.0.0
 ```
 
 Install the newly added dependencies via:
@@ -487,6 +492,10 @@ Handler middleware(Handler handler) {
 We're providing a single instance of the `TodosDataSource` so we have a single source of data for the lifetime of the application.
 
 In addition, we're using the `requestLogger` middleware from `package:dart_frog` to log all requests for debugging.
+:::
+
+:::tip
+Install and use the [Dart Frog VS Code extension](https://marketplace.visualstudio.com/items?itemName=VeryGoodVentures.dart-frog) to easily create new middleware within your IDE.
 :::
 
 ## Creating the `/todos` route
@@ -531,6 +540,10 @@ Future<Response> _post(RequestContext context) async {
   );
 }
 ```
+
+:::tip
+Install and use the [Dart Frog VS Code extension](https://marketplace.visualstudio.com/items?itemName=VeryGoodVentures.dart-frog) to easily create new routes within your IDE.
+:::
 
 :::note
 We're using `context.read<TodosDataSource>` to access the provided instance of the `TodosDataSource`.

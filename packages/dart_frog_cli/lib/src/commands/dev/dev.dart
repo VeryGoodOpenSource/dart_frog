@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io' as io;
 
 import 'package:dart_frog_cli/src/command.dart';
@@ -7,15 +8,6 @@ import 'package:dart_frog_cli/src/dev_server_runner/dev_server_runner.dart';
 import 'package:dart_frog_cli/src/runtime_compatibility.dart'
     as runtime_compatibility;
 import 'package:mason/mason.dart';
-
-/// Typedef for [DevServerRunner.new].
-typedef DevServerRunnerBuilder = DevServerRunner Function({
-  required Logger logger,
-  required String port,
-  required MasonGenerator devServerBundleGenerator,
-  required String dartVmServicePort,
-  required io.Directory workingDirectory,
-});
 
 /// {@template dev_command}
 /// `dart_frog dev` command which starts the dev server`.
@@ -61,6 +53,54 @@ class DevCommand extends DartFrogCommand {
   @override
   final String name = 'dev';
 
+  StreamSubscription<List<int>>? _stdinSubscription;
+
+  late final DevServerRunner _devServerRunner;
+
+  void _startListeningForHelpers() {
+    if (_stdinSubscription != null) return;
+    if (!stdin.hasTerminal) return;
+
+    // listen for the R key
+    stdin
+      ..echoMode = false
+      ..lineMode = false;
+
+    _stdinSubscription = stdin.listen(
+      (event) {
+        if (event.length == 1 &&
+            (event.first == 'R'.codeUnitAt(0) ||
+                event.first == 'r'.codeUnitAt(0))) {
+          _devServerRunner.reload();
+        }
+      },
+      onError: (dynamic error) {
+        logger.err(error.toString());
+        _stopListeningForHelpers();
+      },
+      cancelOnError: true,
+      onDone: _stopListeningForHelpers,
+    );
+
+    logger.info('Press either R or r to reload');
+  }
+
+  void _stopListeningForHelpers() {
+    _stdinSubscription?.cancel();
+    _stdinSubscription = null;
+
+    // The command may lose terminal after sigint, even though
+    // the stdin subscription may have been created when the
+    // devserver started.
+    // That is why this check is made after the subscription
+    // is canceled, if existent.
+    if (!stdin.hasTerminal) return;
+
+    stdin
+      ..lineMode = true
+      ..echoMode = true;
+  }
+
   @override
   Future<int> run() async {
     _ensureRuntimeCompatibility(cwd);
@@ -70,23 +110,23 @@ class DevCommand extends DartFrogCommand {
         _defaultDartVmServicePort;
     final generator = await _generator(dartFrogDevServerBundle);
 
-    final devServer = _devServerRunnerBuilder(
+    _devServerRunner = _devServerRunnerBuilder(
       devServerBundleGenerator: generator,
       logger: logger,
       workingDirectory: cwd,
       port: port,
       dartVmServicePort: dartVmServicePort,
+      onHotReloadEnabled: _startListeningForHelpers,
     );
 
     try {
-      await devServer.start();
-    } on DartFrogDevServerException catch (e) {
-      logger.err(e.message);
+      await _devServerRunner.start();
+      return (await _devServerRunner.exitCode).code;
+    } catch (e) {
+      logger.err(e.toString());
       return ExitCode.software.code;
+    } finally {
+      _stopListeningForHelpers();
     }
-
-    final result = await devServer.exitCode;
-
-    return result.code;
   }
 }

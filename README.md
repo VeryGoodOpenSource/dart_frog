@@ -86,6 +86,10 @@ The goal of Dart Frog is to help developers effectively build backends in Dart. 
 
 Dart Frog provides a simple core with a small API surface area in order to reduce the learning curve and ramp-up time for developers. In addition, Dart Frog is intended to help Flutter/Dart developers maximize their productivity by having a unified tech stack that enables sharing tooling, models, and more!
 
+## Extensions 💻
+
+- [VS Code](https://marketplace.visualstudio.com/items?itemName=VeryGoodVentures.dart-frog): extends VS Code with support for Dart Frog and provides tools for effectively managing Dart Frog projects within VS Code.
+
 [dart_installation_link]: https://dart.dev/get-dart
 [ci_badge]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/main.yaml/badge.svg
 [ci_link]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/main.yaml

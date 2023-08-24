@@ -25,7 +25,7 @@ RouteConfiguration buildRouteConfiguration(Directory directory) {
 
   final endpoints = <String, List<RouteFile>>{};
   final middleware = <MiddlewareFile>[
-    if (globalMiddleware != null) globalMiddleware
+    if (globalMiddleware != null) globalMiddleware,
   ];
   final routes = <RouteFile>[];
   final rogueRoutes = <RouteFile>[];
@@ -346,6 +346,26 @@ class RouteConfiguration {
   /// │   │   └── index.dart
   /// ```
   final List<RouteFile> rogueRoutes;
+
+  /// Transform into json
+  Map<String, dynamic> toJson() {
+    return {
+      'invokeCustomEntrypoint': invokeCustomEntrypoint,
+      'invokeCustomInit': invokeCustomInit,
+      'serveStaticFiles': serveStaticFiles,
+      'globalMiddleware': globalMiddleware?.toJson(),
+      'middleware': middleware.map((e) => e.toJson()).toList(),
+      'directories': directories.map((e) => e.toJson()).toList(),
+      'routes': routes.map((e) => e.toJson()).toList(),
+      'endpoints': endpoints.map(
+        (key, value) => MapEntry(
+          key,
+          value.map((e) => e.toJson()).toList(),
+        ),
+      ),
+      'rogueRoutes': rogueRoutes.map((e) => e.toJson()).toList(),
+    };
+  }
 }
 
 /// {@template route_directory}

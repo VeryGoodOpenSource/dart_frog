@@ -25,6 +25,7 @@ void main() {
               path: 'hello.dart',
               route: '/hello',
               params: [],
+              wildcard: false,
             ),
           ],
         );
@@ -49,6 +50,7 @@ void main() {
               path: 'index.dart',
               route: '/',
               params: [],
+              wildcard: false,
             ),
           ],
           '/hello': const [
@@ -57,14 +59,16 @@ void main() {
               path: 'hello.dart',
               route: '/hello',
               params: [],
+              wildcard: false,
             ),
             RouteFile(
               name: 'hello_index',
               path: 'hello/index.dart',
               route: '/',
               params: [],
-            )
-          ]
+              wildcard: false,
+            ),
+          ],
         });
 
         expect(
@@ -91,7 +95,8 @@ void main() {
               path: '../routes/index.dart',
               route: '/',
               params: [],
-            )
+              wildcard: false,
+            ),
           ],
           '/<id>': const <RouteFile>[
             RouteFile(
@@ -99,7 +104,8 @@ void main() {
               path: '../routes/[id]/index.dart',
               route: '/',
               params: [],
-            )
+              wildcard: false,
+            ),
           ],
           '/<id>/existing_as_file': const <RouteFile>[
             RouteFile(
@@ -107,7 +113,8 @@ void main() {
               path: '../routes/[id]/existing_as_file.dart',
               route: '/existing_as_file',
               params: [],
-            )
+              wildcard: false,
+            ),
           ],
           '/<id>/existing_as_dir': const <RouteFile>[
             RouteFile(
@@ -115,7 +122,8 @@ void main() {
               path: '../routes/[id]/existing_as_dir/index.dart',
               route: '/',
               params: [],
-            )
+              wildcard: false,
+            ),
           ],
         });
       });
@@ -147,6 +155,7 @@ void main() {
               path: '../routes/[id]/existing_as_file.dart',
               route: '/existing_as_file',
               params: [],
+              wildcard: false,
             ),
           );
         });
@@ -192,6 +201,7 @@ void main() {
               path: '../routes/[id]/existing_as_file.dart',
               route: '/existing_as_file',
               params: [],
+              wildcard: false,
             ),
           );
         });
@@ -209,6 +219,7 @@ void main() {
               path: '../routes/[id]/existing_as_file.dart',
               route: '/existing_as_file',
               params: [],
+              wildcard: false,
             ),
           );
         });

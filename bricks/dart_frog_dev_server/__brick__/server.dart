@@ -12,7 +12,7 @@ import 'package:dart_frog/dart_frog.dart';
 {{/middleware}}
 void main() async {
   final address = InternetAddress.anyIPv6;
-  final port = int.parse(Platform.environment['PORT'] ?? '{{{port}}}');{{#invokeCustomInit}}
+  final port = int.tryParse(Platform.environment['PORT'] ?? '{{{port}}}') ?? {{{port}}};{{#invokeCustomInit}}
   await entrypoint.init(address, port);{{/invokeCustomInit}}
   hotReload(() => createServer(address, port));
 }

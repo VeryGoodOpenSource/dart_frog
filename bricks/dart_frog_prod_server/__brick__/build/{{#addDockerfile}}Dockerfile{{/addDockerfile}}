@@ -3,13 +3,20 @@
 FROM dart:{{dartVersion}} AS build
 
 WORKDIR /app
+{{#hasExternalDependencies}}
 
+# Copy external dependencies
+COPY ./.dart_frog_path_dependencies  ./.dart_frog_path_dependencies
+COPY ./pubspec_overrides.yaml ./pubspec_overrides.yaml
+{{/hasExternalDependencies}}
 # Copy Dependencies
 {{#pathDependencies}}COPY {{{.}}} ./{{{.}}}
 {{/pathDependencies}}
+{{^hasExternalDependencies}}
 # Install Dependencies
 {{#pathDependencies}}RUN dart pub get -C {{{.}}}
 {{/pathDependencies}}
+{{/hasExternalDependencies}}
 # Resolve app dependencies.
 COPY pubspec.* ./
 RUN dart pub get

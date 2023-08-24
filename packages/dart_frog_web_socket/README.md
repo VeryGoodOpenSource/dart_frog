@@ -60,7 +60,7 @@ void main() {
 }
 ```
 
-[ci_badge]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog_web_socket.yaml/badge.svg
+[ci_badge]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog_web_socket.yaml/badge.svg?branch=main
 [ci_link]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog_web_socket.yaml
 [coverage_badge]: https://raw.githubusercontent.com/VeryGoodOpenSource/dart_frog/main/packages/dart_frog_web_socket/coverage_badge.svg
 [dart_frog_link]: https://github.com/verygoodopensource/dart_frog

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
+import 'package:dart_frog_cli/src/command_runner.dart';
 import 'package:mason/mason.dart';
 import 'package:meta/meta.dart';
 
@@ -22,6 +23,12 @@ abstract class DartFrogCommand extends Command<int> {
 
   /// Current working directory used for testing purposes only.
   Directory? testCwd;
+
+  /// [stdin] used for testing purposes only.
+  Stdin? testStdin;
+
+  /// The [Stdin] instance to be used by the commands.
+  Stdin get stdin => testStdin ?? (runner as DartFrogCommandRunner?)!.stdin;
 
   /// [ArgResults] for the current command.
   ArgResults get results => testArgResults ?? argResults!;

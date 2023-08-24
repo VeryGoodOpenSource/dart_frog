@@ -18,7 +18,7 @@ Dart Frog provides a simple core with a small API surface area in order to reduc
 In order to use Dart Frog you must have the [Dart SDK][dart_installation_link] installed on your machine.
 
 :::info
-Dart Frog requires Dart `">=2.19.0 <3.0.0"`
+Dart Frog requires Dart `">=3.0.0 <4.0.0"`
 :::
 
 ### Installing 🧑‍💻
@@ -69,6 +69,22 @@ Create a production build which includes a `DockerFile` so that you can deploy a
 dart_frog build
 ```
 
+## Uninstalling 🗑️
+
+To uninstall Dart Frog completely, the [CLI completion](https://github.com/VeryGoodOpenSource/cli_completion) files have to be removed before uninstalling.
+
+```shell
+# 🧹 Uninstalling the Dart Frog CLI completion files
+dart_frog uninstall-completion-files
+```
+
+Now, if you installed Dart Frog globally via Pub, Dart's package manager, you can uninstall Dart Frog using:
+
+```shell
+# 🗑️ Uninstall the Dart Frog CLI from pub.dev
+dart pub global deactivate dart_frog_cli
+```
+
 ## Feature Set ✨
 
 ✅ Hot Reload ⚡️
@@ -94,6 +110,8 @@ dart_frog build
 ✅ Static File Support 📁
 
 ✅ WebSocket Support 🔌
+
+✅ VS Code Extension 💻
 
 🚧 Generated Dart Client Package 📦
 

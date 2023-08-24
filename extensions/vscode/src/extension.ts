@@ -5,11 +5,17 @@ import {
   newMiddleware,
   updateCLI,
   create,
+  startDaemon,
+  startDevServer,
+  stopDevServer,
 } from "./commands";
 import {
   readDartFrogCLIVersion,
   isCompatibleDartFrogCLIVersion,
   isDartFrogCLIInstalled,
+  openChangelog,
+  readLatestDartFrogCLIVersion,
+  suggestInstallingDartFrogCLI,
 } from "./utils";
 
 /**
@@ -25,52 +31,28 @@ import {
  */
 export function activate(
   context: vscode.ExtensionContext,
-  suggestInstallingCLI: () => Promise<void> = suggestInstallingDartFrogCLI,
   ensureCompatibleCLI: () => Promise<void> = ensureCompatibleDartFrogCLI
 ): vscode.ExtensionContext {
   if (!isDartFrogCLIInstalled()) {
-    suggestInstallingCLI();
+    suggestInstallingDartFrogCLI();
   } else {
     ensureCompatibleCLI();
   }
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("extension.create", create),
-    vscode.commands.registerCommand("extension.install-cli", installCLI),
-    vscode.commands.registerCommand("extension.update-cli", updateCLI),
-    vscode.commands.registerCommand("extension.new-route", newRoute),
-    vscode.commands.registerCommand("extension.new-middleware", newMiddleware)
+    vscode.commands.registerCommand("dart-frog.create", create),
+    vscode.commands.registerCommand("dart-frog.install-cli", installCLI),
+    vscode.commands.registerCommand("dart-frog.update-cli", updateCLI),
+    vscode.commands.registerCommand("dart-frog.new-route", newRoute),
+    vscode.commands.registerCommand("dart-frog.new-middleware", newMiddleware),
+    vscode.commands.registerCommand("dart-frog.start-daemon", startDaemon),
+    vscode.commands.registerCommand(
+      "dart-frog.start-dev-server",
+      startDevServer
+    ),
+    vscode.commands.registerCommand("dart-frog.stop-dev-server", stopDevServer)
   );
   return context;
-}
-
-/**
- * Suggests the user to install Dart Frog CLI.
- *
- * This method should be called upon activation of the extension whenever
- * Dart Frog CLI is not installed in the user's system.
- *
- * It prompts the user to install Dart Frog CLI. This is optional, the user
- * can choose to install Dart Frog CLI at a later time but the extension may
- * not work as intended until Dart Frog CLI is installed.
- *
- * @see {@link isDartFrogCLIInstalled}, to check if Dart Frog CLI is installed
- */
-export async function suggestInstallingDartFrogCLI(): Promise<void> {
-  const selection = await vscode.window.showWarningMessage(
-    "Dart Frog CLI is not installed. Install Dart Frog CLI to use this extension.",
-    "Install Dart Frog CLI",
-    "Ignore"
-  );
-  switch (selection) {
-    case "Install Dart Frog CLI":
-      await installCLI();
-      break;
-    case "Ignore":
-      break;
-    default:
-      break;
-  }
 }
 
 /**
@@ -105,14 +87,27 @@ export async function ensureCompatibleDartFrogCLI(): Promise<void> {
     return;
   }
 
+  const latestVersion = readLatestDartFrogCLIVersion();
+  if (!latestVersion) {
+    return;
+  }
+
+  const options = ["Update Dart Frog CLI", "Changelog", "Ignore"];
+  const shouldUpdate = isCompatibleDartFrogCLIVersion(latestVersion);
+  if (!shouldUpdate) {
+    options.shift();
+  }
+
   const selection = await vscode.window.showWarningMessage(
     `Dart Frog CLI version ${version} is not compatible with this extension.`,
-    "Update Dart Frog CLI",
-    "Ignore"
+    ...options
   );
   switch (selection) {
     case "Update Dart Frog CLI":
       updateCLI();
+      break;
+    case "Changelog":
+      openChangelog(latestVersion);
       break;
     case "Ignore":
       break;

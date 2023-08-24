@@ -1,9 +1,6 @@
-import 'dart:io';
-
 import 'package:dart_frog_gen/dart_frog_gen.dart';
 import 'package:mason/mason.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
 import '../pre_gen.dart';
@@ -73,6 +70,7 @@ void main() {
               path: 'index.dart',
               route: '/',
               params: [],
+              wildcard: false,
             ),
           ],
           '/hello': [
@@ -81,14 +79,16 @@ void main() {
               path: 'hello.dart',
               route: '/hello',
               params: [],
+              wildcard: false,
             ),
             RouteFile(
               name: 'hello_index',
               path: 'hello/index.dart',
               route: '/',
               params: [],
-            )
-          ]
+              wildcard: false,
+            ),
+          ],
         },
       );
 
@@ -118,6 +118,7 @@ void main() {
             path: 'hello.dart',
             route: '/hello',
             params: [],
+            wildcard: false,
           ),
         ],
         endpoints: {},
@@ -136,53 +137,6 @@ void main() {
         ),
       );
       expect(exitCalls, isEmpty);
-    });
-
-    test('complains about r external dependencies', () async {
-      const configuration = RouteConfiguration(
-        middleware: [],
-        directories: [],
-        routes: [],
-        rogueRoutes: [],
-        endpoints: {},
-      );
-
-      final directory = Directory.systemTemp.createTempSync();
-      File(path.join(directory.path, 'pubspec.yaml')).writeAsStringSync(
-        '''
-name: example
-version: 0.1.0
-environment:
-  sdk: ^2.17.0
-dependencies:
-  mason: any
-  foo:
-    path: ../../foo
-dev_dependencies:
-  test: any
-''',
-      );
-
-      final exitCalls = <int>[];
-      await preGen(
-        context,
-        buildConfiguration: (_) => configuration,
-        exit: exitCalls.add,
-        directory: directory,
-      );
-
-      verify(
-        () => logger.err('All path dependencies must be within the project.'),
-      ).called(1);
-      verify(
-        () => logger.err('External path dependencies detected:'),
-      ).called(1);
-      verify(
-        () => logger.err('  \u{2022} foo from ../../foo'),
-      ).called(1);
-      expect(exitCalls, isEmpty);
-
-      directory.delete(recursive: true).ignore();
     });
 
     test('retains custom port if specified', () async {
@@ -205,16 +159,18 @@ dev_dependencies:
       verifyNever(() => logger.err(any()));
       expect(
         context.vars,
-        equals({
-          'port': customPort,
-          'directories': <RouteDirectory>[],
-          'routes': <RouteFile>[],
-          'middleware': <MiddlewareFile>[],
-          'globalMiddleware': false,
-          'serveStaticFiles': false,
-          'invokeCustomEntrypoint': false,
-          'invokeCustomInit': false
-        }),
+        equals(
+          {
+            'port': customPort,
+            'directories': <RouteDirectory>[],
+            'routes': <RouteFile>[],
+            'middleware': <MiddlewareFile>[],
+            'globalMiddleware': false,
+            'serveStaticFiles': false,
+            'invokeCustomEntrypoint': false,
+            'invokeCustomInit': false,
+          },
+        ),
       );
     });
 
@@ -239,16 +195,18 @@ dev_dependencies:
       verifyNever(() => logger.err(any()));
       expect(
         context.vars,
-        equals({
-          'port': customPort,
-          'directories': <RouteDirectory>[],
-          'routes': <RouteFile>[],
-          'middleware': <MiddlewareFile>[],
-          'globalMiddleware': false,
-          'serveStaticFiles': false,
-          'invokeCustomEntrypoint': true,
-          'invokeCustomInit': false
-        }),
+        equals(
+          {
+            'port': customPort,
+            'directories': <RouteDirectory>[],
+            'routes': <RouteFile>[],
+            'middleware': <MiddlewareFile>[],
+            'globalMiddleware': false,
+            'serveStaticFiles': false,
+            'invokeCustomEntrypoint': true,
+            'invokeCustomInit': false,
+          },
+        ),
       );
     });
 
@@ -273,16 +231,18 @@ dev_dependencies:
       verifyNever(() => logger.err(any()));
       expect(
         context.vars,
-        equals({
-          'port': customPort,
-          'directories': <RouteDirectory>[],
-          'routes': <RouteFile>[],
-          'middleware': <MiddlewareFile>[],
-          'globalMiddleware': false,
-          'serveStaticFiles': false,
-          'invokeCustomEntrypoint': false,
-          'invokeCustomInit': true
-        }),
+        equals(
+          {
+            'port': customPort,
+            'directories': <RouteDirectory>[],
+            'routes': <RouteFile>[],
+            'middleware': <MiddlewareFile>[],
+            'globalMiddleware': false,
+            'serveStaticFiles': false,
+            'invokeCustomEntrypoint': false,
+            'invokeCustomInit': true,
+          },
+        ),
       );
     });
 
@@ -297,7 +257,7 @@ dev_dependencies:
           MiddlewareFile(
             name: 'hello_middleware',
             path: 'hello/middleware.dart',
-          )
+          ),
         ],
         directories: [
           RouteDirectory(
@@ -310,16 +270,18 @@ dev_dependencies:
                 path: 'index.dart',
                 route: '/',
                 params: [],
+                wildcard: false,
               ),
               RouteFile(
                 name: 'hello',
                 path: 'hello.dart',
                 route: '/hello',
                 params: [],
+                wildcard: false,
               ),
             ],
             params: [],
-          )
+          ),
         ],
         routes: [
           RouteFile(
@@ -327,12 +289,14 @@ dev_dependencies:
             path: 'index.dart',
             route: '/',
             params: [],
+            wildcard: false,
           ),
           RouteFile(
             name: 'hello',
             path: 'hello.dart',
             route: '/hello',
             params: [],
+            wildcard: false,
           ),
         ],
         endpoints: {
@@ -342,6 +306,7 @@ dev_dependencies:
               path: 'index.dart',
               route: '/',
               params: [],
+              wildcard: false,
             ),
           ],
           '/hello': [
@@ -350,8 +315,9 @@ dev_dependencies:
               path: 'hello.dart',
               route: '/hello',
               params: [],
+              wildcard: false,
             ),
-          ]
+          ],
         },
         rogueRoutes: [],
         serveStaticFiles: true,
@@ -366,52 +332,64 @@ dev_dependencies:
       verifyNever(() => logger.err(any()));
       expect(
         context.vars,
-        equals({
-          'port': '8080',
-          'directories': [
-            {
-              'name': '_',
-              'route': '/',
-              'middleware': <Map<String, dynamic>>[],
-              'files': [
-                {
-                  'name': 'index',
-                  'path': 'index.dart',
-                  'route': '/',
-                  'file_params': <String>[],
-                },
-                {
-                  'name': 'hello',
-                  'path': 'hello.dart',
-                  'route': '/hello',
-                  'file_params': <String>[],
-                }
-              ],
-              'directory_params': <String>[],
-            }
-          ],
-          'routes': [
-            {
-              'name': 'index',
-              'path': 'index.dart',
-              'route': '/',
-              'file_params': const <String>[],
+        equals(
+          {
+            'port': '8080',
+            'directories': [
+              {
+                'name': '_',
+                'route': '/',
+                'middleware': <Map<String, dynamic>>[],
+                'files': [
+                  {
+                    'name': 'index',
+                    'path': 'index.dart',
+                    'route': '/',
+                    'file_params': <String>[],
+                    'wildcard': false,
+                  },
+                  {
+                    'name': 'hello',
+                    'path': 'hello.dart',
+                    'route': '/hello',
+                    'file_params': <String>[],
+                    'wildcard': false,
+                  }
+                ],
+                'directory_params': <String>[],
+              }
+            ],
+            'routes': [
+              {
+                'name': 'index',
+                'path': 'index.dart',
+                'route': '/',
+                'file_params': const <String>[],
+                'wildcard': false,
+              },
+              {
+                'name': 'hello',
+                'path': 'hello.dart',
+                'route': '/hello',
+                'file_params': const <String>[],
+                'wildcard': false,
+              }
+            ],
+            'middleware': [
+              {
+                'name': 'hello_middleware',
+                'path': 'hello/middleware.dart',
+              },
+            ],
+            'globalMiddleware': {
+              'name': 'middleware',
+              'path': 'middleware.dart',
             },
-            {
-              'name': 'hello',
-              'path': 'hello.dart',
-              'route': '/hello',
-              'file_params': const <String>[],
-            }
-          ],
-          'middleware': [
-            {'name': 'hello_middleware', 'path': 'hello/middleware.dart'}
-          ],
-          'globalMiddleware': {'name': 'middleware', 'path': 'middleware.dart'},
-          'serveStaticFiles': true,
-          'invokeCustomEntrypoint': false,
-          'invokeCustomInit': false
-        }),
+            'serveStaticFiles': true,
+            'invokeCustomEntrypoint': false,
+            'invokeCustomInit': false,
+          },
+        ),
       );
     });
   });

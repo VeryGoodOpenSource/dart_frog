@@ -1,3 +1,19 @@
+# 1.0.0
+
+- feat: add uninstall command
+- feat: add verify-only flag to update command
+- feat: add dev_server domain to daemon
+- feat: daemon logger
+
+# 0.3.9
+
+- fix: Remove multiple EOL when creating route or middleware
+- feat: enable asserts when running dart_frog dev
+- fix: use custom docker file when building prod server
+- feat: start daemon implementation
+- feat: add devserver lifecycle
+- feat: add `dart_frog daemon` command
+
 # 0.3.8
 
 - feat: update brick bundles to dart 3.0.0

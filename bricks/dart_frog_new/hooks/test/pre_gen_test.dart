@@ -65,7 +65,7 @@ const validRouteConfiguration = RouteConfiguration(
       files: [],
       middleware: [],
       params: [],
-    )
+    ),
   ],
   routes: [
     RouteFile(
@@ -73,19 +73,22 @@ const validRouteConfiguration = RouteConfiguration(
       path: '../routes/index.dart',
       route: '/',
       params: [],
+      wildcard: false,
     ),
     RouteFile(
       name: r'$id_existing_as_file',
       path: '../routes/[id]/existing_as_file.dart',
       route: '/existing_as_file',
       params: [],
+      wildcard: false,
     ),
     RouteFile(
       name: r'$id_existing_as_dir_index',
       path: '../routes/[id]/existing_as_dir/index.dart',
       route: '/',
       params: [],
-    )
+      wildcard: false,
+    ),
   ],
   endpoints: {
     '/': <RouteFile>[
@@ -94,7 +97,8 @@ const validRouteConfiguration = RouteConfiguration(
         path: '../routes/index.dart',
         route: '/',
         params: [],
-      )
+        wildcard: false,
+      ),
     ],
     '/<id>/existing_as_file': <RouteFile>[
       RouteFile(
@@ -102,7 +106,8 @@ const validRouteConfiguration = RouteConfiguration(
         path: '../routes/[id]/existing_as_file.dart',
         route: '/existing_as_file',
         params: [],
-      )
+        wildcard: false,
+      ),
     ],
     '/<id>/existing_as_dir': <RouteFile>[
       RouteFile(
@@ -110,7 +115,8 @@ const validRouteConfiguration = RouteConfiguration(
         path: '../routes/[id]/existing_as_dir/index.dart',
         route: '/',
         params: [],
-      )
+        wildcard: false,
+      ),
     ],
   },
   rogueRoutes: [],
@@ -130,7 +136,12 @@ void main() {
     test('preGen completes', () {
       expect(
         ExitOverrides.runZoned(
-          () async => preGen(_FakeHookContext()),
+          () async => preGen(
+            _FakeHookContext(),
+            buildConfiguration: (_) {
+              throw Exception('oops');
+            },
+          ),
           exit: (_) {},
         ),
         completes,
@@ -158,6 +169,7 @@ void main() {
             path: 'hello.dart',
             route: '/hello',
             params: [],
+            wildcard: false,
           ),
         ],
       );
