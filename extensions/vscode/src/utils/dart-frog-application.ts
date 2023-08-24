@@ -1,6 +1,5 @@
 /**
- * @file Provides utilities for inspecting and managing with Dart Frog
- * applications.
+ * @file Provides utilities for inspecting and managing Dart Frog applications.
  */
 
 import {
