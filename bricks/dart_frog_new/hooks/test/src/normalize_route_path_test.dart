@@ -24,7 +24,7 @@ void main() {
       '[id]/item': '/<id>/item',
       '/<id>/item': '/<id>/item',
       '/this has space/really': '/this%20has%20space/really',
-      '/who/does/not/../this/.': '/who/does/this'
+      '/who/does/not/../this/.': '/who/does/this',
     };
 
     for (final entry in expectedMappings.entries) {
