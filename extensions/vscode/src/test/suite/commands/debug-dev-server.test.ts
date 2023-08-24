@@ -2,12 +2,7 @@ const sinon = require("sinon");
 var proxyquire = require("proxyquire");
 
 import { afterEach, beforeEach } from "mocha";
-import {
-  DaemonResponse,
-  DartFrogApplication,
-  StopDaemonRequest,
-} from "../../../daemon";
-import * as assert from "assert";
+import { DartFrogApplication } from "../../../daemon";
 import { Uri } from "vscode";
 
 suite("debug-dev-server command", () => {
