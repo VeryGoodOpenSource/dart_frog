@@ -5,7 +5,11 @@ import {
   commands,
   window,
 } from "vscode";
-import { isDartFrogCLIInstalled, suggestInstallingDartFrogCLI } from "../utils";
+import {
+  isDartFrogCLIInstalled,
+  quickPickApplication,
+  suggestInstallingDartFrogCLI,
+} from "../utils";
 import {
   DartFrogApplication,
   DartFrogApplicationRegistry,
@@ -56,7 +60,12 @@ export const stopDevServer = async (): Promise<void> => {
   const application =
     applications.length === 1
       ? applications[0]
-      : await quickPickApplication(applications);
+      : await quickPickApplication(
+          {
+            placeHolder: "Select a server to stop",
+          },
+          applications
+        );
   if (!application) {
     return;
   }
@@ -103,61 +112,6 @@ export const stopDevServer = async (): Promise<void> => {
     }
   );
 };
-
-class PickableDartFrogApplication implements QuickPickItem {
-  constructor(dartFrogApplication: DartFrogApplication) {
-    const addressWithoutProtocol = dartFrogApplication.address!.replace(
-      /.*?:\/\//g,
-      ""
-    );
-    this.label = `$(globe) ${addressWithoutProtocol}`;
-    this.description = dartFrogApplication.id!.toString();
-    this.application = dartFrogApplication;
-  }
-
-  public readonly application: DartFrogApplication;
-
-  label: string;
-  kind?: QuickPickItemKind | undefined;
-  description?: string | undefined;
-  detail?: string | undefined;
-  picked?: boolean | undefined;
-  alwaysShow?: boolean | undefined;
-  buttons?: readonly QuickInputButton[] | undefined;
-}
-
-/**
- * Prompts the user to select a {@link DartFrogApplication} from a list of
- * running {@link DartFrogApplication}s.
- *
- * @param applications The running {@link DartFrogApplication}s to choose from.
- * @returns The selected {@link DartFrogApplication} or `undefined` if the user
- * cancelled the selection.
- */
-async function quickPickApplication(
-  applications: DartFrogApplication[]
-): Promise<DartFrogApplication | undefined> {
-  const quickPick = window.createQuickPick<PickableDartFrogApplication>();
-  quickPick.placeholder = "Select a server to stop";
-  quickPick.busy = true;
-  quickPick.ignoreFocusOut = true;
-  quickPick.items = applications.map(
-    (application) => new PickableDartFrogApplication(application)
-  );
-  quickPick.show();
-
-  return new Promise<DartFrogApplication | undefined>((resolve) => {
-    quickPick.onDidChangeSelection((value) => {
-      quickPick.dispose();
-
-      if (!value || value.length === 0) {
-        resolve(undefined);
-      } else {
-        resolve(value[0]!.application);
-      }
-    });
-  });
-}
 
 /**
  * Waits for a {@link DartFrogApplication} to be deregistered.

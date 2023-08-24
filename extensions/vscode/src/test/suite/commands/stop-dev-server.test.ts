@@ -14,7 +14,6 @@ suite("stop-dev-server command", () => {
   let utilsStub: any;
   let daemon: any;
   let command: any;
-  let quickPick: any;
   let progress: any;
 
   beforeEach(() => {
@@ -23,23 +22,18 @@ suite("stop-dev-server command", () => {
         showInformationMessage: sinon.stub(),
         showErrorMessage: sinon.stub(),
         withProgress: sinon.stub(),
-        createQuickPick: sinon.stub(),
       },
       commands: {
         executeCommand: sinon.stub(),
       },
     };
-    quickPick = sinon.stub();
-    vscodeStub.window.createQuickPick.returns(quickPick);
-    quickPick.show = sinon.stub();
-    quickPick.dispose = sinon.stub();
-    quickPick.onDidChangeSelection = sinon.stub();
 
     utilsStub = {
       isDartFrogCLIInstalled: sinon.stub(),
       suggestInstallingDartFrogCLI: sinon.stub(),
       resolveDartFrogProjectPathFromWorkspace: sinon.stub(),
       nearestDartFrogProject: sinon.stub(),
+      quickPickApplication: sinon.stub(),
     };
     utilsStub.isDartFrogCLIInstalled.returns(true);
 
@@ -223,12 +217,6 @@ suite("stop-dev-server command", () => {
 
     beforeEach(() => {
       daemon.isReady = true;
-
-      application1.id = "application1";
-      application1.address = `http://localhost:${application1.port}`;
-
-      application2.id = "application2";
-      application2.address = `http://localhost:${application2.port}`;
     });
 
     test("is not shown when there is a single running application", async () => {
@@ -236,70 +224,31 @@ suite("stop-dev-server command", () => {
 
       await command.stopDevServer();
 
-      sinon.assert.notCalled(vscodeStub.window.createQuickPick);
+      sinon.assert.notCalled(utilsStub.quickPickApplication);
     });
 
     test("is shown when there is more than a single running application", async () => {
       daemon.applicationRegistry.all.returns([application1, application2]);
+      utilsStub.quickPickApplication.resolves(application1);
 
-      const stopDevServer = command.stopDevServer();
-      const onDidChangeSelection =
-        quickPick.onDidChangeSelection.getCall(0).args[0];
-      onDidChangeSelection([]);
+      await command.stopDevServer();
 
-      await stopDevServer;
-
-      sinon.assert.calledOnce(vscodeStub.window.createQuickPick);
+      sinon.assert.calledOnceWithExactly(
+        utilsStub.quickPickApplication,
+        {
+          placeHolder: "Select a server to stop",
+        },
+        [application1, application2]
+      );
     });
 
     test("never stops the server when dismissed", async () => {
       daemon.applicationRegistry.all.returns([application1, application2]);
+      utilsStub.quickPickApplication.resolves(undefined);
 
-      const stopDevServer = command.stopDevServer();
-      const onDidChangeSelection =
-        quickPick.onDidChangeSelection.getCall(0).args[0];
-      onDidChangeSelection(undefined);
-
-      await stopDevServer;
+      await command.stopDevServer();
 
       sinon.assert.notCalled(daemon.send);
-    });
-
-    test("shows appropiate items for each running applications", async () => {
-      daemon.applicationRegistry.all.returns([application1, application2]);
-
-      const stopDevServer = command.stopDevServer();
-      const onDidChangeSelection =
-        quickPick.onDidChangeSelection.getCall(0).args[0];
-      onDidChangeSelection(undefined);
-
-      await stopDevServer;
-
-      const items = quickPick.items;
-
-      sinon.assert.match(items[0], {
-        label: `$(globe) localhost:${application1.port}`,
-        description: application1.id,
-        application: application1,
-      });
-      sinon.assert.match(items[1], {
-        label: `$(globe) localhost:${application2.port}`,
-        description: application2.id,
-        application: application2,
-      });
-    });
-
-    test("is disposed after selection", async () => {
-      daemon.applicationRegistry.all.returns([application1, application2]);
-
-      const stopDevServer = command.stopDevServer();
-      const onDidChangeSelection =
-        quickPick.onDidChangeSelection.getCall(0).args[0];
-      onDidChangeSelection([application1]);
-
-      await stopDevServer;
-
-      sinon.assert.calledOnce(quickPick.dispose);
     });
   });
 
