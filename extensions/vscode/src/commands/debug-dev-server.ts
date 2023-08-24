@@ -24,7 +24,7 @@ export const debugDevServer = async (): Promise<void> => {
       case "Install Dart extension":
         const dartCodeMarketplaceUri =
           "https://marketplace.visualstudio.com/items?itemName=Dart-Code.dart-code";
-        await commands.executeCommand(
+        commands.executeCommand(
           "vscode.open",
           Uri.parse(dartCodeMarketplaceUri)
         );
@@ -33,7 +33,9 @@ export const debugDevServer = async (): Promise<void> => {
       default:
         return;
     }
+    /* c8 ignore start */
   }
+  /* c8 ignore stop */
 
   if (!dartExtension.isActive) {
     await window.withProgress(
