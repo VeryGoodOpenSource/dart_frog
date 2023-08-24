@@ -84,11 +84,6 @@ suite("debug-dev-server command", () => {
   });
 
   suite("installing Dart Frog CLI", () => {
-    beforeEach(() => {
-      daemon.isReady = false;
-      daemon.applicationRegistry.all.returns([]);
-    });
-
     test("is suggested when not installed", async () => {
       utilsStub.isDartFrogCLIInstalled.returns(false);
 
@@ -145,7 +140,7 @@ suite("debug-dev-server command", () => {
       );
     });
 
-    test("`Install Dart extension` option runs install command", async () => {
+    test("`Install Dart extension` option opens marketplace", async () => {
       vscodeStub.extensions.getExtension
         .withArgs("Dart-Code.dart-code")
         .returns(undefined);
