@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math';
 
 import 'package:dart_frog/dart_frog.dart';
@@ -28,20 +27,17 @@ void main() {
     },
   );
 
-  final notAllowedMethods =
-      HttpMethod.values.where((v) => v != HttpMethod.post);
-
-  for (final method in notAllowedMethods) {
-    test(
-      'responds with method not allowed.',
-      () async {
-        final testContext = DartFrogTestContext(
+  test(
+    'responds with method not allowed.',
+    () async {
+      await expectNotAllowedMethods(
+        route.onRequest,
+        contextBuilder: (method) => DartFrogTestContext(
           path: '/dice',
           method: method,
-        );
-        final response = route.onRequest(testContext.context);
-        expect(response, hasStatus(HttpStatus.methodNotAllowed));
-      },
-    );
-  }
+        ),
+        allowedMethods: [HttpMethod.post],
+      );
+    },
+  );
 }
