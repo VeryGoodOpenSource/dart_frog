@@ -1,15 +1,9 @@
+import { Uri, commands, debug, extensions, window } from "vscode";
 import {
-  ProgressOptions,
-  QuickInputButton,
-  QuickPickItem,
-  QuickPickItemKind,
-  Uri,
-  commands,
-  debug,
-  extensions,
-  window,
-} from "vscode";
-import { isDartFrogCLIInstalled, suggestInstallingDartFrogCLI } from "../utils";
+  isDartFrogCLIInstalled,
+  quickPickApplication,
+  suggestInstallingDartFrogCLI,
+} from "../utils";
 import { DartFrogApplication, DartFrogDaemon } from "../daemon";
 
 export const debugDevServer = async (): Promise<void> => {
@@ -73,86 +67,59 @@ export const debugDevServer = async (): Promise<void> => {
   const application =
     applications.length === 1
       ? applications[0]
-      : await quickPickApplication(applications);
+      : await quickPickApplication(
+          {
+            placeHolder: "Select a server to debug",
+          },
+          applications
+        );
   if (!application) {
     return;
   }
 
-  // TODO(alestiago): Check running debug session to avoid duplicate
-  // debug sessions.
+  const debugSession = debug.activeDebugSession;
+  if (
+    debugSession &&
+    debugSession.configuration.applicationId === application.id
+  ) {
+    const selection = await window.showInformationMessage(
+      `A debug session is already running for this application.`,
+      "Create another debug session",
+      "Cancel"
+    );
+    switch (selection) {
+      case "Create another debug session":
+        break;
+      case "Cancel":
+      default:
+        return;
+    }
+  }
+
   attachToDebugSession(application);
 };
 
-// TODO(alestiago): Move this to a separate file to be shared with
-// src/commands/stop-dev-server.ts.
-class PickableDartFrogApplication implements QuickPickItem {
-  constructor(dartFrogApplication: DartFrogApplication) {
-    const addressWithoutProtocol = dartFrogApplication.address!.replace(
-      /.*?:\/\//g,
-      ""
-    );
-    this.label = `$(globe) ${addressWithoutProtocol}`;
-    this.description = dartFrogApplication.id!.toString();
-    this.application = dartFrogApplication;
-  }
-
-  public readonly application: DartFrogApplication;
-
-  label: string;
-  kind?: QuickPickItemKind | undefined;
-  description?: string | undefined;
-  detail?: string | undefined;
-  picked?: boolean | undefined;
-  alwaysShow?: boolean | undefined;
-  buttons?: readonly QuickInputButton[] | undefined;
-}
-
-// TODO(alestiago): Move this to a separate file to be shared with
-// src/commands/stop-dev-server.ts.
 /**
- * Prompts the user to select a {@link DartFrogApplication} from a list of
- * running {@link DartFrogApplication}s.
+ * Attaches to a Dart debug session for the given application.
  *
- * @param applications The running {@link DartFrogApplication}s to choose from.
- * @returns The selected {@link DartFrogApplication} or `undefined` if the user
- * cancelled the selection.
+ * @param application The application to attach the debug session to.
  */
-async function quickPickApplication(
-  applications: DartFrogApplication[]
-): Promise<DartFrogApplication | undefined> {
-  const quickPick = window.createQuickPick<PickableDartFrogApplication>();
-  quickPick.placeholder = "Select a server to stop";
-  quickPick.busy = true;
-  quickPick.ignoreFocusOut = true;
-  quickPick.items = applications.map(
-    (application) => new PickableDartFrogApplication(application)
+async function attachToDebugSession(
+  application: DartFrogApplication
+): Promise<void> {
+  await window.withProgress(
+    {
+      location: 15,
+      title: `Attaching to debug session...`,
+    },
+    async function () {
+      return await debug.startDebugging(undefined, {
+        name: `Dart Frog: Development Server (${application.address})`,
+        request: "attach",
+        type: "dart",
+        vmServiceUri: application.vmServiceUri,
+        applicationId: application.id,
+      });
+    }
   );
-  quickPick.show();
-
-  return new Promise<DartFrogApplication | undefined>((resolve) => {
-    quickPick.onDidChangeSelection((value) => {
-      quickPick.dispose();
-
-      if (!value || value.length === 0) {
-        resolve(undefined);
-      } else {
-        resolve(value[0]!.application);
-      }
-    });
-  });
-}
-
-function attachToDebugSession(application: DartFrogApplication): void {
-  const options: ProgressOptions = {
-    location: 15,
-    title: `Attaching to debug session...`,
-  };
-  window.withProgress(options, async function () {
-    return await debug.startDebugging(undefined, {
-      name: `Dart Frog: Development Server (${application.port})`,
-      request: "attach",
-      type: "dart",
-      vmServiceUri: application.vmServiceUri,
-    });
-  });
 }
