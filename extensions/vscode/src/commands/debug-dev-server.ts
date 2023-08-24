@@ -29,13 +29,14 @@ export const debugDevServer = async (): Promise<void> => {
           Uri.parse(dartCodeMarketplaceUri)
         );
         return;
+      case "Cancel":
       default:
         return;
     }
   }
 
   if (!dartExtension.isActive) {
-    window.withProgress(
+    await window.withProgress(
       {
         location: 15,
         title: `Activating Dart extension...`,
@@ -96,7 +97,7 @@ export const debugDevServer = async (): Promise<void> => {
     }
   }
 
-  attachToDebugSession(application);
+  await attachToDebugSession(application);
 };
 
 /**
