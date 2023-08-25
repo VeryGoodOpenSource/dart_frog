@@ -2,10 +2,10 @@ const cp = require("child_process");
 
 import {
   InputBoxOptions,
-  Uri,
-  window,
   OpenDialogOptions,
   ProgressOptions,
+  Uri,
+  window,
 } from "vscode";
 import {
   isDartFrogCLIInstalled,
@@ -142,7 +142,7 @@ function executeDartFrogNewRouteCommand(
     {
       cwd: dartFrogProjectPath,
     },
-    function (error: Error, stdout: string, stderr: string) {
+    function (error: Error) {
       if (error) {
         window.showErrorMessage(error.message);
       }

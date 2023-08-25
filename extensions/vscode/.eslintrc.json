@@ -21,7 +21,9 @@
         "ignoreStrings": true,
         "ignoreTemplateLiterals": true
       }
-    ]
+    ],
+    "sort-imports": "warn",
+    "no-unused-vars": "warn"
   },
   "ignorePatterns": ["out", "dist", "**/*.d.ts"]
 }

@@ -1,9 +1,9 @@
 const sinon = require("sinon");
 var proxyquire = require("proxyquire");
 
+import * as assert from "assert";
 import { afterEach, beforeEach } from "mocha";
 import { DartFrogApplication } from "../../../daemon";
-import * as assert from "assert";
 
 suite("quickPickApplication", () => {
   let vscodeStub: any;

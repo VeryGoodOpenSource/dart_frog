@@ -10,9 +10,9 @@
 import * as cp from "child_process";
 import * as path from "path";
 import {
-  runTests,
   downloadAndUnzipVSCode,
   resolveCliArgsFromVSCodeExecutablePath,
+  runTests,
 } from "@vscode/test-electron";
 
 async function main() {
