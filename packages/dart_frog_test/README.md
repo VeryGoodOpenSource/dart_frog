@@ -28,7 +28,7 @@ Install it:
 dart pub get
 ```
 
-## DartFrogTestContext
+## TestRequestContext
 
 This class makes it simple to mock a `RequestContext` for a Dart Frog request handler. To use it, simply import it
 and use its constructor and methods to create the mocker context.
@@ -40,7 +40,7 @@ A simple example:
 import '../../../routes/users/[id].dart' as route;
 
 test('returns ok', () {
-  final context = DartFrogTestContext(
+  final context = TestRequestContext(
     path: '/users/1',
   );
 
@@ -56,7 +56,7 @@ If the route handler function reads a [dependency injected via context](https://
 import '../../../routes/users/index.dart' as route;
 
 test('returns ok', () {
-  final context = DartFrogTestContext(
+  final context = TestRequestContext(
     path: '/users',
   );
 
@@ -69,7 +69,7 @@ test('returns ok', () {
 });
 ```
 
-Check the `DartFrogTestContext` [constructor](https://pub.dev/documentation/dart_frog_test/latest/) for all the available context attributes that can be mocked.
+Check the `TestRequestContext` [constructor](https://pub.dev/documentation/dart_frog_test/latest/) for all the available context attributes that can be mocked.
 
 ## Matchers
 
@@ -88,6 +88,15 @@ expect(response, isUnauthorized);
 expect(response, isForbidden);
 expect(response, isInternalServerError);
 expect(response, hasStatus(301));
+
+await expectNotAllowedMethods(
+  route.onRequest,
+  contextBuilder: (method) => TestRequestContext(
+    path: '/dice',
+    method: method,
+  ),
+  allowedMethods: [HttpMethod.post],
+);
 ```
 
 ---

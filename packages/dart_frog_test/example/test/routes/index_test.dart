@@ -7,7 +7,7 @@ void main() {
   test(
     'responds with a 200 and "Welcome to Dart Frog!".',
     () async {
-      final testContext = DartFrogTestContext(path: '/');
+      final testContext = TestRequestContext(path: '/');
       final response = route.onRequest(testContext.context);
       expect(response, isOk);
       expectBody(response, 'Welcome to Dart Frog!');

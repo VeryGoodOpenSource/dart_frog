@@ -4,13 +4,13 @@ import 'package:dart_frog_test/dart_frog_test.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('DartFrogTestContext', () {
+  group('TestRequestContext', () {
     test('can be instantiated', () {
-      expect(DartFrogTestContext(path: '/'), isNotNull);
+      expect(TestRequestContext(path: '/'), isNotNull);
     });
 
     test('creates the correct RequestContext', () {
-      final testContext = DartFrogTestContext(
+      final testContext = TestRequestContext(
         path: '/',
         method: HttpMethod.post,
         headers: {'content-type': 'application/json'},
@@ -33,7 +33,7 @@ void main() {
     });
 
     test('can mock a dependency', () {
-      final testContext = DartFrogTestContext(path: '/')
+      final testContext = TestRequestContext(path: '/')
         ..provide<String>('hello');
 
       final context = testContext.context;

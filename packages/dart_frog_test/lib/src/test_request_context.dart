@@ -6,9 +6,9 @@ class _MockRequestContext extends Mock implements RequestContext {}
 /// {@template dart_frog_test_context}
 /// A context used to test Dart Frog handlers.
 /// {@endtemplate}
-class DartFrogTestContext {
+class TestRequestContext {
   /// {@macro dart_frog_test_context}
-  DartFrogTestContext({
+  TestRequestContext({
     required this.path,
     this.basePath = 'https://test.com',
     this.method = HttpMethod.get,

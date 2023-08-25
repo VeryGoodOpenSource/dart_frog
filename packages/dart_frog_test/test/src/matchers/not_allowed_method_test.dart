@@ -16,7 +16,7 @@ void main() {
           );
         },
         contextBuilder: (method) {
-          final context = DartFrogTestContext(
+          final context = TestRequestContext(
             path: '/test',
             method: method,
           );

@@ -9,7 +9,7 @@ import 'package:test/test.dart';
 @experimental
 Future<void> expectNotAllowedMethods(
   FutureOr<Response> Function(RequestContext) handler, {
-  required DartFrogTestContext Function(HttpMethod) contextBuilder,
+  required TestRequestContext Function(HttpMethod) contextBuilder,
   required List<HttpMethod> allowedMethods,
 }) async {
   final methods = HttpMethod.values.where((m) => !allowedMethods.contains(m));

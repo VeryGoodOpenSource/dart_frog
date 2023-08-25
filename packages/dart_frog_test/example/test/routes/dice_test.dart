@@ -16,7 +16,7 @@ void main() {
       final random = _MockRandom();
       when(() => random.nextInt(6)).thenReturn(2);
 
-      final testContext = DartFrogTestContext(
+      final testContext = TestRequestContext(
         path: '/dice',
         method: HttpMethod.post,
       )..provide<Random>(random);
@@ -32,7 +32,7 @@ void main() {
     () async {
       await expectNotAllowedMethods(
         route.onRequest,
-        contextBuilder: (method) => DartFrogTestContext(
+        contextBuilder: (method) => TestRequestContext(
           path: '/dice',
           method: method,
         ),
