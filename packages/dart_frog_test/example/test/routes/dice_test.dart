@@ -28,7 +28,7 @@ void main() {
   );
 
   test(
-    'responds with method not allowed.',
+    'only allows post method',
     () async {
       await expectNotAllowedMethods(
         route.onRequest,

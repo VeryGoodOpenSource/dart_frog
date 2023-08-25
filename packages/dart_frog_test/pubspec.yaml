@@ -1,5 +1,5 @@
 name: dart_frog_test
-description: A testing library which makes it easy to test Dart frog services
+description: A testing library which makes it easy to test Dart frog services.
 version: 0.1.0+1
 homepage: https://dartfrog.vgv.dev
 repository: https://github.com/VeryGoodOpenSource/dart_frog
