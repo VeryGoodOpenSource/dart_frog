@@ -85,6 +85,14 @@
           "when": "!(resourceDirname =~ /routes/) && !(explorerResourceIsFolder && resourceFilename == routes)"
         }
       ]
+    },
+    "configuration": {
+      "properties": {
+        "extension.enableCodeLens": {
+          "type": "boolean",
+          "default": true
+        }
+      }
     }
   },
   "extensionDependencies": [

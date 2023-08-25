@@ -17,6 +17,7 @@ import {
   readLatestDartFrogCLIVersion,
   suggestInstallingDartFrogCLI,
 } from "./utils";
+import { RunOnRequestCodeLensProvider } from "./code-lens";
 
 /**
  * This method is called when the extension is activated.
@@ -38,6 +39,11 @@ export function activate(
   } else {
     ensureCompatibleCLI();
   }
+
+  vscode.languages.registerCodeLensProvider(
+    "*",
+    new RunOnRequestCodeLensProvider()
+  );
 
   context.subscriptions.push(
     vscode.commands.registerCommand("dart-frog.create", create),
