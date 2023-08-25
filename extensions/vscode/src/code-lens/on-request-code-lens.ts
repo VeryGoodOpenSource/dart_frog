@@ -9,6 +9,8 @@ import {
   TextDocument,
   workspace,
 } from "vscode";
+import { nearestDartFrogProject } from "../utils";
+import path = require("path");
 
 abstract class ConfigurableCodeLensProvider implements CodeLensProvider {
   protected codeLenses: CodeLens[] = [];
@@ -85,8 +87,26 @@ abstract class RegularExpressionCodeLensProvider extends ConfigurableCodeLensPro
 abstract class OnRequestCodeLensProvider extends RegularExpressionCodeLensProvider {
   readonly regex: RegExp = /Response\s*onRequest\(RequestContext .*?\)\s*{/g;
 
-  // TODO(alestiago): Specify a better document selector, that only applies to
-  // Dart files under routes in a Dart Frog project.
+  public provideCodeLenses(
+    document: TextDocument,
+    token: CancellationToken
+  ): ProviderResult<CodeLens[]> {
+    if (document.languageId !== "dart") {
+      return undefined;
+    }
+
+    const dartFrogProjectPath = nearestDartFrogProject(document.uri.fsPath);
+    if (!dartFrogProjectPath) {
+      return undefined;
+    }
+
+    const routesPath = path.join(dartFrogProjectPath, "routes");
+    if (!document.uri.fsPath.startsWith(routesPath)) {
+      return undefined;
+    }
+
+    return super.provideCodeLenses(document, token);
+  }
 }
 
 /**
