@@ -47,7 +47,6 @@ abstract class ConfigurableCodeLensProvider implements CodeLensProvider {
   }
 
   private hasEnabledCodeLenses(): boolean {
-    // TODO(alestiago): Document this in README.
     return workspace.getConfiguration("dart-frog").get("enableCodeLens", true);
   }
 }
