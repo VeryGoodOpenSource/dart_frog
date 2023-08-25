@@ -41,11 +41,9 @@ export const debugDevServer = async (): Promise<void> => {
     await window.withProgress(
       {
         location: 15,
-        title: `Activating Dart extension...`,
+        title: "Activating Dart extension...",
       },
-      async () => {
-        await dartExtension.activate();
-      }
+      dartExtension.activate
     );
   }
 
@@ -86,7 +84,7 @@ export const debugDevServer = async (): Promise<void> => {
     debugSession.configuration.applicationId === application.id
   ) {
     const selection = await window.showInformationMessage(
-      `A debug session is already running for this application.`,
+      "A debug session is already running for this application.",
       "Create another debug session",
       "Cancel"
     );
@@ -113,7 +111,7 @@ async function attachToDebugSession(
   await window.withProgress(
     {
       location: 15,
-      title: `Attaching to debug session...`,
+      title: "Attaching to debug session...",
     },
     async function () {
       return await debug.startDebugging(undefined, {
