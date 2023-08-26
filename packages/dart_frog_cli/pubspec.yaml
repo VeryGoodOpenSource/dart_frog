@@ -8,7 +8,7 @@ documentation: https://dartfrog.vgv.dev/docs/overview
 topics: [server, backend, shelf, dart-frog, cli]
 
 screenshots:
-  - description: "Dart Frog logo."
+  - description: 'Dart Frog logo.'
     path: assets/logo.png
 
 environment:
