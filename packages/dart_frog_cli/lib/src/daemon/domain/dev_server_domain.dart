@@ -43,8 +43,7 @@ class DevServerDomain extends DomainBase {
       );
     }
 
-    final host = request.params?['host'];
-
+    final host = request.params?['host'] ?? 'localhost';
     if (!_isValidHost(host)) {
       throw const DartFrogDaemonMalformedMessageException('invalid host');
     }
@@ -223,10 +222,10 @@ class DevServerDomain extends DomainBase {
     }
     _devServerRunners.clear();
   }
+}
 
-  bool _isValidHost(dynamic host) {
-    return host is String &&
-        RegExp(r'^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$')
-            .hasMatch(host);
-  }
+bool _isValidHost(dynamic host) {
+  return host is String &&
+      RegExp(r'^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$')
+          .hasMatch(host);
 }
