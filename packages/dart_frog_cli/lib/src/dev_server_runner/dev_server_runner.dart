@@ -98,7 +98,7 @@ class DevServerRunner {
   /// [Logger] instance used to wrap stdout.
   final Logger logger;
 
-  /// Which host the server should start on.
+  /// Which host the server should bind to.
   final String host;
 
   /// Which port number the server should start on.
