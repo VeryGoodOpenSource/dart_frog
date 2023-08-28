@@ -1,8 +1,8 @@
 const sinon = require("sinon");
 var proxyquire = require("proxyquire");
 
-import { afterEach, beforeEach } from "mocha";
 import * as assert from "assert";
+import { afterEach, beforeEach } from "mocha";
 
 suite("new-route command", () => {
   const validRouteName = "frog";

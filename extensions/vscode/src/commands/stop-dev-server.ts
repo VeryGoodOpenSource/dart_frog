@@ -1,22 +1,16 @@
 import {
-  QuickInputButton,
-  QuickPickItem,
-  QuickPickItemKind,
-  commands,
-  window,
-} from "vscode";
-import {
-  isDartFrogCLIInstalled,
-  quickPickApplication,
-  suggestInstallingDartFrogCLI,
-} from "../utils";
-import {
   DartFrogApplication,
   DartFrogApplicationRegistry,
   DartFrogApplicationRegistryEventEmitterTypes,
   DartFrogDaemon,
   StopDaemonRequest,
 } from "../daemon";
+import { commands, window } from "vscode";
+import {
+  isDartFrogCLIInstalled,
+  quickPickApplication,
+  suggestInstallingDartFrogCLI,
+} from "../utils";
 
 /**
  * Stops a Dart Frog development server on the current workspace.

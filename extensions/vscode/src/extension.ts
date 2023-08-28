@@ -1,19 +1,20 @@
 import * as vscode from "vscode";
 import {
-  installCLI,
-  newRoute,
-  newMiddleware,
-  updateCLI,
   create,
+  debugDevServer,
+  installCLI,
+  newMiddleware,
+  newRoute,
   startDaemon,
   startDevServer,
   stopDevServer,
+  updateCLI,
 } from "./commands";
 import {
-  readDartFrogCLIVersion,
   isCompatibleDartFrogCLIVersion,
   isDartFrogCLIInstalled,
   openChangelog,
+  readDartFrogCLIVersion,
   readLatestDartFrogCLIVersion,
   suggestInstallingDartFrogCLI,
 } from "./utils";
@@ -56,7 +57,11 @@ export function activate(
       "dart-frog.start-dev-server",
       startDevServer
     ),
-    vscode.commands.registerCommand("dart-frog.stop-dev-server", stopDevServer)
+    vscode.commands.registerCommand("dart-frog.stop-dev-server", stopDevServer),
+    vscode.commands.registerCommand(
+      "dart-frog.debug-dev-server",
+      debugDevServer
+    )
   );
   return context;
 }

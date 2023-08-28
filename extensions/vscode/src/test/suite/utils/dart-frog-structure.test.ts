@@ -2,8 +2,8 @@ const sinon = require("sinon");
 var proxyquire = require("proxyquire");
 const path = require("node:path");
 
-import { afterEach, beforeEach } from "mocha";
 import * as assert from "assert";
+import { afterEach, beforeEach } from "mocha";
 
 suite("normalizeRoutePath", () => {
   let fsStub: any;

@@ -1,11 +1,11 @@
-import { window } from "vscode";
-import { DartFrogDaemon } from "../daemon";
 import {
   isDartFrogCLIInstalled,
   nearestDartFrogProject,
   resolveDartFrogProjectPathFromWorkspace,
   suggestInstallingDartFrogCLI,
 } from "../utils";
+import { DartFrogDaemon } from "../daemon";
+import { window } from "vscode";
 
 /**
  * Starts the Dart Frog daemon.
