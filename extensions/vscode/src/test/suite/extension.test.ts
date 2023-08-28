@@ -5,8 +5,50 @@ import * as assert from "assert";
 import * as vscode from "vscode";
 import { installCLI, newMiddleware, newRoute, updateCLI } from "../../commands";
 import { afterEach, beforeEach } from "mocha";
+import { RunOnRequestCodeLensProvider } from "../../code-lens";
 
 suite("activate", () => {
+  let vscodeStub: any;
+  let extension: any;
+  let context: any;
+
+  beforeEach(() => {
+    vscodeStub = {
+      commands: {
+        registerCommand: sinon.stub(),
+      },
+      languages: {
+        registerCodeLensProvider: sinon.stub(),
+      },
+    };
+
+    const utilsStub = {
+      readDartFrogCLIVersion: sinon.stub(),
+      isCompatibleDartFrogCLIVersion: sinon.stub(),
+      isDartFrogCLIInstalled: sinon.stub(),
+    };
+    utilsStub.readDartFrogCLIVersion.returns("0.0.0");
+    utilsStub.isCompatibleDartFrogCLIVersion.returns(true);
+    utilsStub.isDartFrogCLIInstalled.returns(true);
+
+    const childProcessStub = {
+      execSync: sinon.stub(),
+    };
+
+    extension = proxyquire("../../extension", {
+      vscode: vscodeStub,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      child_process: childProcessStub,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      "./utils": utilsStub,
+    });
+    context = { subscriptions: [] };
+  });
+
+  afterEach(() => {
+    sinon.restore();
+  });
+
   test("does not throw", async () => {
     const extension = vscode.extensions.getExtension(
       "VeryGoodVentures.dart-frog"
@@ -15,45 +57,22 @@ suite("activate", () => {
     assert.doesNotThrow(async () => await extension.activate());
   });
 
+  suite("registers CodeLens", () => {
+    test("registerCodeLensProvider on dart", () => {
+      extension.activate(context);
+
+      sinon.assert.calledWith(
+        vscodeStub.languages.registerCodeLensProvider,
+        "dart",
+        sinon.match.any
+      );
+
+      const provider = vscodeStub.languages.registerCodeLensProvider.args[0][1];
+      assert.ok(provider instanceof RunOnRequestCodeLensProvider);
+    });
+  });
+
   suite("registers command", () => {
-    let vscodeStub: any;
-    let extension: any;
-    let context: any;
-
-    beforeEach(() => {
-      vscodeStub = {
-        commands: {
-          registerCommand: sinon.stub(),
-        },
-      };
-
-      const utilsStub = {
-        readDartFrogCLIVersion: sinon.stub(),
-        isCompatibleDartFrogCLIVersion: sinon.stub(),
-        isDartFrogCLIInstalled: sinon.stub(),
-      };
-      utilsStub.readDartFrogCLIVersion.returns("0.0.0");
-      utilsStub.isCompatibleDartFrogCLIVersion.returns(true);
-      utilsStub.isDartFrogCLIInstalled.returns(true);
-
-      const childProcessStub = {
-        execSync: sinon.stub(),
-      };
-
-      extension = proxyquire("../../extension", {
-        vscode: vscodeStub,
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        child_process: childProcessStub,
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        "./utils": utilsStub,
-      });
-      context = { subscriptions: [] };
-    });
-
-    afterEach(() => {
-      sinon.restore();
-    });
-
     test("install-cli", () => {
       extension.activate(context);
 

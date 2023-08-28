@@ -41,7 +41,7 @@ export function activate(
   }
 
   vscode.languages.registerCodeLensProvider(
-    "*",
+    "dart",
     new RunOnRequestCodeLensProvider()
   );
 
