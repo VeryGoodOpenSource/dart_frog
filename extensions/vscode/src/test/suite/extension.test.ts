@@ -3,8 +3,8 @@ var proxyquire = require("proxyquire");
 
 import * as assert from "assert";
 import * as vscode from "vscode";
-import { installCLI, newMiddleware, newRoute, updateCLI } from "../../commands";
 import { afterEach, beforeEach } from "mocha";
+import { installCLI, newMiddleware, newRoute, updateCLI } from "../../commands";
 import { RunOnRequestCodeLensProvider } from "../../code-lens";
 
 suite("activate", () => {

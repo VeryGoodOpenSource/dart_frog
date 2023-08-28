@@ -1,0 +1,21 @@
+name: dart_frog_test
+description: A testing library which makes it easy to test Dart frog services.
+version: 0.1.0+1
+homepage: https://dartfrog.vgv.dev
+repository: https://github.com/VeryGoodOpenSource/dart_frog
+issue_tracker: https://github.com/VeryGoodOpenSource/dart_frog/issues
+documentation: https://dartfrog.vgv.dev/docs/overview
+topics: [server, backend, dart-frog, test]
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  dart_frog: ^1.0.0
+  matcher: ^0.12.16
+  meta: ^1.9.1
+  mocktail: ^1.0.0
+  test: ^1.19.2
+
+dev_dependencies:
+  very_good_analysis: ^5.0.0

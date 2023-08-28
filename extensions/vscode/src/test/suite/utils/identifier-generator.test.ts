@@ -1,5 +1,5 @@
-import { AscendingNumericalIdentifierGenerator } from "../../../utils";
 import * as assert from "assert";
+import { AscendingNumericalIdentifierGenerator } from "../../../utils";
 
 suite("AscendingNumericalIdentifierGenerator", () => {
   suite("generate", () => {

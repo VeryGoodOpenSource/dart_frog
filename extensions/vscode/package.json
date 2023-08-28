@@ -65,6 +65,10 @@
       {
         "command": "dart-frog.stop-dev-server",
         "title": "Dart Frog: Stop Development Server"
+      },
+      {
+        "command": "dart-frog.debug-dev-server",
+        "title": "Dart Frog: Debug Development Server"
       }
     ],
     "menus": {

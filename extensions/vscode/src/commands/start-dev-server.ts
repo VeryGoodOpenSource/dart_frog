@@ -1,10 +1,3 @@
-import { Uri, commands, window } from "vscode";
-import {
-  isDartFrogCLIInstalled,
-  nearestDartFrogProject,
-  resolveDartFrogProjectPathFromWorkspace,
-  suggestInstallingDartFrogCLI,
-} from "../utils";
 import {
   DartFrogApplication,
   DartFrogApplicationRegistry,
@@ -12,6 +5,13 @@ import {
   DartFrogDaemon,
   StartDaemonRequest,
 } from "../daemon";
+import { Uri, commands, window } from "vscode";
+import {
+  isDartFrogCLIInstalled,
+  nearestDartFrogProject,
+  resolveDartFrogProjectPathFromWorkspace,
+  suggestInstallingDartFrogCLI,
+} from "../utils";
 
 /**
  * Starts a Dart Frog development server on the current workspace.
