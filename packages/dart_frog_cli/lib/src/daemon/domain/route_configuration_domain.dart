@@ -158,5 +158,10 @@ class RouteConfigurationDomain extends DomainBase {
   }
 
   @override
-  Future<void> dispose() async {}
+  Future<void> dispose() async {
+    for (final watcher in _routeConfigurationWatchers.values) {
+      await watcher.stop();
+    }
+    _routeConfigurationWatchers.clear();
+  }
 }
