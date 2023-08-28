@@ -1,13 +1,13 @@
 const sinon = require("sinon");
 var proxyquire = require("proxyquire");
 
-import { afterEach, beforeEach } from "mocha";
+import * as assert from "assert";
 import {
   DaemonResponse,
   DartFrogApplication,
   StopDaemonRequest,
 } from "../../../daemon";
-import * as assert from "assert";
+import { afterEach, beforeEach } from "mocha";
 
 suite("stop-dev-server command", () => {
   let vscodeStub: any;

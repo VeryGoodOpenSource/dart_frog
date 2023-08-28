@@ -1,6 +1,6 @@
 const cp = require("child_process");
 
-import { window, ProgressOptions } from "vscode";
+import { ProgressOptions, window } from "vscode";
 import { isDartFrogCLIInstalled } from "../utils";
 
 /**
@@ -27,12 +27,9 @@ export const updateCLI = async (): Promise<void> => {
  * complete.
  */
 async function updateDartFrogCLIVersion(): Promise<void> {
-  await cp.exec(
-    `dart_frog update`,
-    function (error: Error, stdout: string, stderr: string) {
-      if (error) {
-        window.showErrorMessage(error.message);
-      }
+  await cp.exec(`dart_frog update`, function (error: Error) {
+    if (error) {
+      window.showErrorMessage(error.message);
     }
-  );
+  });
 }

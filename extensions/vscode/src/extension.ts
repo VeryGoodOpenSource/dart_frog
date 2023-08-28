@@ -1,20 +1,20 @@
 import * as vscode from "vscode";
 import {
-  installCLI,
-  newRoute,
-  newMiddleware,
-  updateCLI,
   create,
+  debugDevServer,
+  installCLI,
+  newMiddleware,
+  newRoute,
   startDaemon,
   startDevServer,
   stopDevServer,
-  debugDevServer,
+  updateCLI,
 } from "./commands";
 import {
-  readDartFrogCLIVersion,
   isCompatibleDartFrogCLIVersion,
   isDartFrogCLIInstalled,
   openChangelog,
+  readDartFrogCLIVersion,
   readLatestDartFrogCLIVersion,
   suggestInstallingDartFrogCLI,
 } from "./utils";

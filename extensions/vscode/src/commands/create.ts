@@ -2,11 +2,11 @@ const cp = require("child_process");
 const path = require("node:path");
 
 import {
+  InputBoxOptions,
+  OpenDialogOptions,
+  ProgressOptions,
   Uri,
   window,
-  InputBoxOptions,
-  ProgressOptions,
-  OpenDialogOptions,
 } from "vscode";
 import { isDartFrogCLIInstalled, suggestInstallingDartFrogCLI } from "../utils";
 
@@ -114,7 +114,7 @@ async function executeDartFrogCreateCommand(
     {
       cwd: outputDirectory,
     },
-    function (error: Error, stdout: string, stderr: string) {
+    function (error: Error) {
       if (error) {
         window.showErrorMessage(error.message);
       }

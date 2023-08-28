@@ -1,8 +1,8 @@
 const sinon = require("sinon");
 var proxyquire = require("proxyquire");
-import { EventEmitter } from "events";
 
 import { afterEach, beforeEach } from "mocha";
+import { EventEmitter } from "events";
 import assert = require("assert");
 import { RequestVersionDaemonRequest } from "../../../daemon";
 
