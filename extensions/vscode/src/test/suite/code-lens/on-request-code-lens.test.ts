@@ -62,7 +62,7 @@ suite("RunOnRequestCodeLensProvider", () => {
   });
 
   suite("resolveCodeLens", () => {
-    test("returns the code lens when configuration is enabled", async () => {
+    test("returns the CodeLens when configuration is enabled", async () => {
       workspaceConfiguration.get.withArgs("enableCodeLens", true).returns(true);
 
       const provider = new RunOnRequestCodeLensProvider();
@@ -133,7 +133,7 @@ suite("RunOnRequestCodeLensProvider", () => {
       });
     });
 
-    test("returns the correct code lenses", async () => {
+    test("returns the correct CodeLenses", async () => {
       const content = `
 import 'package:dart_frog/dart_frog.dart';
 
@@ -167,7 +167,7 @@ Response onRequest(RequestContext context) {
       sinon.assert.match(codeLens, new CodeLens(range));
     });
 
-    test("returns the correct code lenses on a dynamic route", async () => {
+    test("returns the correct CodeLenses on a dynamic route", async () => {
       const content = `
 import 'package:dart_frog/dart_frog.dart';
 
@@ -201,7 +201,7 @@ Response onRequest(RequestContext context, String id) {
       sinon.assert.match(codeLens, new CodeLens(range));
     });
 
-    test("returns no code lenses on a non route file", async () => {
+    test("returns no CodeLenses on a non route file", async () => {
       const content = `
 import 'package:dart_frog/dart_frog.dart';
 
