@@ -109,8 +109,8 @@ abstract class OnRequestCodeLensProvider extends RegularExpressionCodeLensProvid
 }
 
 /**
- * Shows a "Run" CodeLens on the top of the route handlers, which allows
- * starting a development server.
+ * Shows a "Run" CodeLens on route handlers, which allows starting a development
+ * server.
  */
 export class RunOnRequestCodeLensProvider extends OnRequestCodeLensProvider {
   public resolveCodeLens?(
