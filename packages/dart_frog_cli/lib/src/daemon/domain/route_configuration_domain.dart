@@ -72,19 +72,31 @@ class RouteConfigurationDomain extends DomainBase {
       },
     );
 
-    await routeConfigWatcher.start();
+    _routeConfigurationWatchers[watcherId] = routeConfigWatcher;
 
-    daemon.sendEvent(
-      DaemonEvent(
-        domain: domainName,
-        event: 'watcherStart',
-        params: {
+    try {
+      await routeConfigWatcher.start();
+
+      daemon.sendEvent(
+        DaemonEvent(
+          domain: domainName,
+          event: 'watcherStart',
+          params: {
+            'watcherId': watcherId,
+            'requestId': request.id,
+            'workingDirectory': workingDirectory,
+          },
+        ),
+      );
+    } catch (e) {
+      return DaemonResponse.error(
+        id: request.id,
+        error: {
           'watcherId': watcherId,
-          'requestId': request.id,
-          'workingDirectory': workingDirectory,
+          'message': e.toString(),
         },
-      ),
-    );
+      );
+    }
 
     routeConfigWatcher.exitCode.then((exitCode) {
       daemon.sendEvent(
@@ -174,14 +186,29 @@ class RouteConfigurationDomain extends DomainBase {
       );
     }
 
-    await watcher.stop();
+    try {
+      await watcher.stop();
 
-    return DaemonResponse.success(
-      id: request.id,
-      result: {
-        'watcherId': watcherId,
-      },
-    );
+      _routeConfigurationWatchers.remove(watcherId);
+
+      final exitCode = await watcher.exitCode;
+
+      return DaemonResponse.success(
+        id: request.id,
+        result: {
+          'watcherId': watcherId,
+          'exitCode': exitCode.code,
+        },
+      );
+    } catch (e) {
+      return DaemonResponse.error(
+        id: request.id,
+        error: {
+          'watcherId': watcherId,
+          'message': e.toString(),
+        },
+      );
+    }
   }
 
   @override

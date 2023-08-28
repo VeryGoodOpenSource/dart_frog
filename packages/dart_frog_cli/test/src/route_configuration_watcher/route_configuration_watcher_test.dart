@@ -133,8 +133,6 @@ void main() {
     });
 
     test('returns null when route generation fails', () async {
-      final routeConfiguration = _MockRouteConfiguration();
-
       routeConfigurationWatcher = RouteConfigurationWatcher(
         logger: logger,
         workingDirectory: Directory.current,
