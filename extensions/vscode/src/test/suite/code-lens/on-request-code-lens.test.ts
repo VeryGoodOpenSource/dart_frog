@@ -134,9 +134,17 @@ suite("RunOnRequestCodeLensProvider", () => {
     });
 
     test("returns the correct code lenses", async () => {
+      const content = `
+import 'package:dart_frog/dart_frog.dart';
+
+Response onRequest(RequestContext context) {
+  return Response(body: 'Welcome to Dart Frog!');
+}
+
+`;
       const textDocument = await workspace.openTextDocument({
         language: "text",
-        content: routeDocumentContent,
+        content,
       });
       document.getText = textDocument.getText.bind(textDocument);
       document.positionAt = textDocument.positionAt.bind(textDocument);
@@ -160,9 +168,17 @@ suite("RunOnRequestCodeLensProvider", () => {
     });
 
     test("returns the correct code lenses on a dynamic route", async () => {
+      const content = `
+import 'package:dart_frog/dart_frog.dart';
+
+Response onRequest(RequestContext context, String id) {
+  return Response(body: 'Welcome to Dart Frog!');
+}
+
+`;
       const textDocument = await workspace.openTextDocument({
         language: "text",
-        content: dynamicRouteDocumentContent,
+        content,
       });
       document.getText = textDocument.getText.bind(textDocument);
       document.positionAt = textDocument.positionAt.bind(textDocument);
@@ -186,9 +202,18 @@ suite("RunOnRequestCodeLensProvider", () => {
     });
 
     test("returns no code lenses on a non route file", async () => {
+      const content = `
+import 'package:dart_frog/dart_frog.dart';
+
+Response notOnRequest(RequestContext context) {
+  return Response(body: 'Welcome to Dart Frog!');
+}
+
+`;
+
       const textDocument = await workspace.openTextDocument({
         language: "text",
-        content: nonRouteDocumentContent,
+        content,
       });
       document.getText = textDocument.getText.bind(textDocument);
       document.positionAt = textDocument.positionAt.bind(textDocument);
@@ -203,30 +228,3 @@ suite("RunOnRequestCodeLensProvider", () => {
     });
   });
 });
-
-const routeDocumentContent = `
-import 'package:dart_frog/dart_frog.dart';
-
-Response onRequest(RequestContext context) {
-  return Response(body: 'Welcome to Dart Frog!');
-}
-
-`;
-
-const dynamicRouteDocumentContent = `
-import 'package:dart_frog/dart_frog.dart';
-
-Response onRequest(RequestContext context, String id) {
-  return Response(body: 'post id: $id');
-}
-
-`;
-
-const nonRouteDocumentContent = `
-import 'package:dart_frog/dart_frog.dart';
-
-Response notOnRequest(RequestContext context) {
-  return Response(body: 'Welcome to Dart Frog!');
-}
-
-`;
