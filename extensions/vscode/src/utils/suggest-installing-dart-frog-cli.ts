@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
 import { installCLI } from "../commands";
-import { isDartFrogCLIInstalled } from ".";
 
 /**
  * Suggests the user to install Dart Frog CLI.

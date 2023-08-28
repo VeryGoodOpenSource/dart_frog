@@ -1,10 +1,10 @@
+import { DartFrogApplication, DartFrogDaemon } from "../daemon";
 import { Uri, commands, debug, extensions, window } from "vscode";
 import {
   isDartFrogCLIInstalled,
   quickPickApplication,
   suggestInstallingDartFrogCLI,
 } from "../utils";
-import { DartFrogApplication, DartFrogDaemon } from "../daemon";
 
 export const debugDevServer = async (): Promise<void> => {
   if (!isDartFrogCLIInstalled()) {

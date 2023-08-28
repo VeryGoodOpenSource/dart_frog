@@ -1,3 +1,7 @@
+import {
+  AscendingNumericalIdentifierGenerator,
+  IdentifierGenerator,
+} from "../utils";
 import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 import {
   DaemonEvent,
@@ -9,12 +13,8 @@ import {
   isDaemonResponse,
   isReadyDaemonEvent,
 } from "./protocol";
-import { EventEmitter } from "events";
 import { DartFrogApplicationRegistry } from ".";
-import {
-  AscendingNumericalIdentifierGenerator,
-  IdentifierGenerator,
-} from "../utils";
+import { EventEmitter } from "events";
 
 /**
  * An error that is thrown when the Dart Frog Daemon has not yet been invoked
