@@ -90,6 +90,8 @@ void main() {
       test('starts a route config watcher', () async {
         late Logger passedLogger;
         late Directory passedWorkingDirectory;
+        late RouteConfigurationChanged passedOnRouteConfigurationChanged;
+
         domain = RouteConfigurationDomain(
           daemonServer,
           getId: () => 'id',
@@ -100,6 +102,7 @@ void main() {
           }) {
             passedLogger = logger;
             passedWorkingDirectory = workingDirectory;
+            passedOnRouteConfigurationChanged = onRouteConfigurationChanged;
             return watcher;
           },
         );
@@ -122,6 +125,21 @@ void main() {
         expect(passedWorkingDirectory.path, equals('/'));
 
         verify(() => watcher.start()).called(1);
+
+        passedOnRouteConfigurationChanged(_configuration);
+        verify(
+          () => daemonServer.sendEvent(
+            DaemonEvent(
+              domain: 'route_config',
+              event: 'routeConfigurationChanged',
+              params: {
+                'watcherId': 'id',
+                'requestId': '12',
+                'routeConfiguration': _configuration.toJson(),
+              },
+            ),
+          ),
+        ).called(1);
       });
 
       group('malformed messages', () {
@@ -400,6 +418,50 @@ void main() {
       });
     });
 
-    group('dispose', () {});
+    group('dispose', () {
+      test('should dispose', () async {
+        final watcher1 = _MockRouteConfigurationWatcher();
+        when(watcher1.stop).thenAnswer((_) async {});
+        final watcher2 = _MockRouteConfigurationWatcher();
+        when(watcher2.stop).thenAnswer((_) async {});
+
+        var calls = 0;
+
+        domain = RouteConfigurationDomain(
+          daemonServer,
+          routeConfigurationWatcherBuilder: ({
+            required Logger logger,
+            required Directory workingDirectory,
+            required RouteConfigurationChanged onRouteConfigurationChanged,
+          }) {
+            final watcher = calls == 0 ? watcher1 : watcher2;
+            calls++;
+            return watcher;
+          },
+        );
+
+        await domain.handleRequest(
+          const DaemonRequest(
+            id: '12',
+            domain: 'route_config',
+            method: 'watcherStart',
+            params: {'workingDirectory': '/'},
+          ),
+        );
+
+        await domain.handleRequest(
+          const DaemonRequest(
+            id: '13',
+            domain: 'route_config',
+            method: 'watcherStart',
+            params: {'workingDirectory': '/'},
+          ),
+        );
+
+        await domain.dispose();
+        verify(watcher1.stop).called(1);
+        verify(watcher2.stop).called(1);
+      });
+    });
   });
 }
