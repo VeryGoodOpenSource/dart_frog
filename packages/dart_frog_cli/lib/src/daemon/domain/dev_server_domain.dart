@@ -64,6 +64,7 @@ class DevServerDomain extends DomainBase {
         params: {
           'applicationId': applicationId,
           'requestId': request.id,
+          'workingDirectory': workingDirectory,
         },
       ),
     );

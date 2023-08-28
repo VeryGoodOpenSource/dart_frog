@@ -74,6 +74,33 @@ class RouteConfigurationDomain extends DomainBase {
 
     await routeConfigWatcher.start();
 
+    daemon.sendEvent(
+      DaemonEvent(
+        domain: domainName,
+        event: 'watcherStart',
+        params: {
+          'watcherId': watcherId,
+          'requestId': request.id,
+          'workingDirectory': workingDirectory,
+        },
+      ),
+    );
+
+    routeConfigWatcher.exitCode.then((exitCode) {
+      daemon.sendEvent(
+        DaemonEvent(
+          domain: domainName,
+          event: 'watcherExit',
+          params: {
+            'watcherId': watcherId,
+            'requestId': request.id,
+            'workingDirectory': workingDirectory,
+            'exitCode': exitCode.code,
+          },
+        ),
+      );
+    }).ignore();
+
     // Queue up a regeneration of the route config so that it happens after the
     // daemon has responded to the client.
     Timer.run(routeConfigWatcher.forceRouteConfigurationRegeneration);

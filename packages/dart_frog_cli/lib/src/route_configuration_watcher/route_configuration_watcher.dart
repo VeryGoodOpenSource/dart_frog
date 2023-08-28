@@ -25,6 +25,11 @@ typedef RouteConfigurationWatcherBuilder = RouteConfigurationWatcher Function({
   required RouteConfigurationChanged onRouteConfigurationChanged,
 });
 
+/// Typedef for [buildRouteConfiguration]
+typedef RouteConfigurationBuilder = RouteConfiguration Function(
+  io.Directory directory,
+);
+
 /// {@template route_config_watcher}
 /// Monitors a dart frog project for changes on its route configuration.
 /// {@endtemplate}
@@ -35,7 +40,10 @@ class RouteConfigurationWatcher {
     required this.workingDirectory,
     required this.onRouteConfigurationChanged,
     @visibleForTesting DirectoryWatcherBuilder? directoryWatcher,
-  }) : _directoryWatcher = directoryWatcher ?? DirectoryWatcher.new;
+    @visibleForTesting RouteConfigurationBuilder? routeConfigurationBuilder,
+  })  : _directoryWatcher = directoryWatcher ?? DirectoryWatcher.new,
+        _routeConfigurationBuilder =
+            routeConfigurationBuilder ?? buildRouteConfiguration;
 
   /// [Logger] instance used to wrap stdout.
   final Logger logger;
@@ -53,6 +61,7 @@ class RouteConfigurationWatcher {
   bool _isRunning = false;
 
   final DirectoryWatcherBuilder _directoryWatcher;
+  final RouteConfigurationBuilder _routeConfigurationBuilder;
 
   /// A [Future] that completes when the watcher stops.
   Future<ExitCode> get exitCode => _exitCodeCompleter.future;
@@ -81,7 +90,7 @@ class RouteConfigurationWatcher {
     }
 
     _isRunning = true;
-    logger.info('Starting project monitor');
+    logger.info('Starting route configuration watcher...');
 
     final cwdPath = workingDirectory.path;
     final entrypoint = path.join(cwdPath, 'main.dart');
@@ -115,9 +124,16 @@ class RouteConfigurationWatcher {
 
   /// Stops the watcher.
   Future<void> stop() async {
+    if (isCompleted) {
+      return;
+    }
+
+    logger.detail('[watcher] cancelling subscription...');
     await _watcherSubscription?.cancel();
     _watcherSubscription = null;
     _isRunning = false;
+    logger.detail('[watcher] cancelling subscription complete.');
+
     _exitCodeCompleter.complete(ExitCode.success);
   }
 
@@ -135,7 +151,7 @@ class RouteConfigurationWatcher {
     final RouteConfiguration routeConfiguration;
     final projectDirectory = workingDirectory;
     try {
-      routeConfiguration = buildRouteConfiguration(projectDirectory);
+      routeConfiguration = _routeConfigurationBuilder(projectDirectory);
     } catch (error) {
       logger.err('$error');
       return null;
