@@ -1,9 +1,8 @@
 import {
-  CancellationToken,
   CodeLens,
   CodeLensProvider,
-  EventEmitter,
   Event,
+  EventEmitter,
   Position,
   ProviderResult,
   TextDocument,
@@ -21,15 +20,13 @@ abstract class ConfigurableCodeLensProvider implements CodeLensProvider {
     this._onDidChangeCodeLenses.event;
 
   constructor() {
-    workspace.onDidChangeConfiguration((_) => {
+    workspace.onDidChangeConfiguration(() => {
       this._onDidChangeCodeLenses.fire();
     });
   }
 
-  public provideCodeLenses(
-    document: TextDocument,
-    token: CancellationToken
-  ): ProviderResult<CodeLens[]> {
+  // eslint-disable-next-line no-unused-vars
+  public provideCodeLenses(document: TextDocument): ProviderResult<CodeLens[]> {
     if (!this.hasEnabledCodeLenses()) {
       return undefined;
     }
@@ -37,8 +34,8 @@ abstract class ConfigurableCodeLensProvider implements CodeLensProvider {
   }
 
   public resolveCodeLens?(
-    codeLens: CodeLens,
-    token: CancellationToken
+    codeLens: CodeLens
+    // eslint-disable-next-line no-unused-vars
   ): ProviderResult<CodeLens> {
     if (!this.hasEnabledCodeLenses()) {
       return undefined;
@@ -55,11 +52,8 @@ abstract class ConfigurableCodeLensProvider implements CodeLensProvider {
 abstract class RegularExpressionCodeLensProvider extends ConfigurableCodeLensProvider {
   abstract readonly regex: RegExp;
 
-  public provideCodeLenses(
-    document: TextDocument,
-    token: CancellationToken
-  ): ProviderResult<CodeLens[]> {
-    if (!super.provideCodeLenses(document, token)) {
+  public provideCodeLenses(document: TextDocument): ProviderResult<CodeLens[]> {
+    if (!super.provideCodeLenses(document)) {
       return undefined;
     }
 
@@ -86,10 +80,7 @@ abstract class RegularExpressionCodeLensProvider extends ConfigurableCodeLensPro
 abstract class OnRequestCodeLensProvider extends RegularExpressionCodeLensProvider {
   readonly regex: RegExp = /Response\s*onRequest\(RequestContext .*?\)\s*{/g;
 
-  public provideCodeLenses(
-    document: TextDocument,
-    token: CancellationToken
-  ): ProviderResult<CodeLens[]> {
+  public provideCodeLenses(document: TextDocument): ProviderResult<CodeLens[]> {
     if (document.languageId !== "dart") {
       return undefined;
     }
@@ -104,7 +95,7 @@ abstract class OnRequestCodeLensProvider extends RegularExpressionCodeLensProvid
       return undefined;
     }
 
-    return super.provideCodeLenses(document, token);
+    return super.provideCodeLenses(document);
   }
 }
 
@@ -113,11 +104,8 @@ abstract class OnRequestCodeLensProvider extends RegularExpressionCodeLensProvid
  * server.
  */
 export class RunOnRequestCodeLensProvider extends OnRequestCodeLensProvider {
-  public resolveCodeLens?(
-    codeLens: CodeLens,
-    token: CancellationToken
-  ): ProviderResult<CodeLens> {
-    if (!super.resolveCodeLens!(codeLens, token)) {
+  public resolveCodeLens?(codeLens: CodeLens): ProviderResult<CodeLens> {
+    if (!super.resolveCodeLens!(codeLens)) {
       return undefined;
     }
 

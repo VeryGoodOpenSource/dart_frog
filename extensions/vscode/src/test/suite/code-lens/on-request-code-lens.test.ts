@@ -2,8 +2,8 @@ const sinon = require("sinon");
 var proxyquire = require("proxyquire");
 
 import * as assert from "assert";
-import { afterEach, beforeEach } from "mocha";
 import { CodeLens, Position, workspace } from "vscode";
+import { afterEach, beforeEach } from "mocha";
 
 suite("RunOnRequestCodeLensProvider", () => {
   let vscodeStub: any;
