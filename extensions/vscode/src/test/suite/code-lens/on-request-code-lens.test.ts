@@ -2,8 +2,8 @@ const sinon = require("sinon");
 var proxyquire = require("proxyquire");
 
 import * as assert from "assert";
-import { afterEach, beforeEach, before } from "mocha";
-import { CodeLens, Position, TextDocument, workspace } from "vscode";
+import { afterEach, beforeEach } from "mocha";
+import { CodeLens, Position, workspace } from "vscode";
 
 suite("RunOnRequestCodeLensProvider", () => {
   let vscodeStub: any;
@@ -11,17 +11,20 @@ suite("RunOnRequestCodeLensProvider", () => {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   let RunOnRequestCodeLensProvider: any;
   let document: any;
+  let workspaceConfiguration: any;
 
   beforeEach(() => {
     vscodeStub = {
       workspace: {
+        onDidChangeConfiguration: sinon.stub(),
         getConfiguration: sinon.stub(),
       },
     };
-    vscodeStub.workspace.onDidChangeConfiguration = sinon.stub();
-    vscodeStub.workspace.getConfiguration
-      .withArgs("dart-frog")
-      .returns(sinon.stub().withArgs("enableCodeLens", true).returns(true));
+    workspaceConfiguration = sinon.stub();
+    vscodeStub.workspace.getConfiguration.returns(workspaceConfiguration);
+    const getConfiguration = sinon.stub();
+    workspaceConfiguration.get = getConfiguration;
+    getConfiguration.withArgs("enableCodeLens", true).returns(true);
 
     utilsStub = {
       nearestDartFrogProject: sinon.stub(),
@@ -31,8 +34,7 @@ suite("RunOnRequestCodeLensProvider", () => {
     RunOnRequestCodeLensProvider = proxyquire(
       "../../../code-lens/on-request-code-lens",
       {
-        // TODO(alestiago): Stub vscode workspace.
-        // vscode: vscodeStub,
+        vscode: vscodeStub,
         // eslint-disable-next-line @typescript-eslint/naming-convention
         "../utils": utilsStub,
       }
@@ -49,8 +51,43 @@ suite("RunOnRequestCodeLensProvider", () => {
     sinon.restore();
   });
 
+  test("onDidChangeCodeLenses fires when configuration changes", () => {
+    const provider = new RunOnRequestCodeLensProvider();
+    const onDidChangeCodeLenses = sinon.stub();
+    provider.onDidChangeCodeLenses(onDidChangeCodeLenses);
+
+    vscodeStub.workspace.onDidChangeConfiguration.callArg(0);
+
+    sinon.assert.calledOnce(onDidChangeCodeLenses);
+  });
+
   suite("resolveCodeLens", () => {
-    // TODO(alestiago): Implement tests.
+    test("returns the code lens when configuration is enabled", async () => {
+      workspaceConfiguration.get.withArgs("enableCodeLens", true).returns(true);
+
+      const provider = new RunOnRequestCodeLensProvider();
+      const codeLens = new CodeLens(sinon.stub());
+      const result = await provider.resolveCodeLens(codeLens, sinon.stub());
+
+      assert.strictEqual(result, codeLens);
+      sinon.assert.match(result.command, {
+        title: "Run",
+        tooltip: "Starts a development server",
+        command: "dart-frog.start-dev-server",
+      });
+    });
+
+    test("returns undefined when configuration is disabled", async () => {
+      workspaceConfiguration.get
+        .withArgs("enableCodeLens", true)
+        .returns(false);
+
+      const provider = new RunOnRequestCodeLensProvider();
+      const codeLens = new CodeLens(sinon.stub());
+      const result = await provider.resolveCodeLens(codeLens, sinon.stub());
+
+      assert.strictEqual(result, undefined);
+    });
   });
 
   suite("providesCodeLenses", () => {
@@ -77,6 +114,17 @@ suite("RunOnRequestCodeLensProvider", () => {
         document.uri = {
           fsPath: "/home/dart_frog/not-routes/route.dart",
         };
+
+        const provider = new RunOnRequestCodeLensProvider();
+        const result = provider.provideCodeLenses(document);
+
+        assert.strictEqual(result, undefined);
+      });
+
+      test("codeLens configuration is disabled", () => {
+        workspaceConfiguration.get
+          .withArgs("enableCodeLens", true)
+          .returns(false);
 
         const provider = new RunOnRequestCodeLensProvider();
         const result = provider.provideCodeLenses(document);
@@ -136,6 +184,23 @@ suite("RunOnRequestCodeLensProvider", () => {
 
       sinon.assert.match(codeLens, new CodeLens(range));
     });
+
+    test("returns no code lenses on a non route file", async () => {
+      const textDocument = await workspace.openTextDocument({
+        language: "text",
+        content: nonRouteDocumentContent,
+      });
+      document.getText = textDocument.getText.bind(textDocument);
+      document.positionAt = textDocument.positionAt.bind(textDocument);
+      document.lineAt = textDocument.lineAt.bind(textDocument);
+      document.getWordRangeAtPosition =
+        textDocument.getWordRangeAtPosition.bind(textDocument);
+
+      const provider = new RunOnRequestCodeLensProvider();
+      const result = await provider.provideCodeLenses(document);
+
+      assert.strictEqual(result.length, 0);
+    });
   });
 });
 
@@ -153,6 +218,15 @@ import 'package:dart_frog/dart_frog.dart';
 
 Response onRequest(RequestContext context, String id) {
   return Response(body: 'post id: $id');
+}
+
+`;
+
+const nonRouteDocumentContent = `
+import 'package:dart_frog/dart_frog.dart';
+
+Response notOnRequest(RequestContext context) {
+  return Response(body: 'Welcome to Dart Frog!');
 }
 
 `;
