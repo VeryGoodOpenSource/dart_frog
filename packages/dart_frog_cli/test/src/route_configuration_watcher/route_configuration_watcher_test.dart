@@ -5,6 +5,7 @@ import 'package:dart_frog_cli/src/route_configuration_watcher/route_configuratio
 import 'package:dart_frog_gen/dart_frog_gen.dart';
 import 'package:mason/mason.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 import 'package:watcher/watcher.dart';
 
@@ -67,7 +68,7 @@ void main() {
         routeConfigurationWatcher.start(),
         throwsA(
           isA<DartFrogRouteConfigurationWatcherException>().having(
-            (e) => e.message,
+            (e) => e.toString(),
             'message',
             'Cannot start a route config watcher while already running.',
           ),
@@ -83,12 +84,47 @@ void main() {
         routeConfigurationWatcher.start(),
         throwsA(
           isA<DartFrogRouteConfigurationWatcherException>().having(
-            (e) => e.message,
+            (e) => e.toString(),
             'message',
             'Cannot start a route config watcher after it has been stopped.',
           ),
         ),
       );
+    });
+
+    test('generates a new route config on file changes', () async {
+      final routeConfiguration = _MockRouteConfiguration();
+
+      var onRouteConfigurationChangedCalls = 0;
+
+      routeConfigurationWatcher = RouteConfigurationWatcher(
+        logger: logger,
+        workingDirectory: Directory.current,
+        onRouteConfigurationChanged: (routeConfiguration) {
+          onRouteConfigurationChangedCalls++;
+        },
+        directoryWatcher: (_) => directoryWatcher,
+        routeConfigurationBuilder: (_) => routeConfiguration,
+      );
+
+      await routeConfigurationWatcher.start();
+
+      expect(onRouteConfigurationChangedCalls, equals(0));
+
+      watcherController.add(
+        WatchEvent(
+          ChangeType.MODIFY,
+          path.join(
+            Directory.current.path,
+            'routes',
+            'index.dart',
+          ),
+        ),
+      );
+
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+
+      expect(onRouteConfigurationChangedCalls, equals(1));
     });
   });
 
