@@ -1,6 +1,7 @@
 const sinon = require("sinon");
 var proxyquire = require("proxyquire");
 
+import * as assert from "assert";
 import {
   DaemonResponse,
   DartFrogApplication,
@@ -8,7 +9,6 @@ import {
 } from "../../../daemon";
 import { afterEach, beforeEach } from "mocha";
 import { Uri } from "vscode";
-import * as assert from "assert";
 
 suite("start-dev-server command", () => {
   let vscodeStub: any;
