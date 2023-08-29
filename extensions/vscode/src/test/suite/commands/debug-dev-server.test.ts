@@ -355,7 +355,7 @@ suite("debug-dev-server command", () => {
         sinon.assert.notCalled(utilsStub.quickPickApplication);
       });
 
-      test("when valid options are given", async () => {
+      test("when options has a valid application", async () => {
         daemon.applicationRegistry.all.returns([application1, application2]);
         daemon.applicationRegistry.get
           .withArgs(application2.id)
