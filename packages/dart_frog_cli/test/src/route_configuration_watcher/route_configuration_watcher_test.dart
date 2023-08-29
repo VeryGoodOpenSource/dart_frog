@@ -125,6 +125,21 @@ void main() {
       await Future<void>.delayed(const Duration(milliseconds: 100));
 
       expect(onRouteConfigurationChangedCalls, equals(1));
+
+      watcherController.add(
+        WatchEvent(
+          ChangeType.MODIFY,
+          path.join(
+            Directory.current.path,
+            'public',
+            'index.html',
+          ),
+        ),
+      );
+
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+
+      expect(onRouteConfigurationChangedCalls, equals(2));
     });
   });
 
@@ -136,7 +151,10 @@ void main() {
       expect(routeConfigurationWatcher.isWatching, isFalse);
       expect(routeConfigurationWatcher.isRunning, isFalse);
       expect(routeConfigurationWatcher.isCompleted, isTrue);
-      expect(await routeConfigurationWatcher.exitCode, equals(ExitCode.success));
+      expect(
+        await routeConfigurationWatcher.exitCode,
+        equals(ExitCode.success),
+      );
     });
 
     test('stops a stopped watcher', () async {
