@@ -58,7 +58,7 @@ suite("activate", () => {
   });
 
   suite("registers CodeLens", () => {
-    test("registerCodeLensProvider on dart", () => {
+    test("RunOnRequestCodeLensProvider on dart", () => {
       extension.activate(context);
 
       sinon.assert.calledWith(
