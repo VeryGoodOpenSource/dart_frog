@@ -3,9 +3,12 @@ var proxyquire = require("proxyquire");
 
 import * as assert from "assert";
 import * as vscode from "vscode";
+import {
+  DebugOnRequestCodeLensProvider,
+  RunOnRequestCodeLensProvider,
+} from "../../code-lens";
 import { afterEach, beforeEach } from "mocha";
 import { installCLI, newMiddleware, newRoute, updateCLI } from "../../commands";
-import { RunOnRequestCodeLensProvider } from "../../code-lens";
 
 suite("activate", () => {
   let vscodeStub: any;
@@ -58,7 +61,7 @@ suite("activate", () => {
   });
 
   suite("registers CodeLens", () => {
-    test("registerCodeLensProvider on dart", () => {
+    test("DebugOnRequestCodeLensProvider on dart", () => {
       extension.activate(context);
 
       sinon.assert.calledWith(
@@ -67,8 +70,40 @@ suite("activate", () => {
         sinon.match.any
       );
 
-      const provider = vscodeStub.languages.registerCodeLensProvider.args[0][1];
+      const provider =
+        vscodeStub.languages.registerCodeLensProvider.getCall(0).args[1];
+
+      assert.ok(provider instanceof DebugOnRequestCodeLensProvider);
+    });
+
+    test("RunOnRequestCodeLensProvider on dart", () => {
+      extension.activate(context);
+
+      sinon.assert.calledWith(
+        vscodeStub.languages.registerCodeLensProvider,
+        "dart",
+        sinon.match.any
+      );
+
+      const provider =
+        vscodeStub.languages.registerCodeLensProvider.getCall(1).args[1];
+
       assert.ok(provider instanceof RunOnRequestCodeLensProvider);
+    });
+
+    test("in the correct order", () => {
+      // Registration order matters for CodeLensProviders reporting on the same
+      // word; since it will alter the order in which they are displayed in the
+      // editor. Those registered first will be rightmost in the editor.
+      extension.activate(context);
+
+      const provider1 =
+        vscodeStub.languages.registerCodeLensProvider.getCall(0).args[1];
+      const provider2 =
+        vscodeStub.languages.registerCodeLensProvider.getCall(1).args[1];
+
+      assert.ok(provider1 instanceof DebugOnRequestCodeLensProvider);
+      assert.ok(provider2 instanceof RunOnRequestCodeLensProvider);
     });
   });
 
