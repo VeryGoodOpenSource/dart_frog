@@ -33,7 +33,9 @@ import {
  *
  * Otherwise, the command will not start the server.
  */
-export const startDevServer = async (): Promise<DartFrogApplication | void> => {
+export const startDevServer = async (): Promise<
+  DartFrogApplication | undefined
+> => {
   if (!isDartFrogCLIInstalled()) {
     await suggestInstallingDartFrogCLI(
       "Running this command requires Dart Frog CLI to be installed."
