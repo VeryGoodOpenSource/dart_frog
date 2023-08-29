@@ -128,6 +128,7 @@ export class DebugOnRequestCodeLensProvider extends OnRequestCodeLensProvider {
     codeLens.command = {
       title: "Debug",
       tooltip: "Starts and debugs a development server",
+      // TODO(alestiago): Use start-and-debug command when available.
       command: "dart-frog.start-dev-server",
     };
     return codeLens;
