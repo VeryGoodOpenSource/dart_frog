@@ -1032,6 +1032,8 @@ suite("start-dev-server command", () => {
       };
       daemon.send.withArgs(startRequest).resolves(startResponse);
 
+      await command.startDevServer();
+
       const application = new DartFrogApplication(
         startRequest.params.workingDirectory,
         startRequest.params.port,
