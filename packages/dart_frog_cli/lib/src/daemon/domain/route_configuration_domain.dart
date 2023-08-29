@@ -5,12 +5,12 @@ import 'package:dart_frog_cli/src/daemon/daemon.dart';
 import 'package:dart_frog_cli/src/route_configuration_watcher/route_configuration_watcher.dart';
 import 'package:meta/meta.dart';
 
-/// {@template route_config_domain}
+/// {@template route_configuration_domain}
 /// A [DomainBase] which includes operations for starting and stopping
 /// [RouteConfigurationWatcher]s.
 /// {@endtemplate}
 class RouteConfigurationDomain extends DomainBase {
-  /// {@macro route_config_domain}
+  /// {@macro route_configuration_domain}
   RouteConfigurationDomain(
     super.daemon, {
     @visibleForTesting super.getId,
@@ -27,7 +27,7 @@ class RouteConfigurationDomain extends DomainBase {
   }
 
   @override
-  String get domainName => 'route_config';
+  String get domainName => 'route_configuration';
 
   final _routeConfigurationWatchers = <String, RouteConfigurationWatcher>{};
 

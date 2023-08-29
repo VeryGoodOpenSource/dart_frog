@@ -111,7 +111,7 @@ void main() {
           await domain.handleRequest(
             const DaemonRequest(
               id: '12',
-              domain: 'route_config',
+              domain: 'route_configuration',
               method: 'watcherStart',
               params: {'workingDirectory': '/'},
             ),
@@ -130,7 +130,7 @@ void main() {
         verify(
           () => daemonServer.sendEvent(
             DaemonEvent(
-              domain: 'route_config',
+              domain: 'route_configuration',
               event: 'routeConfigurationChanged',
               params: {
                 'watcherId': 'id',
@@ -148,7 +148,7 @@ void main() {
             await domain.handleRequest(
               const DaemonRequest(
                 id: '12',
-                domain: 'route_config',
+                domain: 'route_configuration',
                 method: 'watcherStart',
                 params: {'workingDirectory': 123},
               ),
@@ -172,7 +172,7 @@ void main() {
           await domain.handleRequest(
             const DaemonRequest(
               id: '12',
-              domain: 'route_config',
+              domain: 'route_configuration',
               method: 'watcherStart',
               params: {'workingDirectory': '/'},
             ),
@@ -194,7 +194,7 @@ void main() {
         await domain.handleRequest(
           const DaemonRequest(
             id: '12',
-            domain: 'route_config',
+            domain: 'route_configuration',
             method: 'watcherStart',
             params: {'workingDirectory': '/'},
           ),
@@ -207,7 +207,7 @@ void main() {
           await domain.handleRequest(
             const DaemonRequest(
               id: '12',
-              domain: 'route_config',
+              domain: 'route_configuration',
               method: 'watcherStop',
               params: {
                 'watcherId': 'id',
@@ -234,7 +234,7 @@ void main() {
             await domain.handleRequest(
               const DaemonRequest(
                 id: '12',
-                domain: 'route_config',
+                domain: 'route_configuration',
                 method: 'watcherStop',
                 params: {
                   'watcherId': 123,
@@ -282,7 +282,7 @@ void main() {
           await domain.handleRequest(
             const DaemonRequest(
               id: '12',
-              domain: 'route_config',
+              domain: 'route_configuration',
               method: 'watcherStop',
               params: {
                 'watcherId': 'id',
@@ -307,7 +307,7 @@ void main() {
         await domain.handleRequest(
           const DaemonRequest(
             id: '12',
-            domain: 'route_config',
+            domain: 'route_configuration',
             method: 'watcherStart',
             params: {'workingDirectory': '/'},
           ),
@@ -320,7 +320,7 @@ void main() {
           await domain.handleRequest(
             const DaemonRequest(
               id: '12',
-              domain: 'route_config',
+              domain: 'route_configuration',
               method: 'watcherGenerateRouteConfiguration',
               params: {
                 'watcherId': 'id',
@@ -347,7 +347,7 @@ void main() {
             await domain.handleRequest(
               const DaemonRequest(
                 id: '12',
-                domain: 'route_config',
+                domain: 'route_configuration',
                 method: 'watcherGenerateRouteConfiguration',
                 params: {
                   'watcherId': 123,
@@ -396,7 +396,7 @@ void main() {
           await domain.handleRequest(
             const DaemonRequest(
               id: '12',
-              domain: 'route_config',
+              domain: 'route_configuration',
               method: 'watcherGenerateRouteConfiguration',
               params: {
                 'watcherId': 'id',
@@ -443,7 +443,7 @@ void main() {
         await domain.handleRequest(
           const DaemonRequest(
             id: '12',
-            domain: 'route_config',
+            domain: 'route_configuration',
             method: 'watcherStart',
             params: {'workingDirectory': '/'},
           ),
@@ -452,7 +452,7 @@ void main() {
         await domain.handleRequest(
           const DaemonRequest(
             id: '13',
-            domain: 'route_config',
+            domain: 'route_configuration',
             method: 'watcherStart',
             params: {'workingDirectory': '/'},
           ),

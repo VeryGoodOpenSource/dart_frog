@@ -30,11 +30,11 @@ typedef RouteConfigurationBuilder = RouteConfiguration Function(
   io.Directory directory,
 );
 
-/// {@template route_config_watcher}
+/// {@template route_configuration_watcher}
 /// Monitors a dart frog project for changes on its route configuration.
 /// {@endtemplate}
 class RouteConfigurationWatcher {
-  /// {@macro route_config_watcher}
+  /// {@macro route_configuration_watcher}
   RouteConfigurationWatcher({
     required this.logger,
     required this.workingDirectory,
@@ -162,11 +162,11 @@ class RouteConfigurationWatcher {
   }
 }
 
-/// {@template dart_frog_route_config_watcher_exception}
+/// {@template dart_frog_route_configuration_watcher_exception}
 /// Thrown when an error occurs while running the route config watcher.
 /// {@endtemplate}
 class DartFrogRouteConfigurationWatcherException implements Exception {
-  /// {@macro dart_frog_route_config_watcher_exception}
+  /// {@macro dart_frog_route_configuration_watcher_exception}
   DartFrogRouteConfigurationWatcherException(this.message);
 
   /// The exception message.

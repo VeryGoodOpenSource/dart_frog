@@ -71,7 +71,7 @@ void main() {
       expect(daemonServer.domainNames, [
         'daemon',
         'dev_server',
-        'route_config',
+        'route_configuration',
       ]);
     });
 
