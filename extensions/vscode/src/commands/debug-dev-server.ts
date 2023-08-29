@@ -11,7 +11,7 @@ export interface DebugDevServerOptions {
 }
 
 export const debugDevServer = async (
-  options?: DebugDevServerOptions
+  options?: DebugDevServerOptions | undefined
 ): Promise<void> => {
   if (!isDartFrogCLIInstalled()) {
     await suggestInstallingDartFrogCLI(

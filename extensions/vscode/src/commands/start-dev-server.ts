@@ -33,9 +33,7 @@ import {
  *
  * Otherwise, the command will not start the server.
  */
-export const startDevServer = async (): Promise<
-  DartFrogApplication | undefined
-> => {
+export const startDevServer = async (): Promise<DartFrogApplication | void> => {
   if (!isDartFrogCLIInstalled()) {
     await suggestInstallingDartFrogCLI(
       "Running this command requires Dart Frog CLI to be installed."
@@ -108,7 +106,7 @@ export const startDevServer = async (): Promise<
     startDaemonRequest
   );
 
-  await window.withProgress(
+  return await window.withProgress(
     {
       location: 15,
     },
@@ -134,10 +132,10 @@ export const startDevServer = async (): Promise<
       });
 
       commands.executeCommand("vscode.open", Uri.parse(application.address!));
+
+      return application;
     }
   );
-
-  return applicationPromise;
 };
 
 /**
