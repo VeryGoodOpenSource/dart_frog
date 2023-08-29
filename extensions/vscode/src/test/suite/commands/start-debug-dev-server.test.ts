@@ -52,13 +52,6 @@ suite("start-debug-dev-server command", () => {
     await command.startDebugDevServer();
 
     sinon.assert.calledOnce(commandsStub.startDevServer);
-
-    sinon.assert.calledOnce(
-      commandsStub.debugDevServer.withArgs(
-        sinon.match({
-          application: application,
-        })
-      )
-    );
+    sinon.assert.notCalled(commandsStub.debugDevServer);
   });
 });
