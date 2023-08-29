@@ -136,7 +136,7 @@ void main() {
       expect(routeConfigurationWatcher.isWatching, isFalse);
       expect(routeConfigurationWatcher.isRunning, isFalse);
       expect(routeConfigurationWatcher.isCompleted, isTrue);
-      expect(await routeConfigurationWatcher.exitCode, ExitCode.success);
+      expect(await routeConfigurationWatcher.exitCode, equals(ExitCode.success));
     });
 
     test('stops a stopped watcher', () async {
