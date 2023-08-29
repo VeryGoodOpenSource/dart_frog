@@ -33,10 +33,7 @@ abstract class ConfigurableCodeLensProvider implements CodeLensProvider {
     return this.codeLenses;
   }
 
-  public resolveCodeLens?(
-    codeLens: CodeLens
-    // eslint-disable-next-line no-unused-vars
-  ): ProviderResult<CodeLens> {
+  public resolveCodeLens?(codeLens: CodeLens): ProviderResult<CodeLens> {
     if (!this.hasEnabledCodeLenses()) {
       return undefined;
     }
