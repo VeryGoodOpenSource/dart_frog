@@ -15,7 +15,7 @@ Developed with 💙 by [Very Good Ventures][very_good_ventures_link] 🦄
 
 A package that provides the foundation for authentication for a Dart Frog backend server.
 
-Learn more about it on the [official docs](https://dartfrog.vgv.dev/docs/advanced/authentication).
+Learn more about it on the [official docs][docs_link].
 
 [ci_badge]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog_auth.yaml/badge.svg?branch=main
 [ci_link]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog_auth.yaml
@@ -33,3 +33,4 @@ Learn more about it on the [official docs](https://dartfrog.vgv.dev/docs/advance
 [very_good_analysis_link]: https://pub.dev/packages/very_good_analysis
 [very_good_ventures_link]: https://verygood.ventures
 [general_http]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication#the_general_http_authentication_framework
+[docs_link]: https://dartfrog.vgv.dev/docs/advanced/authentication
