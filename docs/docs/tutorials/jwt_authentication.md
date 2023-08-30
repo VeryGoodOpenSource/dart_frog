@@ -169,331 +169,348 @@ Handler middleware(Handler handler) {
 
 Now that we have all the domain code necessary to authenticate users given an username and a password.
 
-So let's now create a route where we can use to authenticate users. In the routes folder, create the file below:
+So let's now create a route which we can use to authenticate users. In the routes folder, create the file below:
 
 ```dart
-```
+// routes/sign_in.dart
+import 'dart:io';
 
-## REPLACE FROM DOWN HERE
-## Creating the WebSocket Route
-
-Now that we have a running application, let's start by creating a new `ws` route at `routes/ws.dart`:
-
-```dart
+import 'package:authenticated_app/authenticator.dart';
 import 'package:dart_frog/dart_frog.dart';
-
-Response onRequest(RequestContext context) {
-  return Response(body: 'You have requested /ws');
-}
-```
-
-We can also delete the root endpoint at `routes/index.dart` since we won't be needing it for this example.
-
-:::tip
-Install and use the [Dart Frog VS Code extension](https://marketplace.visualstudio.com/items?itemName=VeryGoodVentures.dart-frog) to easily create new routes within your IDE.
-:::
-
-Save the changes and hot reload should kick in ⚡️
-
-```
-[hotreload] - Application reloaded.
-```
-
-Now if we visit [http://localhost:8080/ws](http://localhost:8080/ws) in the browser or via `cURL`:
-
-```bash
-curl --request GET \
-  --url http://localhost:8080/ws
-```
-
-We should see our new response:
-
-```
-You have requested /ws
-```
-
-## Adding a WebSocket Handler
-
-Next, we need to upgrade our route handler to handle WebSocket connections. To do this we'll use the [dart_frog_web_socket](https://pub.dev/packages/dart_frog_web_socket) package.
-
-Add the `dart_frog_web_socket` dependency:
-
-```
-dart pub add dart_frog_web_socket
-```
-
-Now, let's update our route handler at `routes/ws.dart` to use the provided `webSocketHandler` from `dart_frog_web_socket`:
-
-```dart
-import 'package:dart_frog/dart_frog.dart';
-import 'package:dart_frog_web_socket/dart_frog_web_socket.dart';
 
 Future<Response> onRequest(RequestContext context) async {
-  final handler = webSocketHandler(
-    (channel, protocol) {
-      // A new client has connected to our server.
-      print('connected');
+  return switch (context.request.method) {
+    HttpMethod.post => _onPost(context),
+    _ => Future.value(
+        Response(statusCode: HttpStatus.methodNotAllowed),
+      ),
+  };
+}
 
-      // Send a message to the client.
-      channel.sink.add('hello from the server');
+Future<Response> _onPost(RequestContext context) async {
+  final body = await context.request.json() as Map<String, dynamic>;
+  final username = body['username'] as String?;
+  final password = body['password'] as String?;
 
-      // Listen for messages from the client.
-      channel.stream.listen(
-        print,
-        // The client has disconnected.
-        onDone: () => print('disconnected'),
-      );
-    },
+  if (username == null || password == null) {
+    return Response(statusCode: HttpStatus.badRequest);
+  }
+
+  final authenticator = context.read<Authenticator>();
+
+  final user = authenticator.findByUsernameAndPassword(
+    username: username,
+    password: password,
   );
 
-  return handler(context);
+  if (user == null) {
+    return Response(statusCode: HttpStatus.unauthorized);
+  } else {
+    return Response.json(
+      body: { 'token': username },
+    );
+  }
 }
 ```
 
-:::info
-For more information, refer to the [WebSocket documentation](/docs/advanced/web_socket).
-:::
+To people familiar with Dart Frog, the code abose should be no real challenge, we are simply handling the
+request in the following steps:
+ - Check with we have all the info needed, returning `badRequest` otherwise.
+ - Get our `Authenticator` dependency from our dependency injection.
+ - User the authenticator to get a user that match the request's credential.
+ - Returns `unauthorized` (401) if there is no user, or returns the the user username as the authentication token otherwise.
 
-Save the changes and hot reload should kick in ⚡️
+But wait, you could be thinking that using the user username as an autehntication token is quite unsafe.
+And for sure it is, but for now, let's just for the sake of simplicity, for now lets go with that
+in order to finish our authentication setup before introducing more complex security methods.
 
-Now we should be able to write a simple script to test the WebSocket connection.
-
-## Establishing a WebSocket Connection
-
-Create a new directory called `example` at the project root and create a `pubspec.yaml`:
-
-```yaml
-name: example
-publish_to: none
-
-environment:
-  sdk: '>=3.0.0 <4.0.0'
-
-dependencies:
-  web_socket_channel: ^2.4.0
-```
-
-Next, install the dependencies:
-
-```sh
-dart pub get
-```
-
-Now, create a `main.dart` with the following contents:
-
-```dart
-import 'package:web_socket_channel/web_socket_channel.dart';
-
-void main() {
-  // Connect to the remote WebSocket endpoint.
-  final uri = Uri.parse('ws://localhost:8080/ws');
-  final channel = WebSocketChannel.connect(uri);
-
-  // Listen to messages from the server.
-  channel.stream.listen(print);
-
-  // Send a message to the server.
-  channel.sink.add('hello from the client');
-
-  // Close the connection.
-  channel.sink.close();
-}
-```
-
-We're using [`package:web_socket_channel`](https://pub.dev/packages/web_socket_channel) to connect to our Dart Frog `/ws` endpoint. We can send messages to the server by calling `add` on the `WebSocketChannel` sink. We can listen to incoming messages by subscribing to the `WebSocketChannel` stream.
-
-With the Dart Frog server still running, open a separate terminal, and run the example script:
+Try now running a `curl` in the terminal to get a token:
 
 ```bash
-dart example/main.dart
+curl -X POST \
+     -H "Content-Type: application/json" \
+     -d '{"username": "john", "password": "123"}'  \
+     http://localhost:8080/sign_in
+
+# {"token":"john"}
 ```
 
-We should see the following output on the client:
+## Requiring authentication to access routes
 
-```
-hello from the server
-```
+Now that we have the means to get an authentication token, we can now protect routes to require that a token
+is provided.
 
-On the server we should see the following output:
+To start lets create the following route:
 
-```
-connected
-hello from the client
-disconnected
-```
-
-Awesome! We've configured a WebSocket handler and established a connection to our server 🎉
-
-## Managing the Counter State
-
-Now that we've configured the WebSocket handler, we're going to shift gears and work on creating a component that will manage the state of the counter.
-
-In this example, we're going to use a cubit from the [Bloc Library](https://bloclibrary.dev) to manage the state of our counter because it provides a reactive API which allows us to stream state changes and query the current state at any given point in time. We're going to use [package:broadcast_bloc](https://pub.dev/packages/broadcast_bloc) which allows blocs or cubits to broadcast their state changes to any subscribed stream channels — this will come in handy later on.
-
-Let's add the `broadcast_bloc` dependency:
-
-```
-dart pub add broadcast_bloc
-```
-
-Then, create a cubit in `lib/counter/cubit/counter_cubit.dart`.
 
 ```dart
-import 'package:broadcast_bloc/broadcast_bloc.dart';
+// routes/tasks/index.dart
+import 'dart:io';
 
-class CounterCubit extends BroadcastCubit<int> {
-  // Create an instance with an initial state of 0.
-  CounterCubit() : super(0);
+import 'package:dart_frog/dart_frog.dart';
 
-  // Increment the current state.
-  void increment() => emit(state + 1);
-
-  // Decrement the current state.
-  void decrement() => emit(state - 1);
+Future<Response> onRequest(RequestContext context) {
+  return switch (context.request.method) {
+    HttpMethod.post => _onPost(context),
+    _ => Future.value(Response(statusCode: HttpStatus.methodNotAllowed)),
+  };
 }
-```
 
-In order to access the cubit from our route handler, we'll create a `provider` in `lib/counter/middleware/counter_provider.dart`.
-
-```dart
-import 'package:dart_frog/dart_frog.dart';
-import 'package:web_socket_counter/counter/counter.dart';
-
-final _counter = CounterCubit();
-
-// Provide the counter instance via `RequestContext`.
-final counterProvider = provider<CounterCubit>((_) => _counter);
-```
-
-:::info
-For more information, refer to the [dependency injection documentation](/docs/basics/dependency-injection).
-:::
-
-Let's also create a barrel file which exports all `counter` components in `lib/counter/counter.dart`:
-
-```dart
-export 'cubit/counter_cubit.dart';
-export 'middleware/counter_provider.dart';
-```
-
-## Providing the Counter
-
-We need to use the `counterProvider` in order to have access to it in nested. Create a global piece of middleware (`routes/_middleware.dart`):
-
-```dart
-import 'package:dart_frog/dart_frog.dart';
-import 'package:web_socket_counter/counter/counter.dart';
-
-Handler middleware(Handler handler) => handler.use(counterProvider);
-```
-
-:::info
-For more information, refer to the [middleware documentation](/docs/basics/middleware).
-:::
-
-:::tip
-Install and use the [Dart Frog VS Code extension](https://marketplace.visualstudio.com/items?itemName=VeryGoodVentures.dart-frog) to easily create new middleware within your IDE.
-:::
-
-## Using the Counter
-
-We can access the `CounterCubit` instance from our WebSocket handler via `context.read<CounterCubit>()`.
-
-```dart
-import 'package:dart_frog/dart_frog.dart';
-import 'package:dart_frog_web_socket/dart_frog_web_socket.dart';
-import 'package:web_socket_counter/counter/counter.dart';
-
-Future<Response> onRequest(RequestContext context) async {
-  final handler = webSocketHandler(
-    (channel, protocol) {
-      // A new client has connected to our server.
-      // Subscribe the new client to receive notifications
-      // whenever the cubit state changes.
-      final cubit = context.read<CounterCubit>()..subscribe(channel);
-
-      // Send the current count to the new client.
-      channel.sink.add('${cubit.state}');
-
-      // Listen for messages from the client.
-      channel.stream.listen(
-        (event) {
-          switch (event) {
-            // Handle an increment message.
-            case '__increment__':
-              cubit.increment();
-              break;
-            // Handle a decrement message.
-            case '__decrement__':
-              cubit.decrement();
-              break;
-            // Ignore any other messages.
-            default:
-              break;
-          }
-        },
-        // The client has disconnected.
-        // Unsubscribe the channel.
-        onDone: () => cubit.unsubscribe(channel),
-      );
+Future<Response> _onPost(RequestContext context) async {
+  final task = await context.request.body();
+  return Response.json(
+    body: {
+      'recorded_task': task,
     },
   );
-
-  return handler(context);
 }
 ```
 
-First, we subscribe the newly connected client to the `CounterCubit` in order to receive updates whenever the cubit state changes.
+This routes doesn't do much for now, it just reads the request and answers with a body with the
+received task name. Also it isn't yet protected.
 
-Next, we send the current count to the new client via `cubit.state`.
+To protect our route, we will use [`dart_frog_auth`](https://pub.dev/packages/dart_frog_auth), a
+package provided by Dart Frog that makes it easier to implement token based authentications.
 
-When the client sends a new message, we invoke the `increment`/`decrement` method on the cubit based on the message.
+So lets start by adding it to the project:
 
-Finally, we unsubscribe the channel when the client disconnects.
-
-:::info
-The `subscribe` and `unsubscribe` APIs are exposed by the `BroadcastCubit` super class from `package:broadcast_bloc`.
-:::
-
-Be sure to save all the changes and hot reload should kick in ⚡️
-
-```
-[hotreload] - Application reloaded.
+```bash
+dart pub add dart_frog_auth
 ```
 
-Now we can update our example script in `example/main.dart`:
+First, we need to create a method in our authenticator class which will be responsible to validate
+an authentication token, since right now, our authentication token is just the user's username,
+we can add the following snippet to the `Authenticator` class:
 
 ```dart
-import 'package:web_socket_channel/web_socket_channel.dart';
+  User? verifyToken(String username) {
+    return _users[username];
+  }
+```
 
-void main() async {
-  final channel = WebSocketChannel.connect(Uri.parse('ws://localhost:8080/ws'));
-  channel.stream.listen(print);
+If the token is valid, the user will be returned, otherwise, the method will return `null`.
 
-  channel.sink.add('__increment__');
-  channel.sink.add('__decrement__');
+Next, lets create the following middleware under `routes/tasks`:
 
-  channel.sink.close();
+```dart
+import 'package:authenticated_app/authenticator.dart';
+import 'package:authenticated_app/user.dart';
+import 'package:dart_frog/dart_frog.dart';
+import 'package:dart_frog_auth/dart_frog_auth.dart';
+
+Handler middleware(Handler handler) {
+  return handler.use(
+    bearerAuthentication<User>(
+      authenticator: (context, token) async {
+        final authenticator = context.read<Authenticator>();
+        return authenticator.verifyToken(token);
+      },
+    ),
+  );
 }
 ```
 
-Finally, let's run the script:
+What this middle does, is to add a Bearer token authentication checking to all requests comming
+into the routes of that namescape.
 
+The usage of `bearerAuthentication` middleware, which is provided by `dart_frog_auth` is quite simple.
+We simply need to inform the a function to the `bearerAuthentication` attribute, this function receives
+the current `RequestContext` and the token that was passed in the request.
+
+If the token is valid and belongs to a user, the function must return that user. Otherwise,
+it should return null.
+
+This middleware will automatically return `unauthorized` response to incoming resquests where
+no valid tokens are provided, so if we go ahead and try the following command in our terminal:
+
+```bash
+# Note the additional `-v`, so we can see the status code in the output
+curl -d "Buy bread" \
+     -v \
+     http://localhost:8080/tasks
 ```
-dart example/main.dart
+
+We should see the following line in the output
+
+```bash
+< HTTP/1.1 401 Unauthorized
 ```
 
-We should see the following output:
+But if we inform a valid and correct authentication token:
 
+```bash
+curl -d "Buy bread" \
+     -v \
+     -H "Authorization: Bearer john" \
+     http://localhost:8080/tasks
 ```
-0
-1
-0
+
+The correct response of that route should be output:
+
+```bash
+{"recorded_task":"Buy bread"}
 ```
 
-:::note
-If you restart the server, the count will always be reset to 0 because it is only maintained in memory.
-:::
+Additionally, the `bearerAuthentication` middleware will set the returned user in the request context,
+so any route handlers affected by it, will have access to the user that is currently authenticated.
 
-🎉 Congrats, you've created a real-time counter application using Dart Frog. View the [full source code](https://github.com/VeryGoodOpenSource/dart_frog/tree/main/examples/web_socket_counter).
+With that information, we can change our tasks routes to have a more interesting response:
 
+
+```dart
+import 'dart:io';
+
+import 'package:authenticated_app/user.dart';
+import 'package:dart_frog/dart_frog.dart';
+
+Future<Response> onRequest(RequestContext context) {
+  return switch (context.request.method) {
+    HttpMethod.post => _onPost(context),
+    _ => Future.value(Response(statusCode: HttpStatus.methodNotAllowed)),
+  };
+}
+
+Future<Response> _onPost(RequestContext context) async {
+  final task = await context.request.body();
+  final user = context.read<User>();
+
+  return Response.json(
+    body: {
+      'recorded_task': task,
+      'user_id': user.id,
+    },
+  );
+}
+```
+
+## Protecting the authentication token
+
+This is a good step to review what we have done so far:
+
+ - We have created a sign in route, where credentials can be posted, and an authentication token
+is returned.
+ - We have routes that can only accessed if an authentication token is sent in the request. 
+
+But like we noticed in the steps above, our authentication token is quite unsafe, it is nothing
+more than the user's username, meaning that if an ill intentioned person guesses another user's
+username, which is not something hard to do, they could pass as that user, and maybe steal
+information or other bad actions.
+
+To avoid that, we to make our tokens in a way where they cannot be faked, guessed or tampered.
+There are many ways of doing that, in this tutorial, we will JWT, a widely used standard in the
+industry to secure issued tokens. This tutoriall will not go much in deep on how JWT tokens work
+under the hood, so to get a better understanding of how they work, be sure to check their official
+[documentation](https://jwt.io/).
+
+Right, with that brief introduction, lets get that done. Luckily, the Dart ecosystem already have
+a handy package that makes it easy to work with JWT tokens, lets start by adding that dependency to our
+project:
+
+```dart
+dart pub add dart_jsonwebtoken
+```
+
+Next, lets add the following method to our `Authenticator` class:
+
+```dart
+  String generateToken({
+    required String username,
+    required User user,
+  }) {
+    final jwt = JWT(
+      {
+        'id': user.id,
+        'name': user.name,
+        'username': username,
+      },
+    );
+
+    return jwt.sign(SecretKey('123'));
+  }
+```
+
+That will take care of generating a JWT token. Note that we call a method `sign` out of the token,
+passing a secret key, as the name implies, this key is secret and should be kept as such, in this
+tutorial we are keeping it harded coded for the sake of simplicity, but in a real case application,
+be sure to correctly store it.
+
+The sign method will create a signature out of the data we passed to it, that signature will be part
+of the token and will later on allow us to check if an authentication token that we've received
+is valid and if hasn't been tampered!
+
+Alright, now we need to make a small change in our sign in route, as it should not return the token
+create by this method instead, the route will now look like this:
+
+```dart
+import 'dart:io';
+
+import 'package:authenticated_app/authenticator.dart';
+import 'package:dart_frog/dart_frog.dart';
+
+Future<Response> onRequest(RequestContext context) async {
+  return switch (context.request.method) {
+    HttpMethod.post => _onPost(context),
+    _ => Future.value(
+        Response(statusCode: HttpStatus.methodNotAllowed),
+      ),
+  };
+}
+
+Future<Response> _onPost(RequestContext context) async {
+  final body = await context.request.json() as Map<String, dynamic>;
+  final username = body['username'] as String?;
+  final password = body['password'] as String?;
+
+  if (username == null || password == null) {
+    return Response(statusCode: HttpStatus.badRequest);
+  }
+
+  final authenticator = context.read<Authenticator>();
+
+  final user = authenticator.findByUsernameAndPassword(
+    username: username,
+    password: password,
+  );
+
+  if (user == null) {
+    return Response(statusCode: HttpStatus.unauthorized);
+  } else {
+    return Response.json(
+      body: {
+        'token': authenticator.generateToken(
+          username: username,
+          user: user,
+        ),
+      },
+    );
+  }
+}
+```
+
+Finally, we now need to change the `Authenticator` to verify the signed token instead of just
+checking if there is a user with the username.
+
+
+```dart
+  User? verifyToken(String token) {
+    try {
+      final payload = JWT.verify(
+        token,
+        SecretKey('123'),
+      );
+
+      final payloadData = payload.payload as Map<String, dynamic>;
+
+      final username = payloadData['username'] as String;
+      return _users[username];
+    } catch (e) {
+      return null;
+    }
+  }
+```
+
+And that is it, with the addition of a signed token if someone tamper the information stored in it,
+or try to forge a token without knowing the secret key, the authentication will fail and only real,
+authenticated users will be able to access protected routes!
+
+🎉 Congrats, you've created an application using Dart Frog with authentication.
