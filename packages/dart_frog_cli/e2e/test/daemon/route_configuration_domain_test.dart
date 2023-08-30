@@ -125,7 +125,7 @@ void main() {
             'message',
             allOf(
               startsWith('[watcher] add'),
-              endsWith('example/routes/new_route/_middleware.dart'),
+              endsWith('_middleware.dart'),
             ),
           ),
         ),
@@ -210,7 +210,7 @@ void main() {
             'message',
             allOf(
               startsWith('[watcher] add'),
-              endsWith('example/routes/rogue_route.dart'),
+              endsWith('rogue_route.dart'),
             ),
           ),
         ),
