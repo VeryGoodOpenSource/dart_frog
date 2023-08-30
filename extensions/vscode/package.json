@@ -89,6 +89,15 @@
           "when": "!(resourceDirname =~ /routes/) && !(explorerResourceIsFolder && resourceFilename == routes)"
         }
       ]
+    },
+    "icons": {
+      "dart-frog": {
+        "description": "Dart Frog logo",
+        "default": {
+          "fontPath": "./assets/dart-frog.woff",
+          "fontCharacter": "\\e900"
+        }
+      }
     }
   },
   "extensionDependencies": [
