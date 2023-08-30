@@ -63,7 +63,7 @@ cd authenticated_app
 Then, run the following command:
 
 ```bash
-authenticated_app dev
+dart_frog dev
 ```
 
 This will start the development server on port `8080`:
