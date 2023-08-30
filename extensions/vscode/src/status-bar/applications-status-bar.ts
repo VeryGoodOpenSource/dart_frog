@@ -3,10 +3,12 @@ import {
   DartFrogDaemon,
 } from "../daemon";
 import {
+  Command,
   Disposable,
   StatusBarAlignment,
   StatusBarItem,
   ThemeColor,
+  Uri,
   window,
 } from "vscode";
 
@@ -45,6 +47,7 @@ export class ApplicationStatusBar implements Disposable {
     if (applications.length === 0) {
       this.startStopStatusBarItem.text = "$(dart-frog) Start Server";
       this.startStopStatusBarItem.tooltip = "Start development server";
+      // TODO(alestiago): Use start-debug-dev-server comman instead.
       this.startStopStatusBarItem.command = "dart-frog.start-dev-server";
       this.startStopStatusBarItem.backgroundColor = undefined;
 
@@ -53,6 +56,7 @@ export class ApplicationStatusBar implements Disposable {
       this.startStopStatusBarItem.text = "$(dart-frog) Stop Server";
       this.startStopStatusBarItem.tooltip = "Stop development server";
       this.startStopStatusBarItem.command = "dart-frog.stop-dev-server";
+      // TODO(alestiago): Check colors when debug is active.
       this.startStopStatusBarItem.backgroundColor = new ThemeColor(
         "statusBarItem.warningBackground"
       );
@@ -61,6 +65,12 @@ export class ApplicationStatusBar implements Disposable {
       this.applicationStatusBarItem.text = `$(globe) localhost:${application.port}`;
       this.applicationStatusBarItem.tooltip = `localhost:${application.port}`;
       this.applicationStatusBarItem.show();
+      const openCommand: Command = {
+        title: "Open application in browser",
+        command: "vscode.open",
+        arguments: [Uri.parse(application.address!)],
+      };
+      this.applicationStatusBarItem.command = openCommand;
     }
   }
 
