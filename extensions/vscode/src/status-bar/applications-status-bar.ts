@@ -66,5 +66,16 @@ export class ApplicationStatusBar implements Disposable {
 
   dispose() {
     this.startStopStatusBarItem.dispose();
+    this.applicationStatusBarItem.dispose();
+
+    const daemon = DartFrogDaemon.instance;
+    daemon.applicationRegistry.off(
+      DartFrogApplicationRegistryEventEmitterTypes.add,
+      this.update.bind(this)
+    );
+    daemon.applicationRegistry.off(
+      DartFrogApplicationRegistryEventEmitterTypes.remove,
+      this.update.bind(this)
+    );
   }
 }
