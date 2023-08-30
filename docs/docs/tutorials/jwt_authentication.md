@@ -216,7 +216,7 @@ Future<Response> _onPost(RequestContext context) async {
 To people familiar with Dart Frog, the code above should be no real challenge, we are simply handling the
 request in the following steps:
 
-- Check with we have all the info needed, returning `badRequest` otherwise.
+- Check if we have all the info needed, returning `badRequest` otherwise.
 - Get our `Authenticator` dependency from our dependency injection.
 - User the authenticator to get a user that match the request's credential.
 - Returns `unauthorized` (401) if there is no user, or returns the the user username as the authentication token otherwise.
