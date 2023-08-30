@@ -101,6 +101,13 @@
           "fontPath": "./assets/dart-frog.woff",
           "fontCharacter": "\\e900"
         }
+      },
+      "dart-frog-stop": {
+        "description": "Dart Frog logo with a stop sign",
+        "default": {
+          "fontPath": "./assets/dart-frog.woff",
+          "fontCharacter": "\\e901"
+        }
       }
     }
   },

@@ -47,19 +47,14 @@ export class ApplicationStatusBar implements Disposable {
     if (applications.length === 0) {
       this.startStopStatusBarItem.text = "$(dart-frog) Start Server";
       this.startStopStatusBarItem.tooltip = "Start development server";
-      // TODO(alestiago): Use start-debug-dev-server comman instead.
-      this.startStopStatusBarItem.command = "dart-frog.start-dev-server";
+      this.startStopStatusBarItem.command = "dart-frog.start-debug-dev-server";
       this.startStopStatusBarItem.backgroundColor = undefined;
 
       this.applicationStatusBarItem.hide();
     } else {
-      this.startStopStatusBarItem.text = "$(dart-frog) Stop Server";
+      this.startStopStatusBarItem.text = "$(dart-frog-stop) Stop Server";
       this.startStopStatusBarItem.tooltip = "Stop development server";
       this.startStopStatusBarItem.command = "dart-frog.stop-dev-server";
-      // TODO(alestiago): Check colors when debug is active.
-      this.startStopStatusBarItem.backgroundColor = new ThemeColor(
-        "statusBarItem.warningBackground"
-      );
 
       const application = applications[0];
       this.applicationStatusBarItem.text = `$(globe) localhost:${application.port}`;
