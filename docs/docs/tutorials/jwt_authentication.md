@@ -149,7 +149,7 @@ We also need to provide our `Authenticator` to our routes. Since it will be used
 several routes like a sign in and all the routes that are authenticated, it makes sense to
 provide it to all routes.
 
-In order to do so, we can use [Dart frog's dependecy injection](https://dartfrog.vgv.dev/docs/basics/dependency-injection)
+In order to do so, we can use [Dart frog's dependency injection](https://dartfrog.vgv.dev/docs/basics/dependency-injection)
 and create a middleware in the root of our `routes` folder with the following code:
 
 ```dart
@@ -213,7 +213,7 @@ Future<Response> _onPost(RequestContext context) async {
 }
 ```
 
-To people familiar with Dart Frog, the code abose should be no real challenge, we are simply handling the
+To people familiar with Dart Frog, the code above should be no real challenge, we are simply handling the
 request in the following steps:
 
 - Check with we have all the info needed, returning `badRequest` otherwise.
@@ -221,7 +221,7 @@ request in the following steps:
 - User the authenticator to get a user that match the request's credential.
 - Returns `unauthorized` (401) if there is no user, or returns the the user username as the authentication token otherwise.
 
-But wait, you could be thinking that using the user username as an autehntication token is quite unsafe.
+But wait, you could be thinking that using the user username as an authentication token is quite unsafe.
 And for sure it is, but for now, let's just for the sake of simplicity, for now lets go with that
 in order to finish our authentication setup before introducing more complex security methods.
 
@@ -310,8 +310,8 @@ Handler middleware(Handler handler) {
 }
 ```
 
-What this middle does, is to add a Bearer token authentication checking to all requests comming
-into the routes of that namescape.
+What this middle does, is to add a Bearer token authentication checking to all requests coming
+into the routes of that namespace.
 
 The usage of `bearerAuthentication` middleware, which is provided by `dart_frog_auth` is quite simple.
 We simply need to inform the a function to the `bearerAuthentication` attribute, this function receives
@@ -320,7 +320,7 @@ the current `RequestContext` and the token that was passed in the request.
 If the token is valid and belongs to a user, the function must return that user. Otherwise,
 it should return null.
 
-This middleware will automatically return `unauthorized` response to incoming resquests where
+This middleware will automatically return `unauthorized` response to incoming requests where
 no valid tokens are provided, so if we go ahead and try the following command in our terminal:
 
 ```bash
@@ -397,7 +397,7 @@ information or other bad actions.
 
 To avoid that, we to make our tokens in a way where they cannot be faked, guessed or tampered.
 There are many ways of doing that, in this tutorial, we will JWT, a widely used standard in the
-industry to secure issued tokens. This tutoriall will not go much in deep on how JWT tokens work
+industry to secure issued tokens. This tutorial will not go much in deep on how JWT tokens work
 under the hood, so to get a better understanding of how they work, be sure to check their official
 [documentation](https://jwt.io/).
 
@@ -430,7 +430,7 @@ Next, lets add the following method to our `Authenticator` class:
 
 That will take care of generating a JWT token. Note that we call a method `sign` out of the token,
 passing a secret key, as the name implies, this key is secret and should be kept as such, in this
-tutorial we are keeping it harded coded for the sake of simplicity, but in a real case application,
+tutorial we are keeping it hard coded for the sake of simplicity, but in a real case application,
 be sure to correctly store it.
 
 The sign method will create a signature out of the data we passed to it, that signature will be part
