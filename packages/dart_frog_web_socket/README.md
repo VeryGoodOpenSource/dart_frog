@@ -11,6 +11,8 @@ WebSocket support for [Dart Frog][dart_frog_link].
 
 Developed with 💙 by [Very Good Ventures][very_good_ventures_link] 🦄
 
+Learn more about it on the [official docs](https://dartfrog.vgv.dev/docs/advanced/web_socket).
+
 ## Quick Start 🚀
 
 Use `webSocketHandler` to manage `WebSocket` connections in a Dart Frog route handler.

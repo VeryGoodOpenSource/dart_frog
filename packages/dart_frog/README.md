@@ -11,6 +11,10 @@ A fast, minimalistic backend framework for Dart 🎯
 
 Developed with 💙 by [Very Good Ventures][very_good_ventures_link] 🦄
 
+## Documentation 📝
+
+For official documentation, please visit https://dartfrog.vgv.dev.
+
 ## Quick Start 🚀
 
 ### Prerequisites 📝

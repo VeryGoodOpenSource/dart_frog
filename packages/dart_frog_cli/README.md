@@ -34,6 +34,8 @@ Available commands:
 Run "dart_frog help <command>" for more information about a command.
 ```
 
+Learn more about it on the [official docs](https://dartfrog.vgv.dev/docs/overview).
+
 [ci_badge]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog_cli.yaml/badge.svg?branch=main
 [ci_link]: https://github.com/VeryGoodOpenSource/dart_frog/actions/workflows/dart_frog_cli.yaml
 [coverage_badge]: https://raw.githubusercontent.com/VeryGoodOpenSource/dart_frog/main/packages/dart_frog_cli/coverage_badge.svg
