@@ -79,8 +79,8 @@ void main() {
           routeConfiguration['rogueRoutes'] as List<dynamic>;
 
       expect(routeConfigurationEndpoints.keys.toList(), containsAll(['/']));
-      expect(routeConfigurationMiddleware, equals([]));
-      expect(routeConfigurationRogueRoutes, equals([]));
+      expect(routeConfigurationMiddleware, isEmpty);
+      expect(routeConfigurationRogueRoutes, isEmpty);
     });
 
     test('create new route', () async {
@@ -105,8 +105,8 @@ void main() {
         routeConfigurationEndpoints.keys.toList(),
         equals(['/new_route', '/']),
       );
-      expect(routeConfigurationMiddleware, equals([]));
-      expect(routeConfigurationRogueRoutes, equals([]));
+      expect(routeConfigurationMiddleware, isEmpty);
+      expect(routeConfigurationRogueRoutes, isEmpty);
     });
 
     test('create new middleware', () async {
@@ -155,7 +155,7 @@ void main() {
         (routeConfigurationMiddleware.first as Map<String, dynamic>)['path'],
         '../routes/new_route/_middleware.dart',
       );
-      expect(routeConfigurationRogueRoutes, equals([]));
+      expect(routeConfigurationRogueRoutes, isEmpty);
     });
 
     test('ask for route config generation', () async {
@@ -188,7 +188,7 @@ void main() {
         (routeConfigurationMiddleware.first as Map<String, dynamic>)['path'],
         '../routes/new_route/_middleware.dart',
       );
-      expect(routeConfigurationRogueRoutes, equals([]));
+      expect(routeConfigurationRogueRoutes, isEmpty);
     });
 
     test('create a rogue route', () async {
