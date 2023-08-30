@@ -45,7 +45,7 @@ export class ApplicationStatusBar implements Disposable {
     const applications = daemon.applicationRegistry.all();
 
     if (applications.length === 0) {
-      this.startStopStatusBarItem.text = "$(dart-frog) Start Server";
+      this.startStopStatusBarItem.text = "$(dart-frog-start) Start Server";
       this.startStopStatusBarItem.tooltip = "Start development server";
       this.startStopStatusBarItem.command = "dart-frog.start-debug-dev-server";
       this.startStopStatusBarItem.backgroundColor = undefined;
@@ -57,7 +57,7 @@ export class ApplicationStatusBar implements Disposable {
       this.startStopStatusBarItem.command = "dart-frog.stop-dev-server";
 
       const application = applications[0];
-      this.applicationStatusBarItem.text = `$(globe) localhost:${application.port}`;
+      this.applicationStatusBarItem.text = `$(dart-frog-globe) localhost:${application.port}`;
       this.applicationStatusBarItem.tooltip = `localhost:${application.port}`;
       this.applicationStatusBarItem.show();
       const openCommand: Command = {
