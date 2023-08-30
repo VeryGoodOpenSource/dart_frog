@@ -6,7 +6,13 @@ import {
   suggestInstallingDartFrogCLI,
 } from "../utils";
 
-export const debugDevServer = async (): Promise<void> => {
+export interface DebugDevServerOptions {
+  application: DartFrogApplication;
+}
+
+export const debugDevServer = async (
+  options?: DebugDevServerOptions | undefined
+): Promise<void> => {
   if (!isDartFrogCLIInstalled()) {
     await suggestInstallingDartFrogCLI(
       "Running this command requires Dart Frog CLI to be installed."
@@ -65,17 +71,27 @@ export const debugDevServer = async (): Promise<void> => {
     }
   }
 
-  const application =
-    applications.length === 1
-      ? applications[0]
-      : await quickPickApplication(
-          {
-            placeHolder: "Select a server to debug",
-          },
-          applications
-        );
-  if (!application) {
-    return;
+  let application: DartFrogApplication;
+  if (
+    options &&
+    options.application.id &&
+    daemon.applicationRegistry.get(options.application.id)
+  ) {
+    application = options.application;
+  } else if (applications.length === 1) {
+    application = applications[0];
+  } else {
+    const selection = await quickPickApplication(
+      {
+        placeHolder: "Select a server to debug",
+      },
+      applications
+    );
+    if (!selection) {
+      return;
+    }
+
+    application = selection;
   }
 
   const debugSession = debug.activeDebugSession;
