@@ -18,6 +18,7 @@ import {
   readLatestDartFrogCLIVersion,
   suggestInstallingDartFrogCLI,
 } from "./utils";
+import { ApplicationStatusBar } from "./status-bar";
 
 /**
  * This method is called when the extension is activated.
@@ -55,8 +56,10 @@ export function activate(
     vscode.commands.registerCommand(
       "dart-frog.debug-dev-server",
       debugDevServer
-    )
+    ),
+    new ApplicationStatusBar()
   );
+
   return context;
 }
 
