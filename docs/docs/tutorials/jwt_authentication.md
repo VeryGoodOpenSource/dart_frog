@@ -219,7 +219,7 @@ request in the following steps:
 - Check if we have all the info needed, returning `badRequest` otherwise.
 - Get our `Authenticator` dependency from our dependency injection.
 - User the authenticator to get a user that match the request's credential.
-- Returns `unauthorized` (401) if there is no user, or returns the the user username as the authentication token otherwise.
+- Returns `unauthorized` (401) if there is no user, or returns the user username as the authentication token otherwise.
 
 But wait, you could be thinking that using the user username as an authentication token is quite unsafe.
 And for sure it is, but for now, let's just for the sake of simplicity, for now lets go with that
@@ -238,8 +238,9 @@ curl -X POST \
 
 ## Requiring authentication to access routes
 
-Now that we have the means to get an authentication token, we can now protect routes to require that a token
-is provided.
+Now that we have the means to get an authentication token, we can now protect routes to require a token
+to be provided in
+order to access them.
 
 To start lets create the following route:
 
@@ -266,7 +267,7 @@ Future<Response> _onPost(RequestContext context) async {
 }
 ```
 
-This routes doesn't do much for now, it just reads the request and answers with a body with the
+This route doesn't do much for now, it just reads the request and answers with a body with the
 received task name. Also it isn't yet protected.
 
 To protect our route, we will use [`dart_frog_auth`](https://pub.dev/packages/dart_frog_auth), a
@@ -310,7 +311,7 @@ Handler middleware(Handler handler) {
 }
 ```
 
-What this middle does, is to add a Bearer token authentication checking to all requests coming
+What this middleware does, is to add a Bearer token authentication checking to all requests incoming
 into the routes of that namespace.
 
 The usage of `bearerAuthentication` middleware, which is provided by `dart_frog_auth` is quite simple.
@@ -320,7 +321,7 @@ the current `RequestContext` and the token that was passed in the request.
 If the token is valid and belongs to a user, the function must return that user. Otherwise,
 it should return null.
 
-This middleware will automatically return `unauthorized` response to incoming requests where
+This middleware will automatically return `unauthorized` response to incoming requests when
 no valid tokens are provided, so if we go ahead and try the following command in our terminal:
 
 ```bash
@@ -384,21 +385,21 @@ Future<Response> _onPost(RequestContext context) async {
 
 ## Protecting the authentication token
 
-This is a good step to review what we have done so far:
+This is a good point to review what we have done so far:
 
 - We have created a sign in route, where credentials can be posted, and an authentication token
-  is returned.
-- We have routes that can only accessed if an authentication token is sent in the request.
+  is returned if valid.
+- We have routes that can only be accessed if an authentication token is sent in the request.
 
-But like we noticed in the steps above, our authentication token is quite unsafe, it is nothing
+But like we noticed in the steps before, our authentication token is quite unsafe, it is nothing
 more than the user's username, meaning that if an ill intentioned person guesses another user's
-username, which is not something hard to do, they could pass as that user, and maybe steal
+username, which is not something hard to do, they could pass as that user and maybe steal
 information or other bad actions.
 
-To avoid that, we to make our tokens in a way where they cannot be faked, guessed or tampered.
-There are many ways of doing that, in this tutorial, we will JWT, a widely used standard in the
+To avoid that, we have to make our tokens in a way where they cannot be faked, guessed or tampered.
+There are many ways of doing that, in this tutorial, we will use JWT, a widely used standard in the
 industry to secure issued tokens. This tutorial will not go much in deep on how JWT tokens work
-under the hood, so to get a better understanding of how they work, be sure to check their official
+under the hood, so to get a better understanding on how they work, be sure to check their official
 [documentation](https://jwt.io/).
 
 Right, with that brief introduction, lets get that done. Luckily, the Dart ecosystem already have
@@ -431,14 +432,14 @@ Next, lets add the following method to our `Authenticator` class:
 That will take care of generating a JWT token. Note that we call a method `sign` out of the token,
 passing a secret key, as the name implies, this key is secret and should be kept as such, in this
 tutorial we are keeping it hard coded for the sake of simplicity, but in a real case application,
-be sure to correctly store it.
+be sure to correctly store it and pass it to the code in a way where then will remain secret to outsiders.
 
 The sign method will create a signature out of the data we passed to it, that signature will be part
 of the token and will later on allow us to check if an authentication token that we've received
 is valid and if hasn't been tampered!
 
-Alright, now we need to make a small change in our sign in route, as it should not return the token
-create by this method instead, the route will now look like this:
+Alright, now we need to make a small change in our sign in route, as it should not return the username
+anymore, but rather the token created by this method instead. The route will now look like this:
 
 ```dart
 import 'dart:io';
