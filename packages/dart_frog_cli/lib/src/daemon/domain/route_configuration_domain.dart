@@ -61,7 +61,7 @@ class RouteConfigurationDomain extends DomainBase {
         daemon.sendEvent(
           DaemonEvent(
             domain: domainName,
-            event: 'routeConfigurationChanged',
+            event: 'changed',
             params: {
               'watcherId': watcherId,
               'requestId': request.id,
