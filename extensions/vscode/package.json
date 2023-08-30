@@ -69,6 +69,10 @@
       {
         "command": "dart-frog.debug-dev-server",
         "title": "Dart Frog: Debug Development Server"
+      },
+      {
+        "command": "dart-frog.start-debug-dev-server",
+        "title": "Dart Frog: Start and Debug Development Server"
       }
     ],
     "menus": {
@@ -108,15 +112,15 @@
     "@types/node": "20.5.7",
     "@types/vscode": "^1.81.0",
     "@typescript-eslint/eslint-plugin": "^6.5.0",
-    "@typescript-eslint/parser": "^6.4.1",
+    "@typescript-eslint/parser": "^6.5.0",
     "@vscode/test-electron": "^2.3.2",
     "c8": "^8.0.0",
-    "eslint": "^8.47.0",
+    "eslint": "^8.48.0",
     "glob": "^10.3.3",
     "mocha": "^10.2.0",
     "proxyquire": "^2.1.3",
     "sinon": "^15.1.2",
-    "typescript": "^5.1.6"
+    "typescript": "^5.2.2"
   },
   "dependencies": {
     "semver": "^7.5.4"

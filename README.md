@@ -23,6 +23,8 @@ For official documentation, please visit https://dartfrog.vgv.dev.
 | [dart_frog_gen](https://github.com/verygoodopensource/dart_frog/tree/main/packages/dart_frog_gen)               | [![pub package](https://img.shields.io/pub/v/dart_frog_gen.svg)](https://pub.dev/packages/dart_frog_gen)               |
 | [dart_frog_cli](https://github.com/verygoodopensource/dart_frog/tree/main/packages/dart_frog_cli)               | [![pub package](https://img.shields.io/pub/v/dart_frog_cli.svg)](https://pub.dev/packages/dart_frog_cli)               |
 | [dart_frog_web_socket](https://github.com/verygoodopensource/dart_frog/tree/main/packages/dart_frog_web_socket) | [![pub package](https://img.shields.io/pub/v/dart_frog_web_socket.svg)](https://pub.dev/packages/dart_frog_web_socket) |
+| [dart_frog_auth](https://github.com/verygoodopensource/dart_frog/tree/main/packages/dart_frog_auth)             | [![pub package](https://img.shields.io/pub/v/dart_frog_auth.svg)](https://pub.dev/packages/dart_frog_auth)             |
+
 
 ## Quick Start 🚀
 
