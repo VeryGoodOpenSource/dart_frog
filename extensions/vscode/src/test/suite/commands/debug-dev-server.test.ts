@@ -63,6 +63,8 @@ suite("debug-dev-server command", () => {
     daemon.applicationRegistry = sinon.stub();
     daemon.applicationRegistry.all = sinon.stub();
     daemon.applicationRegistry.all.returns([]);
+    daemon.applicationRegistry.get = sinon.stub();
+    daemon.applicationRegistry.get.returns();
     daemon.isReady = true;
 
     command = proxyquire("../../../commands/debug-dev-server", {
@@ -344,12 +346,28 @@ suite("debug-dev-server command", () => {
   });
 
   suite("applications quick pick", () => {
-    test("is not shown when there is a single running application", async () => {
-      daemon.applicationRegistry.all.returns([application1]);
+    suite("is not shown", () => {
+      test("when there is a single running application", async () => {
+        daemon.applicationRegistry.all.returns([application1]);
 
-      await command.debugDevServer();
+        await command.debugDevServer();
 
-      sinon.assert.notCalled(utilsStub.quickPickApplication);
+        sinon.assert.notCalled(utilsStub.quickPickApplication);
+      });
+
+      test("when options has a valid application", async () => {
+        daemon.applicationRegistry.all.returns([application1, application2]);
+        daemon.applicationRegistry.get
+          .withArgs(application2.id)
+          .returns(application2);
+        utilsStub.quickPickApplication.resolves(application1);
+
+        await command.debugDevServer({
+          application: application2,
+        });
+
+        sinon.assert.notCalled(utilsStub.quickPickApplication);
+      });
     });
 
     test("is shown when there is more than a single running application", async () => {
@@ -469,6 +487,35 @@ suite("debug-dev-server command", () => {
   });
 
   suite("starts debug session", () => {
+    test("when options has a valid application", async () => {
+      vscodeStub.debug.activeDebugSession = undefined;
+
+      daemon.applicationRegistry.all.returns([application1]);
+      daemon.applicationRegistry.get
+        .withArgs(application1.id)
+        .returns(application1);
+
+      await command.debugDevServer({
+        application: application1,
+      });
+
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      await progressFunction();
+
+      sinon.assert.calledOnceWithExactly(
+        vscodeStub.debug.startDebugging,
+        undefined,
+        {
+          name: `Dart Frog: Development Server (${application1.address})`,
+          request: "attach",
+          type: "dart",
+          vmServiceUri: application1.vmServiceUri,
+          applicationId: application1.id,
+        }
+      );
+    });
+
     test("when there is a single running application", async () => {
       vscodeStub.debug.activeDebugSession = undefined;
 
@@ -523,5 +570,15 @@ suite("debug-dev-server command", () => {
         }
       );
     });
+  });
+
+  test("does not start debug session when options application is not registered", async () => {
+    daemon.applicationRegistry.all.returns([application1]);
+
+    await command.debugDevServer({
+      application: application2,
+    });
+
+    sinon.assert.notCalled(vscodeStub.debug.startDebugging);
   });
 });
