@@ -1,8 +1,4 @@
 import {
-  DartFrogApplicationRegistryEventEmitterTypes,
-  DartFrogDaemon,
-} from "../daemon";
-import {
   Command,
   Disposable,
   StatusBarAlignment,
@@ -11,6 +7,10 @@ import {
   Uri,
   window,
 } from "vscode";
+import {
+  DartFrogApplicationRegistryEventEmitterTypes,
+  DartFrogDaemon,
+} from "../daemon";
 
 export class ApplicationStatusBar implements Disposable {
   public readonly startStopStatusBarItem: StatusBarItem;
