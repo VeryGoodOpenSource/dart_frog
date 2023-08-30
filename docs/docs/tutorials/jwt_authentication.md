@@ -4,7 +4,7 @@ title: 🪪  Authentication with JWT
 description: Build an authenticated dart frog service.
 ---
 
-#  Authentication with JWT 🪪 
+# Authentication with JWT 🪪
 
 :::info
 **Difficulty**: 🟠 Intermediate<br/>
@@ -215,10 +215,11 @@ Future<Response> _onPost(RequestContext context) async {
 
 To people familiar with Dart Frog, the code abose should be no real challenge, we are simply handling the
 request in the following steps:
- - Check with we have all the info needed, returning `badRequest` otherwise.
- - Get our `Authenticator` dependency from our dependency injection.
- - User the authenticator to get a user that match the request's credential.
- - Returns `unauthorized` (401) if there is no user, or returns the the user username as the authentication token otherwise.
+
+- Check with we have all the info needed, returning `badRequest` otherwise.
+- Get our `Authenticator` dependency from our dependency injection.
+- User the authenticator to get a user that match the request's credential.
+- Returns `unauthorized` (401) if there is no user, or returns the the user username as the authentication token otherwise.
 
 But wait, you could be thinking that using the user username as an autehntication token is quite unsafe.
 And for sure it is, but for now, let's just for the sake of simplicity, for now lets go with that
@@ -241,7 +242,6 @@ Now that we have the means to get an authentication token, we can now protect ro
 is provided.
 
 To start lets create the following route:
-
 
 ```dart
 // routes/tasks/index.dart
@@ -356,7 +356,6 @@ so any route handlers affected by it, will have access to the user that is curre
 
 With that information, we can change our tasks routes to have a more interesting response:
 
-
 ```dart
 import 'dart:io';
 
@@ -387,9 +386,9 @@ Future<Response> _onPost(RequestContext context) async {
 
 This is a good step to review what we have done so far:
 
- - We have created a sign in route, where credentials can be posted, and an authentication token
-is returned.
- - We have routes that can only accessed if an authentication token is sent in the request. 
+- We have created a sign in route, where credentials can be posted, and an authentication token
+  is returned.
+- We have routes that can only accessed if an authentication token is sent in the request.
 
 But like we noticed in the steps above, our authentication token is quite unsafe, it is nothing
 more than the user's username, meaning that if an ill intentioned person guesses another user's
@@ -489,7 +488,6 @@ Future<Response> _onPost(RequestContext context) async {
 
 Finally, we now need to change the `Authenticator` to verify the signed token instead of just
 checking if there is a user with the username.
-
 
 ```dart
   User? verifyToken(String token) {
