@@ -69,6 +69,10 @@
       {
         "command": "dart-frog.debug-dev-server",
         "title": "Dart Frog: Debug Development Server"
+      },
+      {
+        "command": "dart-frog.start-debug-dev-server",
+        "title": "Dart Frog: Start and Debug Development Server"
       }
     ],
     "menus": {

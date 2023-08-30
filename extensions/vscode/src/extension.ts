@@ -6,6 +6,7 @@ import {
   newMiddleware,
   newRoute,
   startDaemon,
+  startDebugDevServer,
   startDevServer,
   stopDevServer,
   updateCLI,
@@ -56,6 +57,10 @@ export function activate(
     vscode.commands.registerCommand(
       "dart-frog.debug-dev-server",
       debugDevServer
+    ),
+    vscode.commands.registerCommand(
+      "dart-frog.start-debug-dev-server",
+      startDebugDevServer
     ),
     new ApplicationStatusBar()
   );
