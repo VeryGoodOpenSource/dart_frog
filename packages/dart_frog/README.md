@@ -13,7 +13,7 @@ Developed with 💙 by [Very Good Ventures][very_good_ventures_link] 🦄
 
 ## Documentation 📝
 
-For official documentation, please visit https://dartfrog.vgv.dev.
+For official documentation, please visit [dartfrog.vgv.dev][docs_link].
 
 ## Quick Start 🚀
 
@@ -75,3 +75,4 @@ View the full documentation [here][documentation_link].
 [very_good_analysis_badge]: https://img.shields.io/badge/style-very_good_analysis-B22C89.svg
 [very_good_analysis_link]: https://pub.dev/packages/very_good_analysis
 [very_good_ventures_link]: https://verygood.ventures
+[docs_link]: https://dartfrog.vgv.dev

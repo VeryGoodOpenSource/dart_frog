@@ -11,7 +11,7 @@ WebSocket support for [Dart Frog][dart_frog_link].
 
 Developed with 💙 by [Very Good Ventures][very_good_ventures_link] 🦄
 
-Learn more about it on the [official docs](https://dartfrog.vgv.dev/docs/advanced/web_socket).
+Learn more about it on the [official docs][docs_link].
 
 ## Quick Start 🚀
 
@@ -77,3 +77,4 @@ void main() {
 [very_good_analysis_badge]: https://img.shields.io/badge/style-very_good_analysis-B22C89.svg
 [very_good_analysis_link]: https://pub.dev/packages/very_good_analysis
 [very_good_ventures_link]: https://verygood.ventures
+[docs_link]: https://dartfrog.vgv.dev/docs/advanced/web_socket
