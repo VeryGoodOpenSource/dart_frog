@@ -309,8 +309,7 @@ suite("DebugOnRequestCodeLensProvider", () => {
       sinon.assert.match(result.command, {
         title: "Debug",
         tooltip: "Starts and debugs a development server",
-        // TODO(alestiago): Use start-and-debug command when available.
-        command: "dart-frog.start-dev-server",
+        command: "dart-frog.start-debug-dev-server",
       });
     });
 
