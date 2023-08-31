@@ -9,7 +9,7 @@ environment:
 dependencies:
   todos_data_source:
     path: ../todos_data_source
-  uuid: ^3.0.6
+  uuid: ^4.0.0
 
 dev_dependencies:
   mocktail: ^1.0.0
