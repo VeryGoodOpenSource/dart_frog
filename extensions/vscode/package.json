@@ -123,6 +123,14 @@
           "fontCharacter": "\\e903"
         }
       }
+    },
+    "configuration": {
+      "properties": {
+        "dart-frog.enableCodeLens": {
+          "type": "boolean",
+          "default": true
+        }
+      }
     }
   },
   "extensionDependencies": [

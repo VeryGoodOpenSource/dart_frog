@@ -1,5 +1,9 @@
 import * as vscode from "vscode";
 import {
+  DebugOnRequestCodeLensProvider,
+  RunOnRequestCodeLensProvider,
+} from "./code-lens";
+import {
   OpenApplicationStatusBarItem,
   StartStopStatusBarItem,
 } from "./status-bar";
@@ -44,6 +48,15 @@ export function activate(
   } else {
     ensureCompatibleCLI();
   }
+
+  vscode.languages.registerCodeLensProvider(
+    "dart",
+    new DebugOnRequestCodeLensProvider()
+  );
+  vscode.languages.registerCodeLensProvider(
+    "dart",
+    new RunOnRequestCodeLensProvider()
+  );
 
   context.subscriptions.push(
     vscode.commands.registerCommand("dart-frog.create", create),
