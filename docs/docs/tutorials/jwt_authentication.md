@@ -433,7 +433,6 @@ passing a secret key, as the name implies, this key is secret and should be kept
 tutorial we are keeping it hard coded. Nonetheless, in a real case application,
 be sure to correctly store it and pass it to the code in a way where then will remain secret to outsiders.
 
-
 :::tip
 Environments variables are a great way of injecting secrets into you Dart Frog application. Check [this guide](https://dartfrog.vgv.dev/docs/basics/environments) to learn more about them.
 :::
