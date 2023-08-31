@@ -2,342 +2,443 @@ const sinon = require("sinon");
 var proxyquire = require("proxyquire");
 
 import * as assert from "assert";
-import * as vscode from "vscode";
-import {
-  DebugOnRequestCodeLensProvider,
-  RunOnRequestCodeLensProvider,
-} from "../../code-lens";
+import { CodeLens, Position, workspace } from "vscode";
 import { afterEach, beforeEach } from "mocha";
-import { installCLI, newMiddleware, newRoute, updateCLI } from "../../commands";
 
-suite("activate", () => {
+/**
+ * The content of a route file.
+ */
+const routeContent = `
+import 'package:dart_frog/dart_frog.dart';
+
+Response onRequest(RequestContext context) {
+  return Response(body: 'Welcome to Dart Frog!');
+}
+
+`;
+
+/**
+ * The content of a route file with a dynamic route.
+ */
+const dynamicRouteContent = `
+import 'package:dart_frog/dart_frog.dart';
+
+Response onRequest(RequestContext context, String id) {
+  return Response(body: 'Welcome to Dart Frog!');
+}
+
+`;
+
+/**
+ * The content of something that looks like a route file but isn't.
+ */
+const invalidRouteContent = `
+import 'package:dart_frog/dart_frog.dart';
+
+Response notOnRequest(RequestContext context) {
+  return Response(body: 'Welcome to Dart Frog!');
+}
+
+`;
+
+suite("RunOnRequestCodeLensProvider", () => {
   let vscodeStub: any;
-  let extension: any;
-  let context: any;
+  let utilsStub: any;
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  let RunOnRequestCodeLensProvider: any;
+  let document: any;
+  let workspaceConfiguration: any;
 
   beforeEach(() => {
     vscodeStub = {
-      commands: {
-        registerCommand: sinon.stub(),
-      },
-      languages: {
-        registerCodeLensProvider: sinon.stub(),
+      workspace: {
+        onDidChangeConfiguration: sinon.stub(),
+        getConfiguration: sinon.stub(),
       },
     };
+    workspaceConfiguration = sinon.stub();
+    vscodeStub.workspace.getConfiguration.returns(workspaceConfiguration);
+    const getConfiguration = (workspaceConfiguration.get = sinon.stub());
+    getConfiguration.withArgs("enableCodeLens", true).returns(true);
 
-    const utilsStub = {
-      readDartFrogCLIVersion: sinon.stub(),
-      isCompatibleDartFrogCLIVersion: sinon.stub(),
-      isDartFrogCLIInstalled: sinon.stub(),
+    utilsStub = {
+      nearestDartFrogProject: sinon.stub(),
     };
-    utilsStub.readDartFrogCLIVersion.returns("0.0.0");
-    utilsStub.isCompatibleDartFrogCLIVersion.returns(true);
-    utilsStub.isDartFrogCLIInstalled.returns(true);
+    utilsStub.nearestDartFrogProject.returns("/home/dart_frog");
 
-    const childProcessStub = {
-      execSync: sinon.stub(),
+    RunOnRequestCodeLensProvider = proxyquire(
+      "../../../code-lens/on-request-code-lens",
+      {
+        vscode: vscodeStub,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        "../utils": utilsStub,
+      }
+    ).RunOnRequestCodeLensProvider;
+
+    document = sinon.stub();
+    document.languageId = "dart";
+    document.uri = {
+      fsPath: "/home/dart_frog/routes/index.dart",
     };
-
-    extension = proxyquire("../../extension", {
-      vscode: vscodeStub,
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      child_process: childProcessStub,
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      "./utils": utilsStub,
-    });
-    context = { subscriptions: [] };
   });
 
   afterEach(() => {
     sinon.restore();
   });
 
-  test("does not throw", async () => {
-    const extension = vscode.extensions.getExtension(
-      "VeryGoodVentures.dart-frog"
-    ) as vscode.Extension<any>;
+  test("onDidChangeCodeLenses fires when configuration changes", () => {
+    const provider = new RunOnRequestCodeLensProvider();
+    const onDidChangeCodeLenses = sinon.stub();
+    provider.onDidChangeCodeLenses(onDidChangeCodeLenses);
 
-    assert.doesNotThrow(async () => await extension.activate());
+    vscodeStub.workspace.onDidChangeConfiguration.callArg(0);
+
+    sinon.assert.calledOnce(onDidChangeCodeLenses);
   });
 
-  suite("registers CodeLens", () => {
-    test("DebugOnRequestCodeLensProvider on dart", () => {
-      extension.activate(context);
+  suite("resolveCodeLens", () => {
+    test("returns the CodeLens when configuration is enabled", async () => {
+      workspaceConfiguration.get.withArgs("enableCodeLens", true).returns(true);
 
-      sinon.assert.calledWith(
-        vscodeStub.languages.registerCodeLensProvider,
-        "dart",
-        sinon.match.any
-      );
+      const provider = new RunOnRequestCodeLensProvider();
+      const codeLens = new CodeLens(sinon.stub());
+      const result = await provider.resolveCodeLens(codeLens, sinon.stub());
 
-      const provider =
-        vscodeStub.languages.registerCodeLensProvider.getCall(0).args[1];
-
-      assert.ok(provider instanceof DebugOnRequestCodeLensProvider);
+      assert.strictEqual(result, codeLens);
+      sinon.assert.match(result.command, {
+        title: "Run",
+        tooltip: "Starts a development server",
+        command: "dart-frog.start-dev-server",
+      });
     });
 
-    test("RunOnRequestCodeLensProvider on dart", () => {
-      extension.activate(context);
+    test("returns undefined when configuration is disabled", async () => {
+      workspaceConfiguration.get
+        .withArgs("enableCodeLens", true)
+        .returns(false);
 
-      sinon.assert.calledWith(
-        vscodeStub.languages.registerCodeLensProvider,
-        "dart",
-        sinon.match.any
-      );
+      const provider = new RunOnRequestCodeLensProvider();
+      const codeLens = new CodeLens(sinon.stub());
+      const result = await provider.resolveCodeLens(codeLens, sinon.stub());
 
-      const provider =
-        vscodeStub.languages.registerCodeLensProvider.getCall(1).args[1];
-
-      assert.ok(provider instanceof RunOnRequestCodeLensProvider);
-    });
-
-    test("in the correct order", () => {
-      // Registration order matters for CodeLensProviders reporting on the same
-      // word; since it will alter the order in which they are displayed in the
-      // editor. Those registered first will be rightmost in the editor.
-      extension.activate(context);
-
-      const provider1 =
-        vscodeStub.languages.registerCodeLensProvider.getCall(0).args[1];
-      const provider2 =
-        vscodeStub.languages.registerCodeLensProvider.getCall(1).args[1];
-
-      assert.ok(provider1 instanceof DebugOnRequestCodeLensProvider);
-      assert.ok(provider2 instanceof RunOnRequestCodeLensProvider);
+      assert.strictEqual(result, undefined);
     });
   });
 
-  suite("registers command", () => {
-    test("install-cli", () => {
-      extension.activate(context);
+  suite("providesCodeLenses", () => {
+    suite("returns undefined if the document is not", () => {
+      test("a Dart file", () => {
+        document.languageId = "not-dart";
 
-      sinon.assert.calledWith(
-        vscodeStub.commands.registerCommand,
-        "dart-frog.install-cli",
-        installCLI
-      );
+        const provider = new RunOnRequestCodeLensProvider();
+        const result = provider.provideCodeLenses(document);
+
+        assert.strictEqual(result, undefined);
+      });
+
+      test("in a Dart Frog project", () => {
+        utilsStub.nearestDartFrogProject.returns(undefined);
+
+        const provider = new RunOnRequestCodeLensProvider();
+        const result = provider.provideCodeLenses(document);
+
+        assert.strictEqual(result, undefined);
+      });
+
+      test("in the routes folder", () => {
+        document.uri = {
+          fsPath: "/home/dart_frog/not-routes/route.dart",
+        };
+
+        const provider = new RunOnRequestCodeLensProvider();
+        const result = provider.provideCodeLenses(document);
+
+        assert.strictEqual(result, undefined);
+      });
+
+      test("codeLens configuration is disabled", () => {
+        workspaceConfiguration.get
+          .withArgs("enableCodeLens", true)
+          .returns(false);
+
+        const provider = new RunOnRequestCodeLensProvider();
+        const result = provider.provideCodeLenses(document);
+
+        assert.strictEqual(result, undefined);
+      });
     });
 
-    test("update-cli", () => {
-      extension.activate(context);
+    test("returns the correct CodeLenses", async () => {
+      const content = routeContent;
+      const textDocument = await workspace.openTextDocument({
+        language: "text",
+        content,
+      });
+      document.getText = textDocument.getText.bind(textDocument);
+      document.positionAt = textDocument.positionAt.bind(textDocument);
+      document.lineAt = textDocument.lineAt.bind(textDocument);
+      document.getWordRangeAtPosition =
+        textDocument.getWordRangeAtPosition.bind(textDocument);
 
-      sinon.assert.calledWith(
-        vscodeStub.commands.registerCommand,
-        "dart-frog.update-cli",
-        updateCLI
-      );
+      const provider = new RunOnRequestCodeLensProvider();
+      const result = await provider.provideCodeLenses(document);
+
+      assert.strictEqual(result.length, 1);
+
+      const codeLens = result[0];
+
+      const range = document.getWordRangeAtPosition(
+        new Position(3, 0),
+        /Response onRequest\(RequestContext context\) {/
+      )!;
+
+      sinon.assert.match(codeLens, new CodeLens(range));
     });
 
-    test("new-route", () => {
-      extension.activate(context);
+    test("returns the correct CodeLenses on a dynamic route", async () => {
+      const content = dynamicRouteContent;
+      const textDocument = await workspace.openTextDocument({
+        language: "text",
+        content,
+      });
+      document.getText = textDocument.getText.bind(textDocument);
+      document.positionAt = textDocument.positionAt.bind(textDocument);
+      document.lineAt = textDocument.lineAt.bind(textDocument);
+      document.getWordRangeAtPosition =
+        textDocument.getWordRangeAtPosition.bind(textDocument);
 
-      sinon.assert.calledWith(
-        vscodeStub.commands.registerCommand,
-        "dart-frog.new-route",
-        newRoute
-      );
+      const provider = new RunOnRequestCodeLensProvider();
+      const result = await provider.provideCodeLenses(document);
+
+      assert.strictEqual(result.length, 1);
+
+      const codeLens = result[0];
+
+      const range = document.getWordRangeAtPosition(
+        new Position(3, 0),
+        /Response onRequest\(RequestContext context, String id\) {/
+      )!;
+
+      sinon.assert.match(codeLens, new CodeLens(range));
     });
 
-    test("new-middleware", () => {
-      extension.activate(context);
+    test("returns no CodeLenses on a non route file", async () => {
+      const content = invalidRouteContent;
+      const textDocument = await workspace.openTextDocument({
+        language: "text",
+        content,
+      });
+      document.getText = textDocument.getText.bind(textDocument);
+      document.positionAt = textDocument.positionAt.bind(textDocument);
+      document.lineAt = textDocument.lineAt.bind(textDocument);
+      document.getWordRangeAtPosition =
+        textDocument.getWordRangeAtPosition.bind(textDocument);
 
-      sinon.assert.calledWith(
-        vscodeStub.commands.registerCommand,
-        "dart-frog.new-middleware",
-        newMiddleware
-      );
+      const provider = new RunOnRequestCodeLensProvider();
+      const result = await provider.provideCodeLenses(document);
+
+      assert.strictEqual(result.length, 0);
     });
-  });
-
-  test("calls suggestInstallingDartFrogCLI when Dart Frog CLI is not installed", () => {
-    const vscodeStub = {
-      commands: {
-        registerCommand: sinon.stub(),
-      },
-    };
-
-    const utilsStub = {
-      isDartFrogCLIInstalled: sinon.stub(),
-      suggestInstallingDartFrogCLI: sinon.stub(),
-    };
-    utilsStub.isDartFrogCLIInstalled.returns(false);
-
-    const extension = proxyquire("../../extension", {
-      vscode: vscodeStub,
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      "./utils": utilsStub,
-    });
-
-    const context = { subscriptions: [] };
-    const ensureCompatibleCLI = sinon.stub();
-    extension.activate(context, ensureCompatibleCLI);
-
-    sinon.assert.calledOnce(utilsStub.suggestInstallingDartFrogCLI);
-  });
-
-  test("calls ensureCompatibleDartFrogCLI when Dart Frog CLI is installed", () => {
-    const vscodeStub = {
-      commands: {
-        registerCommand: sinon.stub(),
-      },
-    };
-
-    const utilsStub = {
-      isDartFrogCLIInstalled: sinon.stub(),
-      suggestInstallingCLI: sinon.stub(),
-    };
-    utilsStub.isDartFrogCLIInstalled.returns(true);
-
-    const extension = proxyquire("../../extension", {
-      vscode: vscodeStub,
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      "./utils": utilsStub,
-    });
-
-    const context = { subscriptions: [] };
-    const ensureCompatibleCLI = sinon.stub();
-    extension.activate(context, ensureCompatibleCLI);
-
-    sinon.assert.calledOnce(ensureCompatibleCLI);
   });
 });
 
-suite("ensureCompatibleDartFrogCLI", () => {
+suite("DebugOnRequestCodeLensProvider", () => {
   let vscodeStub: any;
   let utilsStub: any;
-  let commandsStub: any;
-  let extension: any;
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  let DebugOnRequestCodeLensProvider: any;
+  let document: any;
+  let workspaceConfiguration: any;
 
   beforeEach(() => {
     vscodeStub = {
-      window: {
-        showWarningMessage: sinon.stub(),
-      },
-      commands: {
-        executeCommand: sinon.stub(),
+      workspace: {
+        onDidChangeConfiguration: sinon.stub(),
+        getConfiguration: sinon.stub(),
       },
     };
+    workspaceConfiguration = sinon.stub();
+    vscodeStub.workspace.getConfiguration.returns(workspaceConfiguration);
+    const getConfiguration = (workspaceConfiguration.get = sinon.stub());
+    getConfiguration.withArgs("enableCodeLens", true).returns(true);
 
     utilsStub = {
-      readDartFrogCLIVersion: sinon.stub(),
-      isCompatibleDartFrogCLIVersion: sinon.stub(),
-      readLatestDartFrogCLIVersion: sinon.stub(),
-      openChangelog: sinon.stub(),
+      nearestDartFrogProject: sinon.stub(),
     };
-    commandsStub = {
-      updateCLI: sinon.stub(),
-    };
+    utilsStub.nearestDartFrogProject.returns("/home/dart_frog");
 
-    extension = proxyquire("../../extension", {
-      vscode: vscodeStub,
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      "./utils": utilsStub,
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      "./commands": commandsStub,
-    });
+    DebugOnRequestCodeLensProvider = proxyquire(
+      "../../../code-lens/on-request-code-lens",
+      {
+        vscode: vscodeStub,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        "../utils": utilsStub,
+      }
+    ).DebugOnRequestCodeLensProvider;
+
+    document = sinon.stub();
+    document.languageId = "dart";
+    document.uri = {
+      fsPath: "/home/dart_frog/routes/index.dart",
+    };
   });
 
   afterEach(() => {
     sinon.restore();
   });
 
-  test("does not show warning when CLI is not installed", async () => {
-    utilsStub.readDartFrogCLIVersion.returns(undefined);
+  test("onDidChangeCodeLenses fires when configuration changes", () => {
+    const provider = new DebugOnRequestCodeLensProvider();
+    const onDidChangeCodeLenses = sinon.stub();
+    provider.onDidChangeCodeLenses(onDidChangeCodeLenses);
 
-    await extension.ensureCompatibleDartFrogCLI();
+    vscodeStub.workspace.onDidChangeConfiguration.callArg(0);
 
-    sinon.assert.notCalled(vscodeStub.window.showWarningMessage);
+    sinon.assert.calledOnce(onDidChangeCodeLenses);
   });
 
-  test("does not show warning when CLI is compatible", async () => {
-    utilsStub.readDartFrogCLIVersion.returns("1.0.0");
-    utilsStub.isCompatibleDartFrogCLIVersion.returns(true);
+  suite("resolveCodeLens", () => {
+    test("returns the CodeLens when configuration is enabled", async () => {
+      workspaceConfiguration.get.withArgs("enableCodeLens", true).returns(true);
 
-    await extension.ensureCompatibleDartFrogCLI();
+      const provider = new DebugOnRequestCodeLensProvider();
+      const codeLens = new CodeLens(sinon.stub());
+      const result = await provider.resolveCodeLens(codeLens, sinon.stub());
 
-    sinon.assert.notCalled(vscodeStub.window.showWarningMessage);
-  });
-
-  test("does not show warning when latest version cannot be retrieved", async () => {
-    utilsStub.readDartFrogCLIVersion.returns("1.0.0");
-    utilsStub.isCompatibleDartFrogCLIVersion.returns(false);
-    utilsStub.readLatestDartFrogCLIVersion.returns(undefined);
-
-    await extension.ensureCompatibleDartFrogCLI();
-
-    sinon.assert.notCalled(vscodeStub.window.showWarningMessage);
-  });
-
-  suite("incompatible CLI", () => {
-    const version = "0.0.0";
-    const latestVersion = "2.0.0";
-
-    beforeEach(() => {
-      utilsStub.readDartFrogCLIVersion.returns(version);
-      utilsStub.readLatestDartFrogCLIVersion.returns(latestVersion);
-      utilsStub.isCompatibleDartFrogCLIVersion.withArgs(version).returns(false);
-      utilsStub.isCompatibleDartFrogCLIVersion
-        .withArgs(latestVersion)
-        .returns(true);
+      assert.strictEqual(result, codeLens);
+      sinon.assert.match(result.command, {
+        title: "Debug",
+        tooltip: "Starts and debugs a development server",
+        command: "dart-frog.start-debug-dev-server",
+      });
     });
 
-    afterEach(() => {
-      sinon.restore();
-    });
-
-    test("shows warning", async () => {
-      await extension.ensureCompatibleDartFrogCLI();
-
-      sinon.assert.calledOnceWithExactly(
-        vscodeStub.window.showWarningMessage,
-        `Dart Frog CLI version ${version} is not compatible with this extension.`,
-        "Update Dart Frog CLI",
-        "Changelog",
-        "Ignore"
-      );
-    });
-
-    test("shows warning without update action when latest version is not compatible", async () => {
-      utilsStub.isCompatibleDartFrogCLIVersion
-        .withArgs(latestVersion)
+    test("returns undefined when configuration is disabled", async () => {
+      workspaceConfiguration.get
+        .withArgs("enableCodeLens", true)
         .returns(false);
 
-      await extension.ensureCompatibleDartFrogCLI();
+      const provider = new DebugOnRequestCodeLensProvider();
+      const codeLens = new CodeLens(sinon.stub());
+      const result = await provider.resolveCodeLens(codeLens, sinon.stub());
 
-      sinon.assert.calledOnceWithExactly(
-        vscodeStub.window.showWarningMessage,
-        `Dart Frog CLI version ${version} is not compatible with this extension.`,
-        "Changelog",
-        "Ignore"
-      );
+      assert.strictEqual(result, undefined);
+    });
+  });
+
+  suite("providesCodeLenses", () => {
+    suite("returns undefined if the document is not", () => {
+      test("a Dart file", () => {
+        document.languageId = "not-dart";
+
+        const provider = new DebugOnRequestCodeLensProvider();
+        const result = provider.provideCodeLenses(document);
+
+        assert.strictEqual(result, undefined);
+      });
+
+      test("in a Dart Frog project", () => {
+        utilsStub.nearestDartFrogProject.returns(undefined);
+
+        const provider = new DebugOnRequestCodeLensProvider();
+        const result = provider.provideCodeLenses(document);
+
+        assert.strictEqual(result, undefined);
+      });
+
+      test("in the routes folder", () => {
+        document.uri = {
+          fsPath: "/home/dart_frog/not-routes/route.dart",
+        };
+
+        const provider = new DebugOnRequestCodeLensProvider();
+        const result = provider.provideCodeLenses(document);
+
+        assert.strictEqual(result, undefined);
+      });
+
+      test("codeLens configuration is disabled", () => {
+        workspaceConfiguration.get
+          .withArgs("enableCodeLens", true)
+          .returns(false);
+
+        const provider = new DebugOnRequestCodeLensProvider();
+        const result = provider.provideCodeLenses(document);
+
+        assert.strictEqual(result, undefined);
+      });
     });
 
-    test("updates CLI when selected", async () => {
-      vscodeStub.window.showWarningMessage.returns("Update Dart Frog CLI");
+    test("returns the correct CodeLenses", async () => {
+      const content = routeContent;
+      const textDocument = await workspace.openTextDocument({
+        language: "text",
+        content,
+      });
+      document.getText = textDocument.getText.bind(textDocument);
+      document.positionAt = textDocument.positionAt.bind(textDocument);
+      document.lineAt = textDocument.lineAt.bind(textDocument);
+      document.getWordRangeAtPosition =
+        textDocument.getWordRangeAtPosition.bind(textDocument);
 
-      await extension.ensureCompatibleDartFrogCLI();
+      const provider = new DebugOnRequestCodeLensProvider();
+      const result = await provider.provideCodeLenses(document);
 
-      sinon.assert.calledOnce(commandsStub.updateCLI);
+      assert.strictEqual(result.length, 1);
+
+      const codeLens = result[0];
+
+      const range = document.getWordRangeAtPosition(
+        new Position(3, 0),
+        /Response onRequest\(RequestContext context\) {/
+      )!;
+
+      sinon.assert.match(codeLens, new CodeLens(range));
     });
 
-    test("opens changelog when selected", async () => {
-      vscodeStub.window.showWarningMessage.returns("Changelog");
+    test("returns the correct CodeLenses on a dynamic route", async () => {
+      const content = dynamicRouteContent;
+      const textDocument = await workspace.openTextDocument({
+        language: "text",
+        content,
+      });
+      document.getText = textDocument.getText.bind(textDocument);
+      document.positionAt = textDocument.positionAt.bind(textDocument);
+      document.lineAt = textDocument.lineAt.bind(textDocument);
+      document.getWordRangeAtPosition =
+        textDocument.getWordRangeAtPosition.bind(textDocument);
 
-      await extension.ensureCompatibleDartFrogCLI();
+      const provider = new DebugOnRequestCodeLensProvider();
+      const result = await provider.provideCodeLenses(document);
 
-      sinon.assert.calledOnceWithExactly(
-        utilsStub.openChangelog,
-        latestVersion
-      );
-      sinon.assert.notCalled(commandsStub.updateCLI);
+      assert.strictEqual(result.length, 1);
+
+      const codeLens = result[0];
+
+      const range = document.getWordRangeAtPosition(
+        new Position(3, 0),
+        /Response onRequest\(RequestContext context, String id\) {/
+      )!;
+
+      sinon.assert.match(codeLens, new CodeLens(range));
     });
 
-    test("does not update CLI when ignored", async () => {
-      vscodeStub.window.showWarningMessage.returns("Ignore");
+    test("returns no CodeLenses on a non route file", async () => {
+      const content = invalidRouteContent;
+      const textDocument = await workspace.openTextDocument({
+        language: "text",
+        content,
+      });
+      document.getText = textDocument.getText.bind(textDocument);
+      document.positionAt = textDocument.positionAt.bind(textDocument);
+      document.lineAt = textDocument.lineAt.bind(textDocument);
+      document.getWordRangeAtPosition =
+        textDocument.getWordRangeAtPosition.bind(textDocument);
 
-      await extension.ensureCompatibleDartFrogCLI();
+      const provider = new DebugOnRequestCodeLensProvider();
+      const result = await provider.provideCodeLenses(document);
 
-      sinon.assert.notCalled(commandsStub.updateCLI);
+      assert.strictEqual(result.length, 0);
     });
   });
 });
