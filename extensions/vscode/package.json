@@ -93,6 +93,14 @@
           "when": "!(resourceDirname =~ /routes/) && !(explorerResourceIsFolder && resourceFilename == routes)"
         }
       ]
+    },
+    "configuration": {
+      "properties": {
+        "dart-frog.enableCodeLens": {
+          "type": "boolean",
+          "default": true
+        }
+      }
     }
   },
   "extensionDependencies": [
