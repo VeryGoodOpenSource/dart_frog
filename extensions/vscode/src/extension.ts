@@ -1,5 +1,9 @@
 import * as vscode from "vscode";
 import {
+  OpenApplicationStatusBarItem,
+  StartStopStatusBarItem,
+} from "./status-bar";
+import {
   create,
   debugDevServer,
   installCLI,
@@ -19,7 +23,6 @@ import {
   readLatestDartFrogCLIVersion,
   suggestInstallingDartFrogCLI,
 } from "./utils";
-import { ApplicationStatusBar } from "./status-bar";
 
 /**
  * This method is called when the extension is activated.
@@ -62,7 +65,8 @@ export function activate(
       "dart-frog.start-debug-dev-server",
       startDebugDevServer
     ),
-    new ApplicationStatusBar()
+    new StartStopStatusBarItem(),
+    new OpenApplicationStatusBarItem()
   );
 
   return context;
