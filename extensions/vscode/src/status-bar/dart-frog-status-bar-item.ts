@@ -25,18 +25,16 @@ export abstract class DartFrogStatusBarItem implements Disposable {
     this.statusBarItem = window.createStatusBarItem(alignment, priority);
 
     this.onDidChangeWorkspaceFoldersDisposable =
-      workspace.onDidChangeWorkspaceFolders(
-        this.onChangeWorkingSystem.bind(this)
-      );
+      workspace.onDidChangeWorkspaceFolders(this.onChangeSetup.bind(this));
     this.onDidChangeActiveTextEditorDisposable =
-      window.onDidChangeActiveTextEditor(this.onChangeWorkingSystem.bind(this));
+      window.onDidChangeActiveTextEditor(this.onChangeSetup.bind(this));
 
-    this.update();
+    this.onChangeSetup();
   }
 
   public abstract update(): any;
 
-  private onChangeWorkingSystem(): void {
+  private onChangeSetup(): void {
     const isDartFrogProject = resolveDartFrogProjectPathFromWorkspace();
     if (isDartFrogProject) {
       this.update();
