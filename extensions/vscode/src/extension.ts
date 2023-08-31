@@ -1,5 +1,9 @@
 import * as vscode from "vscode";
 import {
+  DebugOnRequestCodeLensProvider,
+  RunOnRequestCodeLensProvider,
+} from "./code-lens";
+import {
   create,
   debugDevServer,
   installCLI,
@@ -19,7 +23,6 @@ import {
   readLatestDartFrogCLIVersion,
   suggestInstallingDartFrogCLI,
 } from "./utils";
-import { RunOnRequestCodeLensProvider } from "./code-lens";
 
 /**
  * This method is called when the extension is activated.
@@ -42,6 +45,10 @@ export function activate(
     ensureCompatibleCLI();
   }
 
+  vscode.languages.registerCodeLensProvider(
+    "dart",
+    new DebugOnRequestCodeLensProvider()
+  );
   vscode.languages.registerCodeLensProvider(
     "dart",
     new RunOnRequestCodeLensProvider()
