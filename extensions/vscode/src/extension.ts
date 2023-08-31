@@ -1,5 +1,9 @@
 import * as vscode from "vscode";
 import {
+  DebugOnRequestCodeLensProvider,
+  RunOnRequestCodeLensProvider,
+} from "./code-lens";
+import {
   create,
   debugDevServer,
   installCLI,
@@ -40,6 +44,15 @@ export function activate(
   } else {
     ensureCompatibleCLI();
   }
+
+  vscode.languages.registerCodeLensProvider(
+    "dart",
+    new DebugOnRequestCodeLensProvider()
+  );
+  vscode.languages.registerCodeLensProvider(
+    "dart",
+    new RunOnRequestCodeLensProvider()
+  );
 
   context.subscriptions.push(
     vscode.commands.registerCommand("dart-frog.create", create),
