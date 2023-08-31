@@ -357,6 +357,7 @@ so any route handlers affected by it, will already have access to the user that 
 With that information, we can change our tasks routes to have a more interesting response:
 
 ```dart
+// routes/tasks/index.dart
 import 'dart:io';
 
 import 'package:authenticated_app/user.dart';
@@ -432,6 +433,11 @@ passing a secret key, as the name implies, this key is secret and should be kept
 tutorial we are keeping it hard coded. Nonetheless, in a real case application,
 be sure to correctly store it and pass it to the code in a way where then will remain secret to outsiders.
 
+
+:::tip
+Environments variables are a great way of injecting secrets into you Dart Frog application. Check [this guide](https://dartfrog.vgv.dev/docs/basics/environments) to learn more about them.
+:::
+
 The `sign` method will create a signature out of the data we passed to it, and it will be part
 of the token. This technique will allow us to check if an authentication token that we've received
 is valid and if it hasn't been tampered!
@@ -439,6 +445,7 @@ is valid and if it hasn't been tampered!
 Alright, now we need to update our `/sign_in` route. It should no longer return the user's username, but instead, the token created by the `generateToken` method. The route should now look like this:
 
 ```dart
+// routes/tasks/sign_in.dart
 import 'dart:io';
 
 import 'package:authenticated_app/authenticator.dart';
