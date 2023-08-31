@@ -43,6 +43,8 @@ The `id` field on the request is used to match the request with the response. As
 
 ---
 
+# Domains
+
 To organize the accepted requests and its parameters as well as events, there are "domains." A
 domain is a group of related requests and events.
 
@@ -162,3 +164,71 @@ Signals that a dev server has exited.
 | applicationId | String | A unique identifier for the dev server instance                 |
 | requestId     | String | A unique identifier for the request that started the dev server |
 | exitCode      | int    | The exit code of the dev server process                         |
+
+### Dev server logging events
+
+The dev server will send logging events to the client as they happen. These events are identified by
+"dev_server.logger<Severity\>". See the [Logging events](#logging-events) section for more details.
+
+- **Content**:
+
+| Field            | Type   | Description                                                     |
+|------------------|--------|-----------------------------------------------------------------|
+| applicationId    | String | A unique identifier for the dev server instance                 |
+| requestId        | String | A unique identifier for the request that started the dev server |
+| workingDirectory | String | The project directory                                           |
+| message          | String | The log message                                                 |
+
+
+# Logging events
+
+Some operations (eg. starting a dev server) will generate logs. These logs are sent to the client
+via logging events. These events are identified by the "logger" prefix on its name folowed by its
+severity. Its domain is always associated with the operation that generated the log.
+
+For example, this is logger event generate bhy the `dev_server.start` operation
+(the content was formatted to improve readability):
+
+```json
+[
+  {
+    "event": "dev_server.loggerInfo",
+    "params": {
+      "applicationId": "cfd5d56a-b855-49a7-9153-a035b1ba1bc4",
+      "requestId": "2",
+      "workingDirectory": "/path/to/project",
+      "message": "The Dart VM service is listening on http://127.0.0.1:8091/fWMHu3sTnYk=/"
+    }
+  }
+]
+```
+
+In this example, it is a logger event with the `info` severity. The `params` field contains the
+metadata associated with the event. In this case, the `applicationId` and `requestId` fields
+can be used to identify the operation that generated the log.
+
+The available severities are:
+
+| level    | identification                                        |
+| -------- | ----------------------------------------------------- |
+| debug    | `loggerDetail`                                        |
+| info     | `loggerInfo` <br/> `loggerSuccess`<br/> `loggerWrite` |
+| warn     | `loggerWarning`                                       |
+| error    | `loggerError`                                         |
+| critical | `loggerAlert`                                         |
+
+---
+
+Associated with logging, there is also the progress loggings. These are used to signal the
+progress of a long-running operation. For example, when generating server code. These events
+are identified by the "progress" prefix on its name. Its domain is always associated with the
+operation that generated the log. The identifiers are associated not with severity but with
+its progress. The available identifiers are:
+
+| identifier         | details                                                                                                                                         |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `progressStart`    | Identifies the start of the progress. Its params include `progressId` which can be used to track further events associated with this operation. |
+| `progressUpdate`   | Identifies an update on the progress.                                                                                                           |
+| `progressCancel`   | Progress was cancelled. Ends the progress.                                                                                                      |
+| `progressFail`     | Progress has failed. Ends the progress.                                                                                                         |
+| `progressComplete` | Progress has completed. Ends the progress.                                                                                                      |
