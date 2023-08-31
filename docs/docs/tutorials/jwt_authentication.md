@@ -166,6 +166,10 @@ Handler middleware(Handler handler) {
 }
 ```
 
+:::tip
+Install and use the [Dart Frog VS Code extension](https://marketplace.visualstudio.com/items?itemName=VeryGoodVentures.dart-frog) to easily create new middleware within your IDE.
+:::
+
 ## Writing a Sign In route
 
 Now that we have all the domain code necessary to authenticate users given an username and a password, we can create a route to authenticate users. Within the routes folder, create the file below:
@@ -211,6 +215,10 @@ Future<Response> _onPost(RequestContext context) async {
   }
 }
 ```
+
+:::tip
+Install and use the [Dart Frog VS Code extension](https://marketplace.visualstudio.com/items?itemName=VeryGoodVentures.dart-frog) to easily create new routes within your IDE.
+:::
 
 To people familiar with Dart Frog, the code above should be no real challenge, we are simply handling the
 request in the following steps:
