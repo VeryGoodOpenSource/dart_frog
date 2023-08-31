@@ -173,17 +173,16 @@ The dev server will send logging events to the client as they happen. These even
 - **Content**:
 
 | Field            | Type   | Description                                                     |
-|------------------|--------|-----------------------------------------------------------------|
+| ---------------- | ------ | --------------------------------------------------------------- |
 | applicationId    | String | A unique identifier for the dev server instance                 |
 | requestId        | String | A unique identifier for the request that started the dev server |
 | workingDirectory | String | The project directory                                           |
 | message          | String | The log message                                                 |
 
-
 # Logging events
 
 Some operations (eg. starting a dev server) will generate logs. These logs are sent to the client
-via logging events. These events are identified by the "logger" prefix on its name folowed by its
+via logging events. These events are identified by the "logger" prefix on its name followed by its
 severity. Its domain is always associated with the operation that generated the log.
 
 For example, this is logger event generate bhy the `dev_server.start` operation
