@@ -105,7 +105,10 @@ class User {
   final String password;
 }
 import 'package:authenticated_app/user.dart';
+```
 
+```dart
+// lib/authenticator.dart
 class Authenticator {
   static const _users = {
     'john': User(
