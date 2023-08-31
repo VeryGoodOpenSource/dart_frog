@@ -104,8 +104,6 @@ class User {
   final String name;
   final String password;
 }
-
-// lib/authenticator.dart
 import 'package:authenticated_app/user.dart';
 
 class Authenticator {
