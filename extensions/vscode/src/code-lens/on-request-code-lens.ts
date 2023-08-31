@@ -114,3 +114,22 @@ export class RunOnRequestCodeLensProvider extends OnRequestCodeLensProvider {
     return codeLens;
   }
 }
+
+/**
+ * Shows a "Debug" CodeLens on route handlers, which allows starting and
+ * debugging a development server.
+ */
+export class DebugOnRequestCodeLensProvider extends OnRequestCodeLensProvider {
+  public resolveCodeLens?(codeLens: CodeLens): ProviderResult<CodeLens> {
+    if (!super.resolveCodeLens!(codeLens)) {
+      return undefined;
+    }
+
+    codeLens.command = {
+      title: "Debug",
+      tooltip: "Starts and debugs a development server",
+      command: "dart-frog.start-debug-dev-server",
+    };
+    return codeLens;
+  }
+}
