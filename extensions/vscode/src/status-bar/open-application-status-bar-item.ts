@@ -6,17 +6,20 @@ import {
 import { DartFrogStatusBarItem } from "./dart-frog-status-bar-item";
 
 export class OpenApplicationStatusBarItem extends DartFrogStatusBarItem {
+  private updateFunction: () => void;
+
   constructor() {
     super(StatusBarAlignment.Right, 10);
 
     const daemon = DartFrogDaemon.instance;
+    this.updateFunction = this.update.bind(this);
     daemon.applicationRegistry.on(
       DartFrogApplicationRegistryEventEmitterTypes.add,
-      this.update.bind(this)
+      this.updateFunction
     );
     daemon.applicationRegistry.on(
       DartFrogApplicationRegistryEventEmitterTypes.remove,
-      this.update.bind(this)
+      this.updateFunction
     );
   }
 
@@ -41,16 +44,15 @@ export class OpenApplicationStatusBarItem extends DartFrogStatusBarItem {
   }
 
   public dispose(): void {
-    super.dispose();
-
     const daemon = DartFrogDaemon.instance;
     daemon.applicationRegistry.off(
       DartFrogApplicationRegistryEventEmitterTypes.add,
-      this.update.bind(this)
+      this.updateFunction
     );
     daemon.applicationRegistry.off(
       DartFrogApplicationRegistryEventEmitterTypes.remove,
-      this.update.bind(this)
+      this.updateFunction
     );
+    super.dispose();
   }
 }

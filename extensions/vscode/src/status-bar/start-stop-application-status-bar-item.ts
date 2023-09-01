@@ -38,8 +38,6 @@ export class StartStopApplicationStatusBarItem extends DartFrogStatusBarItem {
   }
 
   dispose() {
-    super.dispose();
-
     const daemon = DartFrogDaemon.instance;
     daemon.applicationRegistry.off(
       DartFrogApplicationRegistryEventEmitterTypes.add,
@@ -49,5 +47,6 @@ export class StartStopApplicationStatusBarItem extends DartFrogStatusBarItem {
       DartFrogApplicationRegistryEventEmitterTypes.remove,
       this.update.bind(this)
     );
+    super.dispose();
   }
 }

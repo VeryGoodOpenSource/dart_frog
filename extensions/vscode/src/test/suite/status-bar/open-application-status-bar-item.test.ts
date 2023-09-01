@@ -20,6 +20,8 @@ suite("OpenApplicationStatusBarItem", () => {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   let OpenApplicationStatusBarItem: any;
   let statusBarItem: any;
+  let onDidChangeActiveTextEditor: any;
+  let onDidChangeWorkspaceFolders: any;
 
   beforeEach(() => {
     vscodeStub = {
@@ -31,8 +33,18 @@ suite("OpenApplicationStatusBarItem", () => {
         onDidChangeWorkspaceFolders: sinon.stub(),
       },
     };
-    vscodeStub.window.onDidChangeActiveTextEditor.returns(sinon.stub());
-    vscodeStub.workspace.onDidChangeWorkspaceFolders.returns(sinon.stub());
+    onDidChangeActiveTextEditor = sinon.stub();
+    vscodeStub.window.onDidChangeActiveTextEditor.returns(
+      onDidChangeActiveTextEditor
+    );
+    onDidChangeActiveTextEditor.dispose = sinon.stub();
+
+    onDidChangeWorkspaceFolders = sinon.stub();
+    vscodeStub.workspace.onDidChangeWorkspaceFolders.returns(
+      onDidChangeWorkspaceFolders
+    );
+    onDidChangeWorkspaceFolders.dispose = sinon.stub();
+
     vscodeStub.window.createStatusBarItem.returns(
       (statusBarItem = sinon.stub())
     );
@@ -41,6 +53,7 @@ suite("OpenApplicationStatusBarItem", () => {
     statusBarItem.text = sinon.stub();
     statusBarItem.tooltip = sinon.stub();
     statusBarItem.command = sinon.stub();
+    statusBarItem.dispose = sinon.stub();
 
     utilsStub = {
       resolveDartFrogProjectPathFromWorkspace: sinon.stub(),
@@ -83,7 +96,7 @@ suite("OpenApplicationStatusBarItem", () => {
   });
 
   suite("is shown", () => {
-    suite("upon start when in a Dart Frog project start", () => {
+    suite("upon start when in a Dart Frog project", () => {
       test("with one registered application", () => {
         daemon.applicationRegistry.all.returns([application1]);
 
@@ -215,7 +228,7 @@ suite("OpenApplicationStatusBarItem", () => {
       sinon.assert.calledOnce(openApplicationStatusBarItem.statusBarItem.hide);
     });
 
-    test("when there are is a registered applications but application is unregistered", () => {
+    test("when there are registered applications but application is unregistered", () => {
       daemon.applicationRegistry.all.returns([application1]);
 
       const openApplicationStatusBarItem = new OpenApplicationStatusBarItem();
@@ -274,5 +287,77 @@ suite("OpenApplicationStatusBarItem", () => {
     });
   });
 
-  suite("dispose", () => {});
+  suite("dispose", () => {
+    beforeEach(() => {
+      daemon.applicationRegistry.all.returns([application1]);
+    });
+
+    test("disposes status bar item", () => {
+      const openApplicationStatusBarItem = new OpenApplicationStatusBarItem();
+
+      openApplicationStatusBarItem.dispose();
+
+      sinon.assert.calledOnce(
+        openApplicationStatusBarItem.statusBarItem.dispose
+      );
+    });
+
+    test("disposes workspace folder change listener", () => {
+      new OpenApplicationStatusBarItem().dispose();
+
+      sinon.assert.calledOnce(onDidChangeWorkspaceFolders.dispose);
+    });
+
+    test("disposes active file change listener", () => {
+      new OpenApplicationStatusBarItem().dispose();
+
+      sinon.assert.calledOnce(onDidChangeActiveTextEditor.dispose);
+    });
+
+    test("removes application registration listener", () => {
+      new OpenApplicationStatusBarItem().dispose();
+
+      sinon.assert.calledWith(
+        daemon.applicationRegistry.on,
+        DartFrogApplicationRegistryEventEmitterTypes.add,
+        sinon.match.any
+      );
+
+      const applicationRegistrationListener = daemon.applicationRegistry.on
+        .withArgs(
+          DartFrogApplicationRegistryEventEmitterTypes.add,
+          sinon.match.any
+        )
+        .getCall(0).args[1];
+
+      sinon.assert.calledWith(
+        daemon.applicationRegistry.off,
+        DartFrogApplicationRegistryEventEmitterTypes.add,
+        applicationRegistrationListener
+      );
+    });
+
+    test("removes application deregistration listener", () => {
+      new OpenApplicationStatusBarItem().dispose();
+
+      sinon.assert.calledWith(
+        daemon.applicationRegistry.on,
+        DartFrogApplicationRegistryEventEmitterTypes.remove,
+        sinon.match.any
+      );
+
+      const applicationDeregistrationListener = daemon.applicationRegistry.on
+        .withArgs(
+          DartFrogApplicationRegistryEventEmitterTypes.remove,
+          sinon.match.any
+        )
+        .getCall(0).args[1];
+
+      sinon.assert.calledWith(
+        daemon.applicationRegistry.off,
+        DartFrogApplicationRegistryEventEmitterTypes.remove,
+        applicationDeregistrationListener
+      );
+    });
+  });
 });
