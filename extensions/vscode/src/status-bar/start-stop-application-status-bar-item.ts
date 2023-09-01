@@ -5,7 +5,7 @@ import {
 import { DartFrogStatusBarItem } from "./dart-frog-status-bar-item";
 import { StatusBarAlignment } from "vscode";
 
-export class StartStopStatusBarItem extends DartFrogStatusBarItem {
+export class StartStopApplicationStatusBarItem extends DartFrogStatusBarItem {
   constructor() {
     super(StatusBarAlignment.Left, 10);
 

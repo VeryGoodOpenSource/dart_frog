@@ -5,7 +5,7 @@ import {
 } from "./code-lens";
 import {
   OpenApplicationStatusBarItem,
-  StartStopStatusBarItem,
+  StartStopApplicationStatusBarItem,
 } from "./status-bar";
 import {
   create,
@@ -78,7 +78,7 @@ export function activate(
       "dart-frog.start-debug-dev-server",
       startDebugDevServer
     ),
-    new StartStopStatusBarItem(),
+    new StartStopApplicationStatusBarItem(),
     new OpenApplicationStatusBarItem()
   );
 
