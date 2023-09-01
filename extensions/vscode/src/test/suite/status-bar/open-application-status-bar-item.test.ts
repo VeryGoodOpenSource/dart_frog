@@ -6,6 +6,7 @@ import {
   DartFrogApplicationRegistryEventEmitterTypes,
 } from "../../../daemon";
 import { afterEach, beforeEach } from "mocha";
+import { Uri } from "vscode";
 
 suite("OpenApplicationStatusBarItem", () => {
   const application1 = new DartFrogApplication("workingDirectory", 8080, 8181);
@@ -207,16 +208,9 @@ suite("OpenApplicationStatusBarItem", () => {
       command: {
         title: "Open application in browser",
         command: "vscode.open",
+        arguments: [Uri.parse(application1.address!)],
       },
     });
-    sinon.assert.match(
-      openApplicationStatusBarItem.statusBarItem.command.arguments[0],
-      {
-        scheme: "http",
-        authority: "localhost:8080",
-        path: "/",
-      }
-    );
   });
 
   suite("is hidden", () => {
