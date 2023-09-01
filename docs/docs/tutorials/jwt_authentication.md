@@ -23,7 +23,7 @@ protected routes.
 
 Like mentioned in the [Dart Frog Authentication documentation](https://dartfrog.vgv.dev/docs/advanced/authentication),
 there are many ways of implementing authentication in a backend, for this tutorial we will use a
-hardcoded, in memory, database of users and [Json Web Tokens](https://jwt.io/) (or for short JWTs)
+hardcoded, in memory, database of users and [JSON Web Tokens](https://jwt.io/) (or for short JWTs)
 for the user's authentication token.
 
 ## Creating a new app
@@ -226,9 +226,9 @@ request in the following steps:
 - Check if we have all the info needed, returning `badRequest` otherwise.
 - Get our `Authenticator` dependency from our dependency injection.
 - Use the `Authenticator` to get a user that match the request's credential.
-- Returns `unauthorized` (401) if there is no user, or returns the user username as the authentication token otherwise.
+- Return an `unauthorized` (401) if there is no user, or return the user username as the authentication token otherwise.
 
-Using the user's username as an authentication token is quite unsafe. Malicious hackers could easily modify messages with usernames to break through our security and impersonate someone else. For the sake of simplicity, we'll finish off using this simple authentication setup before introducing JWT, a more complex security method.
+Using the username as an authentication token is quite unsafe. Malicious hackers could easily modify messages with usernames to break through our security and impersonate someone else. For the sake of simplicity, we'll finish off using this simple authentication setup before introducing JWT, a more complex security method.
 
 Try now running a `curl` in the terminal to get a token:
 
@@ -283,7 +283,7 @@ dart pub add dart_frog_auth
 ```
 
 First, we need to create a method in our `Authenticator` class which will be responsible of validating
-an authentication token. Since for now, our authentication token is just the user's username,
+an authentication token. Since for now, our authentication token is just the username,
 we can add the following snippet to the `Authenticator` class:
 
 ```dart
@@ -315,9 +315,9 @@ Handler middleware(Handler handler) {
 }
 ```
 
-This middleware is adding Bearer token authentication for all requests incoming within the `tasks` namespace.
+This middleware is adding a Bearer Token authentication for all requests incoming within the `tasks` namespace.
 
-The usage of `bearerAuthentication` middleware, which is provided by `dart_frog_auth`, is quite simple.
+The usage of the `bearerAuthentication` middleware, which is provided by `dart_frog_auth`, is quite simple.
 We need to provide a function that returns a user if the token is valid and belongs to a user; or null otherwise.
 
 This middleware will automatically return an `unauthorized` (401) response to incoming requests when
@@ -345,7 +345,7 @@ curl -d "Buy bread" \
      http://localhost:8080/tasks
 ```
 
-The correct response of that route should be the output:
+Then the correct response of that route should be the output:
 
 ```bash
 {"recorded_task":"Buy bread"}
@@ -392,7 +392,7 @@ This is a good point to review what we have done so far:
 - We have routes that can only be accessed if an authentication token is sent in the request.
 
 However, as we noticed in the steps before, our authentication token is quite unsafe, it is nothing
-more than the user's username. Meaning that if a malicious hacker guesses another user's
+more than the username. Meaning that if a malicious hacker guesses another
 username, which is not something hard to do. This would allow the hacker to impersonate the user and perform bad actions, such as stealing information.
 
 To avoid that, we have to make our tokens in a way where they cannot be faked, guessed or tampered.
@@ -514,4 +514,4 @@ checking against a user's username.
 And that is it, with the addition of a signed token, if someone tampers the information stored in it,
 or tries to forge a token without knowing the secret key, the authentication will fail; only real authenticated users will be able to access protected routes!
 
-🎉 Congrats, you've created an application using Dart Frog with authentication.
+🎉 Congratulations, you've created an application using Dart Frog with authentication.
