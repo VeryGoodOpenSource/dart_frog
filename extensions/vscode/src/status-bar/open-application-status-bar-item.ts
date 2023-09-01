@@ -28,6 +28,8 @@ export class OpenApplicationStatusBarItem extends DartFrogStatusBarItem {
       return;
     }
 
+    console.log(`@@@ SHOWING`);
+
     const application = applications[0];
     this.statusBarItem.text = `$(dart-frog-globe) localhost:${application.port}`;
     this.statusBarItem.tooltip = "Open application in browser";
@@ -38,6 +40,9 @@ export class OpenApplicationStatusBarItem extends DartFrogStatusBarItem {
     };
     this.statusBarItem.command = openCommand;
     this.statusBarItem.show();
+
+    console.log(`@@@ FINISHED SHOWING`);
+    console.log(`@@@ ${this.statusBarItem.text}`);
   }
 
   public dispose(): void {

@@ -16,7 +16,7 @@ import { resolveDartFrogProjectPathFromWorkspace } from "../utils";
  * @see {@link StatusBarItem}, for more information on status bar items.
  */
 export abstract class DartFrogStatusBarItem implements Disposable {
-  public readonly statusBarItem: StatusBarItem;
+  public statusBarItem: StatusBarItem;
 
   private onDidChangeWorkspaceFoldersDisposable: Disposable;
   private onDidChangeActiveTextEditorDisposable: Disposable;
@@ -32,7 +32,7 @@ export abstract class DartFrogStatusBarItem implements Disposable {
     this.onChangeSetup();
   }
 
-  public abstract update(): any;
+  public update(): void {}
 
   private onChangeSetup(): void {
     const isDartFrogProject = resolveDartFrogProjectPathFromWorkspace();
