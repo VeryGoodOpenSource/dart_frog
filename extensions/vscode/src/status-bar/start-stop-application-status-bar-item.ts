@@ -21,8 +21,6 @@ export class StartStopApplicationStatusBarItem extends DartFrogStatusBarItem {
   }
 
   public update(): void {
-    this.statusBarItem.show();
-
     const daemon = DartFrogDaemon.instance;
     const applications = daemon.applicationRegistry.all();
 
@@ -35,6 +33,8 @@ export class StartStopApplicationStatusBarItem extends DartFrogStatusBarItem {
       this.statusBarItem.tooltip = "Stop development server";
       this.statusBarItem.command = "dart-frog.stop-dev-server";
     }
+
+    this.statusBarItem.show();
   }
 
   dispose() {

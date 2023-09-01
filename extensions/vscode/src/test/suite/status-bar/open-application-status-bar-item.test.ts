@@ -3,7 +3,10 @@ var proxyquire = require("proxyquire");
 
 import * as assert from "assert";
 import { afterEach, beforeEach } from "mocha";
-import { DartFrogApplication } from "../../../daemon";
+import {
+  DartFrogApplication,
+  DartFrogApplicationRegistryEventEmitterTypes,
+} from "../../../daemon";
 
 suite("OpenApplicationStatusBarItem", () => {
   const application1 = new DartFrogApplication("workingDirectory", 8080, 8181);
@@ -80,61 +83,128 @@ suite("OpenApplicationStatusBarItem", () => {
     sinon.restore();
   });
 
-  test("shows on start when there is one registered application", () => {
-    daemon.applicationRegistry.all.returns([application1]);
+  suite("is shown", () => {
+    suite("upon start when in a Dart Frog project start", () => {
+      test("with one registered application", () => {
+        daemon.applicationRegistry.all.returns([application1]);
 
-    const openApplicationStatusBarItem = new OpenApplicationStatusBarItem();
+        const openApplicationStatusBarItem = new OpenApplicationStatusBarItem();
 
-    sinon.assert.calledOnce(openApplicationStatusBarItem.statusBarItem.show);
+        sinon.assert.calledOnce(
+          openApplicationStatusBarItem.statusBarItem.show
+        );
+      });
+
+      test("with multiple registered applications", () => {
+        daemon.applicationRegistry.all.returns([application1, application2]);
+
+        const openApplicationStatusBarItem = new OpenApplicationStatusBarItem();
+
+        sinon.assert.calledOnce(
+          openApplicationStatusBarItem.statusBarItem.show
+        );
+      });
+    });
+
+    suite("upon workspace folder change to a Dart Frog project", () => {
+      test("with one registered application", () => {
+        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(false);
+        daemon.applicationRegistry.all.returns([application1]);
+
+        const openApplicationStatusBarItem = new OpenApplicationStatusBarItem();
+
+        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(true);
+        vscodeStub.workspace.onDidChangeWorkspaceFolders.callArg(0);
+
+        sinon.assert.calledOnce(
+          openApplicationStatusBarItem.statusBarItem.show
+        );
+      });
+
+      test("with multiple registered applications", () => {
+        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(false);
+        daemon.applicationRegistry.all.returns([application1, application2]);
+
+        const openApplicationStatusBarItem = new OpenApplicationStatusBarItem();
+
+        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(true);
+        vscodeStub.workspace.onDidChangeWorkspaceFolders.callArg(0);
+
+        sinon.assert.calledOnce(
+          openApplicationStatusBarItem.statusBarItem.show
+        );
+      });
+    });
+
+    suite("upon active file change to a Dart Frog project", () => {
+      test("with one registered application", () => {
+        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(false);
+        daemon.applicationRegistry.all.returns([application1]);
+
+        const openApplicationStatusBarItem = new OpenApplicationStatusBarItem();
+
+        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(true);
+        vscodeStub.window.onDidChangeActiveTextEditor.callArg(0);
+
+        sinon.assert.calledOnce(
+          openApplicationStatusBarItem.statusBarItem.show
+        );
+      });
+
+      test("with multiple registered applications", () => {
+        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(false);
+        daemon.applicationRegistry.all.returns([application1, application2]);
+
+        const openApplicationStatusBarItem = new OpenApplicationStatusBarItem();
+
+        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(true);
+        vscodeStub.window.onDidChangeActiveTextEditor.callArg(0);
+
+        sinon.assert.calledOnce(
+          openApplicationStatusBarItem.statusBarItem.show
+        );
+      });
+    });
+
+    test("upon application registration", () => {
+      daemon.applicationRegistry.all.returns([]);
+
+      const openApplicationStatusBarItem = new OpenApplicationStatusBarItem();
+
+      daemon.applicationRegistry.all.returns([application1]);
+      const applicationRegistrationListener = daemon.applicationRegistry.on
+        .withArgs(
+          DartFrogApplicationRegistryEventEmitterTypes.add,
+          sinon.match.any
+        )
+        .getCall(0).args[1];
+      applicationRegistrationListener(application1);
+
+      sinon.assert.calledOnce(openApplicationStatusBarItem.statusBarItem.show);
+    });
   });
 
-  test("shows when there are multiple registered applications", () => {
+  test("shows the first registered application", () => {
     daemon.applicationRegistry.all.returns([application1, application2]);
 
     const openApplicationStatusBarItem = new OpenApplicationStatusBarItem();
 
-    sinon.assert.calledOnce(openApplicationStatusBarItem.statusBarItem.show);
-  });
-
-  suite("shows the first registered application in item", () => {
-    beforeEach(() => {
-      daemon.applicationRegistry.all.returns([application1, application2]);
-    });
-
-    test("with host and port as text", () => {
-      const openApplicationStatusBarItem = new OpenApplicationStatusBarItem();
-
-      assert.equal(
-        openApplicationStatusBarItem.statusBarItem.text,
-        `$(dart-frog-globe) localhost:${application1.port}`
-      );
-    });
-
-    test("with correct tooltip", () => {
-      const openApplicationStatusBarItem = new OpenApplicationStatusBarItem();
-
-      assert.strictEqual(
-        openApplicationStatusBarItem.statusBarItem.tooltip,
-        "Open application in browser"
-      );
-    });
-
-    test("with open command", () => {
-      const openApplicationStatusBarItem = new OpenApplicationStatusBarItem();
-
-      sinon.assert.match(openApplicationStatusBarItem.statusBarItem.command, {
+    sinon.assert.match(openApplicationStatusBarItem.statusBarItem, {
+      text: `$(dart-frog-globe) localhost:${application1.port}`,
+      tooltip: "Open application in browser",
+      command: {
         title: "Open application in browser",
         command: "vscode.open",
-      });
-      sinon.assert.match(
-        openApplicationStatusBarItem.statusBarItem.command.arguments[0],
-        {
-          scheme: "http",
-          authority: "localhost:8080",
-          path: "/",
-        }
-      );
+      },
     });
+    sinon.assert.match(
+      openApplicationStatusBarItem.statusBarItem.command.arguments[0],
+      {
+        scheme: "http",
+        authority: "localhost:8080",
+        path: "/",
+      }
+    );
   });
 
   suite("is hidden", () => {
@@ -142,6 +212,23 @@ suite("OpenApplicationStatusBarItem", () => {
       daemon.applicationRegistry.all.returns([]);
 
       const openApplicationStatusBarItem = new OpenApplicationStatusBarItem();
+
+      sinon.assert.calledOnce(openApplicationStatusBarItem.statusBarItem.hide);
+    });
+
+    test("when there are is a registered applications but application is unregistered", () => {
+      daemon.applicationRegistry.all.returns([application1]);
+
+      const openApplicationStatusBarItem = new OpenApplicationStatusBarItem();
+
+      daemon.applicationRegistry.all.returns([]);
+      const applicationDeregistrationListener = daemon.applicationRegistry.on
+        .withArgs(
+          DartFrogApplicationRegistryEventEmitterTypes.remove,
+          sinon.match.any
+        )
+        .getCall(0).args[1];
+      applicationDeregistrationListener(application1);
 
       sinon.assert.calledOnce(openApplicationStatusBarItem.statusBarItem.hide);
     });
