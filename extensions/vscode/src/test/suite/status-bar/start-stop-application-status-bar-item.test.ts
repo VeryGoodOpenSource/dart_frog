@@ -6,7 +6,6 @@ import {
   DartFrogApplicationRegistryEventEmitterTypes,
 } from "../../../daemon";
 import { afterEach, beforeEach } from "mocha";
-import { test } from "node:test";
 
 suite("StartStopApplicationStatusBarItem", () => {
   const application1 = new DartFrogApplication("workingDirectory", 8080, 8181);
