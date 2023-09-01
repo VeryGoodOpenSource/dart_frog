@@ -1,12 +1,11 @@
 const sinon = require("sinon");
 var proxyquire = require("proxyquire");
 
-import * as assert from "assert";
-import { afterEach, beforeEach } from "mocha";
 import {
   DartFrogApplication,
   DartFrogApplicationRegistryEventEmitterTypes,
 } from "../../../daemon";
+import { afterEach, beforeEach } from "mocha";
 
 suite("OpenApplicationStatusBarItem", () => {
   const application1 = new DartFrogApplication("workingDirectory", 8080, 8181);
