@@ -32,7 +32,7 @@ export abstract class DartFrogStatusBarItem implements Disposable {
     this.onChangeSetup();
   }
 
-  public update(): void {}
+  public abstract update(): any;
 
   private onChangeSetup(): void {
     const isDartFrogProject = resolveDartFrogProjectPathFromWorkspace();
