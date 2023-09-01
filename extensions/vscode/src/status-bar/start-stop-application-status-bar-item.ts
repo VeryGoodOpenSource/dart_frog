@@ -30,7 +30,6 @@ export class StartStopApplicationStatusBarItem extends DartFrogStatusBarItem {
       this.statusBarItem.text = "$(dart-frog-start) Start Server";
       this.statusBarItem.tooltip = "Start development server";
       this.statusBarItem.command = "dart-frog.start-debug-dev-server";
-      this.statusBarItem.backgroundColor = undefined;
     } else {
       this.statusBarItem.text = "$(dart-frog-stop) Stop Server";
       this.statusBarItem.tooltip = "Stop development server";

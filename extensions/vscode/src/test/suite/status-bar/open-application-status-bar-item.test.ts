@@ -187,4 +187,6 @@ suite("OpenApplicationStatusBarItem", () => {
       });
     });
   });
+
+  suite("dispose", () => {});
 });
