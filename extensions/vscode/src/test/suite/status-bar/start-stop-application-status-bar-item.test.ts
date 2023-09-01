@@ -20,6 +20,8 @@ suite("StartStopApplicationStatusBarItem", () => {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   let StartStopApplicationStatusBarItem: any;
   let statusBarItem: any;
+  let onDidChangeActiveTextEditor: any;
+  let onDidChangeWorkspaceFolders: any;
 
   beforeEach(() => {
     vscodeStub = {
@@ -31,8 +33,18 @@ suite("StartStopApplicationStatusBarItem", () => {
         onDidChangeWorkspaceFolders: sinon.stub(),
       },
     };
-    vscodeStub.window.onDidChangeActiveTextEditor.returns(sinon.stub());
-    vscodeStub.workspace.onDidChangeWorkspaceFolders.returns(sinon.stub());
+    onDidChangeActiveTextEditor = sinon.stub();
+    vscodeStub.window.onDidChangeActiveTextEditor.returns(
+      onDidChangeActiveTextEditor
+    );
+    onDidChangeActiveTextEditor.dispose = sinon.stub();
+
+    onDidChangeWorkspaceFolders = sinon.stub();
+    vscodeStub.workspace.onDidChangeWorkspaceFolders.returns(
+      onDidChangeWorkspaceFolders
+    );
+    onDidChangeWorkspaceFolders.dispose = sinon.stub();
+
     vscodeStub.window.createStatusBarItem.returns(
       (statusBarItem = sinon.stub())
     );
@@ -41,6 +53,7 @@ suite("StartStopApplicationStatusBarItem", () => {
     statusBarItem.text = sinon.stub();
     statusBarItem.tooltip = sinon.stub();
     statusBarItem.command = sinon.stub();
+    statusBarItem.dispose = sinon.stub();
 
     utilsStub = {
       resolveDartFrogProjectPathFromWorkspace: sinon.stub(),
@@ -87,36 +100,42 @@ suite("StartStopApplicationStatusBarItem", () => {
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(true);
       daemon.applicationRegistry.all.returns([]);
 
-      const openApplicationStatusBarItem =
+      const startStopApplicationStatusBarItem =
         new StartStopApplicationStatusBarItem();
 
-      sinon.assert.calledOnce(openApplicationStatusBarItem.statusBarItem.show);
+      sinon.assert.calledOnce(
+        startStopApplicationStatusBarItem.statusBarItem.show
+      );
     });
 
     test("upon workspace folder change to a Dart Frog project", () => {
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(false);
       daemon.applicationRegistry.all.returns([]);
 
-      const openApplicationStatusBarItem =
+      const startStopApplicationStatusBarItem =
         new StartStopApplicationStatusBarItem();
 
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(true);
       vscodeStub.workspace.onDidChangeWorkspaceFolders.callArg(0);
 
-      sinon.assert.calledOnce(openApplicationStatusBarItem.statusBarItem.show);
+      sinon.assert.calledOnce(
+        startStopApplicationStatusBarItem.statusBarItem.show
+      );
     });
 
     test("upon active file change to a Dart Frog project", () => {
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(false);
       daemon.applicationRegistry.all.returns([]);
 
-      const openApplicationStatusBarItem =
+      const startStopApplicationStatusBarItem =
         new StartStopApplicationStatusBarItem();
 
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(true);
       vscodeStub.window.onDidChangeActiveTextEditor.callArg(0);
 
-      sinon.assert.calledOnce(openApplicationStatusBarItem.statusBarItem.show);
+      sinon.assert.calledOnce(
+        startStopApplicationStatusBarItem.statusBarItem.show
+      );
     });
   });
 
@@ -129,10 +148,10 @@ suite("StartStopApplicationStatusBarItem", () => {
       test("when there are no registered applications", () => {
         daemon.applicationRegistry.all.returns([]);
 
-        const openApplicationStatusBarItem =
+        const startStopApplicationStatusBarItem =
           new StartStopApplicationStatusBarItem();
 
-        sinon.assert.match(openApplicationStatusBarItem.statusBarItem, {
+        sinon.assert.match(startStopApplicationStatusBarItem.statusBarItem, {
           text,
           tooltip,
           command,
@@ -142,7 +161,7 @@ suite("StartStopApplicationStatusBarItem", () => {
       test("when there is a registered applications that gets unregistered", () => {
         daemon.applicationRegistry.all.returns([application1]);
 
-        const openApplicationStatusBarItem =
+        const startStopApplicationStatusBarItem =
           new StartStopApplicationStatusBarItem();
 
         daemon.applicationRegistry.all.returns([]);
@@ -154,7 +173,7 @@ suite("StartStopApplicationStatusBarItem", () => {
           .getCall(0).args[1];
         applicationDeregistrationListener(application1);
 
-        sinon.assert.match(openApplicationStatusBarItem.statusBarItem, {
+        sinon.assert.match(startStopApplicationStatusBarItem.statusBarItem, {
           text,
           tooltip,
           command,
@@ -170,10 +189,10 @@ suite("StartStopApplicationStatusBarItem", () => {
       test("when there are registered applications", () => {
         daemon.applicationRegistry.all.returns([application1, application2]);
 
-        const openApplicationStatusBarItem =
+        const startStopApplicationStatusBarItem =
           new StartStopApplicationStatusBarItem();
 
-        sinon.assert.match(openApplicationStatusBarItem.statusBarItem, {
+        sinon.assert.match(startStopApplicationStatusBarItem.statusBarItem, {
           text,
           tooltip,
           command,
@@ -183,7 +202,7 @@ suite("StartStopApplicationStatusBarItem", () => {
       test("when there are no registered applications but application gets registered", () => {
         daemon.applicationRegistry.all.returns([]);
 
-        const openApplicationStatusBarItem =
+        const startStopApplicationStatusBarItem =
           new StartStopApplicationStatusBarItem();
 
         daemon.applicationRegistry.all.returns([application1]);
@@ -195,7 +214,7 @@ suite("StartStopApplicationStatusBarItem", () => {
           .getCall(0).args[1];
         applicationRegistrationListener(application1);
 
-        sinon.assert.match(openApplicationStatusBarItem.statusBarItem, {
+        sinon.assert.match(startStopApplicationStatusBarItem.statusBarItem, {
           text,
           tooltip,
           command,
@@ -210,11 +229,11 @@ suite("StartStopApplicationStatusBarItem", () => {
         utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(false);
         daemon.applicationRegistry.all.returns([]);
 
-        const openApplicationStatusBarItem =
+        const startStopApplicationStatusBarItem =
           new StartStopApplicationStatusBarItem();
 
         sinon.assert.calledOnce(
-          openApplicationStatusBarItem.statusBarItem.hide
+          startStopApplicationStatusBarItem.statusBarItem.hide
         );
       });
 
@@ -222,14 +241,14 @@ suite("StartStopApplicationStatusBarItem", () => {
         utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(true);
         daemon.applicationRegistry.all.returns([]);
 
-        const openApplicationStatusBarItem =
+        const startStopApplicationStatusBarItem =
           new StartStopApplicationStatusBarItem();
 
         utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(false);
         vscodeStub.workspace.onDidChangeWorkspaceFolders.callArg(0);
 
         sinon.assert.calledOnce(
-          openApplicationStatusBarItem.statusBarItem.hide
+          startStopApplicationStatusBarItem.statusBarItem.hide
         );
       });
 
@@ -237,18 +256,91 @@ suite("StartStopApplicationStatusBarItem", () => {
         utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(true);
         daemon.applicationRegistry.all.returns([]);
 
-        const openApplicationStatusBarItem =
+        const startStopApplicationStatusBarItem =
           new StartStopApplicationStatusBarItem();
 
         utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(false);
         vscodeStub.window.onDidChangeActiveTextEditor.callArg(0);
 
         sinon.assert.calledOnce(
-          openApplicationStatusBarItem.statusBarItem.hide
+          startStopApplicationStatusBarItem.statusBarItem.hide
         );
       });
     });
   });
 
-  suite("dispose", () => {});
+  suite("dispose", () => {
+    beforeEach(() => {
+      daemon.applicationRegistry.all.returns([application1]);
+    });
+
+    test("disposes status bar item", () => {
+      const startStopApplicationStatusBarItem =
+        new StartStopApplicationStatusBarItem();
+
+      startStopApplicationStatusBarItem.dispose();
+
+      sinon.assert.calledOnce(
+        startStopApplicationStatusBarItem.statusBarItem.dispose
+      );
+    });
+
+    test("disposes workspace folder change listener", () => {
+      new StartStopApplicationStatusBarItem().dispose();
+
+      sinon.assert.calledOnce(onDidChangeWorkspaceFolders.dispose);
+    });
+
+    test("disposes active file change listener", () => {
+      new StartStopApplicationStatusBarItem().dispose();
+
+      sinon.assert.calledOnce(onDidChangeActiveTextEditor.dispose);
+    });
+
+    test("removes application registration listener", () => {
+      new StartStopApplicationStatusBarItem().dispose();
+
+      sinon.assert.calledWith(
+        daemon.applicationRegistry.on,
+        DartFrogApplicationRegistryEventEmitterTypes.add,
+        sinon.match.any
+      );
+
+      const applicationRegistrationListener = daemon.applicationRegistry.on
+        .withArgs(
+          DartFrogApplicationRegistryEventEmitterTypes.add,
+          sinon.match.any
+        )
+        .getCall(0).args[1];
+
+      sinon.assert.calledWith(
+        daemon.applicationRegistry.off,
+        DartFrogApplicationRegistryEventEmitterTypes.add,
+        applicationRegistrationListener
+      );
+    });
+
+    test("removes application deregistration listener", () => {
+      new StartStopApplicationStatusBarItem().dispose();
+
+      sinon.assert.calledWith(
+        daemon.applicationRegistry.on,
+        DartFrogApplicationRegistryEventEmitterTypes.remove,
+        sinon.match.any
+      );
+
+      const applicationDeregistrationListener = daemon.applicationRegistry.on
+        .withArgs(
+          DartFrogApplicationRegistryEventEmitterTypes.remove,
+          sinon.match.any
+        )
+        .getCall(0).args[1];
+
+      sinon.assert.calledWith(
+        daemon.applicationRegistry.off,
+        DartFrogApplicationRegistryEventEmitterTypes.remove,
+        applicationDeregistrationListener
+      );
+    });
+  });
 });

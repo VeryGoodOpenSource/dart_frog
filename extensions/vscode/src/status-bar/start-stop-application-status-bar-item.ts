@@ -6,17 +6,21 @@ import { DartFrogStatusBarItem } from "./dart-frog-status-bar-item";
 import { StatusBarAlignment } from "vscode";
 
 export class StartStopApplicationStatusBarItem extends DartFrogStatusBarItem {
+  private updateFunction: () => void;
+
   constructor() {
     super(StatusBarAlignment.Left, 10);
+
+    this.updateFunction = this.update.bind(this);
 
     const daemon = DartFrogDaemon.instance;
     daemon.applicationRegistry.on(
       DartFrogApplicationRegistryEventEmitterTypes.add,
-      this.update.bind(this)
+      this.updateFunction
     );
     daemon.applicationRegistry.on(
       DartFrogApplicationRegistryEventEmitterTypes.remove,
-      this.update.bind(this)
+      this.updateFunction
     );
   }
 
@@ -41,11 +45,11 @@ export class StartStopApplicationStatusBarItem extends DartFrogStatusBarItem {
     const daemon = DartFrogDaemon.instance;
     daemon.applicationRegistry.off(
       DartFrogApplicationRegistryEventEmitterTypes.add,
-      this.update.bind(this)
+      this.updateFunction
     );
     daemon.applicationRegistry.off(
       DartFrogApplicationRegistryEventEmitterTypes.remove,
-      this.update.bind(this)
+      this.updateFunction
     );
     super.dispose();
   }

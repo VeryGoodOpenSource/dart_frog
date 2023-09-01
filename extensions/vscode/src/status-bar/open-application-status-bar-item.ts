@@ -11,8 +11,9 @@ export class OpenApplicationStatusBarItem extends DartFrogStatusBarItem {
   constructor() {
     super(StatusBarAlignment.Right, 10);
 
-    const daemon = DartFrogDaemon.instance;
     this.updateFunction = this.update.bind(this);
+
+    const daemon = DartFrogDaemon.instance;
     daemon.applicationRegistry.on(
       DartFrogApplicationRegistryEventEmitterTypes.add,
       this.updateFunction
