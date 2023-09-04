@@ -4,6 +4,10 @@ import {
   RunOnRequestCodeLensProvider,
 } from "./code-lens";
 import {
+  OpenApplicationStatusBarItem,
+  StartStopApplicationStatusBarItem,
+} from "./status-bar";
+import {
   create,
   debugDevServer,
   installCLI,
@@ -73,8 +77,11 @@ export function activate(
     vscode.commands.registerCommand(
       "dart-frog.start-debug-dev-server",
       startDebugDevServer
-    )
+    ),
+    new StartStopApplicationStatusBarItem(),
+    new OpenApplicationStatusBarItem()
   );
+
   return context;
 }
 
