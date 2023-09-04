@@ -94,6 +94,36 @@
         }
       ]
     },
+    "icons": {
+      "dart-frog": {
+        "description": "Dart Frog logo",
+        "default": {
+          "fontPath": "./assets/dart-frog.woff",
+          "fontCharacter": "\\e900"
+        }
+      },
+      "dart-frog-start": {
+        "description": "Dart Frog logo with a start sign",
+        "default": {
+          "fontPath": "./assets/dart-frog.woff",
+          "fontCharacter": "\\e901"
+        }
+      },
+      "dart-frog-stop": {
+        "description": "Dart Frog logo with a stop sign",
+        "default": {
+          "fontPath": "./assets/dart-frog.woff",
+          "fontCharacter": "\\e902"
+        }
+      },
+      "dart-frog-globe": {
+        "description": "Dart Frog logo with a globe sign",
+        "default": {
+          "fontPath": "./assets/dart-frog.woff",
+          "fontCharacter": "\\e903"
+        }
+      }
+    },
     "configuration": {
       "properties": {
         "dart-frog.enableCodeLens": {
