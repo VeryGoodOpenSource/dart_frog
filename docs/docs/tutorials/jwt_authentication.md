@@ -104,11 +104,12 @@ class User {
   final String name;
   final String password;
 }
-import 'package:authenticated_app/user.dart';
 ```
 
 ```dart
 // lib/authenticator.dart
+import 'package:authenticated_app/user.dart';
+
 class Authenticator {
   static const _users = {
     'john': User(
