@@ -131,7 +131,7 @@ void main() {
           () => daemonServer.sendEvent(
             DaemonEvent(
               domain: 'route_configuration',
-              event: 'routeConfigurationChanged',
+              event: 'changed',
               params: {
                 'watcherId': 'id',
                 'requestId': '12',
