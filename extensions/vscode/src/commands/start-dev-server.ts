@@ -7,6 +7,7 @@ import {
 } from "../daemon";
 import { Uri, commands, window } from "vscode";
 import {
+  currentRoutePath,
   isDartFrogCLIInstalled,
   nearestDartFrogProject,
   resolveDartFrogProjectPathFromWorkspace,
@@ -133,7 +134,10 @@ export const startDevServer = async (): Promise<
         increment: 100,
       });
 
-      commands.executeCommand("vscode.open", Uri.parse(application.address!));
+      commands.executeCommand(
+        "vscode.open",
+        Uri.parse(application.address! + currentRoutePath())
+      );
 
       return application;
     }

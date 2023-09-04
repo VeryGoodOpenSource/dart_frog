@@ -154,3 +154,31 @@ export function resolveDartFrogProjectPathFromWorkspace(
 
   return undefined;
 }
+
+/**
+ * Deduces the current route path from the active workspace file or folder of a
+ * of a Dart Frog project.
+ *
+ * @returns {string} The current route path of a Dart Frog project. If the user
+ * has a Dart file or workspace open in the editor that is under a `routes`
+ * directory and within a Dart Frog project, then the path of that file is
+ * returned. Otherwise, an empty string is returned.
+ */
+export function currentRoutePath(): string {
+  const workingPath = resolveDartFrogProjectPathFromWorkspace();
+  if (workingPath) {
+    const dartFrogProjectPath = nearestDartFrogProject(workingPath);
+    const routePath = normalizeRoutePath(workingPath, dartFrogProjectPath!);
+    const isRoot = routePath === "/" || routePath === "";
+
+    if (isRoot) {
+      return "";
+    } else if (!routePath.startsWith("/")) {
+      return `/${routePath}`;
+    } else {
+      return routePath;
+    }
+  }
+
+  return "";
+}
