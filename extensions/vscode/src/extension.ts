@@ -50,7 +50,8 @@ export function activate(
     ensureCompatibleCLI();
   }
 
-  let anyDartFrogProjectLoaded = !!resolveDartFrogProjectPathFromWorkspace();
+  let anyDartFrogProjectLoaded =
+    resolveDartFrogProjectPathFromWorkspace() !== undefined;
   vscode.commands.executeCommand(
     "setContext",
     "dart-frog:anyDartFrogProjectLoaded",
