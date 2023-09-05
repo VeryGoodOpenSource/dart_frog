@@ -241,7 +241,7 @@ suite("activate", () => {
       extension.activate(context);
 
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
-      vscodeStub.window.onDidChangeWorkspaceFolders.getCall(0).args[0]();
+      vscodeStub.workspace.onDidChangeWorkspaceFolders.getCall(0).args[0]();
 
       sinon.assert.calledWith(
         vscodeStub.commands.executeCommand,
