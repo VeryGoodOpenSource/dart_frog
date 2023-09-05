@@ -1,3 +1,8 @@
+# 2.0.0
+
+- feat: removing external checking from code gen ([#928](https://github.com/VeryGoodOpenSource/dart_frog/pull/928))
+- chore(packages): bump very good analysis ([#983](https://github.com/VeryGoodOpenSource/dart_frog/pull/983))
+
 # 1.1.0
 
 - chore(deps): bump `package:mocktail` and `very_good_analysis` ([#855](https://github.com/VeryGoodOpenSource/dart_frog/pull/855))
