@@ -1,8 +1,8 @@
 # 1.1.0
 
-- feat(dart_frog_cli): press R to reload ([#814](https://github.com/VeryGoodOpenSource/dart_frog/pull/814))
-- feat(dart_frig_cli): make daemon command visible ([#871](https://github.com/VeryGoodOpenSource/dart_frog/pull/871))
-- fix(dart_frog_cli): port read from env([#874](https://github.com/VeryGoodOpenSource/dart_frog/pull/874))
+- feat: press R to reload ([#814](https://github.com/VeryGoodOpenSource/dart_frog/pull/814))
+- feat: make daemon command visible ([#871](https://github.com/VeryGoodOpenSource/dart_frog/pull/871))
+- fix: port read from env([#874](https://github.com/VeryGoodOpenSource/dart_frog/pull/874))
 - chore: add topics ([#901](https://github.com/VeryGoodOpenSource/dart_frog/pull/901))
 - chore: add .DS_Store to create_dart_frog gitignore ([#936](https://github.com/VeryGoodOpenSource/dart_frog/pull/936))
 - feat: change production brick to support external dependencies in the Dockerfile ([#926](https://github.com/VeryGoodOpenSource/dart_frog/pull/926))
