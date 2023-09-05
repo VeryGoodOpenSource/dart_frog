@@ -1,3 +1,11 @@
+# 1.0.1
+
+- chore: add topics ([#901](https://github.com/VeryGoodOpenSource/dart_frog/pull/901))
+- chore: comply with new analysis rules ([#940](https://github.com/VeryGoodOpenSource/dart_frog/pull/940))
+- docs: corrected serve function documentation typo ([#939](https://github.com/VeryGoodOpenSource/dart_frog/pull/939))
+- feat: add optional shared parameter to serve function ([#908](https://github.com/VeryGoodOpenSource/dart_frog/pull/908))
+- docs: add links to docs on readmes ([#978](https://github.com/VeryGoodOpenSource/dart_frog/pull/978))
+
 # 1.0.0
 
 - feat: stable 1.0.0 release 🎉
