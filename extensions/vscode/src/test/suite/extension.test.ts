@@ -24,6 +24,12 @@ suite("activate", () => {
       languages: {
         registerCodeLensProvider: sinon.stub(),
       },
+      window: {
+        onDidChangeActiveTextEditor: sinon.stub(),
+      },
+      workspace: {
+        onDidChangeWorkspaceFolders: sinon.stub(),
+      },
     };
 
     const utilsStub = {

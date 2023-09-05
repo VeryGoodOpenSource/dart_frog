@@ -92,6 +92,10 @@ export function activate(
     vscode.window.onDidChangeActiveTextEditor(() => {
       anyDartFrogProjectLoaded =
         resolveDartFrogProjectPathFromWorkspace() !== undefined;
+    }),
+    vscode.workspace.onDidChangeWorkspaceFolders(() => {
+      anyDartFrogProjectLoaded =
+        resolveDartFrogProjectPathFromWorkspace() !== undefined;
     })
   );
 
