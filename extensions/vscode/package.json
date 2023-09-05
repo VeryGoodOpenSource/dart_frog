@@ -80,12 +80,12 @@
         {
           "command": "dart-frog.new-route",
           "group": "dartFrogGroup@1",
-          "when": "(resourceDirname =~ /routes/ && (explorerResourceIsFolder || resourceExtname == .dart)) || (explorerResourceIsFolder && resourceFilename == routes)"
+          "when": "dart-frog:anyDartFrogProjectLoaded && (resourceDirname =~ /routes/ && (explorerResourceIsFolder || resourceExtname == .dart)) || (explorerResourceIsFolder && resourceFilename == routes)"
         },
         {
           "command": "dart-frog.new-middleware",
           "group": "dartFrogGroup@1",
-          "when": "(resourceDirname =~ /routes/ && (explorerResourceIsFolder || resourceExtname == .dart)) || (explorerResourceIsFolder && resourceFilename == routes)"
+          "when": "dart-frog:anyDartFrogProjectLoaded && (resourceDirname =~ /routes/ && (explorerResourceIsFolder || resourceExtname == .dart)) || (explorerResourceIsFolder && resourceFilename == routes)"
         },
         {
           "command": "dart-frog.create",

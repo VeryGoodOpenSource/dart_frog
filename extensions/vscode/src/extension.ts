@@ -25,8 +25,11 @@ import {
   openChangelog,
   readDartFrogCLIVersion,
   readLatestDartFrogCLIVersion,
+  resolveDartFrogProjectPathFromWorkspace,
   suggestInstallingDartFrogCLI,
 } from "./utils";
+
+let anyDartFrogProjectLoaded: boolean;
 
 /**
  * This method is called when the extension is activated.
@@ -49,13 +52,11 @@ export function activate(
     ensureCompatibleCLI();
   }
 
-  vscode.languages.registerCodeLensProvider(
-    "dart",
-    new DebugOnRequestCodeLensProvider()
-  );
-  vscode.languages.registerCodeLensProvider(
-    "dart",
-    new RunOnRequestCodeLensProvider()
+  anyDartFrogProjectLoaded = !!resolveDartFrogProjectPathFromWorkspace();
+  vscode.commands.executeCommand(
+    "setContext",
+    "dart-frog:anyDartFrogProjectLoaded",
+    anyDartFrogProjectLoaded
   );
 
   context.subscriptions.push(
@@ -78,8 +79,20 @@ export function activate(
       "dart-frog.start-debug-dev-server",
       startDebugDevServer
     ),
+    vscode.languages.registerCodeLensProvider(
+      "dart",
+      new DebugOnRequestCodeLensProvider()
+    ),
+    vscode.languages.registerCodeLensProvider(
+      "dart",
+      new RunOnRequestCodeLensProvider()
+    ),
     new StartStopApplicationStatusBarItem(),
-    new OpenApplicationStatusBarItem()
+    new OpenApplicationStatusBarItem(),
+    vscode.window.onDidChangeActiveTextEditor(() => {
+      anyDartFrogProjectLoaded =
+        resolveDartFrogProjectPathFromWorkspace() !== undefined;
+    })
   );
 
   return context;
