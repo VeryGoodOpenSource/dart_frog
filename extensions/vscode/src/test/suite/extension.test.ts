@@ -221,11 +221,18 @@ suite("ensureCompatibleDartFrogCLI", () => {
 
   beforeEach(() => {
     vscodeStub = {
-      window: {
-        showWarningMessage: sinon.stub(),
-      },
       commands: {
+        registerCommand: sinon.stub(),
         executeCommand: sinon.stub(),
+      },
+      languages: {
+        registerCodeLensProvider: sinon.stub(),
+      },
+      window: {
+        onDidChangeActiveTextEditor: sinon.stub(),
+      },
+      workspace: {
+        onDidChangeWorkspaceFolders: sinon.stub(),
       },
     };
 
