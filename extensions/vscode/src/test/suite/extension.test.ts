@@ -181,6 +181,76 @@ suite("activate", () => {
 
     sinon.assert.calledOnce(ensureCompatibleCLI);
   });
+
+  suite("sets anyDartFrogProjectLoaded", () => {
+    test("to true when can resolve Dart Frog project", () => {
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+        "path/to/project"
+      );
+
+      const context = { subscriptions: [] };
+      extension.activate(context);
+
+      sinon.assert.calledWith(
+        vscodeStub.commands.executeCommand,
+        "setContext",
+        "dart-frog:anyDartFrogProjectLoaded",
+        true
+      );
+    });
+
+    test("to false when can resolve Dart Frog project", () => {
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
+
+      const context = { subscriptions: [] };
+      extension.activate(context);
+
+      sinon.assert.calledWith(
+        vscodeStub.commands.executeCommand,
+        "setContext",
+        "dart-frog:anyDartFrogProjectLoaded",
+        false
+      );
+    });
+
+    test("on onDidChangeActiveTextEditor", () => {
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+        "path/to/project"
+      );
+
+      const context = { subscriptions: [] };
+      extension.activate(context);
+
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
+      vscodeStub.window.onDidChangeActiveTextEditor.getCall(0).args[0]();
+
+      sinon.assert.calledWith(
+        vscodeStub.commands.executeCommand,
+        "setContext",
+        "dart-frog:anyDartFrogProjectLoaded",
+        false
+      );
+    });
+
+    test("on onDidChangeWorkspaceFolders", () => {
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+        "path/to/project"
+      );
+
+      const context = { subscriptions: [] };
+      extension.activate(context);
+
+      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
+      vscodeStub.window.onDidChangeWorkspaceFolders.getCall(0).args[0]();
+
+      sinon.assert.calledWith(
+        vscodeStub.commands.executeCommand,
+        "setContext",
+        "dart-frog:anyDartFrogProjectLoaded",
+        false
+      );
+    });
+  });
 });
 
 suite("ensureCompatibleDartFrogCLI", () => {
