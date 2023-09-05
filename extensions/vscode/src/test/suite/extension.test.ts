@@ -19,6 +19,7 @@ suite("activate", () => {
     vscodeStub = {
       commands: {
         registerCommand: sinon.stub(),
+        executeCommand: sinon.stub(),
       },
       languages: {
         registerCodeLensProvider: sinon.stub(),
@@ -29,10 +30,14 @@ suite("activate", () => {
       readDartFrogCLIVersion: sinon.stub(),
       isCompatibleDartFrogCLIVersion: sinon.stub(),
       isDartFrogCLIInstalled: sinon.stub(),
+      resolveDartFrogProjectPathFromWorkspace: sinon.stub(),
     };
     utilsStub.readDartFrogCLIVersion.returns("0.0.0");
     utilsStub.isCompatibleDartFrogCLIVersion.returns(true);
     utilsStub.isDartFrogCLIInstalled.returns(true);
+    utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+      "path/to/project"
+    );
 
     const childProcessStub = {
       execSync: sinon.stub(),
