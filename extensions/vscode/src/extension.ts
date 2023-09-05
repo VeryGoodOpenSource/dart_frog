@@ -97,7 +97,7 @@ export function activate(
  *
  * This provides "dart-frog:anyDartFrogProjectLoaded" as a custom when clause,
  * to be used in the "package.json" file to enable or disable commands based on
- * whether a Dart Frog project is loaded in the workspace.
+ * whether a Dart Frog project is detected in the workspace.
  *
  * @see {@link https://code.visualstudio.com/api/references/when-clause-contexts#add-a-custom-when-clause-context} for further details about custom when clause context.
  */
