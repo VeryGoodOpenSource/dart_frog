@@ -183,72 +183,114 @@ suite("activate", () => {
   });
 
   suite("sets anyDartFrogProjectLoaded", () => {
-    test("to true when can resolve Dart Frog project", () => {
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
-        "path/to/project"
-      );
+    suite("to true", () => {
+      test("when can resolve Dart Frog project", () => {
+        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+          "path/to/project"
+        );
 
-      const context = { subscriptions: [] };
-      extension.activate(context);
+        const context = { subscriptions: [] };
+        extension.activate(context);
 
-      sinon.assert.calledWith(
-        vscodeStub.commands.executeCommand,
-        "setContext",
-        "dart-frog:anyDartFrogProjectLoaded",
-        true
-      );
+        sinon.assert.calledWith(
+          vscodeStub.commands.executeCommand,
+          "setContext",
+          "dart-frog:anyDartFrogProjectLoaded",
+          true
+        );
+      });
+
+      test("when active text editor changes to a Dart Frog project", () => {
+        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
+
+        const context = { subscriptions: [] };
+        extension.activate(context);
+
+        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+          "path/to/project"
+        );
+        vscodeStub.window.onDidChangeActiveTextEditor.getCall(0).args[0]();
+
+        sinon.assert.calledWith(
+          vscodeStub.commands.executeCommand,
+          "setContext",
+          "dart-frog:anyDartFrogProjectLoaded",
+          true
+        );
+      });
+
+      test("when workspace folder changes to a Dart Frog project", () => {
+        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
+
+        const context = { subscriptions: [] };
+        extension.activate(context);
+
+        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+          "path/to/project"
+        );
+        vscodeStub.workspace.onDidChangeWorkspaceFolders.getCall(0).args[0]();
+
+        sinon.assert.calledWith(
+          vscodeStub.commands.executeCommand,
+          "setContext",
+          "dart-frog:anyDartFrogProjectLoaded",
+          true
+        );
+      });
     });
 
-    test("to false when can resolve Dart Frog project", () => {
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
+    suite("to false", () => {
+      test("when can not resolve Dart Frog project", () => {
+        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
 
-      const context = { subscriptions: [] };
-      extension.activate(context);
+        const context = { subscriptions: [] };
+        extension.activate(context);
 
-      sinon.assert.calledWith(
-        vscodeStub.commands.executeCommand,
-        "setContext",
-        "dart-frog:anyDartFrogProjectLoaded",
-        false
-      );
-    });
+        sinon.assert.calledWith(
+          vscodeStub.commands.executeCommand,
+          "setContext",
+          "dart-frog:anyDartFrogProjectLoaded",
+          false
+        );
+      });
 
-    test("on onDidChangeActiveTextEditor", () => {
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
-        "path/to/project"
-      );
+      test("when active text editor changes and is not a Dart Frog project", () => {
+        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+          "path/to/project"
+        );
 
-      const context = { subscriptions: [] };
-      extension.activate(context);
+        const context = { subscriptions: [] };
+        extension.activate(context);
 
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
-      vscodeStub.window.onDidChangeActiveTextEditor.getCall(0).args[0]();
+        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
+        vscodeStub.window.onDidChangeActiveTextEditor.getCall(0).args[0]();
 
-      sinon.assert.calledWith(
-        vscodeStub.commands.executeCommand,
-        "setContext",
-        "dart-frog:anyDartFrogProjectLoaded",
-        false
-      );
-    });
+        sinon.assert.calledWith(
+          vscodeStub.commands.executeCommand,
+          "setContext",
+          "dart-frog:anyDartFrogProjectLoaded",
+          false
+        );
+      });
 
-    test("on onDidChangeWorkspaceFolders", () => {
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
-        "path/to/project"
-      );
+      test("when workspace folder changes and is not a Dart Frog project", () => {
+        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+          "path/to/project"
+        );
 
-      const context = { subscriptions: [] };
-      extension.activate(context);
+        const context = { subscriptions: [] };
+        extension.activate(context);
 
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
-      vscodeStub.workspace.onDidChangeWorkspaceFolders.getCall(0).args[0]();
+        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
+        vscodeStub.workspace.onDidChangeWorkspaceFolders.getCall(0).args[0]();
 
-      sinon.assert.calledWith(
-        vscodeStub.commands.executeCommand,
-        "setContext",
-        "dart-frog:anyDartFrogProjectLoaded",
-        false
-      );
+        sinon.assert.calledWith(
+          vscodeStub.commands.executeCommand,
+          "setContext",
+          "dart-frog:anyDartFrogProjectLoaded",
+          false
+        );
+      });
     });
   });
 });
