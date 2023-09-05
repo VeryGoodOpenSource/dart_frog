@@ -29,8 +29,6 @@ import {
   suggestInstallingDartFrogCLI,
 } from "./utils";
 
-let anyDartFrogProjectLoaded: boolean;
-
 /**
  * This method is called when the extension is activated.
  *
@@ -52,7 +50,7 @@ export function activate(
     ensureCompatibleCLI();
   }
 
-  anyDartFrogProjectLoaded = !!resolveDartFrogProjectPathFromWorkspace();
+  let anyDartFrogProjectLoaded = !!resolveDartFrogProjectPathFromWorkspace();
   vscode.commands.executeCommand(
     "setContext",
     "dart-frog:anyDartFrogProjectLoaded",
