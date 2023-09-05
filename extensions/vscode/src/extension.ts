@@ -50,14 +50,12 @@ export function activate(
     ensureCompatibleCLI();
   }
 
-  updateHasAnyDartFrogProjectLoaded();
+  updateAnyDartFrogProjectLoaded();
 
   context.subscriptions.push(
-    vscode.window.onDidChangeActiveTextEditor(
-      updateHasAnyDartFrogProjectLoaded
-    ),
+    vscode.window.onDidChangeActiveTextEditor(updateAnyDartFrogProjectLoaded),
     vscode.workspace.onDidChangeWorkspaceFolders(
-      updateHasAnyDartFrogProjectLoaded
+      updateAnyDartFrogProjectLoaded
     ),
     vscode.commands.registerCommand("dart-frog.create", create),
     vscode.commands.registerCommand("dart-frog.install-cli", installCLI),
@@ -93,7 +91,17 @@ export function activate(
   return context;
 }
 
-function updateHasAnyDartFrogProjectLoaded(): void {
+/**
+ * Sets "dart-frog:anyDartFrogProjectLoaded" context to "true" if a Dart Frog
+ * project is loaded in the workspace, or "false" otherwise.
+ *
+ * This provides "dart-frog:anyDartFrogProjectLoaded" context to be used in
+ * the "package.json" file to enable or disable commands based on whether a
+ * Dart Frog project is loaded in the workspace.
+ *
+ * @see {@link https://code.visualstudio.com/api/references/when-clause-contexts#add-a-custom-when-clause-context} for further details about custom when clause context.
+ */
+function updateAnyDartFrogProjectLoaded(): void {
   const anyDartFrogProjectLoaded =
     resolveDartFrogProjectPathFromWorkspace() !== undefined;
   vscode.commands.executeCommand(
