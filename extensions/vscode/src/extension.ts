@@ -93,7 +93,7 @@ export function activate(
 
 /**
  * Sets "dart-frog:anyDartFrogProjectLoaded" context to "true" if a Dart Frog
- * project is loaded in the workspace, or "false" otherwise.
+ * project is detected in the workspace, or "false" otherwise.
  *
  * This provides "dart-frog:anyDartFrogProjectLoaded" context to be used in
  * the "package.json" file to enable or disable commands based on whether a
