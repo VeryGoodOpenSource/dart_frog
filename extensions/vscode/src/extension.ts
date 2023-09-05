@@ -59,6 +59,14 @@ export function activate(
   );
 
   context.subscriptions.push(
+    vscode.window.onDidChangeActiveTextEditor(() => {
+      anyDartFrogProjectLoaded =
+        resolveDartFrogProjectPathFromWorkspace() !== undefined;
+    }),
+    vscode.workspace.onDidChangeWorkspaceFolders(() => {
+      anyDartFrogProjectLoaded =
+        resolveDartFrogProjectPathFromWorkspace() !== undefined;
+    }),
     vscode.commands.registerCommand("dart-frog.create", create),
     vscode.commands.registerCommand("dart-frog.install-cli", installCLI),
     vscode.commands.registerCommand("dart-frog.update-cli", updateCLI),
@@ -87,15 +95,7 @@ export function activate(
       new RunOnRequestCodeLensProvider()
     ),
     new StartStopApplicationStatusBarItem(),
-    new OpenApplicationStatusBarItem(),
-    vscode.window.onDidChangeActiveTextEditor(() => {
-      anyDartFrogProjectLoaded =
-        resolveDartFrogProjectPathFromWorkspace() !== undefined;
-    }),
-    vscode.workspace.onDidChangeWorkspaceFolders(() => {
-      anyDartFrogProjectLoaded =
-        resolveDartFrogProjectPathFromWorkspace() !== undefined;
-    })
+    new OpenApplicationStatusBarItem()
   );
 
   return context;
