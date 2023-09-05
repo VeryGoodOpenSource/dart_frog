@@ -25,7 +25,7 @@ timeouts. The daemon will send events to the client as they happen.
 
 #### Usage example
 
-```json
+```sh
 $ dart_frog daemon
 
 // ready event sent via stdout
@@ -36,7 +36,6 @@ $ dart_frog daemon
 
 // response sent via stdout
 [{"id":"12","result":{"version":"0.0.1"}}]
-
 ```
 
 The `id` field on the request is used to match the request with the response. As the client sets it arbitrarily, the client is responsible for ensuring that all request ids are unique.
@@ -105,9 +104,9 @@ Start a dev server on a given project.
 
 - **Response**:
 
-| Field         | Type   | Description                                    |
-| ------------- | ------ | ---------------------------------------------- |
-| applicationId | String | A unique identifier for the devserver instance |
+| Field         | Type   | Description                                     |
+| ------------- | ------ | ----------------------------------------------- |
+| applicationId | String | A unique identifier for the dev server instance |
 
 ### Method: `reload`
 
@@ -115,15 +114,15 @@ Reload a running dev server.
 
 - **Parameters**:
 
-| Field         | Type   | Description              | Required |
-| ------------- | ------ | ------------------------ | -------- |
-| applicationId | String | The devserver identifier | Yes      |
+| Field         | Type   | Description               | Required |
+| ------------- | ------ | ------------------------- | -------- |
+| applicationId | String | The dev server identifier | Yes      |
 
 - **Response**:
 
-| Field         | Type   | Description                                    |
-| ------------- | ------ | ---------------------------------------------- |
-| applicationId | String | A unique identifier for the devserver instance |
+| Field         | Type   | Description                                     |
+| ------------- | ------ | ----------------------------------------------- |
+| applicationId | String | A unique identifier for the dev server instance |
 
 ### Method: `stop`
 
@@ -131,16 +130,16 @@ Stop a running dev server.
 
 - **Parameters**:
 
-| Field         | Type   | Description              | Required |
-| ------------- | ------ | ------------------------ | -------- |
-| applicationId | String | The devserver identifier | Yes      |
+| Field         | Type   | Description               | Required |
+| ------------- | ------ | ------------------------- | -------- |
+| applicationId | String | The dev server identifier | Yes      |
 
 - **Response**:
 
-| Field         | Type   | Description                                    |
-| ------------- | ------ | ---------------------------------------------- |
-| applicationId | String | A unique identifier for the devserver instance |
-| exitCode      | int    | The exit code of the devserver process         |
+| Field         | Type   | Description                                     |
+| ------------- | ------ | ----------------------------------------------- |
+| applicationId | String | A unique identifier for the dev server instance |
+| exitCode      | int    | The exit code of the dev server process         |
 
 ### Event: `applicationStarting`
 
@@ -148,10 +147,10 @@ Signals that a dev server is starting.
 
 - **Content**:
 
-| Field         | Type   | Description                                                    |
-| ------------- | ------ | -------------------------------------------------------------- |
-| applicationId | String | A unique identifier for the devserver instance                 |
-| requestId     | String | A unique identifier for the request that started the devserver |
+| Field         | Type   | Description                                                     |
+| ------------- | ------ | --------------------------------------------------------------- |
+| applicationId | String | A unique identifier for the dev server instance                 |
+| requestId     | String | A unique identifier for the request that started the dev server |
 
 ### Event: `applicationExit`
 
@@ -178,6 +177,117 @@ The dev server will send logging events to the client as they happen. These even
 | requestId        | String | A unique identifier for the request that started the dev server |
 | workingDirectory | String | The project directory                                           |
 | message          | String | The log message                                                 |
+
+## `route_configuration` domain
+
+Operations related to the route configuration of a project.
+
+A route configuration is generated from the files under `routes` as it describes which routes are
+available in the project as well as the location of middlewares. The route configuration is
+used to diagnose the project for issues such as rogue routes and path conflicts.
+
+### Method: `watcherStart`
+
+Starts a route configuration watcher for a given project. The watcher will send events to the client
+when the route configuration of a project changes.
+
+- **Parameters**:
+
+| Field            | Type   | Description           | Required |
+| ---------------- | ------ | --------------------- | -------- |
+| workingDirectory | String | The project directory | Yes      |
+
+- **Response**:
+
+| Field     | Type   | Description                                  |
+| --------- | ------ | -------------------------------------------- |
+| watcherId | String | A unique identifier for the watcher instance |
+
+### Method: `watcherStop`
+
+Stops a route configuration watcher created by `watcherStart`.
+
+- **Parameters**:
+
+| Field     | Type   | Description                                  | Required |
+| --------- | ------ | -------------------------------------------- | -------- |
+| watcherId | String | A unique identifier for the watcher instance | Yes      |
+
+- **Response**:
+
+| Field     | Type   | Description                                  |
+| --------- | ------ | -------------------------------------------- |
+| watcherId | String | A unique identifier for the watcher instance |
+| exitCode  | int    | The exit code of the watcher process         |
+
+### Method: `watcherGenerateRouteConfiguration`
+
+Forces a route configuration watcher to generate a route configuration for a given project.
+Also, returns the generated route configuration.
+
+- **Parameters**:
+
+| Field     | Type   | Description                                  | Required |
+| --------- | ------ | -------------------------------------------- | -------- |
+| watcherId | String | A unique identifier for the watcher instance | Yes      |
+
+- **Response**:
+
+| Field              | Type   | Description                                  |
+| ------------------ | ------ | -------------------------------------------- |
+| watcherId          | String | A unique identifier for the watcher instance |
+| routeConfiguration | String | The generated route configuration            |
+
+### Event: `changed`
+
+Signals that the route configuration of a project has changed.
+
+- **Content**:
+
+| Field              | Type   | Description                                                  |
+| ------------------ | ------ | ------------------------------------------------------------ |
+| watcherId          | String | A unique identifier for the watcher instance                 |
+| requestId          | String | A unique identifier for the request that started the watcher |
+| routeConfiguration | String | The generated route configuration                            |
+
+### Event: `watcherStart`
+
+Signals that a route configuration watcher has started.
+
+- **Content**:
+
+| Field            | Type   | Description                                  |
+| ---------------- | ------ | -------------------------------------------- |
+| watcherId        | String | A unique identifier for the watcher instance |
+| requestId        | String | A unique identifier for the request          |
+| workingDirectory | String | The project directory                        |
+
+### Event: `watcherExit`
+
+Signals that a route configuration watcher has exited.
+
+- **Content**:
+
+| Field            | Type   | Description                                  |
+| ---------------- | ------ | -------------------------------------------- |
+| watcherId        | String | A unique identifier for the watcher instance |
+| requestId        | String | A unique identifier for the request          |
+| workingDirectory | String | The project directory                        |
+| exitCode         | int    | The exit code of the watcher process         |
+
+### Route configuration watcher logging events
+
+Each watcher instance will send logging events to the client as they happen. These events are identified by
+"route_configuration.logger<Severity\>". See the [Logging events](#logging-events) section for more details.
+
+- **Content**:
+
+| Field            | Type   | Description                                                  |
+| ---------------- | ------ | ------------------------------------------------------------ |
+| watcherId        | String | A unique identifier for the watcher instance                 |
+| requestId        | String | A unique identifier for the request that started the watcher |
+| workingDirectory | String | The project directory                                        |
+| message          | String | The log message                                              |
 
 # Logging events
 
