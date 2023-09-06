@@ -33,7 +33,7 @@ export class OpenApplicationStatusBarItem extends DartFrogStatusBarItem {
     }
 
     const application = applications[0];
-    this.statusBarItem.text = `$(dart-frog-globe) localhost:${application.port}`;
+    this.statusBarItem.text = `$(dart-frog-globe) ${application.host}:${application.port}`;
     this.statusBarItem.tooltip = "Open application in browser";
     const openCommand: Command = {
       title: "Open application in browser",
