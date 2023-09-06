@@ -101,7 +101,7 @@
         {
           "command": "dart-frog.stop-dev-server",
           "group": "navigation@50",
-          "when": "inDebugMode && debugType == dart"
+          "when": "dart-frog:anyDartFrogProjectLoaded && inDebugMode && debugType == dart"
         }
       ]
     },
