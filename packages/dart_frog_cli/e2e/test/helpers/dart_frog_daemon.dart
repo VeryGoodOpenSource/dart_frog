@@ -45,7 +45,7 @@ class DaemonStdioHelper {
   void _handleStdoutLine(String line) {
     final messageMatcher = this.messageMatcher;
 
-    stdout.writeln('::debug:: <- $line');
+    stdout.writeln(' <- $line');
     if (messageMatcher != null) {
       if (messageMatcher.matches(line, {})) {
         messageCompleter?.complete(line);
@@ -146,7 +146,7 @@ class DaemonStdioHelper {
 
   /// Sends a string message to the daemon via its stdin.
   Future<void> sendStringMessage(String message) async {
-    stdout.writeln('::debug:: -> $message');
+    stdout.writeln('-> $message');
     daemonProcess.stdin.writeln(message);
     await daemonProcess.stdin.flush();
   }
