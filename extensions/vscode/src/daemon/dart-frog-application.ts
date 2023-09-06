@@ -30,7 +30,7 @@ export class DartFrogApplication {
   public readonly vmServicePort: number;
 
   /**
-   * The host on which the application is listening.
+   * The host on which the application is bound to.
    */
   public readonly host: string;
 
