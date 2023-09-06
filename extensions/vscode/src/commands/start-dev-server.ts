@@ -117,7 +117,7 @@ export const startDevServer = async (): Promise<
 
       const startDaemonResponse = await daemon.send(startDaemonRequest);
       if (startDaemonResponse.error) {
-        progress.report({ message: startDaemonResponse.error.message });
+        window.showErrorMessage(startDaemonResponse.error.message);
         return;
       }
 

@@ -1017,11 +1017,11 @@ suite("start-dev-server command", () => {
       progress.report = sinon.stub();
       await progressFunction(progress);
 
-      sinon.assert.calledOnce(
-        progress.report.withArgs({
-          message: startResponse.error.message,
-        })
+      sinon.assert.calledWith(
+        vscodeStub.window.showErrorMessage,
+        startResponse.error.message
       );
+      sinon.assert.calledOnce(progress.report);
     });
 
     test("returns application when complete", async () => {
