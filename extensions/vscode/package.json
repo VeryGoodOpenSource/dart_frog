@@ -84,12 +84,12 @@
         {
           "command": "dart-frog.new-route",
           "group": "dartFrogGroup@1",
-          "when": "(resourceDirname =~ /routes/ && (explorerResourceIsFolder || resourceExtname == .dart)) || (explorerResourceIsFolder && resourceFilename == routes)"
+          "when": "dart-frog:anyDartFrogProjectLoaded && (resourceDirname =~ /routes/ && (explorerResourceIsFolder || resourceExtname == .dart)) || (explorerResourceIsFolder && resourceFilename == routes)"
         },
         {
           "command": "dart-frog.new-middleware",
           "group": "dartFrogGroup@1",
-          "when": "(resourceDirname =~ /routes/ && (explorerResourceIsFolder || resourceExtname == .dart)) || (explorerResourceIsFolder && resourceFilename == routes)"
+          "when": "dart-frog:anyDartFrogProjectLoaded && (resourceDirname =~ /routes/ && (explorerResourceIsFolder || resourceExtname == .dart)) || (explorerResourceIsFolder && resourceFilename == routes)"
         },
         {
           "command": "dart-frog.create",
@@ -165,7 +165,7 @@
     "@vscode/test-electron": "^2.3.2",
     "c8": "^8.0.0",
     "eslint": "^8.48.0",
-    "glob": "^10.3.3",
+    "glob": "^10.3.4",
     "mocha": "^10.2.0",
     "proxyquire": "^2.1.3",
     "sinon": "^15.1.2",

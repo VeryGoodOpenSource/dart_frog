@@ -12,6 +12,7 @@ import { installCLI, newMiddleware, newRoute, updateCLI } from "../../commands";
 
 suite("activate", () => {
   let vscodeStub: any;
+  let utilsStub: any;
   let extension: any;
   let context: any;
 
@@ -19,20 +20,32 @@ suite("activate", () => {
     vscodeStub = {
       commands: {
         registerCommand: sinon.stub(),
+        executeCommand: sinon.stub(),
       },
       languages: {
         registerCodeLensProvider: sinon.stub(),
       },
+      window: {
+        onDidChangeActiveTextEditor: sinon.stub(),
+      },
+      workspace: {
+        onDidChangeWorkspaceFolders: sinon.stub(),
+      },
     };
 
-    const utilsStub = {
+    utilsStub = {
       readDartFrogCLIVersion: sinon.stub(),
       isCompatibleDartFrogCLIVersion: sinon.stub(),
       isDartFrogCLIInstalled: sinon.stub(),
+      resolveDartFrogProjectPathFromWorkspace: sinon.stub(),
+      suggestInstallingDartFrogCLI: sinon.stub(),
     };
     utilsStub.readDartFrogCLIVersion.returns("0.0.0");
     utilsStub.isCompatibleDartFrogCLIVersion.returns(true);
     utilsStub.isDartFrogCLIInstalled.returns(true);
+    utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+      "path/to/project"
+    );
 
     const childProcessStub = {
       execSync: sinon.stub(),
@@ -150,23 +163,7 @@ suite("activate", () => {
   });
 
   test("calls suggestInstallingDartFrogCLI when Dart Frog CLI is not installed", () => {
-    const vscodeStub = {
-      commands: {
-        registerCommand: sinon.stub(),
-      },
-    };
-
-    const utilsStub = {
-      isDartFrogCLIInstalled: sinon.stub(),
-      suggestInstallingDartFrogCLI: sinon.stub(),
-    };
     utilsStub.isDartFrogCLIInstalled.returns(false);
-
-    const extension = proxyquire("../../extension", {
-      vscode: vscodeStub,
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      "./utils": utilsStub,
-    });
 
     const context = { subscriptions: [] };
     const ensureCompatibleCLI = sinon.stub();
@@ -176,29 +173,125 @@ suite("activate", () => {
   });
 
   test("calls ensureCompatibleDartFrogCLI when Dart Frog CLI is installed", () => {
-    const vscodeStub = {
-      commands: {
-        registerCommand: sinon.stub(),
-      },
-    };
-
-    const utilsStub = {
-      isDartFrogCLIInstalled: sinon.stub(),
-      suggestInstallingCLI: sinon.stub(),
-    };
     utilsStub.isDartFrogCLIInstalled.returns(true);
-
-    const extension = proxyquire("../../extension", {
-      vscode: vscodeStub,
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      "./utils": utilsStub,
-    });
 
     const context = { subscriptions: [] };
     const ensureCompatibleCLI = sinon.stub();
     extension.activate(context, ensureCompatibleCLI);
 
     sinon.assert.calledOnce(ensureCompatibleCLI);
+  });
+
+  suite("sets anyDartFrogProjectLoaded", () => {
+    suite("to true", () => {
+      test("when can resolve Dart Frog project", () => {
+        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+          "path/to/project"
+        );
+
+        const context = { subscriptions: [] };
+        extension.activate(context);
+
+        sinon.assert.calledWith(
+          vscodeStub.commands.executeCommand,
+          "setContext",
+          "dart-frog:anyDartFrogProjectLoaded",
+          true
+        );
+      });
+
+      test("when active text editor changes to a Dart Frog project", () => {
+        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
+
+        const context = { subscriptions: [] };
+        extension.activate(context);
+
+        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+          "path/to/project"
+        );
+        vscodeStub.window.onDidChangeActiveTextEditor.getCall(0).args[0]();
+
+        sinon.assert.calledWith(
+          vscodeStub.commands.executeCommand,
+          "setContext",
+          "dart-frog:anyDartFrogProjectLoaded",
+          true
+        );
+      });
+
+      test("when workspace folder changes to a Dart Frog project", () => {
+        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
+
+        const context = { subscriptions: [] };
+        extension.activate(context);
+
+        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+          "path/to/project"
+        );
+        vscodeStub.workspace.onDidChangeWorkspaceFolders.getCall(0).args[0]();
+
+        sinon.assert.calledWith(
+          vscodeStub.commands.executeCommand,
+          "setContext",
+          "dart-frog:anyDartFrogProjectLoaded",
+          true
+        );
+      });
+    });
+
+    suite("to false", () => {
+      test("when can not resolve Dart Frog project", () => {
+        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
+
+        const context = { subscriptions: [] };
+        extension.activate(context);
+
+        sinon.assert.calledWith(
+          vscodeStub.commands.executeCommand,
+          "setContext",
+          "dart-frog:anyDartFrogProjectLoaded",
+          false
+        );
+      });
+
+      test("when active text editor changes and is not a Dart Frog project", () => {
+        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+          "path/to/project"
+        );
+
+        const context = { subscriptions: [] };
+        extension.activate(context);
+
+        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
+        vscodeStub.window.onDidChangeActiveTextEditor.getCall(0).args[0]();
+
+        sinon.assert.calledWith(
+          vscodeStub.commands.executeCommand,
+          "setContext",
+          "dart-frog:anyDartFrogProjectLoaded",
+          false
+        );
+      });
+
+      test("when workspace folder changes and is not a Dart Frog project", () => {
+        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+          "path/to/project"
+        );
+
+        const context = { subscriptions: [] };
+        extension.activate(context);
+
+        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
+        vscodeStub.workspace.onDidChangeWorkspaceFolders.getCall(0).args[0]();
+
+        sinon.assert.calledWith(
+          vscodeStub.commands.executeCommand,
+          "setContext",
+          "dart-frog:anyDartFrogProjectLoaded",
+          false
+        );
+      });
+    });
   });
 });
 
@@ -212,9 +305,6 @@ suite("ensureCompatibleDartFrogCLI", () => {
     vscodeStub = {
       window: {
         showWarningMessage: sinon.stub(),
-      },
-      commands: {
-        executeCommand: sinon.stub(),
       },
     };
 
