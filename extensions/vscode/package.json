@@ -64,7 +64,11 @@
       },
       {
         "command": "dart-frog.stop-dev-server",
-        "title": "Dart Frog: Stop Development Server"
+        "title": "Dart Frog: Stop Development Server",
+        "icon": {
+          "dark": "./assets/commands/stop-dev-server--dark.svg",
+          "light": "./assets/commands/stop-dev-server--light.svg"
+        }
       },
       {
         "command": "dart-frog.debug-dev-server",
@@ -91,6 +95,13 @@
           "command": "dart-frog.create",
           "group": "dartFrogGroup@2",
           "when": "!(resourceDirname =~ /routes/) && !(explorerResourceIsFolder && resourceFilename == routes)"
+        }
+      ],
+      "debug/toolBar": [
+        {
+          "command": "dart-frog.stop-dev-server",
+          "group": "navigation@50",
+          "when": "dart-frog:anyDartFrogProjectLoaded && inDebugMode && debugType == dart"
         }
       ]
     },
