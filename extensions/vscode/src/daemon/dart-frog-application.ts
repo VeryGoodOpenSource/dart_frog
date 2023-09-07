@@ -2,8 +2,14 @@
  * Represents the metadata associated to a Dart Frog application.
  */
 export class DartFrogApplication {
-  constructor(projectPath: string, port: number, vmServicePort: number) {
+  constructor(
+    projectPath: string,
+    port: number,
+    vmServicePort: number,
+    host?: string
+  ) {
     this.projectPath = projectPath;
+    this.host = host === undefined ? "localhost" : host;
     this.port = port;
     this.vmServicePort = vmServicePort;
   }
@@ -22,6 +28,11 @@ export class DartFrogApplication {
    * The port on which the VM service is listening.
    */
   public readonly vmServicePort: number;
+
+  /**
+   * The host on which the application is bound to.
+   */
+  public readonly host: string;
 
   private _id: string | undefined;
 

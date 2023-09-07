@@ -115,11 +115,11 @@ class DaemonStdioHelper {
     final existingItem = _pastMessagesCache.indexed.where((pair) {
       return messageMatcher.matches(pair.$2, {});
     }).firstOrNull;
-    if (existingItem != null) {
+
+    if (existingItem case (final int itemIndex, final String itemValue)) {
       // if there is a matching message in the cache,
       // remove all the previous messages from the cache and
       // return the matching message.
-      final (itemIndex, itemValue) = existingItem;
       _pastMessagesCache = _pastMessagesCache.skip(itemIndex + 1).toList();
       _clean();
       return itemValue;

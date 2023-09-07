@@ -10,12 +10,24 @@ suite("DartFrogApplication", () => {
     const application = new DartFrogApplication(
       projectPath,
       port,
-      vmServicePort
+      vmServicePort,
+      "127.0.0.1"
     );
 
     assert.equal(application.projectPath, projectPath);
     assert.equal(application.port, port);
     assert.equal(application.vmServicePort, vmServicePort);
+    assert.equal(application.host, "127.0.0.1");
+  });
+
+  test("host is localhost by default", () => {
+    const application = new DartFrogApplication(
+      projectPath,
+      port,
+      vmServicePort
+    );
+
+    assert.equal(application.host, "localhost");
   });
 
   suite("id", () => {

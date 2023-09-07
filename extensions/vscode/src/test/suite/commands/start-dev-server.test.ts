@@ -1,12 +1,13 @@
 const sinon = require("sinon");
 var proxyquire = require("proxyquire");
 
-import { afterEach, beforeEach } from "mocha";
+import * as assert from "assert";
 import {
   DaemonResponse,
   DartFrogApplication,
   StartDaemonRequest,
 } from "../../../daemon";
+import { afterEach, beforeEach } from "mocha";
 import { Uri } from "vscode";
 
 suite("start-dev-server command", () => {
@@ -1016,11 +1017,41 @@ suite("start-dev-server command", () => {
       progress.report = sinon.stub();
       await progressFunction(progress);
 
-      sinon.assert.calledOnce(
-        progress.report.withArgs({
-          message: startResponse.error.message,
-        })
+      sinon.assert.calledWith(
+        vscodeStub.window.showErrorMessage,
+        startResponse.error.message
       );
+      sinon.assert.calledOnce(progress.report);
+    });
+
+    test("returns application when complete", async () => {
+      const startResponse: DaemonResponse = {
+        id: startRequest.id,
+        result: "success",
+        error: undefined,
+      };
+      daemon.send.withArgs(startRequest).resolves(startResponse);
+
+      await command.startDevServer();
+
+      const application = new DartFrogApplication(
+        startRequest.params.workingDirectory,
+        startRequest.params.port,
+        startRequest.params.dartVmServicePort
+      );
+      application.address = `https://localhost:${application.port}`;
+      const registrationListener = daemon.applicationRegistry.on
+        .withArgs("add", sinon.match.any)
+        .getCall(0).args[1];
+      registrationListener(application);
+
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      const progress = sinon.stub();
+      progress.report = sinon.stub();
+      const result = await progressFunction(progress);
+
+      assert.strictEqual(result, application);
     });
   });
 });

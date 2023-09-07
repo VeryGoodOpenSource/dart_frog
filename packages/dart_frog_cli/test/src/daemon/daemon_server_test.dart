@@ -68,7 +68,11 @@ void main() {
     });
 
     test('domainNames returns the correct domains', () {
-      expect(daemonServer.domainNames, ['daemon', 'dev_server']);
+      expect(daemonServer.domainNames, [
+        'daemon',
+        'dev_server',
+        'route_configuration',
+      ]);
     });
 
     test('kill exits with given exit code', () async {

@@ -1,20 +1,31 @@
 import * as vscode from "vscode";
 import {
-  installCLI,
-  newRoute,
-  newMiddleware,
-  updateCLI,
+  DebugOnRequestCodeLensProvider,
+  RunOnRequestCodeLensProvider,
+} from "./code-lens";
+import {
+  OpenApplicationStatusBarItem,
+  StartStopApplicationStatusBarItem,
+} from "./status-bar";
+import {
   create,
+  debugDevServer,
+  installCLI,
+  newMiddleware,
+  newRoute,
   startDaemon,
+  startDebugDevServer,
   startDevServer,
   stopDevServer,
+  updateCLI,
 } from "./commands";
 import {
-  readDartFrogCLIVersion,
   isCompatibleDartFrogCLIVersion,
   isDartFrogCLIInstalled,
   openChangelog,
+  readDartFrogCLIVersion,
   readLatestDartFrogCLIVersion,
+  resolveDartFrogProjectPathFromWorkspace,
   suggestInstallingDartFrogCLI,
 } from "./utils";
 
@@ -39,7 +50,13 @@ export function activate(
     ensureCompatibleCLI();
   }
 
+  updateAnyDartFrogProjectLoaded();
+
   context.subscriptions.push(
+    vscode.window.onDidChangeActiveTextEditor(updateAnyDartFrogProjectLoaded),
+    vscode.workspace.onDidChangeWorkspaceFolders(
+      updateAnyDartFrogProjectLoaded
+    ),
     vscode.commands.registerCommand("dart-frog.create", create),
     vscode.commands.registerCommand("dart-frog.install-cli", installCLI),
     vscode.commands.registerCommand("dart-frog.update-cli", updateCLI),
@@ -50,9 +67,48 @@ export function activate(
       "dart-frog.start-dev-server",
       startDevServer
     ),
-    vscode.commands.registerCommand("dart-frog.stop-dev-server", stopDevServer)
+    vscode.commands.registerCommand("dart-frog.stop-dev-server", stopDevServer),
+    vscode.commands.registerCommand(
+      "dart-frog.debug-dev-server",
+      debugDevServer
+    ),
+    vscode.commands.registerCommand(
+      "dart-frog.start-debug-dev-server",
+      startDebugDevServer
+    ),
+    vscode.languages.registerCodeLensProvider(
+      "dart",
+      new DebugOnRequestCodeLensProvider()
+    ),
+    vscode.languages.registerCodeLensProvider(
+      "dart",
+      new RunOnRequestCodeLensProvider()
+    ),
+    new StartStopApplicationStatusBarItem(),
+    new OpenApplicationStatusBarItem()
   );
+
   return context;
+}
+
+/**
+ * Sets "dart-frog:anyDartFrogProjectLoaded" context to "true" if a Dart Frog
+ * project is loaded in the workspace, or "false" otherwise.
+ *
+ * This provides "dart-frog:anyDartFrogProjectLoaded" as a custom when clause,
+ * to be used in the "package.json" file to enable or disable commands based on
+ * whether a Dart Frog project is loaded in the workspace.
+ *
+ * @see {@link https://code.visualstudio.com/api/references/when-clause-contexts#add-a-custom-when-clause-context} for further details about custom when clause context.
+ */
+function updateAnyDartFrogProjectLoaded(): void {
+  const anyDartFrogProjectLoaded =
+    resolveDartFrogProjectPathFromWorkspace() !== undefined;
+  vscode.commands.executeCommand(
+    "setContext",
+    "dart-frog:anyDartFrogProjectLoaded",
+    anyDartFrogProjectLoaded
+  );
 }
 
 /**

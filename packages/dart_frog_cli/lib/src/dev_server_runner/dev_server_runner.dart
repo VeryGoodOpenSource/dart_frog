@@ -27,9 +27,6 @@ typedef DirectoryWatcherBuilder = DirectoryWatcher Function(
   String directory,
 );
 
-/// Typedef for [io.exit].
-typedef Exit = dynamic Function(int exitCode);
-
 /// Regex for detecting warnings in the output of `dart run`.
 final _warningRegex = RegExp(r'^.*:\d+:\d+: Warning: .*', multiLine: true);
 

@@ -1,10 +1,3 @@
-import { Uri, commands, window } from "vscode";
-import {
-  isDartFrogCLIInstalled,
-  nearestDartFrogProject,
-  resolveDartFrogProjectPathFromWorkspace,
-  suggestInstallingDartFrogCLI,
-} from "../utils";
 import {
   DartFrogApplication,
   DartFrogApplicationRegistry,
@@ -12,6 +5,13 @@ import {
   DartFrogDaemon,
   StartDaemonRequest,
 } from "../daemon";
+import { Uri, commands, window } from "vscode";
+import {
+  isDartFrogCLIInstalled,
+  nearestDartFrogProject,
+  resolveDartFrogProjectPathFromWorkspace,
+  suggestInstallingDartFrogCLI,
+} from "../utils";
 
 /**
  * Starts a Dart Frog development server on the current workspace.
@@ -33,7 +33,9 @@ import {
  *
  * Otherwise, the command will not start the server.
  */
-export const startDevServer = async (): Promise<void> => {
+export const startDevServer = async (): Promise<
+  DartFrogApplication | undefined
+> => {
   if (!isDartFrogCLIInstalled()) {
     await suggestInstallingDartFrogCLI(
       "Running this command requires Dart Frog CLI to be installed."
@@ -106,7 +108,7 @@ export const startDevServer = async (): Promise<void> => {
     startDaemonRequest
   );
 
-  await window.withProgress(
+  return await window.withProgress(
     {
       location: 15,
     },
@@ -115,7 +117,7 @@ export const startDevServer = async (): Promise<void> => {
 
       const startDaemonResponse = await daemon.send(startDaemonRequest);
       if (startDaemonResponse.error) {
-        progress.report({ message: startDaemonResponse.error.message });
+        window.showErrorMessage(startDaemonResponse.error.message);
         return;
       }
 
@@ -132,6 +134,8 @@ export const startDevServer = async (): Promise<void> => {
       });
 
       commands.executeCommand("vscode.open", Uri.parse(application.address!));
+
+      return application;
     }
   );
 };

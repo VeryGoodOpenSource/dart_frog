@@ -1,8 +1,8 @@
 const sinon = require("sinon");
 var proxyquire = require("proxyquire");
 
-import { afterEach, beforeEach } from "mocha";
 import * as assert from "assert";
+import { afterEach, beforeEach } from "mocha";
 
 suite("new-middleware command", () => {
   const invalidUri = { fsPath: "/home/not_dart_frog/routes" };
@@ -245,9 +245,6 @@ suite("new-middleware command", () => {
 
   suite("runs `dart_frog new middleware` command with route", () => {
     test("successfully with non-index route name", async () => {
-      const selectedUri = {
-        fsPath: `${validUri.fsPath}/food`,
-      };
       utilsStub.normalizeRoutePath.returns("food");
 
       await command.newMiddleware(validUri);

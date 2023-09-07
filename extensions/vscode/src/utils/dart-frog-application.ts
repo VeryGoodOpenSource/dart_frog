@@ -56,11 +56,7 @@ export async function quickPickApplication(
  */
 class PickableDartFrogApplication implements QuickPickItem {
   constructor(dartFrogApplication: DartFrogApplication) {
-    const addressWithoutProtocol = dartFrogApplication.address!.replace(
-      /.*?:\/\//g,
-      ""
-    );
-    this.label = `$(globe) ${addressWithoutProtocol}`;
+    this.label = `$(globe) ${dartFrogApplication.host}:${dartFrogApplication.port}`;
     this.description = dartFrogApplication.id!.toString();
     this.application = dartFrogApplication;
   }
