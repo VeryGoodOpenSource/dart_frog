@@ -125,7 +125,7 @@ void main() {
             'message',
             allOf(
               startsWith('[watcher] add'),
-              endsWith('_middleware.dart'),
+              endsWith(path.join('new_route', '_middleware.dart')),
             ),
           ),
         ),
