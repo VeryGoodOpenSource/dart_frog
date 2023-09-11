@@ -1,6 +1,6 @@
 /**
  * @file Provides utilities for inspecting and dealing with a Dart Frog
- * project's structure.
+ * project's.
  */
 
 const fs = require("fs");
@@ -101,8 +101,8 @@ export function nearestChildDartFrogProjects(
   if (isDartFrogProject(filePath)) {
     return [filePath];
   }
-  
-   const dartFrogProjects = new Set<string>();
+
+  const dartFrogProjects = new Set<string>();
 
   let currentSubdirectories = fs
     .readdirSync(filePath)

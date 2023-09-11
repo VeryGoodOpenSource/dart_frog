@@ -15,7 +15,7 @@ suite("normalizeRoutePath", () => {
       readFileSync: sinon.stub(),
     };
 
-    normalizeRoutePath = proxyquire("../../../utils/dart-frog-structure", {
+    normalizeRoutePath = proxyquire("../../../utils/dart-frog-project", {
       fs: fsStub,
     }).normalizeRoutePath;
   });
@@ -109,7 +109,7 @@ suite("nearestParentDartFrogProject", () => {
     };
 
     nearestParentDartFrogProject = proxyquire(
-      "../../../utils/dart-frog-structure",
+      "../../../utils/dart-frog-project",
       {
         fs: fsStub,
       }
@@ -215,7 +215,7 @@ suite("nearestChildDartFrogProjects", () => {
     };
 
     nearestChildDartFrogProjects = proxyquire(
-      "../../../utils/dart-frog-structure",
+      "../../../utils/dart-frog-project",
       {
         fs: fsStub,
       }
@@ -396,7 +396,7 @@ suite("isDartFrogProject", () => {
       readFileSync: sinon.stub(),
     };
 
-    isDartFrogProject = proxyquire("../../../utils/dart-frog-structure", {
+    isDartFrogProject = proxyquire("../../../utils/dart-frog-project", {
       fs: fsStub,
     }).isDartFrogProject;
   });
@@ -489,7 +489,7 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
     };
 
     resolveDartFrogProjectPathFromWorkspace = proxyquire(
-      "../../../utils/dart-frog-structure",
+      "../../../utils/dart-frog-project",
       {
         vscode: vscodeStub,
       }
