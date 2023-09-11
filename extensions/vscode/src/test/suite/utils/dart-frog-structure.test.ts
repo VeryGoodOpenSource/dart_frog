@@ -226,10 +226,31 @@ suite("nearestChildDartFrogProject", () => {
     sinon.restore();
   });
 
+  test("returns a single path when the file path is a Dart Frog project", () => {
+    const filePath = "/home/project";
+
+    const dartFrogPubspecRoutesPath = path.join(filePath, "routes");
+    const dartFrogPubspecPath = path.join(filePath, "pubspec.yaml");
+    fsStub.existsSync.withArgs(filePath).returns(true);
+    fsStub.statSync.withArgs(filePath).returns({
+      isDirectory: () => true,
+    });
+    fsStub.readdirSync.withArgs(filePath).returns([]);
+    fsStub.existsSync.withArgs(dartFrogPubspecRoutesPath).returns(true);
+    fsStub.existsSync.withArgs(dartFrogPubspecPath).returns(true);
+    fsStub.readFileSync
+      .withArgs(dartFrogPubspecPath, "utf-8")
+      .returns(validPubspecYaml);
+
+    const result = nearestChildDartFrogProject(filePath);
+
+    assert.deepEqual(Array.from(result), [filePath]);
+  });
+
   test("returns the path to all the child Dart Frog projects", () => {
     fsStub.existsSync.returns(false);
 
-    const filePath = "/home/project/";
+    const filePath = "/home/project";
     fsStub.existsSync.withArgs(filePath).returns(true);
     fsStub.statSync.withArgs(filePath).returns({
       isDirectory: () => true,
@@ -337,7 +358,7 @@ suite("nearestChildDartFrogProject", () => {
     });
 
     test("when subdirectory is not a Dart Frog project", () => {
-      const filePath = "/home/project/";
+      const filePath = "/home/project";
       fsStub.existsSync.withArgs(filePath).returns(true);
       fsStub.statSync.withArgs(filePath).returns({
         isDirectory: () => true,

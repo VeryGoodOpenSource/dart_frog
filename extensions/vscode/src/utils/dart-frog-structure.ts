@@ -78,18 +78,20 @@ export function nearestParentDartFrogProject(
 }
 
 /**
+ * Finds all Dart Frog projects that are children of a directory.
  *
- * @param filePath The path to a file, including directories, to check.
- * @param {function} _isDartFrogProject A function, used for testing,
- * that finds the root of a Dart Frog project from a file path. Defaults to
- * {@link isDartFrogProject}.
+ * Nested Dart Frog projects are not considered. Therefore, if the
+ * {@link filePath} is a Dart Frog project, then only that project is reported.
+ * The same logic applies to subdirectories. If a subdirectory is also a Dart
+ * Frog project, then all of its subdirectories are ignored and only the
+ * shallowest Dart Frog project is reported.
+ *
+ * @param filePath The path to the directory to check for.
  * @returns {Set<string> | undefined} A set of paths to Dart Frog projects that
  * are children of the {@link filePath}, or `undefined` if there are no Dart
  * Frog projects in the {@link filePath}.
  */
-// TODO(alestiago): Consider renaming this function to something more
-// descriptive (plural).
-export function nearestChildDartFrogProject(
+export function nearestChildDartFrogProjects(
   filePath: string
 ): Set<string> | undefined {
   if (!fs.existsSync(filePath) || !fs.statSync(filePath).isDirectory()) {
@@ -98,14 +100,15 @@ export function nearestChildDartFrogProject(
 
   const dartFrogProjects = new Set<string>();
 
+  if (isDartFrogProject(filePath)) {
+    dartFrogProjects.add(filePath);
+    return dartFrogProjects;
+  }
+
   let currentSubdirectories = fs
     .readdirSync(filePath)
     .map((file: string) => path.join(filePath, file))
-    .filter((file: string) => {
-      console.log(`@@@ file: ${file}`);
-      console.log(`@@@ statSync: ${fs.statSync(file)}`);
-      return fs.statSync(file).isDirectory();
-    });
+    .filter((file: string) => fs.statSync(file).isDirectory());
 
   while (currentSubdirectories.length > 0) {
     for (let i = 0; i < currentSubdirectories.length; i++) {
