@@ -102,12 +102,10 @@ export function activate(
  * @see {@link https://code.visualstudio.com/api/references/when-clause-contexts#add-a-custom-when-clause-context} for further details about custom when clause context.
  */
 function updateAnyDartFrogProjectLoaded(): void {
-  const anyDartFrogProjectLoaded =
-    canResolveDartFrogProjectPath() !== undefined;
   vscode.commands.executeCommand(
     "setContext",
     "dart-frog:anyDartFrogProjectLoaded",
-    anyDartFrogProjectLoaded
+    canResolveDartFrogProjectPath()
   );
 }
 
