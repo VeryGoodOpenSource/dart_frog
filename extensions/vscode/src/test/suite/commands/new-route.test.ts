@@ -166,23 +166,40 @@ suite("new-route command", () => {
       });
     });
 
-    test("is not shown when Uri is undefined but resolves a path from workspace", async () => {
-      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
-        validUri.fsPath
-      );
-      utilsStub.normalizeRoutePath.returns("/");
+    suite("is not shwon", () => {
+      test("when Uri is defined", async () => {
+        vscodeStub.window.showInputBox.returns(validRouteName);
 
-      await command.newRoute();
+        await command.newRoute(invalidUri);
 
-      sinon.assert.notCalled(vscodeStub.window.showOpenDialog);
-    });
+        sinon.assert.notCalled(vscodeStub.window.showOpenDialog);
+      });
 
-    test("is not shown when Uri is defined", async () => {
-      vscodeStub.window.showInputBox.returns(validRouteName);
+      test("when Uri is undefined but resolves a path from active text editor", async () => {
+        utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns(
+          validUri.fsPath
+        );
+        utilsStub.normalizeRoutePath.returns("/");
 
-      await command.newRoute(invalidUri);
+        await command.newRoute();
 
-      sinon.assert.notCalled(vscodeStub.window.showOpenDialog);
+        sinon.assert.notCalled(vscodeStub.window.showOpenDialog);
+      });
+
+      test("when Uri and active text editor are undefined but resolves a path from workspace folder", async () => {
+        utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns();
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
+          validUri.fsPath
+        );
+        utilsStub.normalizeRoutePath.returns("/");
+
+        await command.newRoute();
+
+        sinon.assert.called(
+          utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders
+        );
+        sinon.assert.notCalled(vscodeStub.window.showOpenDialog);
+      });
     });
   });
 
