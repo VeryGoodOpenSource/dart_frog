@@ -98,11 +98,11 @@ export function nearestChildDartFrogProjects(
     return undefined;
   }
 
-  const dartFrogProjects = new Set<string>();
-
   if (isDartFrogProject(filePath)) {
     return [filePath];
   }
+  
+   const dartFrogProjects = new Set<string>();
 
   let currentSubdirectories = fs
     .readdirSync(filePath)
