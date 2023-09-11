@@ -93,7 +93,7 @@ export function nearestParentDartFrogProject(
  */
 export function nearestChildDartFrogProjects(
   filePath: string
-): Set<string> | undefined {
+): Array<string> | undefined {
   if (!fs.existsSync(filePath) || !fs.statSync(filePath).isDirectory()) {
     return undefined;
   }
@@ -101,8 +101,7 @@ export function nearestChildDartFrogProjects(
   const dartFrogProjects = new Set<string>();
 
   if (isDartFrogProject(filePath)) {
-    dartFrogProjects.add(filePath);
-    return dartFrogProjects;
+    return [filePath];
   }
 
   let currentSubdirectories = fs
@@ -135,7 +134,7 @@ export function nearestChildDartFrogProjects(
     return undefined;
   }
 
-  return dartFrogProjects;
+  return Array.from(dartFrogProjects);
 }
 
 /**

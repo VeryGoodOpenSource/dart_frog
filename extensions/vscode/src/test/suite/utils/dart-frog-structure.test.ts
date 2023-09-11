@@ -242,9 +242,9 @@ suite("nearestChildDartFrogProjects", () => {
       .withArgs(dartFrogPubspecPath, "utf-8")
       .returns(validPubspecYaml);
 
-    const result = nearestChildDartFrogProjects(filePath);
+    const dartFrogProjects = nearestChildDartFrogProjects(filePath);
 
-    assert.deepEqual(Array.from(result), [filePath]);
+    assert.deepEqual(dartFrogProjects, [filePath]);
   });
 
   test("returns the path to all the child Dart Frog projects", () => {
@@ -326,9 +326,9 @@ suite("nearestChildDartFrogProjects", () => {
       .withArgs(flutterPubspecPath, "utf-8")
       .returns(invalidPubspecYaml);
 
-    const result = nearestChildDartFrogProjects(filePath);
+    const dartFrogProjects = nearestChildDartFrogProjects(filePath);
 
-    assert.deepEqual(Array.from(result), [
+    assert.deepEqual(dartFrogProjects, [
       dartFrogPath1,
       dartFrogPath2,
       dartFrogPath3,
