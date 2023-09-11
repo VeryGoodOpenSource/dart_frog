@@ -9,7 +9,8 @@ import { Uri, commands, window } from "vscode";
 import {
   isDartFrogCLIInstalled,
   nearestParentDartFrogProject,
-  resolveDartFrogProjectPathFromWorkspace,
+  resolveDartFrogProjectPathFromActiveTextEditor,
+  resolveDartFrogProjectPathFromWorkspaceFolders,
   suggestInstallingDartFrogCLI,
 } from "../utils";
 
@@ -56,7 +57,11 @@ export const startDevServer = async (): Promise<
     return;
   }
 
-  const workingPath = resolveDartFrogProjectPathFromWorkspace();
+  let workingPath = resolveDartFrogProjectPathFromWorkspaceFolders();
+  if (workingPath === undefined) {
+    workingPath = resolveDartFrogProjectPathFromActiveTextEditor();
+  }
+
   const workingDirectory = workingPath
     ? nearestParentDartFrogProject(workingPath)
     : undefined;

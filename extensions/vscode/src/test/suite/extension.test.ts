@@ -37,13 +37,13 @@ suite("activate", () => {
       readDartFrogCLIVersion: sinon.stub(),
       isCompatibleDartFrogCLIVersion: sinon.stub(),
       isDartFrogCLIInstalled: sinon.stub(),
-      resolveDartFrogProjectPathFromWorkspace: sinon.stub(),
+      resolveDartFrogProjectPathFromWorkspaceFolders: sinon.stub(),
       suggestInstallingDartFrogCLI: sinon.stub(),
     };
     utilsStub.readDartFrogCLIVersion.returns("0.0.0");
     utilsStub.isCompatibleDartFrogCLIVersion.returns(true);
     utilsStub.isDartFrogCLIInstalled.returns(true);
-    utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+    utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
       "path/to/project"
     );
 
@@ -185,7 +185,7 @@ suite("activate", () => {
   suite("sets anyDartFrogProjectLoaded", () => {
     suite("to true", () => {
       test("when can resolve Dart Frog project", () => {
-        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
           "path/to/project"
         );
 
@@ -201,12 +201,14 @@ suite("activate", () => {
       });
 
       test("when active text editor changes to a Dart Frog project", () => {
-        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
+          undefined
+        );
 
         const context = { subscriptions: [] };
         extension.activate(context);
 
-        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
           "path/to/project"
         );
         vscodeStub.window.onDidChangeActiveTextEditor.getCall(0).args[0]();
@@ -220,12 +222,14 @@ suite("activate", () => {
       });
 
       test("when workspace folder changes to a Dart Frog project", () => {
-        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
+          undefined
+        );
 
         const context = { subscriptions: [] };
         extension.activate(context);
 
-        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
           "path/to/project"
         );
         vscodeStub.workspace.onDidChangeWorkspaceFolders.getCall(0).args[0]();
@@ -241,7 +245,9 @@ suite("activate", () => {
 
     suite("to false", () => {
       test("when can not resolve Dart Frog project", () => {
-        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
+          undefined
+        );
 
         const context = { subscriptions: [] };
         extension.activate(context);
@@ -255,14 +261,16 @@ suite("activate", () => {
       });
 
       test("when active text editor changes and is not a Dart Frog project", () => {
-        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
           "path/to/project"
         );
 
         const context = { subscriptions: [] };
         extension.activate(context);
 
-        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
+          undefined
+        );
         vscodeStub.window.onDidChangeActiveTextEditor.getCall(0).args[0]();
 
         sinon.assert.calledWith(
@@ -274,14 +282,16 @@ suite("activate", () => {
       });
 
       test("when workspace folder changes and is not a Dart Frog project", () => {
-        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
           "path/to/project"
         );
 
         const context = { subscriptions: [] };
         extension.activate(context);
 
-        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
+          undefined
+        );
         vscodeStub.workspace.onDidChangeWorkspaceFolders.getCall(0).args[0]();
 
         sinon.assert.calledWith(

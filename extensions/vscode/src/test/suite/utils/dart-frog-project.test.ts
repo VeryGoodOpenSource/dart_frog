@@ -474,9 +474,9 @@ suite("isDartFrogProject", () => {
   });
 });
 
-suite("resolveDartFrogProjectPathFromWorkspace", () => {
+suite("resolveDartFrogProjectPathFromWorkspaceFolders", () => {
   let vscodeStub: any;
-  let resolveDartFrogProjectPathFromWorkspace: any;
+  let resolveDartFrogProjectPathFromWorkspaceFolders: any;
 
   beforeEach(() => {
     vscodeStub = {
@@ -488,12 +488,12 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
       },
     };
 
-    resolveDartFrogProjectPathFromWorkspace = proxyquire(
+    resolveDartFrogProjectPathFromWorkspaceFolders = proxyquire(
       "../../../utils/dart-frog-project",
       {
         vscode: vscodeStub,
       }
-    ).resolveDartFrogProjectPathFromWorkspace;
+    ).resolveDartFrogProjectPathFromWorkspaceFolders;
   });
 
   afterEach(() => {
@@ -509,7 +509,7 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
       },
     };
 
-    const result = resolveDartFrogProjectPathFromWorkspace(
+    const result = resolveDartFrogProjectPathFromWorkspaceFolders(
       sinon.stub().returns("home/user/")
     );
 
@@ -527,7 +527,7 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
         },
       ];
 
-      const result = resolveDartFrogProjectPathFromWorkspace(
+      const result = resolveDartFrogProjectPathFromWorkspaceFolders(
         sinon.stub().returns("home/user/")
       );
 
@@ -550,7 +550,7 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
         },
       ];
 
-      const result = resolveDartFrogProjectPathFromWorkspace(
+      const result = resolveDartFrogProjectPathFromWorkspaceFolders(
         sinon.stub().returns("home/user/")
       );
 
@@ -573,7 +573,7 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
         },
       ];
 
-      const result = resolveDartFrogProjectPathFromWorkspace(
+      const result = resolveDartFrogProjectPathFromWorkspaceFolders(
         sinon.stub().returns("home/user/")
       );
 
@@ -602,7 +602,7 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
         .returns(undefined);
       nearestParentDartFrogProject.withArgs("home/user/").returns("home/user/");
 
-      const result = resolveDartFrogProjectPathFromWorkspace(
+      const result = resolveDartFrogProjectPathFromWorkspaceFolders(
         nearestParentDartFrogProject
       );
 
@@ -615,7 +615,7 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
       vscodeStub.window.activeTextEditor = undefined;
       vscodeStub.workspace.workspaceFolders = undefined;
 
-      const result = resolveDartFrogProjectPathFromWorkspace(
+      const result = resolveDartFrogProjectPathFromWorkspaceFolders(
         sinon.stub().returns(undefined)
       );
 
@@ -638,7 +638,7 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
         },
       ];
 
-      const result = resolveDartFrogProjectPathFromWorkspace(
+      const result = resolveDartFrogProjectPathFromWorkspaceFolders(
         sinon.stub().returns(undefined)
       );
 

@@ -30,7 +30,7 @@ suite("new-route command", () => {
     utilsStub = {
       nearestParentDartFrogProject: sinon.stub(),
       normalizeRoutePath: sinon.stub(),
-      resolveDartFrogProjectPathFromWorkspace: sinon.stub(),
+      resolveDartFrogProjectPathFromWorkspaceFolders: sinon.stub(),
       isDartFrogCLIInstalled: sinon.stub(),
       suggestInstallingDartFrogCLI: sinon.stub(),
     };
@@ -152,7 +152,9 @@ suite("new-route command", () => {
     test("is shown when Uri is undefined and fails to resolve a path from workspace", async () => {
       vscodeStub.window.showInputBox.returns(validRouteName);
       vscodeStub.window.showOpenDialog.resolves();
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
+        undefined
+      );
 
       await command.newRoute();
 
@@ -165,7 +167,7 @@ suite("new-route command", () => {
     });
 
     test("is not shown when Uri is undefined but resolves a path from workspace", async () => {
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
         validUri.fsPath
       );
       utilsStub.normalizeRoutePath.returns("/");

@@ -56,9 +56,9 @@ suite("StartStopApplicationStatusBarItem", () => {
     statusBarItem.dispose = sinon.stub();
 
     utilsStub = {
-      resolveDartFrogProjectPathFromWorkspace: sinon.stub(),
+      resolveDartFrogProjectPathFromWorkspaceFolders: sinon.stub(),
     };
-    utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(true);
+    utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(true);
 
     const dartFrogDaemon = {
       // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -97,7 +97,7 @@ suite("StartStopApplicationStatusBarItem", () => {
 
   suite("is shown", () => {
     test("upon start when in a Dart Frog project", () => {
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(true);
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(true);
       daemon.applicationRegistry.all.returns([]);
 
       const startStopApplicationStatusBarItem =
@@ -109,13 +109,13 @@ suite("StartStopApplicationStatusBarItem", () => {
     });
 
     test("upon workspace folder change to a Dart Frog project", () => {
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(false);
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(false);
       daemon.applicationRegistry.all.returns([]);
 
       const startStopApplicationStatusBarItem =
         new StartStopApplicationStatusBarItem();
 
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(true);
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(true);
       vscodeStub.workspace.onDidChangeWorkspaceFolders.callArg(0);
 
       sinon.assert.calledOnce(
@@ -124,13 +124,13 @@ suite("StartStopApplicationStatusBarItem", () => {
     });
 
     test("upon active file change to a Dart Frog project", () => {
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(false);
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(false);
       daemon.applicationRegistry.all.returns([]);
 
       const startStopApplicationStatusBarItem =
         new StartStopApplicationStatusBarItem();
 
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(true);
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(true);
       vscodeStub.window.onDidChangeActiveTextEditor.callArg(0);
 
       sinon.assert.calledOnce(
@@ -226,7 +226,7 @@ suite("StartStopApplicationStatusBarItem", () => {
   suite("is hidden", () => {
     suite("when not in a Dart Frog project", () => {
       test("upon start", () => {
-        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(false);
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(false);
         daemon.applicationRegistry.all.returns([]);
 
         const startStopApplicationStatusBarItem =
@@ -238,13 +238,13 @@ suite("StartStopApplicationStatusBarItem", () => {
       });
 
       test("upon workspace folder change", () => {
-        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(true);
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(true);
         daemon.applicationRegistry.all.returns([]);
 
         const startStopApplicationStatusBarItem =
           new StartStopApplicationStatusBarItem();
 
-        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(false);
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(false);
         vscodeStub.workspace.onDidChangeWorkspaceFolders.callArg(0);
 
         sinon.assert.calledOnce(
@@ -253,13 +253,13 @@ suite("StartStopApplicationStatusBarItem", () => {
       });
 
       test("upon active file change", () => {
-        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(true);
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(true);
         daemon.applicationRegistry.all.returns([]);
 
         const startStopApplicationStatusBarItem =
           new StartStopApplicationStatusBarItem();
 
-        utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(false);
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(false);
         vscodeStub.window.onDidChangeActiveTextEditor.callArg(0);
 
         sinon.assert.calledOnce(

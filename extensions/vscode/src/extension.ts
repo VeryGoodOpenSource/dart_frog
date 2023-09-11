@@ -8,6 +8,15 @@ import {
   StartStopApplicationStatusBarItem,
 } from "./status-bar";
 import {
+  canResolveDartFrogProjectPath,
+  isCompatibleDartFrogCLIVersion,
+  isDartFrogCLIInstalled,
+  openChangelog,
+  readDartFrogCLIVersion,
+  readLatestDartFrogCLIVersion,
+  suggestInstallingDartFrogCLI,
+} from "./utils";
+import {
   create,
   debugDevServer,
   installCLI,
@@ -19,15 +28,6 @@ import {
   stopDevServer,
   updateCLI,
 } from "./commands";
-import {
-  isCompatibleDartFrogCLIVersion,
-  isDartFrogCLIInstalled,
-  openChangelog,
-  readDartFrogCLIVersion,
-  readLatestDartFrogCLIVersion,
-  resolveDartFrogProjectPathFromWorkspace,
-  suggestInstallingDartFrogCLI,
-} from "./utils";
 
 /**
  * This method is called when the extension is activated.
@@ -103,7 +103,7 @@ export function activate(
  */
 function updateAnyDartFrogProjectLoaded(): void {
   const anyDartFrogProjectLoaded =
-    resolveDartFrogProjectPathFromWorkspace() !== undefined;
+    canResolveDartFrogProjectPath() !== undefined;
   vscode.commands.executeCommand(
     "setContext",
     "dart-frog:anyDartFrogProjectLoaded",

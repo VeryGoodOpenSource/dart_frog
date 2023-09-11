@@ -21,7 +21,7 @@ suite("start-daemon command", () => {
     utilsStub = {
       isDartFrogCLIInstalled: sinon.stub(),
       suggestInstallingDartFrogCLI: sinon.stub(),
-      resolveDartFrogProjectPathFromWorkspace: sinon.stub(),
+      resolveDartFrogProjectPathFromWorkspaceFolders: sinon.stub(),
       nearestParentDartFrogProject: sinon.stub(),
     };
     utilsStub.isDartFrogCLIInstalled.returns(true);
@@ -84,7 +84,7 @@ suite("start-daemon command", () => {
   test("shows error when failed to find Dart Frog project path", async () => {
     utilsStub.isDartFrogCLIInstalled.returns(true);
     dartFrogDaemon.DartFrogDaemon.instance.isReady = false;
-    utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
+    utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(undefined);
 
     await command.startDaemon();
 
@@ -97,7 +97,7 @@ suite("start-daemon command", () => {
   test("shows error when failed to find Dart Frog root project path", async () => {
     utilsStub.isDartFrogCLIInstalled.returns(true);
     dartFrogDaemon.DartFrogDaemon.instance.isReady = false;
-    utilsStub.resolveDartFrogProjectPathFromWorkspace.returns("path");
+    utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns("path");
     utilsStub.nearestParentDartFrogProject.returns(undefined);
 
     await command.startDaemon();
@@ -112,7 +112,7 @@ suite("start-daemon command", () => {
     utilsStub.isDartFrogCLIInstalled.returns(true);
     dartFrogDaemon.DartFrogDaemon.instance.isReady = false;
     dartFrogDaemon.DartFrogDaemon.instance.invoke = sinon.stub();
-    utilsStub.resolveDartFrogProjectPathFromWorkspace.returns("path");
+    utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns("path");
     utilsStub.nearestParentDartFrogProject.returns("path");
 
     await command.startDaemon();
@@ -132,7 +132,7 @@ suite("start-daemon command", () => {
     utilsStub.isDartFrogCLIInstalled.returns(true);
     dartFrogDaemon.DartFrogDaemon.instance.isReady = false;
     dartFrogDaemon.DartFrogDaemon.instance.invoke = sinon.stub();
-    utilsStub.resolveDartFrogProjectPathFromWorkspace.returns("path");
+    utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns("path");
     utilsStub.nearestParentDartFrogProject.returns("path");
 
     await command.startDaemon();
@@ -166,7 +166,9 @@ suite("start-daemon command", () => {
       utilsStub.isDartFrogCLIInstalled.returns(true);
       dartFrogDaemon.DartFrogDaemon.instance.isReady = false;
       dartFrogDaemon.DartFrogDaemon.instance.invoke = sinon.stub();
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
+        undefined
+      );
 
       await command.startDaemon();
 
@@ -177,7 +179,7 @@ suite("start-daemon command", () => {
       utilsStub.isDartFrogCLIInstalled.returns(true);
       dartFrogDaemon.DartFrogDaemon.instance.isReady = false;
       dartFrogDaemon.DartFrogDaemon.instance.invoke = sinon.stub();
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns("path");
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns("path");
       utilsStub.nearestParentDartFrogProject.returns(undefined);
 
       await command.startDaemon();
