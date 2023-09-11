@@ -21,6 +21,7 @@ suite("start-daemon command", () => {
     utilsStub = {
       isDartFrogCLIInstalled: sinon.stub(),
       suggestInstallingDartFrogCLI: sinon.stub(),
+      resolveDartFrogProjectPathFromActiveTextEditor: sinon.stub(),
       resolveDartFrogProjectPathFromWorkspaceFolders: sinon.stub(),
       nearestParentDartFrogProject: sinon.stub(),
     };
@@ -81,51 +82,82 @@ suite("start-daemon command", () => {
     );
   });
 
-  test("shows error when failed to find Dart Frog project path", async () => {
-    utilsStub.isDartFrogCLIInstalled.returns(true);
-    dartFrogDaemon.DartFrogDaemon.instance.isReady = false;
-    utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(undefined);
+  suite("shows error", () => {
+    test("when failed to find Dart Frog project path from workspace folders and active text editor", async () => {
+      utilsStub.isDartFrogCLIInstalled.returns(true);
+      dartFrogDaemon.DartFrogDaemon.instance.isReady = false;
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns();
+      utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns();
 
-    await command.startDaemon();
+      await command.startDaemon();
 
-    sinon.assert.calledOnceWithExactly(
-      vscodeStub.window.showErrorMessage,
-      "Failed to find a Dart Frog project within the current workspace."
-    );
+      sinon.assert.calledOnceWithExactly(
+        vscodeStub.window.showErrorMessage,
+        "Failed to find a Dart Frog project within the current workspace."
+      );
+    });
+
+    test("when failed to find Dart Frog root project path", async () => {
+      utilsStub.isDartFrogCLIInstalled.returns(true);
+      dartFrogDaemon.DartFrogDaemon.instance.isReady = false;
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns("path");
+      utilsStub.nearestParentDartFrogProject.returns();
+
+      await command.startDaemon();
+
+      sinon.assert.calledOnceWithExactly(
+        vscodeStub.window.showErrorMessage,
+        "Failed to find a Dart Frog project within the current workspace."
+      );
+    });
   });
 
-  test("shows error when failed to find Dart Frog root project path", async () => {
-    utilsStub.isDartFrogCLIInstalled.returns(true);
-    dartFrogDaemon.DartFrogDaemon.instance.isReady = false;
-    utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns("path");
-    utilsStub.nearestParentDartFrogProject.returns(undefined);
+  suite("starts daemon", () => {
+    test("starts daemon when found a Dart Frog project path from workspace folder", async () => {
+      utilsStub.isDartFrogCLIInstalled.returns(true);
+      dartFrogDaemon.DartFrogDaemon.instance.isReady = false;
+      dartFrogDaemon.DartFrogDaemon.instance.invoke = sinon.stub();
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns("path");
+      utilsStub.nearestParentDartFrogProject.returns("path");
 
-    await command.startDaemon();
+      await command.startDaemon();
 
-    sinon.assert.calledOnceWithExactly(
-      vscodeStub.window.showErrorMessage,
-      "Failed to find a Dart Frog project within the current workspace."
-    );
-  });
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      const progress = sinon.stub();
+      progress.report = sinon.stub();
+      await progressFunction(progress);
 
-  test("starts daemon when found a Dart Frog project path", async () => {
-    utilsStub.isDartFrogCLIInstalled.returns(true);
-    dartFrogDaemon.DartFrogDaemon.instance.isReady = false;
-    dartFrogDaemon.DartFrogDaemon.instance.invoke = sinon.stub();
-    utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns("path");
-    utilsStub.nearestParentDartFrogProject.returns("path");
+      sinon.assert.calledOnceWithExactly(
+        dartFrogDaemon.DartFrogDaemon.instance.invoke,
+        "path"
+      );
+    });
 
-    await command.startDaemon();
+    test("starts daemon when found a Dart Frog project path from active text editor", async () => {
+      utilsStub.isDartFrogCLIInstalled.returns(true);
+      dartFrogDaemon.DartFrogDaemon.instance.isReady = false;
+      dartFrogDaemon.DartFrogDaemon.instance.invoke = sinon.stub();
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns();
+      utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns("path");
+      utilsStub.nearestParentDartFrogProject.returns("path");
 
-    const progressFunction = vscodeStub.window.withProgress.getCall(0).args[1];
-    const progress = sinon.stub();
-    progress.report = sinon.stub();
-    await progressFunction(progress);
+      await command.startDaemon();
 
-    sinon.assert.calledOnceWithExactly(
-      dartFrogDaemon.DartFrogDaemon.instance.invoke,
-      "path"
-    );
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      const progress = sinon.stub();
+      progress.report = sinon.stub();
+      await progressFunction(progress);
+
+      sinon.assert.called(
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders
+      );
+      sinon.assert.calledOnceWithExactly(
+        dartFrogDaemon.DartFrogDaemon.instance.invoke,
+        "path"
+      );
+    });
   });
 
   test("updates progress when starting daemon", async () => {
@@ -162,13 +194,12 @@ suite("start-daemon command", () => {
       sinon.assert.notCalled(dartFrogDaemon.DartFrogDaemon.instance.invoke);
     });
 
-    test("when failed to find Dart Frog project path", async () => {
+    test("when failed to find Dart Frog project path from workspace folders and active text editor", async () => {
       utilsStub.isDartFrogCLIInstalled.returns(true);
       dartFrogDaemon.DartFrogDaemon.instance.isReady = false;
       dartFrogDaemon.DartFrogDaemon.instance.invoke = sinon.stub();
-      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
-        undefined
-      );
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns();
+      utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns();
 
       await command.startDaemon();
 
