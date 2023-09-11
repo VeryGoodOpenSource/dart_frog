@@ -8,7 +8,7 @@ import {
 import { Uri, commands, window } from "vscode";
 import {
   isDartFrogCLIInstalled,
-  nearestDartFrogProject,
+  nearestParentDartFrogProject,
   resolveDartFrogProjectPathFromWorkspace,
   suggestInstallingDartFrogCLI,
 } from "../utils";
@@ -58,7 +58,7 @@ export const startDevServer = async (): Promise<
 
   const workingPath = resolveDartFrogProjectPathFromWorkspace();
   const workingDirectory = workingPath
-    ? nearestDartFrogProject(workingPath)
+    ? nearestParentDartFrogProject(workingPath)
     : undefined;
   if (!workingDirectory) {
     await window.showErrorMessage(

@@ -98,9 +98,9 @@ suite("normalizeRoutePath", () => {
   });
 });
 
-suite("nearestDartFrogProject", () => {
+suite("nearestParentDartFrogProject", () => {
   let fsStub: any;
-  let nearestDartFrogProject: any;
+  let nearestParentDartFrogProject: any;
 
   beforeEach(() => {
     fsStub = {
@@ -108,9 +108,12 @@ suite("nearestDartFrogProject", () => {
       readFileSync: sinon.stub(),
     };
 
-    nearestDartFrogProject = proxyquire("../../../utils/dart-frog-structure", {
-      fs: fsStub,
-    }).nearestDartFrogProject;
+    nearestParentDartFrogProject = proxyquire(
+      "../../../utils/dart-frog-structure",
+      {
+        fs: fsStub,
+      }
+    ).nearestParentDartFrogProject;
   });
 
   afterEach(() => {
@@ -129,19 +132,21 @@ suite("nearestDartFrogProject", () => {
       .returns(validPubspecYaml);
 
     assert.equal(
-      nearestDartFrogProject(`${dartFrogPath}/routes/a/routes/b/index.dart`),
+      nearestParentDartFrogProject(
+        `${dartFrogPath}/routes/a/routes/b/index.dart`
+      ),
       dartFrogPath
     );
     assert.equal(
-      nearestDartFrogProject(`${dartFrogPath}/routes/index.dart`),
+      nearestParentDartFrogProject(`${dartFrogPath}/routes/index.dart`),
       dartFrogPath
     );
     assert.equal(
-      nearestDartFrogProject(`${dartFrogPath}/routes/z.py`),
+      nearestParentDartFrogProject(`${dartFrogPath}/routes/z.py`),
       dartFrogPath
     );
     assert.equal(
-      nearestDartFrogProject(`${dartFrogPath}/tennis.dart`),
+      nearestParentDartFrogProject(`${dartFrogPath}/tennis.dart`),
       dartFrogPath
     );
   });
@@ -168,11 +173,13 @@ suite("nearestDartFrogProject", () => {
       .returns(validPubspecYaml);
 
     assert.equal(
-      nearestDartFrogProject(`${dartFrogPath2}/routes/a/routes/b/index.dart`),
+      nearestParentDartFrogProject(
+        `${dartFrogPath2}/routes/a/routes/b/index.dart`
+      ),
       dartFrogPath2
     );
     assert.equal(
-      nearestDartFrogProject(`${dartFrogPath1}/routes/index.dart`),
+      nearestParentDartFrogProject(`${dartFrogPath1}/routes/index.dart`),
       dartFrogPath1
     );
   });
@@ -188,7 +195,7 @@ suite("nearestDartFrogProject", () => {
       .withArgs(pubspecPath, "utf-8")
       .returns(invalidPubspecYaml);
 
-    const result = nearestDartFrogProject(
+    const result = nearestParentDartFrogProject(
       `${dartFrogPath}/fruits/pineapple.dart`
     );
     assert.equal(result, undefined);
@@ -405,14 +412,14 @@ suite("resolveDartFrogProjectPathFromWorkspace", () => {
         },
       ];
 
-      const nearestDartFrogProject = sinon.stub();
-      nearestDartFrogProject
+      const nearestParentDartFrogProject = sinon.stub();
+      nearestParentDartFrogProject
         .withArgs("/home/bin/routes/animals")
         .returns(undefined);
-      nearestDartFrogProject.withArgs("home/user/").returns("home/user/");
+      nearestParentDartFrogProject.withArgs("home/user/").returns("home/user/");
 
       const result = resolveDartFrogProjectPathFromWorkspace(
-        nearestDartFrogProject
+        nearestParentDartFrogProject
       );
 
       sinon.assert.match(result, "home/user/");

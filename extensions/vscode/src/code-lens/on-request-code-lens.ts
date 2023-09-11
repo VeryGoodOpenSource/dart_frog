@@ -8,7 +8,7 @@ import {
   TextDocument,
   workspace,
 } from "vscode";
-import { nearestDartFrogProject } from "../utils";
+import { nearestParentDartFrogProject } from "../utils";
 import path = require("path");
 
 abstract class ConfigurableCodeLensProvider implements CodeLensProvider {
@@ -82,7 +82,9 @@ abstract class OnRequestCodeLensProvider extends RegularExpressionCodeLensProvid
       return undefined;
     }
 
-    const dartFrogProjectPath = nearestDartFrogProject(document.uri.fsPath);
+    const dartFrogProjectPath = nearestParentDartFrogProject(
+      document.uri.fsPath
+    );
     if (!dartFrogProjectPath) {
       return undefined;
     }
