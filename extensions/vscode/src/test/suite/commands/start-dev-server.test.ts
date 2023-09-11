@@ -32,6 +32,7 @@ suite("start-dev-server command", () => {
     utilsStub = {
       isDartFrogCLIInstalled: sinon.stub(),
       suggestInstallingDartFrogCLI: sinon.stub(),
+      resolveDartFrogProjectPathFromActiveTextEditor: sinon.stub(),
       resolveDartFrogProjectPathFromWorkspaceFolders: sinon.stub(),
       nearestParentDartFrogProject: sinon.stub(),
     };
@@ -206,41 +207,85 @@ suite("start-dev-server command", () => {
       daemon.applicationRegistry.all = sinon.stub().returns([]);
     });
 
-    test("is shown when failed to find Dart Frog project path", async () => {
-      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
-        undefined
-      );
+    suite("is shown", () => {
+      test("when failed to find Dart Frog project path", async () => {
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
+          undefined
+        );
 
-      await command.startDevServer();
+        await command.startDevServer();
 
-      sinon.assert.calledOnceWithExactly(
-        vscodeStub.window.showErrorMessage,
-        errorMessage
-      );
+        sinon.assert.calledOnceWithExactly(
+          vscodeStub.window.showErrorMessage,
+          errorMessage
+        );
+      });
+
+      test("when failed to find Dart Frog project from workspace folder", async () => {
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
+          "path"
+        );
+        utilsStub.nearestParentDartFrogProject.returns(undefined);
+
+        await command.startDevServer();
+
+        sinon.assert.calledOnceWithExactly(
+          vscodeStub.window.showErrorMessage,
+          errorMessage
+        );
+      });
+
+      test("when failed to find Dart Frog project from active text editor", async () => {
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns();
+        utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns(
+          "path"
+        );
+        utilsStub.nearestParentDartFrogProject.returns(undefined);
+
+        await command.startDevServer();
+
+        sinon.assert.called(
+          utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders
+        );
+        sinon.assert.calledOnceWithExactly(
+          vscodeStub.window.showErrorMessage,
+          errorMessage
+        );
+      });
     });
 
-    test("is shown when failed to find Dart Frog root project path", async () => {
-      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns("path");
-      utilsStub.nearestParentDartFrogProject.returns(undefined);
+    suite("is not shown", () => {
+      test("when found a Dart Frog project path from workspace folder", async () => {
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
+          "path"
+        );
+        utilsStub.nearestParentDartFrogProject.returns("path");
 
-      await command.startDevServer();
+        await command.startDevServer();
 
-      sinon.assert.calledOnceWithExactly(
-        vscodeStub.window.showErrorMessage,
-        errorMessage
-      );
-    });
+        sinon.assert.neverCalledWith(
+          vscodeStub.window.showErrorMessage,
+          errorMessage
+        );
+      });
 
-    test("is not shown when found a Dart Frog project path", async () => {
-      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns("path");
-      utilsStub.nearestParentDartFrogProject.returns("path");
+      test("when found a Dart Frog project path from active text editor and no workspace folders", async () => {
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns();
+        utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns(
+          "path"
+        );
+        utilsStub.nearestParentDartFrogProject.returns("path");
 
-      await command.startDevServer();
+        await command.startDevServer();
 
-      sinon.assert.neverCalledWith(
-        vscodeStub.window.showErrorMessage,
-        errorMessage
-      );
+        sinon.assert.called(
+          utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders
+        );
+        sinon.assert.neverCalledWith(
+          vscodeStub.window.showErrorMessage,
+          errorMessage
+        );
+      });
     });
   });
 
