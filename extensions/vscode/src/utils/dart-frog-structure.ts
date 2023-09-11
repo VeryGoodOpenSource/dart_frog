@@ -78,6 +78,66 @@ export function nearestParentDartFrogProject(
 }
 
 /**
+ * Finds all Dart Frog projects that are children of a directory.
+ *
+ * Nested Dart Frog projects are not considered. Therefore, if the
+ * {@link filePath} is a Dart Frog project, then only that project is reported.
+ * The same logic applies to subdirectories. If a subdirectory is also a Dart
+ * Frog project, then all of its subdirectories are ignored and only the
+ * shallowest Dart Frog project is reported.
+ *
+ * @param filePath The path to the directory to check for.
+ * @returns {Array<string> | undefined} A set of paths to Dart Frog projects
+ * that are children of the {@link filePath}, or `undefined` if there are no
+ * Dart Frog projects in the {@link filePath}.
+ */
+export function nearestChildDartFrogProjects(
+  filePath: string
+): Array<string> | undefined {
+  if (!fs.existsSync(filePath) || !fs.statSync(filePath).isDirectory()) {
+    return undefined;
+  }
+
+  if (isDartFrogProject(filePath)) {
+    return [filePath];
+  }
+  
+   const dartFrogProjects = new Set<string>();
+
+  let currentSubdirectories = fs
+    .readdirSync(filePath)
+    .map((file: string) => path.join(filePath, file))
+    .filter((file: string) => fs.statSync(file).isDirectory());
+
+  while (currentSubdirectories.length > 0) {
+    for (let i = 0; i < currentSubdirectories.length; i++) {
+      const subdirectory = currentSubdirectories[i];
+      if (isDartFrogProject(subdirectory)) {
+        dartFrogProjects.add(subdirectory);
+        currentSubdirectories.splice(i, 1);
+        i--;
+      }
+    }
+
+    const nextSubdirectories: string[] = [];
+    for (const subdirectory of currentSubdirectories) {
+      const subdirectorySubdirectories = fs
+        .readdirSync(subdirectory)
+        .map((file: string) => path.join(subdirectory, file))
+        .filter((file: string) => fs.statSync(file).isDirectory());
+      nextSubdirectories.push(...subdirectorySubdirectories);
+    }
+    currentSubdirectories = nextSubdirectories;
+  }
+
+  if (dartFrogProjects.size === 0) {
+    return undefined;
+  }
+
+  return Array.from(dartFrogProjects);
+}
+
+/**
  * Determines if a {@link filePath} is a Dart Frog project.
  *
  * A file is in a Dart Frog project if it is in a directory that contains a
