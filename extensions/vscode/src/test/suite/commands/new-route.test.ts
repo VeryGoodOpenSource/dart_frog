@@ -30,6 +30,7 @@ suite("new-route command", () => {
     utilsStub = {
       nearestParentDartFrogProject: sinon.stub(),
       normalizeRoutePath: sinon.stub(),
+      resolveDartFrogProjectPathFromActiveTextEditor: sinon.stub(),
       resolveDartFrogProjectPathFromWorkspaceFolders: sinon.stub(),
       isDartFrogCLIInstalled: sinon.stub(),
       suggestInstallingDartFrogCLI: sinon.stub(),
