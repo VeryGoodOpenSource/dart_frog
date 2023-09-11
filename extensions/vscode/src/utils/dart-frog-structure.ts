@@ -87,9 +87,9 @@ export function nearestParentDartFrogProject(
  * shallowest Dart Frog project is reported.
  *
  * @param filePath The path to the directory to check for.
- * @returns {Set<string> | undefined} A set of paths to Dart Frog projects that
- * are children of the {@link filePath}, or `undefined` if there are no Dart
- * Frog projects in the {@link filePath}.
+ * @returns {Array<string> | undefined} A set of paths to Dart Frog projects
+ * that are children of the {@link filePath}, or `undefined` if there are no
+ * Dart Frog projects in the {@link filePath}.
  */
 export function nearestChildDartFrogProjects(
   filePath: string
