@@ -28,17 +28,17 @@ suite("new-route command", () => {
     };
 
     utilsStub = {
-      nearestDartFrogProject: sinon.stub(),
+      nearestParentDartFrogProject: sinon.stub(),
       normalizeRoutePath: sinon.stub(),
       resolveDartFrogProjectPathFromWorkspace: sinon.stub(),
       isDartFrogCLIInstalled: sinon.stub(),
       suggestInstallingDartFrogCLI: sinon.stub(),
     };
 
-    utilsStub.nearestDartFrogProject
+    utilsStub.nearestParentDartFrogProject
       .withArgs(invalidUri.fsPath)
       .returns(undefined);
-    utilsStub.nearestDartFrogProject
+    utilsStub.nearestParentDartFrogProject
       .withArgs(validUri.fsPath)
       .returns(validUri.fsPath);
     utilsStub.isDartFrogCLIInstalled.returns(true);

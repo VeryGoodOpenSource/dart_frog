@@ -33,7 +33,7 @@ suite("start-dev-server command", () => {
       isDartFrogCLIInstalled: sinon.stub(),
       suggestInstallingDartFrogCLI: sinon.stub(),
       resolveDartFrogProjectPathFromWorkspace: sinon.stub(),
-      nearestDartFrogProject: sinon.stub(),
+      nearestParentDartFrogProject: sinon.stub(),
     };
     utilsStub.isDartFrogCLIInstalled.returns(true);
 
@@ -60,7 +60,7 @@ suite("start-dev-server command", () => {
   suite("installing Dart Frog CLI", () => {
     beforeEach(() => {
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
-      utilsStub.nearestDartFrogProject.returns(undefined);
+      utilsStub.nearestParentDartFrogProject.returns(undefined);
 
       daemon.isReady = true;
       daemon.applicationRegistry = sinon.stub();
@@ -94,7 +94,7 @@ suite("start-dev-server command", () => {
       daemon.applicationRegistry = sinon.stub();
       daemon.applicationRegistry.all = sinon.stub().returns([]);
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
-      utilsStub.nearestDartFrogProject.returns(undefined);
+      utilsStub.nearestParentDartFrogProject.returns(undefined);
 
       await command.startDevServer();
 
@@ -110,7 +110,7 @@ suite("start-dev-server command", () => {
       daemon.applicationRegistry = sinon.stub();
       daemon.applicationRegistry.all = sinon.stub().returns([]);
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
-      utilsStub.nearestDartFrogProject.returns(undefined);
+      utilsStub.nearestParentDartFrogProject.returns(undefined);
 
       await command.startDevServer();
 
@@ -125,7 +125,7 @@ suite("start-dev-server command", () => {
     beforeEach(() => {
       utilsStub.isDartFrogCLIInstalled.returns(true);
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
-      utilsStub.nearestDartFrogProject.returns(undefined);
+      utilsStub.nearestParentDartFrogProject.returns(undefined);
 
       daemon.isReady = true;
       daemon.applicationRegistry = sinon.stub();
@@ -211,7 +211,7 @@ suite("start-dev-server command", () => {
 
     test("is shown when failed to find Dart Frog root project path", async () => {
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns("path");
-      utilsStub.nearestDartFrogProject.returns(undefined);
+      utilsStub.nearestParentDartFrogProject.returns(undefined);
 
       await command.startDevServer();
 
@@ -223,7 +223,7 @@ suite("start-dev-server command", () => {
 
     test("is not shown when found a Dart Frog project path", async () => {
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns("path");
-      utilsStub.nearestDartFrogProject.returns("path");
+      utilsStub.nearestParentDartFrogProject.returns("path");
 
       await command.startDevServer();
 
@@ -238,7 +238,7 @@ suite("start-dev-server command", () => {
     beforeEach(() => {
       utilsStub.isDartFrogCLIInstalled.returns(true);
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns("path");
-      utilsStub.nearestDartFrogProject.returns("path");
+      utilsStub.nearestParentDartFrogProject.returns("path");
 
       daemon.isReady = true;
       daemon.applicationRegistry = sinon.stub();
@@ -400,7 +400,7 @@ suite("start-dev-server command", () => {
     beforeEach(() => {
       utilsStub.isDartFrogCLIInstalled.returns(true);
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns("path");
-      utilsStub.nearestDartFrogProject.returns("path");
+      utilsStub.nearestParentDartFrogProject.returns("path");
 
       daemon.isReady = true;
       daemon.applicationRegistry = sinon.stub();
@@ -596,7 +596,7 @@ suite("start-dev-server command", () => {
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
         startRequest.params.workingDirectory
       );
-      utilsStub.nearestDartFrogProject.returns(
+      utilsStub.nearestParentDartFrogProject.returns(
         startRequest.params.workingDirectory
       );
 
@@ -670,7 +670,7 @@ suite("start-dev-server command", () => {
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
         startRequest.params.workingDirectory
       );
-      utilsStub.nearestDartFrogProject.returns(undefined);
+      utilsStub.nearestParentDartFrogProject.returns(undefined);
 
       await command.startDevServer();
 
@@ -745,7 +745,7 @@ suite("start-dev-server command", () => {
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
         startRequest.params.workingDirectory
       );
-      utilsStub.nearestDartFrogProject.returns(
+      utilsStub.nearestParentDartFrogProject.returns(
         startRequest.params.workingDirectory
       );
 
@@ -916,7 +916,7 @@ suite("start-dev-server command", () => {
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
         startRequest.params.workingDirectory
       );
-      utilsStub.nearestDartFrogProject.returns(
+      utilsStub.nearestParentDartFrogProject.returns(
         startRequest.params.workingDirectory
       );
 

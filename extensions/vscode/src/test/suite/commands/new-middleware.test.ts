@@ -26,7 +26,7 @@ suite("new-middleware command", () => {
       exec: sinon.stub(),
     };
     utilsStub = {
-      nearestDartFrogProject: sinon.stub(),
+      nearestParentDartFrogProject: sinon.stub(),
       normalizeRoutePath: sinon.stub(),
       resolveDartFrogProjectPathFromWorkspace: sinon.stub(),
       isDartFrogCLIInstalled: sinon.stub(),
@@ -34,10 +34,10 @@ suite("new-middleware command", () => {
     };
     utilsStub.isDartFrogCLIInstalled.returns(true);
 
-    utilsStub.nearestDartFrogProject
+    utilsStub.nearestParentDartFrogProject
       .withArgs(invalidUri.fsPath)
       .returns(undefined);
-    utilsStub.nearestDartFrogProject
+    utilsStub.nearestParentDartFrogProject
       .withArgs(validUri.fsPath)
       .returns(validUri.fsPath);
 
@@ -92,7 +92,7 @@ suite("new-middleware command", () => {
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
         "/home/dart_frog/routes"
       );
-      utilsStub.nearestDartFrogProject.returns("/home/dart_frog/");
+      utilsStub.nearestParentDartFrogProject.returns("/home/dart_frog/");
       utilsStub.normalizeRoutePath.returns("/");
 
       await command.newMiddleware();
@@ -164,7 +164,9 @@ suite("new-middleware command", () => {
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
         "home/routes/animals/frog"
       );
-      utilsStub.nearestDartFrogProject.returns("home/routes/animals/frog");
+      utilsStub.nearestParentDartFrogProject.returns(
+        "home/routes/animals/frog"
+      );
       utilsStub.normalizeRoutePath.returns("/animals/frog");
 
       await command.newMiddleware();
@@ -177,7 +179,9 @@ suite("new-middleware command", () => {
     });
 
     test("is not shown when Uri is defined and selected file is valid", async () => {
-      utilsStub.nearestDartFrogProject.returns("home/routes/animals/frog");
+      utilsStub.nearestParentDartFrogProject.returns(
+        "home/routes/animals/frog"
+      );
       utilsStub.normalizeRoutePath.returns("/animals/frog");
 
       await command.newMiddleware(validUri);
@@ -198,7 +202,9 @@ suite("new-middleware command", () => {
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
         "home/routes/animals/frog"
       );
-      utilsStub.nearestDartFrogProject.returns("home/routes/animals/frog");
+      utilsStub.nearestParentDartFrogProject.returns(
+        "home/routes/animals/frog"
+      );
       utilsStub.normalizeRoutePath.returns("/animals/frog");
     });
 
@@ -232,7 +238,7 @@ suite("new-middleware command", () => {
     const selectedUri = {
       fsPath: `${validUri.fsPath}${routePath}`,
     };
-    utilsStub.nearestDartFrogProject.returns(selectedUri);
+    utilsStub.nearestParentDartFrogProject.returns(selectedUri);
     utilsStub.normalizeRoutePath.returns(routePath);
 
     await command.newMiddleware(validUri);
@@ -262,7 +268,7 @@ suite("new-middleware command", () => {
       const selectedUri = {
         fsPath: `${validUri.fsPath}/food/pizza.dart`,
       };
-      utilsStub.nearestDartFrogProject.returns(selectedUri);
+      utilsStub.nearestParentDartFrogProject.returns(selectedUri);
       utilsStub.normalizeRoutePath.returns(`food/pizza`);
 
       await command.newMiddleware(selectedUri);
@@ -280,7 +286,7 @@ suite("new-middleware command", () => {
       const selectedUri = {
         fsPath: `${validUri.fsPath}/index.dart`,
       };
-      utilsStub.nearestDartFrogProject.returns(selectedUri);
+      utilsStub.nearestParentDartFrogProject.returns(selectedUri);
       utilsStub.normalizeRoutePath.returns("/");
 
       await command.newMiddleware(validUri);
@@ -298,7 +304,7 @@ suite("new-middleware command", () => {
       const selectedUri = {
         fsPath: `${validUri.fsPath}/food/italian/index.dart`,
       };
-      utilsStub.nearestDartFrogProject.returns(selectedUri);
+      utilsStub.nearestParentDartFrogProject.returns(selectedUri);
       utilsStub.normalizeRoutePath.returns("food/italian");
 
       await command.newMiddleware(selectedUri);
@@ -316,7 +322,9 @@ suite("new-middleware command", () => {
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
         "home/routes/animals/frog"
       );
-      utilsStub.nearestDartFrogProject.returns("home/routes/animals/frog");
+      utilsStub.nearestParentDartFrogProject.returns(
+        "home/routes/animals/frog"
+      );
       utilsStub.normalizeRoutePath.returns("/animals/frog");
       vscodeStub.window.showInputBox.returns("animals/lion");
 
@@ -336,7 +344,7 @@ suite("new-middleware command", () => {
     const error = Error("Failed to run `dart_frog new middleware`");
     childProcessStub.exec.yields(error);
 
-    utilsStub.nearestDartFrogProject.returns(validUri);
+    utilsStub.nearestParentDartFrogProject.returns(validUri);
     utilsStub.normalizeRoutePath.returns("/");
 
     await command.newMiddleware(validUri);

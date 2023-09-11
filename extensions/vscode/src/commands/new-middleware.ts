@@ -9,7 +9,7 @@ import {
 } from "vscode";
 import {
   isDartFrogCLIInstalled,
-  nearestDartFrogProject,
+  nearestParentDartFrogProject,
   normalizeRoutePath,
   resolveDartFrogProjectPathFromWorkspace,
   suggestInstallingDartFrogCLI,
@@ -57,7 +57,7 @@ export const newMiddleware = async (uri: Uri | undefined): Promise<void> => {
     selectedPath = uri.fsPath;
   }
 
-  const dartFrogProjectPath = nearestDartFrogProject(selectedPath);
+  const dartFrogProjectPath = nearestParentDartFrogProject(selectedPath);
   if (dartFrogProjectPath === undefined) {
     window.showErrorMessage(
       "No Dart Frog project found in the selected directory"

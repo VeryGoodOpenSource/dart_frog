@@ -18,7 +18,7 @@ import { window, workspace } from "vscode";
  * @returns {string} The Dart Frog route path. If the {@link selectedPath} is
  * not within the Dart Frog project routes, it returns "/".
  *
- * @see {@link nearestDartFrogProject}, to find the root of a Dart Frog
+ * @see {@link nearestParentDartFrogProject}, to find the root of a Dart Frog
  * project from a file path.
  */
 export function normalizeRoutePath(
@@ -54,7 +54,8 @@ export function normalizeRoutePath(
 }
 
 /**
- * Finds the root of a Dart Frog project.
+ * Finds the root of a Dart Frog project from a file path by traversing up the
+ * directory tree.
  *
  * @param filePath The path to a file, including directories, to check.
  * @returns {string | undefined} The path to the root of the Dart Frog project,
@@ -62,7 +63,9 @@ export function normalizeRoutePath(
  * @see {@link isDartFrogProject}, to determine if a file is a Dart Frog
  * project.
  */
-export function nearestDartFrogProject(filePath: string): string | undefined {
+export function nearestParentDartFrogProject(
+  filePath: string
+): string | undefined {
   let currentPath = filePath;
   while (currentPath !== path.sep) {
     if (isDartFrogProject(currentPath)) {
@@ -107,9 +110,9 @@ export function isDartFrogProject(filePath: string): boolean {
  * Usually used for when the command is launched from the command palette since
  * it lacks a defined path.
  *
- * @param {function} _nearestDartFrogProject A function, used for testing, that
- * finds the root of a Dart Frog project from a file path. Defaults to
- * {@link nearestDartFrogProject}.
+ * @param {function} _nearestParentDartFrogProject A function, used for testing,
+ * that finds the root of a Dart Frog project from a file path. Defaults to
+ * {@link nearestParentDartFrogProject}.
  *
  * @returns {string | undefined} A path, derived from the user's workspace, that
  * is located within a Dart Frog project; or `undefined` if no such path could
@@ -122,15 +125,17 @@ export function isDartFrogProject(filePath: string): boolean {
  * project, then the path of that workspace folder is returned.
  */
 export function resolveDartFrogProjectPathFromWorkspace(
-  _nearestDartFrogProject: (
+  _nearestParentDartFrogProject: (
     filePath: string
-  ) => string | undefined = nearestDartFrogProject
+  ) => string | undefined = nearestParentDartFrogProject
 ): string | undefined {
   if (window.activeTextEditor) {
     const currentTextEditorPath = path.normalize(
       window.activeTextEditor.document.uri.fsPath
     );
-    const dartFrogProjectPath = _nearestDartFrogProject(currentTextEditorPath);
+    const dartFrogProjectPath = _nearestParentDartFrogProject(
+      currentTextEditorPath
+    );
 
     if (dartFrogProjectPath) {
       const routesPath = path.join(dartFrogProjectPath, "routes");
@@ -147,7 +152,7 @@ export function resolveDartFrogProjectPathFromWorkspace(
     const currentWorkspaceFolder = path.normalize(
       workspace.workspaceFolders[0].uri.fsPath
     );
-    if (_nearestDartFrogProject(currentWorkspaceFolder)) {
+    if (_nearestParentDartFrogProject(currentWorkspaceFolder)) {
       return currentWorkspaceFolder;
     }
   }

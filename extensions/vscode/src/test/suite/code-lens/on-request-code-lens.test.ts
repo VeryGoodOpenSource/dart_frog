@@ -62,9 +62,9 @@ suite("RunOnRequestCodeLensProvider", () => {
     getConfiguration.withArgs("enableCodeLens", true).returns(true);
 
     utilsStub = {
-      nearestDartFrogProject: sinon.stub(),
+      nearestParentDartFrogProject: sinon.stub(),
     };
-    utilsStub.nearestDartFrogProject.returns("/home/dart_frog");
+    utilsStub.nearestParentDartFrogProject.returns("/home/dart_frog");
 
     RunOnRequestCodeLensProvider = proxyquire(
       "../../../code-lens/on-request-code-lens",
@@ -137,7 +137,7 @@ suite("RunOnRequestCodeLensProvider", () => {
       });
 
       test("in a Dart Frog project", () => {
-        utilsStub.nearestDartFrogProject.returns(undefined);
+        utilsStub.nearestParentDartFrogProject.returns(undefined);
 
         const provider = new RunOnRequestCodeLensProvider();
         const result = provider.provideCodeLenses(document);
@@ -263,9 +263,9 @@ suite("DebugOnRequestCodeLensProvider", () => {
     getConfiguration.withArgs("enableCodeLens", true).returns(true);
 
     utilsStub = {
-      nearestDartFrogProject: sinon.stub(),
+      nearestParentDartFrogProject: sinon.stub(),
     };
-    utilsStub.nearestDartFrogProject.returns("/home/dart_frog");
+    utilsStub.nearestParentDartFrogProject.returns("/home/dart_frog");
 
     DebugOnRequestCodeLensProvider = proxyquire(
       "../../../code-lens/on-request-code-lens",
@@ -338,7 +338,7 @@ suite("DebugOnRequestCodeLensProvider", () => {
       });
 
       test("in a Dart Frog project", () => {
-        utilsStub.nearestDartFrogProject.returns(undefined);
+        utilsStub.nearestParentDartFrogProject.returns(undefined);
 
         const provider = new DebugOnRequestCodeLensProvider();
         const result = provider.provideCodeLenses(document);

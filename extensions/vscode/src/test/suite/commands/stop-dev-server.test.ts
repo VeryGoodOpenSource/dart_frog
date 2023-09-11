@@ -32,7 +32,7 @@ suite("stop-dev-server command", () => {
       isDartFrogCLIInstalled: sinon.stub(),
       suggestInstallingDartFrogCLI: sinon.stub(),
       resolveDartFrogProjectPathFromWorkspace: sinon.stub(),
-      nearestDartFrogProject: sinon.stub(),
+      nearestParentDartFrogProject: sinon.stub(),
       quickPickApplication: sinon.stub(),
     };
     utilsStub.isDartFrogCLIInstalled.returns(true);
