@@ -202,9 +202,9 @@ suite("nearestParentDartFrogProject", () => {
   });
 });
 
-suite("nearestChildDartFrogProject", () => {
+suite("nearestChildDartFrogProjects", () => {
   let fsStub: any;
-  let nearestChildDartFrogProject: any;
+  let nearestChildDartFrogProjects: any;
 
   beforeEach(() => {
     fsStub = {
@@ -214,12 +214,12 @@ suite("nearestChildDartFrogProject", () => {
       readdirSync: sinon.stub(),
     };
 
-    nearestChildDartFrogProject = proxyquire(
+    nearestChildDartFrogProjects = proxyquire(
       "../../../utils/dart-frog-structure",
       {
         fs: fsStub,
       }
-    ).nearestChildDartFrogProject;
+    ).nearestChildDartFrogProjects;
   });
 
   afterEach(() => {
@@ -242,7 +242,7 @@ suite("nearestChildDartFrogProject", () => {
       .withArgs(dartFrogPubspecPath, "utf-8")
       .returns(validPubspecYaml);
 
-    const result = nearestChildDartFrogProject(filePath);
+    const result = nearestChildDartFrogProjects(filePath);
 
     assert.deepEqual(Array.from(result), [filePath]);
   });
@@ -326,7 +326,7 @@ suite("nearestChildDartFrogProject", () => {
       .withArgs(flutterPubspecPath, "utf-8")
       .returns(invalidPubspecYaml);
 
-    const result = nearestChildDartFrogProject(filePath);
+    const result = nearestChildDartFrogProjects(filePath);
 
     assert.deepEqual(Array.from(result), [
       dartFrogPath1,
@@ -340,7 +340,7 @@ suite("nearestChildDartFrogProject", () => {
       const filePath = "/home/project/routes/animals/frog.dart";
       fsStub.existsSync.withArgs(filePath).returns(false);
 
-      const result = nearestChildDartFrogProject(filePath);
+      const result = nearestChildDartFrogProjects(filePath);
 
       assert.equal(result, undefined);
     });
@@ -352,7 +352,7 @@ suite("nearestChildDartFrogProject", () => {
         isDirectory: () => false,
       });
 
-      const result = nearestChildDartFrogProject(filePath);
+      const result = nearestChildDartFrogProjects(filePath);
 
       assert.equal(result, undefined);
     });
@@ -379,7 +379,7 @@ suite("nearestChildDartFrogProject", () => {
         .withArgs(dartFrogPubspecPath, "utf-8")
         .returns(invalidPubspecYaml);
 
-      const result = nearestChildDartFrogProject(filePath);
+      const result = nearestChildDartFrogProjects(filePath);
 
       assert.equal(result, undefined);
     });
