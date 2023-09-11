@@ -247,9 +247,34 @@ suite("nearestChildDartFrogProject", () => {
     assert.equal(result, undefined);
   });
 
-  // test("returns undefined when path is not a Dart Frog project", () => {});
+  test("returns undefined when subdirectory is not a Dart Frog project", () => {
+    const filePath = "/home/project/";
+    fsStub.existsSync.withArgs(filePath).returns(true);
+    fsStub.statSync.withArgs(filePath).returns({
+      isDirectory: () => true,
+    });
+    fsStub.readdirSync.withArgs(filePath).returns(["frog"]);
 
-  test("returns the path to all the nearest child Dart Frog projects", () => {
+    const dartFrogPath = "/home/project/frog";
+    const dartFrogPubspecRoutesPath = path.join(dartFrogPath, "routes");
+    const dartFrogPubspecPath = path.join(dartFrogPath, "pubspec.yaml");
+    fsStub.existsSync.withArgs(dartFrogPath).returns(true);
+    fsStub.statSync.withArgs(dartFrogPath).returns({
+      isDirectory: () => true,
+    });
+    fsStub.readdirSync.withArgs(dartFrogPath).returns([]);
+    fsStub.existsSync.withArgs(dartFrogPubspecRoutesPath).returns(true);
+    fsStub.existsSync.withArgs(dartFrogPubspecPath).returns(true);
+    fsStub.readFileSync
+      .withArgs(dartFrogPubspecPath, "utf-8")
+      .returns(invalidPubspecYaml);
+
+    const result = nearestChildDartFrogProject(filePath);
+
+    assert.equal(result, undefined);
+  });
+
+  test("returns the path to all the child Dart Frog projects", () => {
     fsStub.existsSync.returns(false);
 
     const filePath = "/home/project/";
