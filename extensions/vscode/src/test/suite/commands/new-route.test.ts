@@ -150,6 +150,18 @@ suite("new-route command", () => {
     });
   });
 
+  suite("quick pick project", () => {
+    test("is shown when Uri and active text editor are undefined and there is more than one Dart Frog project in workspace folders", async () => {});
+
+    suite("is not shown", () => {
+      test("when Uri is defined", async () => {});
+
+      test("when Uri is undefined but resolves a Dart Frog project from active text editor", async () => {});
+
+      test("when Uri and active text editor are undefined but there is only one Dart Frog project in workspace folders", async () => {});
+    });
+  });
+
   suite("file open dialog", () => {
     test("is shown when Uri is undefined and fails to resolve a path from workspace", async () => {
       vscodeStub.window.showInputBox.returns(validRouteName);
