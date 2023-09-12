@@ -151,14 +151,52 @@ suite("new-route command", () => {
   });
 
   suite("quick pick project", () => {
-    test("is shown when Uri and active text editor are undefined and there is more than one Dart Frog project in workspace folders", async () => {});
+    test("is shown when Uri and active text editor are undefined and there is more than one Dart Frog project in workspace folders", async () => {
+      utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns();
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+        "/home/dart_frog/routes",
+        "/home/dart_frog2/routes",
+      ]);
+
+      await command.newRoute();
+
+      sinon.assert.calledOnceWithExactly(utilsStub.quickPickProject, {}, [
+        "/home/dart_frog/routes",
+        "/home/dart_frog2/routes",
+      ]);
+    });
 
     suite("is not shown", () => {
-      test("when Uri is defined", async () => {});
+      beforeEach(() => {
+        utilsStub.normalizeRoutePath.returns("/");
+      });
 
-      test("when Uri is undefined but resolves a Dart Frog project from active text editor", async () => {});
+      test("when Uri is defined", async () => {
+        await command.newRoute(validUri);
 
-      test("when Uri and active text editor are undefined but there is only one Dart Frog project in workspace folders", async () => {});
+        sinon.assert.notCalled(utilsStub.quickPickProject);
+      });
+
+      test("when Uri is undefined but resolves a Dart Frog project from active text editor", async () => {
+        utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns(
+          "/home/dart_frog/routes/index.dart"
+        );
+
+        await command.newRoute();
+
+        sinon.assert.notCalled(utilsStub.quickPickProject);
+      });
+
+      test("when Uri and active text editor are undefined but there is only one Dart Frog project in workspace folders", async () => {
+        utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns();
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+          "/home/dart_frog/routes",
+        ]);
+
+        await command.newRoute();
+
+        sinon.assert.notCalled(utilsStub.quickPickProject);
+      });
     });
   });
 
