@@ -49,13 +49,13 @@ export const newRoute = async (uri: Uri | undefined): Promise<void> => {
   if (uri === undefined) {
     selectedPath = resolveDartFrogProjectPathFromActiveTextEditor();
 
-    if (selectedPath === undefined) {
+    if (!selectedPath) {
       selectedPath = resolveDartFrogProjectPathFromWorkspaceFolders();
     }
-    if (selectedPath === undefined) {
+    if (!selectedPath) {
       selectedPath = await promptForTargetDirectory();
     }
-    if (selectedPath === undefined) {
+    if (!selectedPath) {
       window.showErrorMessage("Please select a valid directory");
       return;
     }
