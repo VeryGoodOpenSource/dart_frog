@@ -1,7 +1,6 @@
 import {
   isDartFrogCLIInstalled,
   nearestParentDartFrogProject,
-  quickPickProject,
   resolveDartFrogProjectPathFromActiveTextEditor,
   resolveDartFrogProjectPathFromWorkspaceFolders,
   suggestInstallingDartFrogCLI,
