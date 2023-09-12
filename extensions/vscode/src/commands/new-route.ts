@@ -57,12 +57,17 @@ export const newRoute = async (uri: Uri | undefined): Promise<void> => {
         if (dartFrogProjectsPaths.length === 1) {
           selectedPath = dartFrogProjectsPaths[0];
         } else if (dartFrogProjectsPaths.length > 0) {
-          selectedPath = await quickPickProject(
+          const selection = await quickPickProject(
             {
               placeHolder: "Select a project",
             },
             dartFrogProjectsPaths
           );
+          if (!selection) {
+            return;
+          }
+
+          selectedPath = selection;
         }
       }
     }
