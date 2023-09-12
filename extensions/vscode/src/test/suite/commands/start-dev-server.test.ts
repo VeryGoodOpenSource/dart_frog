@@ -122,6 +122,57 @@ suite("start-dev-server command", () => {
     });
   });
 
+  suite("project quick pick", () => {
+    test("is shown when there are more than one Dart Frog projects", async () => {
+      utilsStub.isDartFrogCLIInstalled.returns(true);
+      daemon.isReady = true;
+      daemon.applicationRegistry = sinon.stub();
+      daemon.applicationRegistry.all = () => [];
+
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+        "path1",
+        "path2",
+      ]);
+
+      await command.startDevServer();
+
+      sinon.assert.calledOnceWithExactly(utilsStub.quickPickProject, {}, [
+        "path1",
+        "path2",
+      ]);
+    });
+
+    suite("is not shown", () => {
+      test("is not shown when there is only one Dart Frog project", async () => {
+        utilsStub.isDartFrogCLIInstalled.returns(true);
+        daemon.isReady = true;
+        daemon.applicationRegistry = sinon.stub();
+        daemon.applicationRegistry.all = () => [];
+
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+          "path1",
+        ]);
+
+        await command.startDevServer();
+
+        sinon.assert.neverCalledWith(utilsStub.quickPickProject, {}, ["path1"]);
+      });
+
+      test("is not shown when there are no Dart Frog projects", async () => {
+        utilsStub.isDartFrogCLIInstalled.returns(true);
+        daemon.isReady = true;
+        daemon.applicationRegistry = sinon.stub();
+        daemon.applicationRegistry.all = () => [];
+
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([]);
+
+        await command.startDevServer();
+
+        sinon.assert.neverCalledWith(utilsStub.quickPickProject, {}, []);
+      });
+    });
+  });
+
   suite("confirmation prompt before running", () => {
     beforeEach(() => {
       utilsStub.isDartFrogCLIInstalled.returns(true);
