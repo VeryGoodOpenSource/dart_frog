@@ -113,11 +113,6 @@ suite("start-dev-server command", () => {
 
   suite("project quick pick", () => {
     test("is shown when there are more than one Dart Frog projects", async () => {
-      utilsStub.isDartFrogCLIInstalled.returns(true);
-      daemon.isReady = true;
-      daemon.applicationRegistry = sinon.stub();
-      daemon.applicationRegistry.all = () => [];
-
       utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
         "path1",
         "path2",
@@ -133,11 +128,6 @@ suite("start-dev-server command", () => {
 
     suite("is not shown", () => {
       test("is not shown when there is only one Dart Frog project", async () => {
-        utilsStub.isDartFrogCLIInstalled.returns(true);
-        daemon.isReady = true;
-        daemon.applicationRegistry = sinon.stub();
-        daemon.applicationRegistry.all = () => [];
-
         utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
           "path1",
         ]);
@@ -148,11 +138,6 @@ suite("start-dev-server command", () => {
       });
 
       test("is not shown when there are no Dart Frog projects", async () => {
-        utilsStub.isDartFrogCLIInstalled.returns(true);
-        daemon.isReady = true;
-        daemon.applicationRegistry = sinon.stub();
-        daemon.applicationRegistry.all = () => [];
-
         utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([]);
 
         await command.startDevServer();
@@ -807,6 +792,32 @@ suite("start-dev-server command", () => {
 
       progress = sinon.stub();
       progress.report = sinon.stub();
+    });
+
+    test("when there are multiple resolved Dart Frog projects", async () => {
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+        "path",
+        startRequest.params.workingDirectory,
+      ]);
+      utilsStub.quickPickProject.resolves(startRequest.params.workingDirectory);
+
+      await command.startDevServer();
+
+      const application = new DartFrogApplication(
+        startRequest.params.workingDirectory,
+        startRequest.params.port,
+        startRequest.params.dartVmServicePort
+      );
+      const registrationListener = daemon.applicationRegistry.on
+        .withArgs("add", sinon.match.any)
+        .getCall(0).args[1];
+      registrationListener(application);
+
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      await progressFunction(progress);
+
+      sinon.assert.calledOnceWithExactly(daemon.send, startRequest);
     });
 
     test("when there are no running applications", async () => {
