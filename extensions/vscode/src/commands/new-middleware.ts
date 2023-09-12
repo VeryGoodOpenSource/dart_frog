@@ -25,7 +25,7 @@ import {
  * Therefore, the command attempts to resolve a path from the user's active text
  * editor first and then from the user's workspace folders. If no path can be
  * resolved from either of those sources, the user is prompted to select a valid
- * valid directory or file to create the route in.
+ * directory or file to create the route in.
  *
  * When launching the command from the context menu, the Uri corresponds to the
  * selected file or directory. Only those directories or dart files under a
