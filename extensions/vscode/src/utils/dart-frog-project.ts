@@ -269,7 +269,7 @@ export async function quickPickProject(
   projectPaths: string[]
 ) {
   const quickPick = window.createQuickPick<PickableDartFrogProject>();
-  quickPick.placeholder = options.placeHolder;
+  quickPick.placeholder = options.placeHolder ?? "Select a Dart Frog project";
   quickPick.busy = false;
   quickPick.ignoreFocusOut = options.ignoreFocusOut ?? true;
   quickPick.canSelectMany = options.canPickMany ?? false;

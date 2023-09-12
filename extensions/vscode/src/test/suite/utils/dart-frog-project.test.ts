@@ -678,7 +678,7 @@ suite("quickPickProject", () => {
   });
 
   suite("placeholder", () => {
-    test("is undefined by default", async () => {
+    test("is defined by default", async () => {
       const application = quickPickProject({}, [projectPath1, projectPath2]);
 
       const onDidChangeSelection =
@@ -687,7 +687,7 @@ suite("quickPickProject", () => {
 
       await application;
 
-      assert.strictEqual(quickPick.placeholder, undefined);
+      assert.strictEqual(quickPick.placeholder, "Select a Dart Frog project");
     });
 
     test("can be overridden", async () => {
