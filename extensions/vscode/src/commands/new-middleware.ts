@@ -64,7 +64,7 @@ export const newMiddleware = async (uri: Uri | undefined): Promise<void> => {
   }
 
   const dartFrogProjectPath = nearestParentDartFrogProject(selectedPath);
-  if (dartFrogProjectPath === undefined) {
+  if (!dartFrogProjectPath) {
     window.showErrorMessage(
       "No Dart Frog project found in the selected directory"
     );

@@ -35,7 +35,7 @@ export const startDaemon = async (): Promise<void> => {
   }
 
   let dartFrogProjectPath = resolveDartFrogProjectPathFromWorkspaceFolders();
-  if (dartFrogProjectPath === undefined) {
+  if (!dartFrogProjectPath) {
     dartFrogProjectPath = resolveDartFrogProjectPathFromActiveTextEditor();
   }
 
