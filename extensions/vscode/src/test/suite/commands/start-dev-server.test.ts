@@ -631,6 +631,18 @@ suite("start-dev-server command", () => {
       );
     });
 
+    test("when there are multiple resolved Dart Frog projects and user cancelled quick pick", async () => {
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+        "path",
+        startRequest.params.workingDirectory,
+      ]);
+      utilsStub.quickPickProject.resolves();
+
+      await command.startDevServer();
+
+      sinon.assert.neverCalledWith(daemon.send, startRequest);
+    });
+
     test("when there is already a running server and user cancelled confirmation prompt", async () => {
       daemon.applicationRegistry.all.returns([
         new DartFrogApplication(
