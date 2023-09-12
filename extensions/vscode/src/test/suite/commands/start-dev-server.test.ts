@@ -568,7 +568,7 @@ suite("start-dev-server command", () => {
           startRequest.params.dartVmServicePort + 1
         ),
       ]);
-      vscodeStub.window.showInformationMessage.resolves(undefined);
+      vscodeStub.window.showInformationMessage.resolves();
 
       await command.startDevServer();
 
@@ -623,7 +623,7 @@ suite("start-dev-server command", () => {
           ignoreFocusOut: true,
           validateInput: sinon.match.any,
         })
-        .resolves(undefined);
+        .resolves();
 
       await command.startDevServer();
 
@@ -651,7 +651,7 @@ suite("start-dev-server command", () => {
           ignoreFocusOut: true,
           validateInput: sinon.match.any,
         })
-        .resolves(undefined);
+        .resolves();
 
       await command.startDevServer();
 
