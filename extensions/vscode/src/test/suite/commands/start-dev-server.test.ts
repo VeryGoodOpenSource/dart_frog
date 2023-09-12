@@ -36,6 +36,8 @@ suite("start-dev-server command", () => {
       nearestParentDartFrogProject: sinon.stub(),
     };
     utilsStub.isDartFrogCLIInstalled.returns(true);
+    utilsStub.resolveDartFrogProjectPathFromWorkspace.returns();
+    utilsStub.nearestParentDartFrogProject.returns();
 
     const dartFrogDaemon = {
       // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -43,6 +45,14 @@ suite("start-dev-server command", () => {
     };
     dartFrogDaemon.DartFrogDaemon.instance = sinon.stub();
     daemon = dartFrogDaemon.DartFrogDaemon.instance;
+    daemon.isReady = true;
+    daemon.applicationRegistry = sinon.stub();
+    daemon.applicationRegistry.all = sinon.stub().returns([]);
+    daemon.applicationRegistry.on = sinon.stub();
+    daemon.applicationRegistry.off = sinon.stub();
+    daemon.requestIdentifierGenerator = sinon.stub();
+    daemon.requestIdentifierGenerator.generate = sinon.stub();
+    daemon.send = sinon.stub();
 
     command = proxyquire("../../../commands/start-dev-server", {
       vscode: vscodeStub,
@@ -58,15 +68,6 @@ suite("start-dev-server command", () => {
   });
 
   suite("installing Dart Frog CLI", () => {
-    beforeEach(() => {
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
-      utilsStub.nearestParentDartFrogProject.returns(undefined);
-
-      daemon.isReady = true;
-      daemon.applicationRegistry = sinon.stub();
-      daemon.applicationRegistry.all = sinon.stub().returns([]);
-    });
-
     test("is suggested when not installed", async () => {
       utilsStub.isDartFrogCLIInstalled.returns(false);
 
@@ -79,8 +80,6 @@ suite("start-dev-server command", () => {
     });
 
     test("is not suggested when already installed", async () => {
-      utilsStub.isDartFrogCLIInstalled.returns(true);
-
       await command.startDevServer();
 
       sinon.assert.notCalled(utilsStub.suggestInstallingDartFrogCLI);
@@ -89,12 +88,7 @@ suite("start-dev-server command", () => {
 
   suite("daemon", () => {
     test("is started if not ready", async () => {
-      utilsStub.isDartFrogCLIInstalled.returns(true);
       daemon.isReady = false;
-      daemon.applicationRegistry = sinon.stub();
-      daemon.applicationRegistry.all = sinon.stub().returns([]);
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
-      utilsStub.nearestParentDartFrogProject.returns(undefined);
 
       await command.startDevServer();
 
@@ -105,13 +99,6 @@ suite("start-dev-server command", () => {
     });
 
     test("is not started if already ready", async () => {
-      utilsStub.isDartFrogCLIInstalled.returns(true);
-      daemon.isReady = true;
-      daemon.applicationRegistry = sinon.stub();
-      daemon.applicationRegistry.all = sinon.stub().returns([]);
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
-      utilsStub.nearestParentDartFrogProject.returns(undefined);
-
       await command.startDevServer();
 
       sinon.assert.neverCalledWith(
@@ -122,15 +109,6 @@ suite("start-dev-server command", () => {
   });
 
   suite("confirmation prompt before running", () => {
-    beforeEach(() => {
-      utilsStub.isDartFrogCLIInstalled.returns(true);
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
-      utilsStub.nearestParentDartFrogProject.returns(undefined);
-
-      daemon.isReady = true;
-      daemon.applicationRegistry = sinon.stub();
-    });
-
     suite("is shown", () => {
       test("when there is already a running server", async () => {
         daemon.applicationRegistry.all = sinon
@@ -167,8 +145,6 @@ suite("start-dev-server command", () => {
     });
 
     test("is not shown when there is no running server", async () => {
-      daemon.applicationRegistry.all = sinon.stub().returns([]);
-
       await command.startDevServer();
 
       sinon.assert.neverCalledWith(
@@ -190,17 +166,7 @@ suite("start-dev-server command", () => {
     const errorMessage =
       "Failed to find a Dart Frog project within the current workspace.";
 
-    beforeEach(() => {
-      utilsStub.isDartFrogCLIInstalled.returns(true);
-
-      daemon.isReady = true;
-      daemon.applicationRegistry = sinon.stub();
-      daemon.applicationRegistry.all = sinon.stub().returns([]);
-    });
-
     test("is shown when failed to find Dart Frog project path", async () => {
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
-
       await command.startDevServer();
 
       sinon.assert.calledOnceWithExactly(
@@ -211,7 +177,6 @@ suite("start-dev-server command", () => {
 
     test("is shown when failed to find Dart Frog root project path", async () => {
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns("path");
-      utilsStub.nearestParentDartFrogProject.returns(undefined);
 
       await command.startDevServer();
 
@@ -236,17 +201,11 @@ suite("start-dev-server command", () => {
 
   suite("port number prompt is shown", () => {
     beforeEach(() => {
-      utilsStub.isDartFrogCLIInstalled.returns(true);
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns("path");
       utilsStub.nearestParentDartFrogProject.returns("path");
-
-      daemon.isReady = true;
-      daemon.applicationRegistry = sinon.stub();
     });
 
     test("with prefilled default value when there are no running servers", async () => {
-      daemon.applicationRegistry.all = sinon.stub().returns([]);
-
       await command.startDevServer();
 
       sinon.assert.calledOnceWithMatch(vscodeStub.window.showInputBox, {
@@ -281,10 +240,6 @@ suite("start-dev-server command", () => {
         ignoreFocusOut: true,
         validateInput: sinon.match.any,
       };
-
-      beforeEach(() => {
-        daemon.applicationRegistry.all = sinon.stub().returns([]);
-      });
 
       test("that accepts valid port number", async () => {
         await command.startDevServer();
@@ -398,12 +353,8 @@ suite("start-dev-server command", () => {
     const portNumber = "8079";
 
     beforeEach(() => {
-      utilsStub.isDartFrogCLIInstalled.returns(true);
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns("path");
       utilsStub.nearestParentDartFrogProject.returns("path");
-
-      daemon.isReady = true;
-      daemon.applicationRegistry = sinon.stub();
 
       vscodeStub.window.showInputBox
         .withArgs({
@@ -417,8 +368,6 @@ suite("start-dev-server command", () => {
     });
 
     test("with prefilled default value when there are no running servers", async () => {
-      daemon.applicationRegistry.all = sinon.stub().returns([]);
-
       await command.startDevServer();
 
       sinon.assert.calledOnce(
@@ -459,10 +408,6 @@ suite("start-dev-server command", () => {
         ignoreFocusOut: true,
         validateInput: sinon.match.any,
       };
-
-      beforeEach(() => {
-        daemon.applicationRegistry.all = sinon.stub().returns([]);
-      });
 
       test("that accepts valid port number", async () => {
         await command.startDevServer();
@@ -592,18 +537,12 @@ suite("start-dev-server command", () => {
     );
 
     beforeEach(() => {
-      utilsStub.isDartFrogCLIInstalled.returns(true);
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
         startRequest.params.workingDirectory
       );
       utilsStub.nearestParentDartFrogProject.returns(
         startRequest.params.workingDirectory
       );
-
-      daemon.send = sinon.stub();
-      daemon.isReady = true;
-      daemon.applicationRegistry = sinon.stub();
-      daemon.applicationRegistry.all = sinon.stub();
     });
 
     test("when there is already a running server and user cancelled confirmation prompt", async () => {
@@ -629,7 +568,7 @@ suite("start-dev-server command", () => {
           startRequest.params.dartVmServicePort + 1
         ),
       ]);
-      vscodeStub.window.showInformationMessage.resolves(undefined);
+      vscodeStub.window.showInformationMessage.resolves();
 
       await command.startDevServer();
 
@@ -657,20 +596,15 @@ suite("start-dev-server command", () => {
     });
 
     test("when Dart Frog project path failed to be retrieved", async () => {
-      daemon.applicationRegistry.all.returns([]);
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
-
       await command.startDevServer();
 
       sinon.assert.neverCalledWith(daemon.send, startRequest);
     });
 
     test("when Dart Frog project root path failed to be retrieved", async () => {
-      daemon.applicationRegistry.all.returns([]);
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
         startRequest.params.workingDirectory
       );
-      utilsStub.nearestParentDartFrogProject.returns(undefined);
 
       await command.startDevServer();
 
@@ -678,7 +612,6 @@ suite("start-dev-server command", () => {
     });
 
     test("when port number is dismissed", async () => {
-      daemon.applicationRegistry.all.returns([]);
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
         startRequest.params.workingDirectory
       );
@@ -690,7 +623,7 @@ suite("start-dev-server command", () => {
           ignoreFocusOut: true,
           validateInput: sinon.match.any,
         })
-        .resolves(undefined);
+        .resolves();
 
       await command.startDevServer();
 
@@ -698,7 +631,6 @@ suite("start-dev-server command", () => {
     });
 
     test("when Dart VM service port number is dismissed", async () => {
-      daemon.applicationRegistry.all.returns([]);
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
         startRequest.params.workingDirectory
       );
@@ -719,7 +651,7 @@ suite("start-dev-server command", () => {
           ignoreFocusOut: true,
           validateInput: sinon.match.any,
         })
-        .resolves(undefined);
+        .resolves();
 
       await command.startDevServer();
 
@@ -740,8 +672,9 @@ suite("start-dev-server command", () => {
       error: undefined,
     };
 
+    let progress: any;
+
     beforeEach(() => {
-      utilsStub.isDartFrogCLIInstalled.returns(true);
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
         startRequest.params.workingDirectory
       );
@@ -749,16 +682,7 @@ suite("start-dev-server command", () => {
         startRequest.params.workingDirectory
       );
 
-      daemon.send = sinon.stub();
-      daemon.isReady = true;
-      daemon.applicationRegistry = sinon.stub();
-      daemon.applicationRegistry.all = sinon.stub();
-      daemon.applicationRegistry.on = sinon.stub();
-      daemon.applicationRegistry.off = sinon.stub();
-      daemon.requestIdentifierGenerator = sinon.stub();
-      daemon.requestIdentifierGenerator.generate = sinon
-        .stub()
-        .returns(startRequest.id);
+      daemon.requestIdentifierGenerator.generate.returns(startRequest.id);
       daemon.send.withArgs(startRequest).resolves(startResponse);
 
       vscodeStub.window.showInputBox
@@ -779,11 +703,12 @@ suite("start-dev-server command", () => {
           validateInput: sinon.match.any,
         })
         .resolves(startRequest.params.dartVmServicePort.toString());
+
+      progress = sinon.stub();
+      progress.report = sinon.stub();
     });
 
     test("when there are no running applications", async () => {
-      daemon.applicationRegistry.all.returns([]);
-
       await command.startDevServer();
 
       const application = new DartFrogApplication(
@@ -798,8 +723,6 @@ suite("start-dev-server command", () => {
 
       const progressFunction =
         vscodeStub.window.withProgress.getCall(0).args[1];
-      const progress = sinon.stub();
-      progress.report = sinon.stub();
       await progressFunction(progress);
 
       sinon.assert.calledOnceWithExactly(daemon.send, startRequest);
@@ -829,8 +752,6 @@ suite("start-dev-server command", () => {
 
       const progressFunction =
         vscodeStub.window.withProgress.getCall(0).args[1];
-      const progress = sinon.stub();
-      progress.report = sinon.stub();
       await progressFunction(progress);
 
       sinon.assert.calledOnceWithExactly(daemon.send, startRequest);
@@ -865,16 +786,12 @@ suite("start-dev-server command", () => {
 
       const progressFunction =
         vscodeStub.window.withProgress.getCall(0).args[1];
-      const progress = sinon.stub();
-      progress.report = sinon.stub();
       await progressFunction(progress);
 
       sinon.assert.calledOnceWithExactly(daemon.send, startRequest);
     });
 
     test("then opens application", async () => {
-      daemon.applicationRegistry.all.returns([]);
-
       await command.startDevServer();
 
       const application = new DartFrogApplication(
@@ -890,8 +807,6 @@ suite("start-dev-server command", () => {
 
       const progressFunction =
         vscodeStub.window.withProgress.getCall(0).args[1];
-      const progress = sinon.stub();
-      progress.report = sinon.stub();
       await progressFunction(progress);
 
       sinon.assert.calledOnceWithExactly(daemon.send, startRequest);
@@ -911,8 +826,9 @@ suite("start-dev-server command", () => {
       8181
     );
 
+    let progress: any;
+
     beforeEach(() => {
-      utilsStub.isDartFrogCLIInstalled.returns(true);
       utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
         startRequest.params.workingDirectory
       );
@@ -920,16 +836,7 @@ suite("start-dev-server command", () => {
         startRequest.params.workingDirectory
       );
 
-      daemon.send = sinon.stub();
-      daemon.isReady = true;
-      daemon.applicationRegistry = sinon.stub();
-      daemon.applicationRegistry.all = sinon.stub().returns([]);
-      daemon.applicationRegistry.on = sinon.stub();
-      daemon.applicationRegistry.off = sinon.stub();
-      daemon.requestIdentifierGenerator = sinon.stub();
-      daemon.requestIdentifierGenerator.generate = sinon
-        .stub()
-        .returns(startRequest.id);
+      daemon.requestIdentifierGenerator.generate.returns(startRequest.id);
 
       vscodeStub.window.showInputBox
         .withArgs({
@@ -949,6 +856,9 @@ suite("start-dev-server command", () => {
           validateInput: sinon.match.any,
         })
         .resolves(startRequest.params.dartVmServicePort.toString());
+
+      progress = sinon.stub();
+      progress.report = sinon.stub();
     });
 
     test("is shown when starting server", async () => {
@@ -982,8 +892,6 @@ suite("start-dev-server command", () => {
 
       const progressFunction =
         vscodeStub.window.withProgress.getCall(0).args[1];
-      const progress = sinon.stub();
-      progress.report = sinon.stub();
       await progressFunction(progress);
 
       sinon.assert.calledWith(progress.report.getCall(0), {
@@ -1013,8 +921,6 @@ suite("start-dev-server command", () => {
 
       const progressFunction =
         vscodeStub.window.withProgress.getCall(0).args[1];
-      const progress = sinon.stub();
-      progress.report = sinon.stub();
       await progressFunction(progress);
 
       sinon.assert.calledWith(
@@ -1047,8 +953,6 @@ suite("start-dev-server command", () => {
 
       const progressFunction =
         vscodeStub.window.withProgress.getCall(0).args[1];
-      const progress = sinon.stub();
-      progress.report = sinon.stub();
       const result = await progressFunction(progress);
 
       assert.strictEqual(result, application);
