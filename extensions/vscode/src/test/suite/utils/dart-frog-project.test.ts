@@ -679,20 +679,20 @@ suite("quickPickProject", () => {
 
   suite("placeholder", () => {
     test("is defined by default", async () => {
-      const application = quickPickProject({}, [projectPath1, projectPath2]);
+      const project = quickPickProject({}, [projectPath1, projectPath2]);
 
       const onDidChangeSelection =
         quickPick.onDidChangeSelection.getCall(0).args[0];
       onDidChangeSelection([]);
 
-      await application;
+      await project;
 
       assert.strictEqual(quickPick.placeholder, "Select a Dart Frog project");
     });
 
     test("can be overridden", async () => {
       const placeHolder = "placeholder";
-      const application = quickPickProject(
+      const project = quickPickProject(
         {
           placeHolder,
         },
@@ -703,7 +703,7 @@ suite("quickPickProject", () => {
         quickPick.onDidChangeSelection.getCall(0).args[0];
       onDidChangeSelection([]);
 
-      await application;
+      await project;
 
       assert.strictEqual(quickPick.placeholder, placeHolder);
     });
@@ -711,20 +711,20 @@ suite("quickPickProject", () => {
 
   suite("ignoreFocusOut", () => {
     test("is true by default", async () => {
-      const application = quickPickProject({}, [projectPath1, projectPath2]);
+      const project = quickPickProject({}, [projectPath1, projectPath2]);
 
       const onDidChangeSelection =
         quickPick.onDidChangeSelection.getCall(0).args[0];
       onDidChangeSelection([]);
 
-      await application;
+      await project;
 
       assert.strictEqual(quickPick.ignoreFocusOut, true);
     });
 
     test("can be overridden", async () => {
       const ignoreFocusOut = false;
-      const application = quickPickProject(
+      const project = quickPickProject(
         {
           ignoreFocusOut,
         },
@@ -735,7 +735,7 @@ suite("quickPickProject", () => {
         quickPick.onDidChangeSelection.getCall(0).args[0];
       onDidChangeSelection([]);
 
-      await application;
+      await project;
 
       assert.strictEqual(quickPick.ignoreFocusOut, ignoreFocusOut);
     });
@@ -743,20 +743,20 @@ suite("quickPickProject", () => {
 
   suite("canSelectMany", () => {
     test("is false by default", async () => {
-      const application = quickPickProject({}, [projectPath1, projectPath2]);
+      const project = quickPickProject({}, [projectPath1, projectPath2]);
 
       const onDidChangeSelection =
         quickPick.onDidChangeSelection.getCall(0).args[0];
       onDidChangeSelection([]);
 
-      await application;
+      await project;
 
       assert.strictEqual(quickPick.canSelectMany, false);
     });
 
     test("can be overridden", async () => {
       const canPickMany = true;
-      const application = quickPickProject(
+      const project = quickPickProject(
         {
           canPickMany,
         },
@@ -767,32 +767,32 @@ suite("quickPickProject", () => {
         quickPick.onDidChangeSelection.getCall(0).args[0];
       onDidChangeSelection([]);
 
-      await application;
+      await project;
 
       assert.strictEqual(quickPick.canSelectMany, canPickMany);
     });
   });
 
   test("busy is false by default", async () => {
-    const application = quickPickProject({}, [projectPath1, projectPath2]);
+    const project = quickPickProject({}, [projectPath1, projectPath2]);
 
     const onDidChangeSelection =
       quickPick.onDidChangeSelection.getCall(0).args[0];
     onDidChangeSelection([]);
 
-    await application;
+    await project;
 
     assert.strictEqual(quickPick.busy, false);
   });
 
   test("shows appropiate items for resolved projects", async () => {
-    const application = quickPickProject({}, [projectPath1, projectPath2]);
+    const project = quickPickProject({}, [projectPath1, projectPath2]);
 
     const onDidChangeSelection =
       quickPick.onDidChangeSelection.getCall(0).args[0];
     onDidChangeSelection([]);
 
-    await application;
+    await project;
 
     const items = quickPick.items;
 
@@ -809,13 +809,13 @@ suite("quickPickProject", () => {
   });
 
   test("shows the quick pick", async () => {
-    const application = quickPickProject({}, [projectPath1, projectPath2]);
+    const project = quickPickProject({}, [projectPath1, projectPath2]);
 
     const onDidChangeSelection =
       quickPick.onDidChangeSelection.getCall(0).args[0];
     onDidChangeSelection([]);
 
-    await application;
+    await project;
 
     sinon.assert.calledOnce(quickPick.show);
   });
@@ -823,7 +823,7 @@ suite("quickPickProject", () => {
   suite("onDidSelectItem", () => {
     test("is called when an item is selected", async () => {
       const onDidSelectItem = sinon.stub();
-      const application = quickPickProject(
+      const project = quickPickProject(
         {
           onDidSelectItem,
         },
@@ -834,7 +834,7 @@ suite("quickPickProject", () => {
         quickPick.onDidChangeSelection.getCall(0).args[0];
       onDidChangeSelection([{ projectPath: projectPath1 }]);
 
-      await application;
+      await project;
 
       sinon.assert.calledOnceWithExactly(onDidSelectItem, {
         projectPath: projectPath1,
@@ -843,7 +843,7 @@ suite("quickPickProject", () => {
 
     test("is not called when an item is dismissed", async () => {
       const onDidSelectItem = sinon.stub();
-      const application = quickPickProject(
+      const project = quickPickProject(
         {
           onDidSelectItem,
         },
@@ -854,7 +854,7 @@ suite("quickPickProject", () => {
         quickPick.onDidChangeSelection.getCall(0).args[0];
       onDidChangeSelection(undefined);
 
-      await application;
+      await project;
 
       sinon.assert.notCalled(onDidSelectItem);
     });
@@ -862,25 +862,25 @@ suite("quickPickProject", () => {
 
   suite("dispose", () => {
     test("is called when an item is selected", async () => {
-      const application = quickPickProject({}, [projectPath1, projectPath2]);
+      const project = quickPickProject({}, [projectPath1, projectPath2]);
 
       const onDidChangeSelection =
         quickPick.onDidChangeSelection.getCall(0).args[0];
       onDidChangeSelection([{ projectPath: projectPath1 }]);
 
-      await application;
+      await project;
 
       sinon.assert.calledOnce(quickPick.dispose);
     });
 
     test("is called when an item is dismissed", async () => {
-      const application = quickPickProject({}, [projectPath1, projectPath2]);
+      const project = quickPickProject({}, [projectPath1, projectPath2]);
 
       const onDidChangeSelection =
         quickPick.onDidChangeSelection.getCall(0).args[0];
       onDidChangeSelection(undefined);
 
-      await application;
+      await project;
 
       sinon.assert.calledOnce(quickPick.dispose);
     });
@@ -888,25 +888,25 @@ suite("quickPickProject", () => {
 
   suite("returns", () => {
     test("undefined when dismissed", async () => {
-      const application = quickPickProject({}, [projectPath1, projectPath2]);
+      const project = quickPickProject({}, [projectPath1, projectPath2]);
 
       const onDidChangeSelection =
         quickPick.onDidChangeSelection.getCall(0).args[0];
       onDidChangeSelection(undefined);
 
-      const selection = await application;
+      const selection = await project;
 
       assert.strictEqual(selection, undefined);
     });
 
     test("application when selected", async () => {
-      const application = quickPickProject({}, [projectPath1, projectPath2]);
+      const project = quickPickProject({}, [projectPath1, projectPath2]);
 
       const onDidChangeSelection =
         quickPick.onDidChangeSelection.getCall(0).args[0];
       onDidChangeSelection([{ projectPath: projectPath1 }]);
 
-      const selection = await application;
+      const selection = await project;
 
       assert.strictEqual(selection, projectPath1);
     });
