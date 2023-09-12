@@ -1,6 +1,7 @@
 import {
   isDartFrogCLIInstalled,
   nearestParentDartFrogProject,
+  quickPickProject,
   resolveDartFrogProjectPathFromActiveTextEditor,
   resolveDartFrogProjectPathFromWorkspaceFolders,
   suggestInstallingDartFrogCLI,
@@ -34,8 +35,13 @@ export const startDaemon = async (): Promise<void> => {
     return;
   }
 
-  let dartFrogProjectPath = resolveDartFrogProjectPathFromWorkspaceFolders();
-  if (dartFrogProjectPath === undefined) {
+  let dartFrogProjectPath: string | undefined;
+  const dartFrogProjectsPaths =
+    resolveDartFrogProjectPathFromWorkspaceFolders();
+  if (dartFrogProjectsPaths !== undefined && dartFrogProjectsPaths.length > 0) {
+    dartFrogProjectPath = dartFrogProjectsPaths[0];
+  }
+  if (!dartFrogProjectPath) {
     dartFrogProjectPath = resolveDartFrogProjectPathFromActiveTextEditor();
   }
 

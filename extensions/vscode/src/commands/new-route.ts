@@ -11,6 +11,7 @@ import {
   isDartFrogCLIInstalled,
   nearestParentDartFrogProject,
   normalizeRoutePath,
+  quickPickProject,
   resolveDartFrogProjectPathFromActiveTextEditor,
   resolveDartFrogProjectPathFromWorkspaceFolders,
   suggestInstallingDartFrogCLI,
@@ -49,8 +50,21 @@ export const newRoute = async (uri: Uri | undefined): Promise<void> => {
   if (uri === undefined) {
     selectedPath = resolveDartFrogProjectPathFromActiveTextEditor();
 
-    if (selectedPath === undefined) {
-      selectedPath = resolveDartFrogProjectPathFromWorkspaceFolders();
+    if (!selectedPath) {
+      const dartFrogProjectsPaths =
+        resolveDartFrogProjectPathFromWorkspaceFolders();
+      if (dartFrogProjectsPaths) {
+        if (dartFrogProjectsPaths.length === 1) {
+          selectedPath = dartFrogProjectsPaths[0];
+        } else if (dartFrogProjectsPaths.length > 0) {
+          selectedPath = await quickPickProject(
+            {
+              placeHolder: "Select a project",
+            },
+            dartFrogProjectsPaths
+          );
+        }
+      }
     }
     if (selectedPath === undefined) {
       selectedPath = await promptForTargetDirectory();

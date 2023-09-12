@@ -201,14 +201,16 @@ export function resolveDartFrogProjectPathFromWorkspaceFolders(
   _nearestParentDartFrogProject: (
     filePath: string
   ) => string | undefined = nearestParentDartFrogProject
-): string | undefined {
+): Array<string> | undefined {
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
     const currentWorkspaceFolder = path.normalize(
       workspace.workspaceFolders[0].uri.fsPath
     );
     if (_nearestParentDartFrogProject(currentWorkspaceFolder)) {
-      return currentWorkspaceFolder;
+      return [currentWorkspaceFolder];
     }
+
+    return nearestChildDartFrogProjects(currentWorkspaceFolder);
   }
 
   return undefined;
