@@ -66,12 +66,7 @@ export const startDevServer = async (): Promise<
     if (dartFrogProjectsPaths.length === 1) {
       projectPath = dartFrogProjectsPaths[0];
     } else if (dartFrogProjectsPaths.length > 0) {
-      const selection = await quickPickProject(
-        {
-          placeHolder: "Select a project",
-        },
-        dartFrogProjectsPaths
-      );
+      const selection = await quickPickProject({}, dartFrogProjectsPaths);
       if (!selection) {
         return;
       }
