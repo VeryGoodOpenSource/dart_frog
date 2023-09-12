@@ -953,7 +953,6 @@ suite("start-dev-server command", () => {
 
       const progressFunction =
         vscodeStub.window.withProgress.getCall(0).args[1];
-
       const result = await progressFunction(progress);
 
       assert.strictEqual(result, application);
