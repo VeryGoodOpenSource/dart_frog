@@ -32,6 +32,7 @@ suite("new-middleware command", () => {
       resolveDartFrogProjectPathFromWorkspaceFolders: sinon.stub(),
       isDartFrogCLIInstalled: sinon.stub(),
       suggestInstallingDartFrogCLI: sinon.stub(),
+      quickPickProject: sinon.stub(),
     };
     utilsStub.isDartFrogCLIInstalled.returns(true);
 
@@ -111,9 +112,9 @@ suite("new-middleware command", () => {
 
       test("when Uri and active text editor are undefined but resolves a path from workspace folder", async () => {
         utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns();
-        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
-          "/home/dart_frog/routes"
-        );
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+          "/home/dart_frog/routes",
+        ]);
         utilsStub.nearestParentDartFrogProject.returns("/home/dart_frog/");
         utilsStub.normalizeRoutePath.returns("/");
 
@@ -204,9 +205,9 @@ suite("new-middleware command", () => {
 
       test("when Uri and resolved active text editor are undefined but resolved workspace file is valid", async () => {
         vscodeStub.window.showInputBox.returns("animals/frog");
-        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
-          "home/routes/animals/frog"
-        );
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+          "home/routes/animals/frog",
+        ]);
         utilsStub.nearestParentDartFrogProject.returns(
           "home/routes/animals/frog"
         );
@@ -246,9 +247,9 @@ suite("new-middleware command", () => {
 
     beforeEach(() => {
       vscodeStub.window.showInputBox.returns("animals/frog");
-      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
-        "home/routes/animals/frog"
-      );
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+        "home/routes/animals/frog",
+      ]);
       utilsStub.nearestParentDartFrogProject.returns(
         "home/routes/animals/frog"
       );
@@ -366,9 +367,9 @@ suite("new-middleware command", () => {
     });
 
     test("successfully with prompt route path", async () => {
-      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
-        "home/routes/animals/frog"
-      );
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+        "home/routes/animals/frog",
+      ]);
       utilsStub.nearestParentDartFrogProject.returns(
         "home/routes/animals/frog"
       );

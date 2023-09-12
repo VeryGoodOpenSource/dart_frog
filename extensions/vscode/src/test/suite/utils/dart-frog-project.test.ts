@@ -516,7 +516,7 @@ suite("resolveDartFrogProjectPathFromWorkspaceFolders", () => {
       nearestParentDartFrogProject
     );
 
-    assert.deepEqual(dartFrogProjectPath, projectUri.uri.fsPath);
+    assert.deepEqual(dartFrogProjectPath, [projectUri.uri.fsPath]);
   });
 
   suite("returns undefined", () => {

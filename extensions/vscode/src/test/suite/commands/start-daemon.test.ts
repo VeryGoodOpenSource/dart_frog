@@ -117,7 +117,10 @@ suite("start-daemon command", () => {
       utilsStub.isDartFrogCLIInstalled.returns(true);
       dartFrogDaemon.DartFrogDaemon.instance.isReady = false;
       dartFrogDaemon.DartFrogDaemon.instance.invoke = sinon.stub();
-      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns("path");
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+        "path",
+        "another-path",
+      ]);
       utilsStub.nearestParentDartFrogProject.returns("path");
 
       await command.startDaemon();
