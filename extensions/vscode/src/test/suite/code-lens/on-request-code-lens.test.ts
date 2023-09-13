@@ -41,6 +41,9 @@ Future<Response> onRequest(RequestContext context, String id) async {
 
 `;
 
+/**
+ * The content of a route file with a possibly async route.
+ */
 const maybeAsyncRouteContent = `
 import 'package:dart_frog/dart_frog.dart';
 
