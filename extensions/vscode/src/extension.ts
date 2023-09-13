@@ -8,6 +8,15 @@ import {
   StartStopApplicationStatusBarItem,
 } from "./status-bar";
 import {
+  canResolveDartFrogProjectPath,
+  isCompatibleDartFrogCLIVersion,
+  isDartFrogCLIInstalled,
+  openChangelog,
+  readDartFrogCLIVersion,
+  readLatestDartFrogCLIVersion,
+  suggestInstallingDartFrogCLI,
+} from "./utils";
+import {
   create,
   debugDevServer,
   installCLI,
@@ -19,15 +28,6 @@ import {
   stopDevServer,
   updateCLI,
 } from "./commands";
-import {
-  isCompatibleDartFrogCLIVersion,
-  isDartFrogCLIInstalled,
-  openChangelog,
-  readDartFrogCLIVersion,
-  readLatestDartFrogCLIVersion,
-  resolveDartFrogProjectPathFromWorkspace,
-  suggestInstallingDartFrogCLI,
-} from "./utils";
 
 /**
  * This method is called when the extension is activated.
@@ -102,12 +102,10 @@ export function activate(
  * @see {@link https://code.visualstudio.com/api/references/when-clause-contexts#add-a-custom-when-clause-context} for further details about custom when clause context.
  */
 function updateAnyDartFrogProjectLoaded(): void {
-  const anyDartFrogProjectLoaded =
-    resolveDartFrogProjectPathFromWorkspace() !== undefined;
   vscode.commands.executeCommand(
     "setContext",
     "dart-frog:anyDartFrogProjectLoaded",
-    anyDartFrogProjectLoaded
+    canResolveDartFrogProjectPath()
   );
 }
 

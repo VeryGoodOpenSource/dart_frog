@@ -1,6 +1,6 @@
 /**
  * @file Provides utilities for inspecting and dealing with a Dart Frog
- * project's structure.
+ * project's.
  */
 
 const fs = require("fs");
@@ -101,8 +101,8 @@ export function nearestChildDartFrogProjects(
   if (isDartFrogProject(filePath)) {
     return [filePath];
   }
-  
-   const dartFrogProjects = new Set<string>();
+
+  const dartFrogProjects = new Set<string>();
 
   let currentSubdirectories = fs
     .readdirSync(filePath)
@@ -164,6 +164,19 @@ export function isDartFrogProject(filePath: string): boolean {
 }
 
 /**
+ * Determines if the user's workspace contains a Dart Frog project.
+ *
+ * @returns {boolean} Whether or not the user's workspace contains a Dart Frog
+ * project.
+ */
+export function canResolveDartFrogProjectPath(): boolean {
+  return (
+    resolveDartFrogProjectPathFromWorkspaceFolders() !== undefined ||
+    resolveDartFrogProjectPathFromActiveTextEditor() !== undefined
+  );
+}
+
+/**
  * Resolves a path of a file or directory within a Dart Frog project from the
  * user's workspace.
  *
@@ -171,20 +184,44 @@ export function isDartFrogProject(filePath: string): boolean {
  * it lacks a defined path.
  *
  * @param {function} _nearestParentDartFrogProject A function, used for testing,
- * that finds the root of a Dart Frog project from a file path. Defaults to
- * {@link nearestParentDartFrogProject}.
- *
- * @returns {string | undefined} A path, derived from the user's workspace, that
- * is located within a Dart Frog project; or `undefined` if no such path could
- * be resolved. The resolution is done in the following order:
- *
- * 1. If the user has a Dart file open in the editor that is under a `routes`
- * directory and within a Dart Frog project, then the path of that file is
- * returned.
- * 2. If the user has a workspace folder open that is within a Dart Frog
- * project, then the path of that workspace folder is returned.
+ * that finds the root of a Dart Frog project from a file path by traversing up
+ * the directory tree. Defaults to {@link nearestParentDartFrogProject}.
+ * @returns {string | undefined} A path, derived from the user's workspace
+ * folders, that is located within a Dart Frog project; or `undefined` if no
+ * such path could be resolved.
  */
-export function resolveDartFrogProjectPathFromWorkspace(
+export function resolveDartFrogProjectPathFromWorkspaceFolders(
+  _nearestParentDartFrogProject: (
+    filePath: string
+  ) => string | undefined = nearestParentDartFrogProject
+): string | undefined {
+  if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
+    const currentWorkspaceFolder = path.normalize(
+      workspace.workspaceFolders[0].uri.fsPath
+    );
+    if (_nearestParentDartFrogProject(currentWorkspaceFolder)) {
+      return currentWorkspaceFolder;
+    }
+  }
+
+  return undefined;
+}
+
+/**
+ * Resolves a path of a file or directory within a Dart Frog project from the
+ * user's active text editor.
+ *
+ * Usually used for when the command is launched from the command palette since
+ * it lacks a defined path.
+ *
+ * @param _nearestParentDartFrogProject A function, used for testing, that
+ * finds the root of a Dart Frog project from a file path by traversing up the
+ * directory tree. Defaults to {@link nearestParentDartFrogProject}.
+ * @returns {string | undefined} A path, derived from the user's active text
+ * editor, that is located within a Dart Frog project; or `undefined` if no such
+ * path could be resolved.
+ */
+export function resolveDartFrogProjectPathFromActiveTextEditor(
   _nearestParentDartFrogProject: (
     filePath: string
   ) => string | undefined = nearestParentDartFrogProject
@@ -205,15 +242,6 @@ export function resolveDartFrogProjectPathFromWorkspace(
       ) {
         return currentTextEditorPath;
       }
-    }
-  }
-
-  if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
-    const currentWorkspaceFolder = path.normalize(
-      workspace.workspaceFolders[0].uri.fsPath
-    );
-    if (_nearestParentDartFrogProject(currentWorkspaceFolder)) {
-      return currentWorkspaceFolder;
     }
   }
 

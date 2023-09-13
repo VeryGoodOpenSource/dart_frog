@@ -11,7 +11,8 @@ import {
   isDartFrogCLIInstalled,
   nearestParentDartFrogProject,
   normalizeRoutePath,
-  resolveDartFrogProjectPathFromWorkspace,
+  resolveDartFrogProjectPathFromActiveTextEditor,
+  resolveDartFrogProjectPathFromWorkspaceFolders,
   suggestInstallingDartFrogCLI,
 } from "../utils";
 
@@ -20,9 +21,11 @@ import {
  *
  * This command is available from the command palette and the context menu.
  *
- * When launching the command from the command palette, the Uri is undefined
- * and the user is prompted to select a valid directory or file to create the
- * route in.
+ * When launching the command from the command palette, the Uri is undefined.
+ * Therefore, the command attempts to resolve a path from the user's active text
+ * editor first and then from the user's workspace folders. If no path can be
+ * resolved from either of those sources, the user is prompted to select a valid
+ * directory or file to create the route in.
  *
  * When launching the command from the context menu, the Uri corresponds to the
  * selected file or directory. Only those directories or dart files under a
@@ -44,12 +47,15 @@ export const newRoute = async (uri: Uri | undefined): Promise<void> => {
 
   let selectedPath;
   if (uri === undefined) {
-    selectedPath = resolveDartFrogProjectPathFromWorkspace();
+    selectedPath = resolveDartFrogProjectPathFromActiveTextEditor();
 
-    if (selectedPath === undefined) {
+    if (!selectedPath) {
+      selectedPath = resolveDartFrogProjectPathFromWorkspaceFolders();
+    }
+    if (!selectedPath) {
       selectedPath = await promptForTargetDirectory();
     }
-    if (selectedPath === undefined) {
+    if (!selectedPath) {
       window.showErrorMessage("Please select a valid directory");
       return;
     }
@@ -58,7 +64,7 @@ export const newRoute = async (uri: Uri | undefined): Promise<void> => {
   }
 
   const dartFrogProjectPath = nearestParentDartFrogProject(selectedPath);
-  if (dartFrogProjectPath === undefined) {
+  if (!dartFrogProjectPath) {
     window.showErrorMessage(
       "No Dart Frog project found in the selected directory"
     );
