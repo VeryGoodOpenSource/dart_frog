@@ -15,7 +15,7 @@
   "homepage": "https://dartfrog.vgv.dev/",
   "license": "MIT",
   "engines": {
-    "vscode": "^1.82.0"
+    "vscode": "^1.79.0"
   },
   "categories": [
     "Snippets",
@@ -159,7 +159,7 @@
     "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "20.6.0",
-    "@types/vscode": "^1.82.0",
+    "@types/vscode": "^1.79.0",
     "@typescript-eslint/eslint-plugin": "^6.7.0",
     "@typescript-eslint/parser": "^6.7.0",
     "@vscode/test-electron": "^2.3.2",
