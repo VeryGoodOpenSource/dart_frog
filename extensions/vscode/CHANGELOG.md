@@ -1,3 +1,8 @@
+# 0.2.1
+
+- docs(vscode): update README.md ([#1031](https://github.com/VeryGoodOpenSource/dart_frog/pull/1031))
+- chore(vscode): rollback engines.vscode version ([#1035](https://github.com/VeryGoodOpenSource/dart_frog/pull/1035))
+
 # 0.2.0
 
 - refactor: use string over String ([#865](https://github.com/VeryGoodOpenSource/dart_frog/pull/865))
