@@ -30,6 +30,30 @@ Response onRequest(RequestContext context, String id) {
 `;
 
 /**
+ * The content of a route file with an async route.
+ */
+const asyncRouteContent = `
+import 'package:dart_frog/dart_frog.dart';
+
+Future<Response> onRequest(RequestContext context, String id) async {
+  return Response(body: 'Welcome to Dart Frog!');
+}
+
+`;
+
+/**
+ * The content of a route file with a possibly async route.
+ */
+const maybeAsyncRouteContent = `
+import 'package:dart_frog/dart_frog.dart';
+
+FutureOr<Response> onRequest(RequestContext context, String id) async {
+  return Response(body: 'Welcome to Dart Frog!');
+}
+
+`;
+
+/**
  * The content of something that looks like a route file but isn't.
  */
 const invalidRouteContent = `
@@ -189,7 +213,7 @@ suite("RunOnRequestCodeLensProvider", () => {
 
       const range = document.getWordRangeAtPosition(
         new Position(3, 0),
-        /Response onRequest\(RequestContext context\) {/
+        provider.regex
       )!;
 
       sinon.assert.match(codeLens, new CodeLens(range));
@@ -216,7 +240,61 @@ suite("RunOnRequestCodeLensProvider", () => {
 
       const range = document.getWordRangeAtPosition(
         new Position(3, 0),
-        /Response onRequest\(RequestContext context, String id\) {/
+        provider.regex
+      )!;
+
+      sinon.assert.match(codeLens, new CodeLens(range));
+    });
+
+    test("returns the correct CodeLenses on an async route", async () => {
+      const content = asyncRouteContent;
+      const textDocument = await workspace.openTextDocument({
+        language: "text",
+        content,
+      });
+      document.getText = textDocument.getText.bind(textDocument);
+      document.positionAt = textDocument.positionAt.bind(textDocument);
+      document.lineAt = textDocument.lineAt.bind(textDocument);
+      document.getWordRangeAtPosition =
+        textDocument.getWordRangeAtPosition.bind(textDocument);
+
+      const provider = new RunOnRequestCodeLensProvider();
+      const result = await provider.provideCodeLenses(document);
+
+      assert.strictEqual(result.length, 1);
+
+      const codeLens = result[0];
+
+      const range = document.getWordRangeAtPosition(
+        new Position(3, 0),
+        provider.regex
+      )!;
+
+      sinon.assert.match(codeLens, new CodeLens(range));
+    });
+
+    test("returns the correct CodeLenses on a possibly async route", async () => {
+      const content = maybeAsyncRouteContent;
+      const textDocument = await workspace.openTextDocument({
+        language: "text",
+        content,
+      });
+      document.getText = textDocument.getText.bind(textDocument);
+      document.positionAt = textDocument.positionAt.bind(textDocument);
+      document.lineAt = textDocument.lineAt.bind(textDocument);
+      document.getWordRangeAtPosition =
+        textDocument.getWordRangeAtPosition.bind(textDocument);
+
+      const provider = new RunOnRequestCodeLensProvider();
+      const result = await provider.provideCodeLenses(document);
+
+      assert.strictEqual(result.length, 1);
+
+      const codeLens = result[0];
+
+      const range = document.getWordRangeAtPosition(
+        new Position(3, 0),
+        provider.regex
       )!;
 
       sinon.assert.match(codeLens, new CodeLens(range));
@@ -390,7 +468,61 @@ suite("DebugOnRequestCodeLensProvider", () => {
 
       const range = document.getWordRangeAtPosition(
         new Position(3, 0),
-        /Response onRequest\(RequestContext context\) {/
+        provider.regex
+      )!;
+
+      sinon.assert.match(codeLens, new CodeLens(range));
+    });
+
+    test("returns the correct CodeLenses on an async route", async () => {
+      const content = asyncRouteContent;
+      const textDocument = await workspace.openTextDocument({
+        language: "text",
+        content,
+      });
+      document.getText = textDocument.getText.bind(textDocument);
+      document.positionAt = textDocument.positionAt.bind(textDocument);
+      document.lineAt = textDocument.lineAt.bind(textDocument);
+      document.getWordRangeAtPosition =
+        textDocument.getWordRangeAtPosition.bind(textDocument);
+
+      const provider = new DebugOnRequestCodeLensProvider();
+      const result = await provider.provideCodeLenses(document);
+
+      assert.strictEqual(result.length, 1);
+
+      const codeLens = result[0];
+
+      const range = document.getWordRangeAtPosition(
+        new Position(3, 0),
+        provider.regex
+      )!;
+
+      sinon.assert.match(codeLens, new CodeLens(range));
+    });
+
+    test("returns the correct CodeLenses on a possibly async route", async () => {
+      const content = maybeAsyncRouteContent;
+      const textDocument = await workspace.openTextDocument({
+        language: "text",
+        content,
+      });
+      document.getText = textDocument.getText.bind(textDocument);
+      document.positionAt = textDocument.positionAt.bind(textDocument);
+      document.lineAt = textDocument.lineAt.bind(textDocument);
+      document.getWordRangeAtPosition =
+        textDocument.getWordRangeAtPosition.bind(textDocument);
+
+      const provider = new DebugOnRequestCodeLensProvider();
+      const result = await provider.provideCodeLenses(document);
+
+      assert.strictEqual(result.length, 1);
+
+      const codeLens = result[0];
+
+      const range = document.getWordRangeAtPosition(
+        new Position(3, 0),
+        provider.regex
       )!;
 
       sinon.assert.match(codeLens, new CodeLens(range));
@@ -417,7 +549,7 @@ suite("DebugOnRequestCodeLensProvider", () => {
 
       const range = document.getWordRangeAtPosition(
         new Position(3, 0),
-        /Response onRequest\(RequestContext context, String id\) {/
+        provider.regex
       )!;
 
       sinon.assert.match(codeLens, new CodeLens(range));
