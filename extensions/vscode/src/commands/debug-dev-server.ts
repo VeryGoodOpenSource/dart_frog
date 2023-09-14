@@ -173,7 +173,7 @@ async function detachFromDebugSession(applicationId: string): Promise<void> {
  * debug session.
  *
  * This may happen if the user manually detaches from the debug session, or if
- * the application is exitted prematurely.
+ * the application is exited prematurely.
  *
  * @param registry The {@link DartFrogApplicationRegistry} to listen to.
  * @param applicationId The application to wait for.
