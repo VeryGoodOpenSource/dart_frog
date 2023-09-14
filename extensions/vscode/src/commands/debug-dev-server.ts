@@ -1,4 +1,9 @@
-import { DartFrogApplication, DartFrogDaemon } from "../daemon";
+import {
+  DartFrogApplication,
+  DartFrogApplicationRegistry,
+  DartFrogApplicationRegistryEventEmitterTypes,
+  DartFrogDaemon,
+} from "../daemon";
 import { Uri, commands, debug, extensions, window } from "vscode";
 import {
   isDartFrogCLIInstalled,
@@ -113,6 +118,19 @@ export const debugDevServer = async (
     }
   }
 
+  onApplicationExited(daemon.applicationRegistry, application.id!).then(
+    (application) => {
+      const debugSession = debug.activeDebugSession;
+      if (
+        debugSession &&
+        debugSession.configuration.source === "dart-frog" &&
+        debugSession.configuration.applicationId === application.id
+      ) {
+        debugSession.customRequest("disconnect");
+      }
+    }
+  );
+
   await attachToDebugSession(application);
 };
 
@@ -135,8 +153,36 @@ async function attachToDebugSession(
         request: "attach",
         type: "dart",
         vmServiceUri: application.vmServiceUri,
+        source: "dart-frog",
         applicationId: application.id,
       });
     }
   );
+}
+
+/**
+ * Waits for a {@link DartFrogApplication} to be registered by a
+ * {@link start} request.
+ *
+ * @param registry The {@link DartFrogApplicationRegistry} to listen to.
+ * @param start The start daemon request to listen for.
+ * @returns A promise that resolves whit the application that has been
+ * registered by the {@link start} daemon request.
+ */
+function onApplicationExited(
+  registry: DartFrogApplicationRegistry,
+  applicationId: string
+): Promise<DartFrogApplication> {
+  return new Promise<DartFrogApplication>((resolve) => {
+    const listener = (application: DartFrogApplication) => {
+      if (application.id === applicationId) {
+        registry.off(
+          DartFrogApplicationRegistryEventEmitterTypes.remove,
+          listener
+        );
+        resolve(application);
+      }
+    };
+    registry.on(DartFrogApplicationRegistryEventEmitterTypes.remove, listener);
+  });
 }
