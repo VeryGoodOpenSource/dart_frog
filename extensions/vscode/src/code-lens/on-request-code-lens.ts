@@ -77,7 +77,7 @@ abstract class RegularExpressionCodeLensProvider extends ConfigurableCodeLensPro
 abstract class OnRequestCodeLensProvider extends RegularExpressionCodeLensProvider {
   readonly regex: RegExp =
     // eslint-disable-next-line max-len
-    /(Response|Future<Response>|FutureOr<Response>)\s*onRequest\(RequestContext .*?\)\s*(?:async)?\s*{/g;
+    /(Response|Future<Response>|FutureOr<Response>)\s*onRequest\(.*?/g;
 
   public provideCodeLenses(document: TextDocument): ProviderResult<CodeLens[]> {
     if (document.languageId !== "dart") {
