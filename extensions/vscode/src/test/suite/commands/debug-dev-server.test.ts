@@ -860,7 +860,7 @@ suite("debug-dev-server command", () => {
     });
   });
 
-  test("does not start debug session when options application is not registered", async () => {
+  test("does not start debug session when application is not registered", async () => {
     daemon.applicationRegistry.all.returns([application1]);
 
     await command.debugDevServer({
