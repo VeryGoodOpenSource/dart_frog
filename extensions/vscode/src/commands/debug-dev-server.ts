@@ -119,16 +119,7 @@ export const debugDevServer = async (
   }
 
   onApplicationExited(daemon.applicationRegistry, application.id!).then(
-    (application) => {
-      const debugSession = debug.activeDebugSession;
-      if (
-        debugSession &&
-        debugSession.configuration.source === "dart-frog" &&
-        debugSession.configuration.applicationId === application.id
-      ) {
-        debugSession.customRequest("disconnect");
-      }
-    }
+    (application) => detachFromDebugSession(application.id!)
   );
 
   await attachToDebugSession(application);
@@ -161,13 +152,28 @@ async function attachToDebugSession(
 }
 
 /**
- * Waits for a {@link DartFrogApplication} to be registered by a
- * {@link start} request.
+ * Detaches from the current Dart debug session.
+ *
+ * @param applicationId The application attached to the debug session to.
+ */
+async function detachFromDebugSession(applicationId: string): Promise<void> {
+  const debugSession = debug.activeDebugSession;
+  if (
+    debugSession &&
+    debugSession.configuration.source === "dart-frog" &&
+    debugSession.configuration.applicationId === applicationId
+  ) {
+    debugSession.customRequest("disconnect");
+  }
+}
+
+/**
+ * Waits for a {@link DartFrogApplication} to be deregistered from the given
+ * {@link DartFrogApplicationRegistry}.
  *
  * @param registry The {@link DartFrogApplicationRegistry} to listen to.
- * @param start The start daemon request to listen for.
- * @returns A promise that resolves whit the application that has been
- * registered by the {@link start} daemon request.
+ * @param applicationId The application to wait for.
+ * @returns A promise that resolves when the application has been deregistered.
  */
 function onApplicationExited(
   registry: DartFrogApplicationRegistry,
