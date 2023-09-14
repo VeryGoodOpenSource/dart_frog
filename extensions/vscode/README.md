@@ -1,6 +1,6 @@
 [![Dart Frog Logo][logo_black]][dart_frog_link_light]
 
-> ✏️ Note: The extension is currently in the early stages, if you exprience issues or have a recommendation we are eager to hear from you [here](https://github.com/VeryGoodOpenSource/dart_frog/issues/new/choose)!
+> ✏️ Note: The extension is currently in the early stages, if you experience issues or have a recommendation we are eager to hear from you [here](https://github.com/VeryGoodOpenSource/dart_frog/issues/new/choose)!
 
 This is the [Dart Frog](https://dartfrog.vgv.dev/) [VS Code](https://code.visualstudio.com/) extension, which provides tools for effectively managing Dart Frog projects.
 
