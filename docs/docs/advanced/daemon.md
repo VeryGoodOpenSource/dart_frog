@@ -40,6 +40,10 @@ $ dart_frog daemon
 
 The `id` field on the request is used to match the request with the response. As the client sets it arbitrarily, the client is responsible for ensuring that all request ids are unique.
 
+:::warning
+The requests should be strictly in the format `[{...}]`. Therefore, sending a request with any of these formats: `[{...},]`, `[{<...>}, {<...>}]` or `[{<...>}]\n[{<...>}]` is problematic.
+:::
+
 ---
 
 # Domains
