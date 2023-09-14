@@ -118,7 +118,7 @@ export const debugDevServer = async (
     }
   }
 
-  onApplicationExited(daemon.applicationRegistry, application.id!).then(
+  onApplicationDeregistered(daemon.applicationRegistry, application.id!).then(
     (application) => detachFromDebugSession(application.id!)
   );
 
@@ -175,7 +175,7 @@ async function detachFromDebugSession(applicationId: string): Promise<void> {
  * @param applicationId The application to wait for.
  * @returns A promise that resolves when the application has been deregistered.
  */
-function onApplicationExited(
+function onApplicationDeregistered(
   registry: DartFrogApplicationRegistry,
   applicationId: string
 ): Promise<DartFrogApplication> {
