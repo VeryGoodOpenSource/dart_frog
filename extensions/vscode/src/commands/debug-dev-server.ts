@@ -158,6 +158,7 @@ async function attachToDebugSession(
  */
 async function detachFromDebugSession(applicationId: string): Promise<void> {
   const debugSession = debug.activeDebugSession;
+
   if (
     debugSession &&
     debugSession.configuration.source === "dart-frog" &&
@@ -187,6 +188,7 @@ function onApplicationDeregistered(
           listener
         );
         resolve(application);
+        console.log(`@@@ Resolve onApplicationDeregistered`);
       }
     };
     registry.on(DartFrogApplicationRegistryEventEmitterTypes.remove, listener);
