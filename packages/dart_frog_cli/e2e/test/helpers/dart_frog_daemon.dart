@@ -178,7 +178,6 @@ class DaemonStdioHelper {
     return responseMessage as DaemonResponse;
   }
 
-
   /// Sends two daemon requests to the daemon via its stdin.
   ///
   /// Returns a tuple with the responses or throws a
