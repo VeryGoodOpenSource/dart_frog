@@ -263,7 +263,7 @@ void main() {
             'applicationId': project1Server1Id,
           },
         ),
-      ));
+      ),);
 
       expect(response1.isSuccess, isTrue);
       expect(response1.result!['exitCode'], equals(0));

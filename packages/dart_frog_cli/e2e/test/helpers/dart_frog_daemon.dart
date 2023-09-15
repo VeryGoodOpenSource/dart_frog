@@ -109,7 +109,6 @@ class DaemonStdioHelper {
     Duration timeout = const Duration(seconds: 1),
   }) async {
     messageMatchers.add(messageMatcher);
-    final index = messageMatchers.length - 1;
 
     // Check if there is already a matching message in the cache.
     final existingItem = _pastMessagesCache.indexed.where((pair) {
