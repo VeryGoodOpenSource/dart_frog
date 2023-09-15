@@ -173,7 +173,7 @@ class DevServerDomain extends DomainBase {
       );
     }
 
-    final runner = _devServerRunners[applicationId];
+    final runner = _devServerRunners.remove(applicationId);
     if (runner == null) {
       return DaemonResponse.error(
         id: request.id,
@@ -187,8 +187,6 @@ class DevServerDomain extends DomainBase {
     try {
       await runner.stop();
 
-      _devServerRunners.remove(applicationId);
-
       final exitCode = await runner.exitCode;
 
       return DaemonResponse.success(
@@ -199,11 +197,16 @@ class DevServerDomain extends DomainBase {
         },
       );
     } catch (e) {
+      if (!runner.isCompleted) {
+        _devServerRunners[applicationId] = runner;
+      }
+
       return DaemonResponse.error(
         id: request.id,
         error: {
           'applicationId': applicationId,
           'message': e.toString(),
+          'finished': runner.isCompleted,
         },
       );
     }
