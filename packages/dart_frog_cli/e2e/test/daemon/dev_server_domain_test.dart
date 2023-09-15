@@ -139,7 +139,7 @@ void main() {
       }
     });
 
-    test(skip: true, 'start second dev server on project 1', () async {
+    test('start second dev server on project 1', () async {
       final response = await daemonStdio.sendDaemonRequest(
         DaemonRequest(
           id: '${++requestCount}',
@@ -169,7 +169,7 @@ void main() {
       }
     });
 
-    testServer(skip: true, 'GET / on project 1 server 1', (host) async {
+    testServer('GET / on project 1 server 1', (host) async {
       final response = await http.get(Uri.parse(host));
       expect(response.statusCode, equals(HttpStatus.ok));
       expect(response.body, equals('Welcome to Dart Frog!'));
@@ -180,7 +180,18 @@ void main() {
       );
     });
 
-    testServer(skip: true, port: project2ServerPort, 'GET / on project 2',
+    testServer(port: project2ServerPort, 'GET / on project 2', (host) async {
+      final response = await http.get(Uri.parse(host));
+      expect(response.statusCode, equals(HttpStatus.ok));
+      expect(response.body, equals('Welcome to Dart Frog!'));
+      expect(response.headers, contains('date'));
+      expect(
+        response.headers,
+        containsPair('content-type', 'text/plain; charset=utf-8'),
+      );
+    });
+
+    testServer(port: project1Server2Port, 'GET / on project 1 server 2',
         (host) async {
       final response = await http.get(Uri.parse(host));
       expect(response.statusCode, equals(HttpStatus.ok));
@@ -192,21 +203,7 @@ void main() {
       );
     });
 
-    testServer(
-        skip: true,
-        port: project1Server2Port,
-        'GET / on project 1 server 2', (host) async {
-      final response = await http.get(Uri.parse(host));
-      expect(response.statusCode, equals(HttpStatus.ok));
-      expect(response.body, equals('Welcome to Dart Frog!'));
-      expect(response.headers, contains('date'));
-      expect(
-        response.headers,
-        containsPair('content-type', 'text/plain; charset=utf-8'),
-      );
-    });
-
-    test(skip: true, 'modify files on project 2', () async {
+    test('modify files on project 2', () async {
       final routesDirectory = Directory(
         path.join(
           projectDirectory2.path,
@@ -221,7 +218,7 @@ void main() {
       expect(fileAt('new_route.dart', on: routesDirectory), exists);
     });
 
-    test(skip: true, 'reload project 2', () async {
+    test('reload project 2', () async {
       final response = await daemonStdio.sendDaemonRequest(
         DaemonRequest(
           id: '${++requestCount}',
@@ -236,10 +233,8 @@ void main() {
       expect(response.isSuccess, isTrue);
     });
 
-    testServer(
-        skip: true,
-        port: project2ServerPort,
-        'GET /new_route on project 2', (host) async {
+    testServer(port: project2ServerPort, 'GET /new_route on project 2',
+        (host) async {
       final response = await http.get(Uri.parse(host));
       expect(response.statusCode, equals(HttpStatus.ok));
       expect(response.headers, contains('date'));
