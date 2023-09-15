@@ -39,16 +39,17 @@ class DaemonStdioHelper {
 
   var _pastMessagesCache = <String>[];
 
-  Matcher? messageMatcher;
-  Completer<String>? messageCompleter;
+  List<Matcher> messageMatchers = [];
+  List<Completer<String>> messageCompleters = [];
 
   void _handleStdoutLine(String line) {
-    final messageMatcher = this.messageMatcher;
+    final messageMatchers = this.messageMatchers;
 
     stdout.writeln('::debug:: <- $line');
-    if (messageMatcher != null) {
+
+    for (final (index, messageMatcher) in messageMatchers.indexed) {
       if (messageMatcher.matches(line, {})) {
-        messageCompleter?.complete(line);
+        messageCompleters[index].complete(line);
         _pastMessagesCache.clear();
         return;
       }
@@ -57,9 +58,9 @@ class DaemonStdioHelper {
     _pastMessagesCache.add(line);
   }
 
-  void _clean() {
-    messageMatcher = null;
-    messageCompleter = null;
+  void _clean(Matcher messageMatcher, Completer<String>? completer) {
+    messageMatchers.remove(messageMatcher);
+    messageCompleters.remove(completer);
   }
 
   /// Awaits for a daemon event with the given [methodKey].
@@ -107,9 +108,8 @@ class DaemonStdioHelper {
     Matcher messageMatcher, {
     Duration timeout = const Duration(seconds: 1),
   }) async {
-    assert(this.messageMatcher == null, 'Already awaiting for a message');
-
-    this.messageMatcher = messageMatcher;
+    messageMatchers.add(messageMatcher);
+    final index = messageMatchers.length - 1;
 
     // Check if there is already a matching message in the cache.
     final existingItem = _pastMessagesCache.indexed.where((pair) {
@@ -121,7 +121,7 @@ class DaemonStdioHelper {
       // remove all the previous messages from the cache and
       // return the matching message.
       _pastMessagesCache = _pastMessagesCache.skip(itemIndex + 1).toList();
-      _clean();
+      _clean(messageMatcher, null);
       return itemValue;
     }
 
@@ -129,13 +129,15 @@ class DaemonStdioHelper {
     // create a completer and wait for the message to be received
     // or for the timeout to expire.
 
-    final messageCompleter = this.messageCompleter = Completer<String>();
+    final messageCompleter = Completer<String>();
+
+    messageCompleters.add(messageCompleter);
     final result = await Future.any(<Future<String?>>[
       messageCompleter.future,
       Future<String?>.delayed(timeout),
     ]);
 
-    _clean();
+    _clean(messageMatcher, messageCompleter);
 
     if (result == null) {
       throw TimeoutException('Timed out waiting for message', timeout);
@@ -174,6 +176,57 @@ class DaemonStdioHelper {
     );
 
     return responseMessage as DaemonResponse;
+  }
+
+
+  /// Sends two daemon requests to the daemon via its stdin.
+  ///
+  /// Returns a tuple with the responses or throws a
+  /// [TimeoutException] if the timeout expires.
+  Future<(DaemonResponse, DaemonResponse)> sendStaggeredDaemonRequest(
+    (DaemonRequest, DaemonRequest) requests, {
+    Duration timeout = const Duration(seconds: 10),
+  }) async {
+    final request1 = requests.$1;
+    final request2 = requests.$2;
+
+    final json1 = jsonEncode(request1.toJson());
+    final json2 = jsonEncode(request2.toJson());
+
+    stdout.writeln('::debug:: -> [$json1]');
+    daemonProcess.stdin.writeln('[$json1]');
+    stdout.writeln('::debug:: -> [$json2]');
+    daemonProcess.stdin.writeln('[$json2]');
+    await daemonProcess.stdin.flush();
+
+    final wrappedMatcher1 = isA<DaemonResponse>().having(
+      (e) => e.id,
+      'id is ${request1.id}',
+      request1.id,
+    );
+
+    final wrappedMatcher2 = isA<DaemonResponse>().having(
+      (e) => e.id,
+      'id is ${request2.id}',
+      request2.id,
+    );
+
+    final responseMessage1 = awaitForDaemonMessage(
+      wrappedMatcher1,
+      timeout: timeout,
+    );
+
+    final responseMessage2 = awaitForDaemonMessage(
+      wrappedMatcher2,
+      timeout: timeout,
+    );
+
+    final result = await Future.wait([responseMessage1, responseMessage2]);
+
+    return (
+      result.first as DaemonResponse,
+      result.last as DaemonResponse,
+    );
   }
 
   void dispose() {

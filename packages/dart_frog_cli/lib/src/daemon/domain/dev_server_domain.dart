@@ -187,8 +187,6 @@ class DevServerDomain extends DomainBase {
     try {
       await runner.stop();
 
-      _devServerRunners.remove(applicationId);
-
       final exitCode = await runner.exitCode;
 
       return DaemonResponse.success(
@@ -202,6 +200,7 @@ class DevServerDomain extends DomainBase {
       if (!runner.isCompleted) {
         _devServerRunners[applicationId] = runner;
       }
+
       return DaemonResponse.error(
         id: request.id,
         error: {
