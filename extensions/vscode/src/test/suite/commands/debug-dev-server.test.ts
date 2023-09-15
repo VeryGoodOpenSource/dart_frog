@@ -1,8 +1,11 @@
 const sinon = require("sinon");
 var proxyquire = require("proxyquire");
 
+import {
+  DartFrogApplication,
+  DartFrogApplicationRegistryEventEmitterTypes,
+} from "../../../daemon";
 import { afterEach, beforeEach } from "mocha";
-import { DartFrogApplication } from "../../../daemon";
 import { Uri } from "vscode";
 
 suite("debug-dev-server command", () => {
@@ -38,6 +41,7 @@ suite("debug-dev-server command", () => {
       debug: {
         startDebugging: sinon.stub(),
         activeDebugSession: undefined,
+        onDidTerminateDebugSession: sinon.stub(),
       },
     };
     dartCodeExtension = sinon.stub();
@@ -66,6 +70,8 @@ suite("debug-dev-server command", () => {
     daemon.applicationRegistry.get = sinon.stub();
     daemon.applicationRegistry.get.returns();
     daemon.isReady = true;
+    daemon.applicationRegistry.on = sinon.stub().resolves();
+    daemon.applicationRegistry.off = sinon.stub().resolves();
 
     command = proxyquire("../../../commands/debug-dev-server", {
       vscode: vscodeStub,
@@ -511,6 +517,7 @@ suite("debug-dev-server command", () => {
           request: "attach",
           type: "dart",
           vmServiceUri: application1.vmServiceUri,
+          source: "dart-frog",
           applicationId: application1.id,
         }
       );
@@ -535,6 +542,7 @@ suite("debug-dev-server command", () => {
           request: "attach",
           type: "dart",
           vmServiceUri: application1.vmServiceUri,
+          source: "dart-frog",
           applicationId: application1.id,
         }
       );
@@ -545,6 +553,7 @@ suite("debug-dev-server command", () => {
       utilsStub.quickPickApplication.resolves(application1);
       vscodeStub.debug.activeDebugSession = {
         configuration: {
+          source: "dart-frog",
           applicationId: application1.id,
         },
       };
@@ -566,13 +575,292 @@ suite("debug-dev-server command", () => {
           request: "attach",
           type: "dart",
           vmServiceUri: application1.vmServiceUri,
+          source: "dart-frog",
           applicationId: application1.id,
         }
       );
     });
   });
 
-  test("does not start debug session when options application is not registered", async () => {
+  suite("stops debug session", () => {
+    beforeEach(() => {
+      daemon.applicationRegistry.all.returns([application1]);
+    });
+
+    test("when the application exists prematurely", async () => {
+      await command.debugDevServer();
+
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      await progressFunction();
+
+      vscodeStub.debug.activeDebugSession = {
+        configuration: {
+          name: `Dart Frog: Development Server (${application1.address})`,
+          request: "attach",
+          type: "dart",
+          vmServiceUri: application1.vmServiceUri,
+          source: "dart-frog",
+          applicationId: application1.id,
+        },
+        customRequest: sinon.stub(),
+      };
+
+      const deregistrationListener = daemon.applicationRegistry.on
+        .withArgs(
+          DartFrogApplicationRegistryEventEmitterTypes.remove,
+          sinon.match.any
+        )
+        .getCall(0).args[1];
+      deregistrationListener(application1);
+
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      sinon.assert.calledOnceWithExactly(
+        vscodeStub.debug.activeDebugSession.customRequest,
+        "disconnect"
+      );
+    });
+
+    test("removes deregistration listener", async () => {
+      await command.debugDevServer();
+
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      await progressFunction();
+
+      vscodeStub.debug.activeDebugSession = {
+        configuration: {
+          name: `Dart Frog: Development Server (${application1.address})`,
+          request: "attach",
+          type: "dart",
+          vmServiceUri: application1.vmServiceUri,
+          source: "dart-frog",
+          applicationId: application1.id,
+        },
+        customRequest: sinon.stub(),
+      };
+
+      const deregistrationListener = daemon.applicationRegistry.on
+        .withArgs(
+          DartFrogApplicationRegistryEventEmitterTypes.remove,
+          sinon.match.any
+        )
+        .getCall(0).args[1];
+      deregistrationListener(application1);
+
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      sinon.assert.calledOnceWithExactly(
+        daemon.applicationRegistry.off,
+        DartFrogApplicationRegistryEventEmitterTypes.remove,
+        deregistrationListener
+      );
+    });
+  });
+
+  suite("does not stop debug session", () => {
+    beforeEach(() => {
+      daemon.applicationRegistry.all.returns([application1]);
+    });
+
+    test("when the application exits prematurely but the debug session is not a Dart Frog debug session", async () => {
+      await command.debugDevServer();
+
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      await progressFunction();
+
+      vscodeStub.debug.activeDebugSession = {
+        configuration: {
+          name: `Dart Frog: Development Server (${application1.address})`,
+          request: "attach",
+          type: "dart",
+          vmServiceUri: application1.vmServiceUri,
+          source: "not-dart-frog",
+          applicationId: application1.id,
+        },
+        customRequest: sinon.stub(),
+      };
+
+      const deregistrationListener = daemon.applicationRegistry.on
+        .withArgs(
+          DartFrogApplicationRegistryEventEmitterTypes.remove,
+          sinon.match.any
+        )
+        .getCall(0).args[1];
+      deregistrationListener(application1);
+
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      sinon.assert.neverCalledWith(
+        vscodeStub.debug.activeDebugSession.customRequest,
+        "disconnect"
+      );
+    });
+
+    test("when the application exits prematurely but the application identifier doesn't match", async () => {
+      daemon.applicationRegistry.all.returns([application1]);
+
+      await command.debugDevServer();
+
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      await progressFunction();
+
+      vscodeStub.debug.activeDebugSession = {
+        configuration: {
+          name: `Dart Frog: Development Server (${application1.address})`,
+          request: "attach",
+          type: "dart",
+          vmServiceUri: application1.vmServiceUri,
+          source: "not-dart-frog",
+          applicationId: `not-${application1.id}`,
+        },
+        customRequest: sinon.stub(),
+      };
+
+      const deregistrationListener = daemon.applicationRegistry.on
+        .withArgs(
+          DartFrogApplicationRegistryEventEmitterTypes.remove,
+          sinon.match.any
+        )
+        .getCall(0).args[1];
+      deregistrationListener(application1);
+
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      sinon.assert.neverCalledWith(
+        vscodeStub.debug.activeDebugSession.customRequest,
+        "disconnect"
+      );
+    });
+  });
+
+  suite("deregistration listener", () => {
+    beforeEach(() => {
+      daemon.applicationRegistry.all.returns([application1]);
+    });
+
+    test("is removed when the Dart Frog debug session is manually detacched", async () => {
+      await command.debugDevServer();
+
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      await progressFunction();
+
+      vscodeStub.debug.activeDebugSession = {
+        configuration: {
+          name: `Dart Frog: Development Server (${application1.address})`,
+          request: "attach",
+          type: "dart",
+          vmServiceUri: application1.vmServiceUri,
+          source: "dart-frog",
+          applicationId: application1.id,
+        },
+        customRequest: sinon.stub(),
+      };
+
+      const deregistrationListener = daemon.applicationRegistry.on
+        .withArgs(
+          DartFrogApplicationRegistryEventEmitterTypes.remove,
+          sinon.match.any
+        )
+        .getCall(0).args[1];
+
+      const onDidTerminateDebugSessionCallback =
+        vscodeStub.debug.onDidTerminateDebugSession.getCall(0).args[0];
+      onDidTerminateDebugSessionCallback(vscodeStub.debug.activeDebugSession);
+
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      sinon.assert.calledOnceWithExactly(
+        daemon.applicationRegistry.off,
+        DartFrogApplicationRegistryEventEmitterTypes.remove,
+        deregistrationListener
+      );
+    });
+
+    test("is not removed when a non Dart Frog debug session is manually detacched", async () => {
+      await command.debugDevServer();
+
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      await progressFunction();
+
+      vscodeStub.debug.activeDebugSession = {
+        configuration: {
+          name: `Dart Frog: Development Server (${application1.address})`,
+          request: "attach",
+          type: "dart",
+          vmServiceUri: application1.vmServiceUri,
+          source: "not-dart-frog",
+          applicationId: application1.id,
+        },
+        customRequest: sinon.stub(),
+      };
+
+      const deregistrationListener = daemon.applicationRegistry.on
+        .withArgs(
+          DartFrogApplicationRegistryEventEmitterTypes.remove,
+          sinon.match.any
+        )
+        .getCall(0).args[1];
+
+      const onDidTerminateDebugSessionCallback =
+        vscodeStub.debug.onDidTerminateDebugSession.getCall(0).args[0];
+      onDidTerminateDebugSessionCallback(vscodeStub.debug.activeDebugSession);
+
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      sinon.assert.neverCalledWith(
+        daemon.applicationRegistry.off,
+        DartFrogApplicationRegistryEventEmitterTypes.remove,
+        deregistrationListener
+      );
+    });
+
+    test("is not removed when the debug session with a different application identifier is manually detacched", async () => {
+      await command.debugDevServer();
+
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      await progressFunction();
+
+      vscodeStub.debug.activeDebugSession = {
+        configuration: {
+          name: `Dart Frog: Development Server (${application1.address})`,
+          request: "attach",
+          type: "dart",
+          vmServiceUri: application1.vmServiceUri,
+          source: "dart-frog",
+          applicationId: `not-${application1.id}`,
+        },
+        customRequest: sinon.stub(),
+      };
+
+      const deregistrationListener = daemon.applicationRegistry.on
+        .withArgs(
+          DartFrogApplicationRegistryEventEmitterTypes.remove,
+          sinon.match.any
+        )
+        .getCall(0).args[1];
+
+      const onDidTerminateDebugSessionCallback =
+        vscodeStub.debug.onDidTerminateDebugSession.getCall(0).args[0];
+      onDidTerminateDebugSessionCallback(vscodeStub.debug.activeDebugSession);
+
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      sinon.assert.neverCalledWith(
+        daemon.applicationRegistry.off,
+        DartFrogApplicationRegistryEventEmitterTypes.remove,
+        deregistrationListener
+      );
+    });
+  });
+
+  test("does not start debug session when application is not registered", async () => {
     daemon.applicationRegistry.all.returns([application1]);
 
     await command.debugDevServer({
