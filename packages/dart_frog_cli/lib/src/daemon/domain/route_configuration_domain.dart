@@ -175,7 +175,7 @@ class RouteConfigurationDomain extends DomainBase {
       );
     }
 
-    final watcher = _routeConfigurationWatchers[watcherId];
+    final watcher = _routeConfigurationWatchers.remove(watcherId);
     if (watcher == null) {
       return DaemonResponse.error(
         id: request.id,
@@ -189,8 +189,6 @@ class RouteConfigurationDomain extends DomainBase {
     try {
       await watcher.stop();
 
-      _routeConfigurationWatchers.remove(watcherId);
-
       final exitCode = await watcher.exitCode;
 
       return DaemonResponse.success(
@@ -201,11 +199,15 @@ class RouteConfigurationDomain extends DomainBase {
         },
       );
     } catch (e) {
+      if (!watcher.isCompleted) {
+        _routeConfigurationWatchers[watcherId] = watcher;
+      }
       return DaemonResponse.error(
         id: request.id,
         error: {
           'watcherId': watcherId,
           'message': e.toString(),
+          'finished': watcher.isCompleted,
         },
       );
     }
