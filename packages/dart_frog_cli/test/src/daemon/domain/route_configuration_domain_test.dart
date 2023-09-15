@@ -293,7 +293,39 @@ void main() {
           equals(
             const DaemonResponse.error(
               id: '12',
-              error: {'watcherId': 'id', 'message': 'error'},
+              error: {
+                'watcherId': 'id',
+                'message': 'error',
+                'finished': true,
+              },
+            ),
+          ),
+        );
+      });
+
+      test('on non completed dev server throw', () async {
+        when(() => watcher.stop()).thenThrow('error');
+        when(() => watcher.isCompleted).thenReturn(false);
+
+        expect(
+          await domain.handleRequest(
+            const DaemonRequest(
+              id: '12',
+              domain: 'route_configuration',
+              method: 'watcherStop',
+              params: {
+                'watcherId': 'id',
+              },
+            ),
+          ),
+          equals(
+            const DaemonResponse.error(
+              id: '12',
+              error: {
+                'watcherId': 'id',
+                'message': 'error',
+                'finished': false,
+              },
             ),
           ),
         );

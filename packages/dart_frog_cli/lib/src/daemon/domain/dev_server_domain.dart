@@ -206,6 +206,7 @@ class DevServerDomain extends DomainBase {
         error: {
           'applicationId': applicationId,
           'message': e.toString(),
+          'finished': runner.isCompleted,
         },
       );
     }

@@ -207,6 +207,7 @@ class RouteConfigurationDomain extends DomainBase {
         error: {
           'watcherId': watcherId,
           'message': e.toString(),
+          'finished': watcher.isCompleted,
         },
       );
     }
