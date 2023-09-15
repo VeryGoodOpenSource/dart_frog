@@ -235,20 +235,32 @@ void main() {
       );
     });
 
-    test('stop watcher', () async {
-      final response = await daemonStdio.sendDaemonRequest(
-        DaemonRequest(
-          id: '${requestCount++}',
-          domain: 'route_configuration',
-          method: 'watcherStop',
-          params: {
-            'watcherId': projectWatcherId,
-          },
+    test('staggered-stop watcher', () async {
+      final (response1, response2) =
+          await daemonStdio.sendStaggeredDaemonRequest(
+        (
+          DaemonRequest(
+            id: '${requestCount++}',
+            domain: 'route_configuration',
+            method: 'watcherStop',
+            params: {
+              'watcherId': projectWatcherId,
+            },
+          ),
+          DaemonRequest(
+            id: '${requestCount++}',
+            domain: 'route_configuration',
+            method: 'watcherStop',
+            params: {
+              'watcherId': projectWatcherId,
+            },
+          ),
         ),
       );
 
-      expect(response.isSuccess, isTrue);
-      expect(response.result?['exitCode'], equals(0));
+      expect(response1.isSuccess, isTrue);
+      expect(response1.result?['exitCode'], equals(0));
+      expect(response2.isSuccess, isFalse);
     });
   });
 }
