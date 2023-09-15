@@ -35,6 +35,7 @@ suite("new-middleware command", () => {
       quickPickProject: sinon.stub(),
     };
     utilsStub.isDartFrogCLIInstalled.returns(true);
+    utilsStub.quickPickProject.resolves(validUri.fsPath);
 
     utilsStub.nearestParentDartFrogProject
       .withArgs(invalidUri.fsPath)
@@ -107,17 +108,6 @@ suite("new-middleware command", () => {
         utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns(
           "/home/dart_frog/routes/index.dart"
         );
-
-        await command.newMiddleware();
-
-        sinon.assert.notCalled(utilsStub.quickPickProject);
-      });
-
-      test("when Uri and active text editor are undefined but there is only one Dart Frog project in workspace folders", async () => {
-        utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns();
-        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
-          "/home/dart_frog/routes",
-        ]);
 
         await command.newMiddleware();
 

@@ -61,19 +61,14 @@ export const startDevServer = async (): Promise<
   let projectPath: string | undefined;
   const dartFrogProjectsPaths =
     resolveDartFrogProjectPathFromWorkspaceFolders();
-
-  if (dartFrogProjectsPaths) {
-    if (dartFrogProjectsPaths.length === 1) {
-      projectPath = dartFrogProjectsPaths[0];
-    } else if (dartFrogProjectsPaths.length > 0) {
-      const selection = await quickPickProject({}, dartFrogProjectsPaths);
-      if (!selection) {
-        return;
-      }
-
-      projectPath = selection;
+  if (dartFrogProjectsPaths && dartFrogProjectsPaths.length > 0) {
+    const selection = await quickPickProject({}, dartFrogProjectsPaths);
+    if (!selection) {
+      return;
     }
+    projectPath = selection;
   }
+
   if (!projectPath) {
     projectPath = resolveDartFrogProjectPathFromActiveTextEditor();
   }

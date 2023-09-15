@@ -41,6 +41,7 @@ suite("start-dev-server command", () => {
     utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns();
     utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns();
     utilsStub.nearestParentDartFrogProject.returns();
+    utilsStub.quickPickProject.resolves("path");
 
     const dartFrogDaemon = {
       // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -126,24 +127,12 @@ suite("start-dev-server command", () => {
       ]);
     });
 
-    suite("is not shown", () => {
-      test("is not shown when there is only one Dart Frog project", async () => {
-        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
-          "path1",
-        ]);
+    test("is not shown when there are no Dart Frog projects", async () => {
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([]);
 
-        await command.startDevServer();
+      await command.startDevServer();
 
-        sinon.assert.neverCalledWith(utilsStub.quickPickProject, {}, ["path1"]);
-      });
-
-      test("is not shown when there are no Dart Frog projects", async () => {
-        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([]);
-
-        await command.startDevServer();
-
-        sinon.assert.neverCalledWith(utilsStub.quickPickProject, {}, []);
-      });
+      sinon.assert.neverCalledWith(utilsStub.quickPickProject, {}, []);
     });
   });
 

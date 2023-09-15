@@ -186,17 +186,6 @@ suite("new-route command", () => {
 
         sinon.assert.notCalled(utilsStub.quickPickProject);
       });
-
-      test("when Uri and active text editor are undefined but there is only one Dart Frog project in workspace folders", async () => {
-        utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns();
-        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
-          "/home/dart_frog/routes",
-        ]);
-
-        await command.newRoute();
-
-        sinon.assert.notCalled(utilsStub.quickPickProject);
-      });
     });
   });
 

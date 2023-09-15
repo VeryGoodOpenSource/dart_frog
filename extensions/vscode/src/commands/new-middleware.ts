@@ -53,17 +53,12 @@ export const newMiddleware = async (uri: Uri | undefined): Promise<void> => {
     if (!selectedPath) {
       const dartFrogProjectsPaths =
         resolveDartFrogProjectPathFromWorkspaceFolders();
-      if (dartFrogProjectsPaths) {
-        if (dartFrogProjectsPaths.length === 1) {
-          selectedPath = dartFrogProjectsPaths[0];
-        } else if (dartFrogProjectsPaths.length > 0) {
-          const selection = await quickPickProject({}, dartFrogProjectsPaths);
-          if (!selection) {
-            return;
-          }
-
-          selectedPath = selection;
+      if (dartFrogProjectsPaths && dartFrogProjectsPaths.length > 0) {
+        const selection = await quickPickProject({}, dartFrogProjectsPaths);
+        if (!selection) {
+          return;
         }
+        selectedPath = selection;
       }
     }
     if (!selectedPath) {
