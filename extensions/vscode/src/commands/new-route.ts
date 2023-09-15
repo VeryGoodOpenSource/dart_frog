@@ -53,6 +53,7 @@ export const newRoute = async (uri: Uri | undefined): Promise<void> => {
     if (!selectedPath) {
       const dartFrogProjectsPaths =
         resolveDartFrogProjectPathFromWorkspaceFolders();
+
       if (dartFrogProjectsPaths && dartFrogProjectsPaths.length > 0) {
         const selection = await quickPickProject({}, dartFrogProjectsPaths);
         if (!selection) {

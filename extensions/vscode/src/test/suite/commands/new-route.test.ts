@@ -38,9 +38,6 @@ suite("new-route command", () => {
     };
 
     utilsStub.nearestParentDartFrogProject
-      .withArgs(invalidUri.fsPath)
-      .returns(undefined);
-    utilsStub.nearestParentDartFrogProject
       .withArgs(validUri.fsPath)
       .returns(validUri.fsPath);
     utilsStub.isDartFrogCLIInstalled.returns(true);
@@ -324,19 +321,49 @@ suite("new-route command", () => {
     sinon.assert.notCalled(childProcessStub.exec);
   });
 
-  test("runs `dart_frog new route` command with prompted route successfully", async () => {
-    utilsStub.normalizeRoutePath.returns("/");
+  suite("runs `dart_frog new route` command", () => {
     const routePath = "pizza";
-    vscodeStub.window.showInputBox.returns(routePath);
 
-    await command.newRoute(validUri);
-    const progressFunction = vscodeStub.window.withProgress.getCall(0).args[1];
-    await progressFunction();
+    beforeEach(() => {
+      utilsStub.normalizeRoutePath.returns("/");
+      vscodeStub.window.showInputBox.returns(routePath);
+    });
 
-    sinon.assert.calledWith(
-      childProcessStub.exec,
-      `dart_frog new route '${routePath}'`
-    );
+    test("with prompted route successfully", async () => {
+      await command.newRoute(validUri);
+
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      await progressFunction();
+
+      sinon.assert.calledWith(
+        childProcessStub.exec,
+        `dart_frog new route '${routePath}'`
+      );
+    });
+
+    test("with cwd as selected project", async () => {
+      utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns();
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+        "/home/dart_frog/routes",
+        validUri.fsPath,
+      ]);
+      utilsStub.quickPickProject.resolves(validUri.fsPath);
+
+      await command.newRoute();
+
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      await progressFunction();
+
+      sinon.assert.calledWith(
+        childProcessStub.exec,
+        `dart_frog new route '${routePath}'`,
+        {
+          cwd: validUri.fsPath,
+        }
+      );
+    });
   });
 
   test("shows error message when `dart_frog new route` fails", async () => {
