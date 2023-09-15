@@ -311,6 +311,19 @@ suite("new-route command", () => {
     });
   });
 
+  test("does not run `dart_frog new route` command when project selection is cancelled", async () => {
+    utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns();
+    utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+      "/home/dart_frog/routes",
+      "/home/dart_frog2/routes",
+    ]);
+    utilsStub.quickPickProject.resolves();
+
+    await command.newRoute();
+
+    sinon.assert.notCalled(childProcessStub.exec);
+  });
+
   test("runs `dart_frog new route` command with prompted route successfully", async () => {
     utilsStub.normalizeRoutePath.returns("/");
     const routePath = "pizza";

@@ -338,6 +338,19 @@ suite("new-middleware command", () => {
     });
   });
 
+  test("does not run `dart_frog new middleware` command when project selection is cancelled", async () => {
+    utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns();
+    utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+      "/home/dart_frog/routes",
+      "/home/dart_frog2/routes",
+    ]);
+    utilsStub.quickPickProject.resolves();
+
+    await command.newMiddleware();
+
+    sinon.assert.notCalled(childProcessStub.exec);
+  });
+
   suite("runs `dart_frog new middleware` command with route", () => {
     test("successfully with non-index route name", async () => {
       utilsStub.normalizeRoutePath.returns("food");
