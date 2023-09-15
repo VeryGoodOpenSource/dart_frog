@@ -49,6 +49,7 @@ void main() {
       completer = Completer();
       when(() => runner.start()).thenAnswer((_) async {});
       when(() => runner.exitCode).thenAnswer((_) async => completer.future);
+      when(() => runner.isCompleted).thenReturn(true);
     });
 
     test('can be instantiated', () {

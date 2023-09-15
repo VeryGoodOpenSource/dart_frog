@@ -246,24 +246,26 @@ void main() {
 
     test('try staggered-stop a dev server on project 1', () async {
       final (response1, response2) =
-          await daemonStdio.sendStaggeredDaemonRequest((
-        DaemonRequest(
-          id: '${++requestCount}',
-          domain: 'dev_server',
-          method: 'stop',
-          params: {
-            'applicationId': project1Server1Id,
-          },
+          await daemonStdio.sendStaggeredDaemonRequest(
+        (
+          DaemonRequest(
+            id: '${++requestCount}',
+            domain: 'dev_server',
+            method: 'stop',
+            params: {
+              'applicationId': project1Server1Id,
+            },
+          ),
+          DaemonRequest(
+            id: '${++requestCount}',
+            domain: 'dev_server',
+            method: 'stop',
+            params: {
+              'applicationId': project1Server1Id,
+            },
+          ),
         ),
-        DaemonRequest(
-          id: '${++requestCount}',
-          domain: 'dev_server',
-          method: 'stop',
-          params: {
-            'applicationId': project1Server1Id,
-          },
-        ),
-      ),);
+      );
 
       expect(response1.isSuccess, isTrue);
       expect(response1.result!['exitCode'], equals(0));

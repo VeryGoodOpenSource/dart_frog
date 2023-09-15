@@ -80,6 +80,7 @@ void main() {
 
       when(() => watcher.start()).thenAnswer((_) async {});
       when(() => watcher.exitCode).thenAnswer((_) async => completer.future);
+      when(() => watcher.isCompleted).thenReturn(true);
     });
 
     test('can be instantiated', () {
