@@ -1,4 +1,9 @@
-import { DartFrogApplication, DartFrogDaemon } from "../daemon";
+import {
+  DartFrogApplication,
+  DartFrogApplicationRegistry,
+  DartFrogApplicationRegistryEventEmitterTypes,
+  DartFrogDaemon,
+} from "../daemon";
 import { Uri, commands, debug, extensions, window } from "vscode";
 import {
   isDartFrogCLIInstalled,
@@ -113,6 +118,10 @@ export const debugDevServer = async (
     }
   }
 
+  onApplicationDettached(daemon.applicationRegistry, application.id!).then(() =>
+    detachFromDebugSession(application.id!)
+  );
+
   await attachToDebugSession(application);
 };
 
@@ -135,8 +144,70 @@ async function attachToDebugSession(
         request: "attach",
         type: "dart",
         vmServiceUri: application.vmServiceUri,
+        source: "dart-frog",
         applicationId: application.id,
       });
     }
   );
+}
+
+/**
+ * Detaches from the current Dart debug session.
+ *
+ * @param applicationId The application attached to the debug session to.
+ */
+async function detachFromDebugSession(applicationId: string): Promise<void> {
+  const debugSession = debug.activeDebugSession;
+
+  if (
+    debugSession &&
+    debugSession.configuration.source === "dart-frog" &&
+    debugSession.configuration.applicationId === applicationId
+  ) {
+    debugSession.customRequest("disconnect");
+  }
+}
+
+/**
+ * Waits for a {@link DartFrogApplication} to be detached from the active
+ * debug session.
+ *
+ * This may happen if the user manually detaches from the debug session, or if
+ * the application is exited prematurely.
+ *
+ * @param registry The {@link DartFrogApplicationRegistry} to listen to.
+ * @param applicationId The application to wait for.
+ * @returns A promise that resolves when the application has been deregistered.
+ */
+function onApplicationDettached(
+  registry: DartFrogApplicationRegistry,
+  applicationId: string
+): Promise<void> {
+  return new Promise<void>((resolve) => {
+    const dispose = () => {
+      registry.off(
+        DartFrogApplicationRegistryEventEmitterTypes.remove,
+        listener
+      );
+      resolve();
+    };
+
+    const listener = (application: DartFrogApplication) => {
+      if (application.id === applicationId) {
+        dispose();
+      }
+    };
+
+    debug.onDidTerminateDebugSession((session) => {
+      if (
+        session &&
+        session.configuration.source === "dart-frog" &&
+        session.configuration.applicationId === applicationId
+      ) {
+        dispose();
+      }
+    });
+
+    registry.on(DartFrogApplicationRegistryEventEmitterTypes.remove, listener);
+  });
 }

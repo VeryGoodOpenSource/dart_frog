@@ -25,7 +25,7 @@ import {
  * Therefore, the command attempts to resolve a path from the user's active text
  * editor first and then from the user's workspace folders. If no path can be
  * resolved from either of those sources, the user is prompted to select a valid
- * valid directory or file to create the route in.
+ * directory or file to create the route in.
  *
  * When launching the command from the context menu, the Uri corresponds to the
  * selected file or directory. Only those directories or dart files under a
@@ -49,13 +49,13 @@ export const newMiddleware = async (uri: Uri | undefined): Promise<void> => {
   if (uri === undefined) {
     selectedPath = resolveDartFrogProjectPathFromActiveTextEditor();
 
-    if (selectedPath === undefined) {
+    if (!selectedPath) {
       selectedPath = resolveDartFrogProjectPathFromWorkspaceFolders();
     }
-    if (selectedPath === undefined) {
+    if (!selectedPath) {
       selectedPath = await promptForTargetDirectory();
     }
-    if (selectedPath === undefined) {
+    if (!selectedPath) {
       window.showErrorMessage("Please select a valid directory");
       return;
     }
@@ -64,7 +64,7 @@ export const newMiddleware = async (uri: Uri | undefined): Promise<void> => {
   }
 
   const dartFrogProjectPath = nearestParentDartFrogProject(selectedPath);
-  if (dartFrogProjectPath === undefined) {
+  if (!dartFrogProjectPath) {
     window.showErrorMessage(
       "No Dart Frog project found in the selected directory"
     );

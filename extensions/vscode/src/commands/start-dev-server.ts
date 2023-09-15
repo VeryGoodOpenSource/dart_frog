@@ -58,7 +58,7 @@ export const startDevServer = async (): Promise<
   }
 
   let workingPath = resolveDartFrogProjectPathFromWorkspaceFolders();
-  if (workingPath === undefined) {
+  if (!workingPath) {
     workingPath = resolveDartFrogProjectPathFromActiveTextEditor();
   }
 
