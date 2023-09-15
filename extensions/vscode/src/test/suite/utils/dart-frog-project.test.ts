@@ -647,6 +647,272 @@ suite("resolveDartFrogProjectPathFromActiveTextEditor", () => {
   });
 });
 
+suite("quickPickProject", () => {
+  let vscodeStub: any;
+  let quickPickProject: any;
+  let quickPick: any;
+
+  const projectPath1 = "home/project1";
+  const projectPath2 = "home/project2";
+
+  beforeEach(() => {
+    vscodeStub = {
+      window: {
+        createQuickPick: sinon.stub(),
+      },
+    };
+
+    quickPickProject = proxyquire("../../../utils/dart-frog-project", {
+      vscode: vscodeStub,
+    }).quickPickProject;
+
+    quickPick = sinon.stub();
+    vscodeStub.window.createQuickPick.returns(quickPick);
+    quickPick.show = sinon.stub();
+    quickPick.dispose = sinon.stub();
+    quickPick.onDidChangeSelection = sinon.stub();
+  });
+
+  afterEach(() => {
+    sinon.restore();
+  });
+
+  suite("placeholder", () => {
+    test("is defined by default", async () => {
+      const project = quickPickProject({}, [projectPath1, projectPath2]);
+
+      const onDidChangeSelection =
+        quickPick.onDidChangeSelection.getCall(0).args[0];
+      onDidChangeSelection([]);
+
+      await project;
+
+      assert.strictEqual(quickPick.placeholder, "Select a Dart Frog project");
+    });
+
+    test("can be overridden", async () => {
+      const placeHolder = "placeholder";
+      const project = quickPickProject(
+        {
+          placeHolder,
+        },
+        [projectPath1, projectPath2]
+      );
+
+      const onDidChangeSelection =
+        quickPick.onDidChangeSelection.getCall(0).args[0];
+      onDidChangeSelection([]);
+
+      await project;
+
+      assert.strictEqual(quickPick.placeholder, placeHolder);
+    });
+  });
+
+  suite("ignoreFocusOut", () => {
+    test("is true by default", async () => {
+      const project = quickPickProject({}, [projectPath1, projectPath2]);
+
+      const onDidChangeSelection =
+        quickPick.onDidChangeSelection.getCall(0).args[0];
+      onDidChangeSelection([]);
+
+      await project;
+
+      assert.strictEqual(quickPick.ignoreFocusOut, true);
+    });
+
+    test("can be overridden", async () => {
+      const ignoreFocusOut = false;
+      const project = quickPickProject(
+        {
+          ignoreFocusOut,
+        },
+        [projectPath1, projectPath2]
+      );
+
+      const onDidChangeSelection =
+        quickPick.onDidChangeSelection.getCall(0).args[0];
+      onDidChangeSelection([]);
+
+      await project;
+
+      assert.strictEqual(quickPick.ignoreFocusOut, ignoreFocusOut);
+    });
+  });
+
+  suite("canSelectMany", () => {
+    test("is false by default", async () => {
+      const project = quickPickProject({}, [projectPath1, projectPath2]);
+
+      const onDidChangeSelection =
+        quickPick.onDidChangeSelection.getCall(0).args[0];
+      onDidChangeSelection([]);
+
+      await project;
+
+      assert.strictEqual(quickPick.canSelectMany, false);
+    });
+
+    test("can be overridden", async () => {
+      const canPickMany = true;
+      const project = quickPickProject(
+        {
+          canPickMany,
+        },
+        [projectPath1, projectPath2]
+      );
+
+      const onDidChangeSelection =
+        quickPick.onDidChangeSelection.getCall(0).args[0];
+      onDidChangeSelection([]);
+
+      await project;
+
+      assert.strictEqual(quickPick.canSelectMany, canPickMany);
+    });
+  });
+
+  test("busy is false by default", async () => {
+    const project = quickPickProject({}, [projectPath1, projectPath2]);
+
+    const onDidChangeSelection =
+      quickPick.onDidChangeSelection.getCall(0).args[0];
+    onDidChangeSelection([]);
+
+    await project;
+
+    assert.strictEqual(quickPick.busy, false);
+  });
+
+  test("shows appropiate items for resolved projects", async () => {
+    const project = quickPickProject({}, [projectPath1, projectPath2]);
+
+    const onDidChangeSelection =
+      quickPick.onDidChangeSelection.getCall(0).args[0];
+    onDidChangeSelection([]);
+
+    await project;
+
+    const items = quickPick.items;
+
+    sinon.assert.match(items[0], {
+      label: `$(dart-frog) project1`,
+      description: projectPath1,
+      projectPath: projectPath1,
+    });
+    sinon.assert.match(items[1], {
+      label: `$(dart-frog) project2`,
+      description: projectPath2,
+      projectPath: projectPath2,
+    });
+  });
+
+  test("shows the quick pick", async () => {
+    const project = quickPickProject({}, [projectPath1, projectPath2]);
+
+    const onDidChangeSelection =
+      quickPick.onDidChangeSelection.getCall(0).args[0];
+    onDidChangeSelection([]);
+
+    await project;
+
+    sinon.assert.calledOnce(quickPick.show);
+  });
+
+  suite("onDidSelectItem", () => {
+    test("is called when an item is selected", async () => {
+      const onDidSelectItem = sinon.stub();
+      const project = quickPickProject(
+        {
+          onDidSelectItem,
+        },
+        [projectPath1, projectPath2]
+      );
+
+      const onDidChangeSelection =
+        quickPick.onDidChangeSelection.getCall(0).args[0];
+      onDidChangeSelection([{ projectPath: projectPath1 }]);
+
+      await project;
+
+      sinon.assert.calledOnceWithExactly(onDidSelectItem, {
+        projectPath: projectPath1,
+      });
+    });
+
+    test("is not called when an item is dismissed", async () => {
+      const onDidSelectItem = sinon.stub();
+      const project = quickPickProject(
+        {
+          onDidSelectItem,
+        },
+        [projectPath1, projectPath2]
+      );
+
+      const onDidChangeSelection =
+        quickPick.onDidChangeSelection.getCall(0).args[0];
+      onDidChangeSelection(undefined);
+
+      await project;
+
+      sinon.assert.notCalled(onDidSelectItem);
+    });
+  });
+
+  suite("dispose", () => {
+    test("is called when an item is selected", async () => {
+      const project = quickPickProject({}, [projectPath1, projectPath2]);
+
+      const onDidChangeSelection =
+        quickPick.onDidChangeSelection.getCall(0).args[0];
+      onDidChangeSelection([{ projectPath: projectPath1 }]);
+
+      await project;
+
+      sinon.assert.calledOnce(quickPick.dispose);
+    });
+
+    test("is called when an item is dismissed", async () => {
+      const project = quickPickProject({}, [projectPath1, projectPath2]);
+
+      const onDidChangeSelection =
+        quickPick.onDidChangeSelection.getCall(0).args[0];
+      onDidChangeSelection(undefined);
+
+      await project;
+
+      sinon.assert.calledOnce(quickPick.dispose);
+    });
+  });
+
+  suite("returns", () => {
+    test("undefined when dismissed", async () => {
+      const project = quickPickProject({}, [projectPath1, projectPath2]);
+
+      const onDidChangeSelection =
+        quickPick.onDidChangeSelection.getCall(0).args[0];
+      onDidChangeSelection(undefined);
+
+      const selection = await project;
+
+      assert.strictEqual(selection, undefined);
+    });
+
+    test("application when selected", async () => {
+      const project = quickPickProject({}, [projectPath1, projectPath2]);
+
+      const onDidChangeSelection =
+        quickPick.onDidChangeSelection.getCall(0).args[0];
+      onDidChangeSelection([{ projectPath: projectPath1 }]);
+
+      const selection = await project;
+
+      assert.strictEqual(selection, projectPath1);
+    });
+  });
+});
+
 /**
  * Example of a pubspec.yaml file that depends on Dart Frog.
  *

@@ -5,7 +5,14 @@
 
 const fs = require("fs");
 const path = require("node:path");
-import { window, workspace } from "vscode";
+import {
+  QuickInputButton,
+  QuickPickItem,
+  QuickPickItemKind,
+  QuickPickOptions,
+  window,
+  workspace,
+} from "vscode";
 
 /**
  * Normalizes a file path to Dart Frog route path from the root of the
@@ -246,4 +253,65 @@ export function resolveDartFrogProjectPathFromActiveTextEditor(
   }
 
   return undefined;
+}
+
+/**
+ * Prompts the user to select a Dart Frog project from a list of resolved Dart
+ * Frog projects.
+ *
+ * @param options The options for the {@link QuickPick}.
+ * @param projectPaths The resolved project paths.
+ * @returns The selected project path or `undefined` if the user cancelled the
+ * selection.
+ */
+export async function quickPickProject(
+  options: QuickPickOptions,
+  projectPaths: string[]
+) {
+  const quickPick = window.createQuickPick<PickableDartFrogProject>();
+  quickPick.placeholder = options.placeHolder ?? "Select a Dart Frog project";
+  quickPick.busy = false;
+  quickPick.ignoreFocusOut = options.ignoreFocusOut ?? true;
+  quickPick.canSelectMany = options.canPickMany ?? false;
+  quickPick.items = projectPaths.map(
+    (projectPath) => new PickableDartFrogProject(projectPath)
+  );
+  quickPick.show();
+
+  return new Promise<string | undefined>((resolve) => {
+    quickPick.onDidChangeSelection((value) => {
+      quickPick.dispose();
+
+      const selection =
+        !value || value.length === 0 ? undefined : value[0]!.projectPath;
+      if (selection) {
+        options.onDidSelectItem?.(value[0]);
+      }
+
+      resolve(selection);
+    });
+  });
+}
+
+/**
+ * A {@link QuickPickItem} that represents a Dart Frog project.
+ *
+ * @see {@link quickPickApplication}
+ */
+class PickableDartFrogProject implements QuickPickItem {
+  constructor(dartFrogProjectPath: string) {
+    this.label = `$(dart-frog) ${path.basename(dartFrogProjectPath)}`;
+    this.description = dartFrogProjectPath;
+    this.projectPath = dartFrogProjectPath;
+  }
+
+  public readonly projectPath: string;
+
+  label: string;
+  kind?: QuickPickItemKind | undefined;
+  description?: string | undefined;
+  detail?: string | undefined;
+  picked?: boolean | undefined;
+  alwaysShow?: boolean | undefined;
+  buttons?: readonly QuickInputButton[] | undefined;
 }
