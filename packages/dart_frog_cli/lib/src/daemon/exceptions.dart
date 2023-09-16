@@ -27,3 +27,14 @@ class DartFrogDaemonMalformedMessageException
   const DartFrogDaemonMalformedMessageException(String message)
       : super('Malformed message, $message');
 }
+
+/// {@template dart_frog_daemon_missing_parameter_exception}
+/// An exception thrown when the daemon reports
+/// a missing parameter of a message.
+/// {@endtemplate}
+class DartFrogDaemonMissingParameterException
+    extends DartFrogDaemonMessageException {
+  /// {@macro dart_frog_daemon_malformed_message_exception}
+  const DartFrogDaemonMissingParameterException(String message)
+      : super('Missing parameter, $message');
+}
