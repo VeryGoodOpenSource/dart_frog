@@ -1,3 +1,13 @@
+# 1.1.1
+
+- feat(dart_frog_cli): update cli bundles ([#1005](https://github.com/VeryGoodOpenSource/dart_frog/pull/1005))
+  - chore: update dart_frog_gen on bricks ([#1003](https://github.com/VeryGoodOpenSource/dart_frog/pull/1003))
+  - chore: bump very good analysis ([#984](https://github.com/VeryGoodOpenSource/dart_frog/pull/984))
+- test: fix intermittent e2e test ([#1008](https://github.com/VeryGoodOpenSource/dart_frog/pull/1008))
+- feat(dart_frog_cli): update cli bundles ([#1012](https://github.com/VeryGoodOpenSource/dart_frog/pull/1012))
+  - feat: add dart frog extension as recommended ([#1009](https://github.com/VeryGoodOpenSource/dart_frog/pull/1009))
+- fix(dart_frog_cli): prevent staggered devserver kills ([#1048](https://github.com/VeryGoodOpenSource/dart_frog/pull/1048))
+
 # 1.1.0
 
 - feat: press R to reload ([#814](https://github.com/VeryGoodOpenSource/dart_frog/pull/814))

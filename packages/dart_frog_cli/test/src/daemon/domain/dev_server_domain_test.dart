@@ -49,6 +49,7 @@ void main() {
       completer = Completer();
       when(() => runner.start()).thenAnswer((_) async {});
       when(() => runner.exitCode).thenAnswer((_) async => completer.future);
+      when(() => runner.isCompleted).thenReturn(true);
     });
 
     test('can be instantiated', () {
@@ -424,7 +425,37 @@ void main() {
           equals(
             const DaemonResponse.error(
               id: '12',
-              error: {'applicationId': 'id', 'message': 'error'},
+              error: {
+                'applicationId': 'id',
+                'message': 'error',
+                'finished': true,
+              },
+            ),
+          ),
+        );
+      });
+
+      test('on non completed dev server throw', () async {
+        when(() => runner.stop()).thenThrow('error');
+        when(() => runner.isCompleted).thenReturn(false);
+
+        expect(
+          await domain.handleRequest(
+            const DaemonRequest(
+              id: '12',
+              domain: 'dev_server',
+              method: 'stop',
+              params: {'applicationId': 'id'},
+            ),
+          ),
+          equals(
+            const DaemonResponse.error(
+              id: '12',
+              error: {
+                'applicationId': 'id',
+                'message': 'error',
+                'finished': false,
+              },
             ),
           ),
         );
