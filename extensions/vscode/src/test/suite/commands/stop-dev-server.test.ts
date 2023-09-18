@@ -34,6 +34,7 @@ suite("stop-dev-server command", () => {
       resolveDartFrogProjectPathFromWorkspaceFolders: sinon.stub(),
       nearestParentDartFrogProject: sinon.stub(),
       quickPickApplication: sinon.stub(),
+      quickPickProject: sinon.stub(),
     };
     utilsStub.isDartFrogCLIInstalled.returns(true);
 

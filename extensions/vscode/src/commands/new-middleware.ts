@@ -11,6 +11,7 @@ import {
   isDartFrogCLIInstalled,
   nearestParentDartFrogProject,
   normalizeRoutePath,
+  quickPickProject,
   resolveDartFrogProjectPathFromActiveTextEditor,
   resolveDartFrogProjectPathFromWorkspaceFolders,
   suggestInstallingDartFrogCLI,
@@ -50,7 +51,15 @@ export const newMiddleware = async (uri: Uri | undefined): Promise<void> => {
     selectedPath = resolveDartFrogProjectPathFromActiveTextEditor();
 
     if (!selectedPath) {
-      selectedPath = resolveDartFrogProjectPathFromWorkspaceFolders();
+      const dartFrogProjectsPaths =
+        resolveDartFrogProjectPathFromWorkspaceFolders();
+      if (dartFrogProjectsPaths && dartFrogProjectsPaths.length > 0) {
+        const selection = await quickPickProject({}, dartFrogProjectsPaths);
+        if (!selection) {
+          return;
+        }
+        selectedPath = selection;
+      }
     }
     if (!selectedPath) {
       selectedPath = await promptForTargetDirectory();
