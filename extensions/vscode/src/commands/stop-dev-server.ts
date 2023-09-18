@@ -85,7 +85,9 @@ export const stopDevServer = async (): Promise<void> => {
 
       const stopDaemonResponse = await daemon.send(stopRequest);
       if (stopDaemonResponse.error) {
-        window.showErrorMessage(stopDaemonResponse.error.message);
+        if (stopDaemonResponse.error.message !== "Application not found") {
+          window.showErrorMessage(stopDaemonResponse.error.message);
+        }
         return;
       }
 

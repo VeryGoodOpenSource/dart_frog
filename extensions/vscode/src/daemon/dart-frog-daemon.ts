@@ -233,7 +233,7 @@ export class DartFrogDaemon {
 
     const responsePromise = new Promise<DaemonResponse>((resolve) => {
       const responseListener = (message: DaemonResponse) => {
-        if (message.id === request.id && message.result) {
+        if (message.id === request.id && (message.result || message.error)) {
           this.off(DartFrogDaemonEventEmitterTypes.response, responseListener);
           resolve(message);
         }
