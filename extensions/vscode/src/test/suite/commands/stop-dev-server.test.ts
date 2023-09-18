@@ -305,31 +305,60 @@ suite("stop-dev-server command", () => {
       });
     });
 
-    test("shows error message when error occurs", async () => {
-      const stopResponse: DaemonResponse = {
-        id: stopRequest.id,
-        result: undefined,
-        error: {
-          message: "error message",
-        },
-      };
-      daemon.send.withArgs(stopRequest).resolves(stopResponse);
+    suite("stop error message", () => {
+      test("is shown when error occurs", async () => {
+        const stopResponse: DaemonResponse = {
+          id: stopRequest.id,
+          result: undefined,
+          error: {
+            message: "error message",
+          },
+        };
+        daemon.send.withArgs(stopRequest).resolves(stopResponse);
 
-      await command.stopDevServer();
+        await command.stopDevServer();
 
-      const deregistrationListener =
-        daemon.applicationRegistry.on.getCall(0).args[1];
-      deregistrationListener(application);
+        const deregistrationListener =
+          daemon.applicationRegistry.on.getCall(0).args[1];
+        deregistrationListener(application);
 
-      const progressFunction =
-        vscodeStub.window.withProgress.getCall(0).args[1];
-      await progressFunction(progress);
+        const progressFunction =
+          vscodeStub.window.withProgress.getCall(0).args[1];
+        await progressFunction(progress);
 
-      sinon.assert.calledWith(
-        vscodeStub.window.showErrorMessage,
-        stopResponse.error.message
-      );
-      sinon.assert.calledOnce(progress.report);
+        sinon.assert.calledWith(
+          vscodeStub.window.showErrorMessage,
+          stopResponse.error.message
+        );
+        sinon.assert.calledOnce(progress.report);
+      });
+
+      test('is not shown when error is "Application not found"', async () => {
+        const stopResponse: DaemonResponse = {
+          id: stopRequest.id,
+          result: undefined,
+          error: {
+            message: "Application not found",
+          },
+        };
+        daemon.send.withArgs(stopRequest).resolves(stopResponse);
+
+        await command.stopDevServer();
+
+        const deregistrationListener =
+          daemon.applicationRegistry.on.getCall(0).args[1];
+        deregistrationListener(application);
+
+        const progressFunction =
+          vscodeStub.window.withProgress.getCall(0).args[1];
+        await progressFunction(progress);
+
+        sinon.assert.neverCalledWith(
+          vscodeStub.window.showErrorMessage,
+          stopResponse.error.message
+        );
+        sinon.assert.calledOnce(progress.report);
+      });
     });
 
     test("takes at least 250ms before resolving", async () => {
