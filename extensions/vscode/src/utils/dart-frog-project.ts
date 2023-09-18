@@ -201,14 +201,16 @@ export function resolveDartFrogProjectPathFromWorkspaceFolders(
   _nearestParentDartFrogProject: (
     filePath: string
   ) => string | undefined = nearestParentDartFrogProject
-): string | undefined {
+): Array<string> | undefined {
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
     const currentWorkspaceFolder = path.normalize(
       workspace.workspaceFolders[0].uri.fsPath
     );
     if (_nearestParentDartFrogProject(currentWorkspaceFolder)) {
-      return currentWorkspaceFolder;
+      return [currentWorkspaceFolder];
     }
+
+    return nearestChildDartFrogProjects(currentWorkspaceFolder);
   }
 
   return undefined;
@@ -259,6 +261,9 @@ export function resolveDartFrogProjectPathFromActiveTextEditor(
  * Prompts the user to select a Dart Frog project from a list of resolved Dart
  * Frog projects.
  *
+ * If there is only one Dart Frog project, since there is no possible selection,
+ * the user is not prompted and the project is immediately returned.
+ *
  * @param options The options for the {@link QuickPick}.
  * @param projectPaths The resolved project paths.
  * @returns The selected project path or `undefined` if the user cancelled the
@@ -268,6 +273,13 @@ export async function quickPickProject(
   options: QuickPickOptions,
   projectPaths: string[]
 ) {
+  if (projectPaths.length === 0) {
+    return;
+  }
+  if (projectPaths.length === 1) {
+    return projectPaths[0];
+  }
+
   const quickPick = window.createQuickPick<PickableDartFrogProject>();
   quickPick.placeholder = options.placeHolder ?? "Select a Dart Frog project";
   quickPick.busy = false;

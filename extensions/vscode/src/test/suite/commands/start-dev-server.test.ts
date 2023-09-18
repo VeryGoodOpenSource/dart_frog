@@ -35,11 +35,13 @@ suite("start-dev-server command", () => {
       resolveDartFrogProjectPathFromActiveTextEditor: sinon.stub(),
       resolveDartFrogProjectPathFromWorkspaceFolders: sinon.stub(),
       nearestParentDartFrogProject: sinon.stub(),
+      quickPickProject: sinon.stub(),
     };
     utilsStub.isDartFrogCLIInstalled.returns(true);
     utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns();
     utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns();
     utilsStub.nearestParentDartFrogProject.returns();
+    utilsStub.quickPickProject.resolves("path");
 
     const dartFrogDaemon = {
       // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -107,6 +109,30 @@ suite("start-dev-server command", () => {
         vscodeStub.commands.executeCommand,
         "dart-frog.start-daemon"
       );
+    });
+  });
+
+  suite("project quick pick", () => {
+    test("is shown when there are more than one Dart Frog projects", async () => {
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+        "path1",
+        "path2",
+      ]);
+
+      await command.startDevServer();
+
+      sinon.assert.calledOnceWithExactly(utilsStub.quickPickProject, {}, [
+        "path1",
+        "path2",
+      ]);
+    });
+
+    test("is not shown when there are no Dart Frog projects", async () => {
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([]);
+
+      await command.startDevServer();
+
+      sinon.assert.neverCalledWith(utilsStub.quickPickProject, {}, []);
     });
   });
 
@@ -179,10 +205,10 @@ suite("start-dev-server command", () => {
       });
 
       test("when failed to find Dart Frog project from workspace folder", async () => {
-        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
-          "path"
-        );
-        utilsStub.nearestParentDartFrogProject.returns(undefined);
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+          "path",
+        ]);
+        utilsStub.nearestParentDartFrogProject.returns();
 
         await command.startDevServer();
 
@@ -196,7 +222,7 @@ suite("start-dev-server command", () => {
         utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns(
           "path"
         );
-        utilsStub.nearestParentDartFrogProject.returns(undefined);
+        utilsStub.nearestParentDartFrogProject.returns();
 
         await command.startDevServer();
 
@@ -212,9 +238,9 @@ suite("start-dev-server command", () => {
 
     suite("is not shown", () => {
       test("when found a Dart Frog project path from workspace folder", async () => {
-        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
-          "path"
-        );
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+          "path",
+        ]);
         utilsStub.nearestParentDartFrogProject.returns("path");
 
         await command.startDevServer();
@@ -246,7 +272,9 @@ suite("start-dev-server command", () => {
 
   suite("port number prompt is shown", () => {
     beforeEach(() => {
-      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns("path");
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+        "path",
+      ]);
       utilsStub.nearestParentDartFrogProject.returns("path");
     });
 
@@ -398,7 +426,9 @@ suite("start-dev-server command", () => {
     const portNumber = "8079";
 
     beforeEach(() => {
-      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns("path");
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+        "path",
+      ]);
       utilsStub.nearestParentDartFrogProject.returns("path");
 
       vscodeStub.window.showInputBox
@@ -582,12 +612,24 @@ suite("start-dev-server command", () => {
     );
 
     beforeEach(() => {
-      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
-        startRequest.params.workingDirectory
-      );
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+        startRequest.params.workingDirectory,
+      ]);
       utilsStub.nearestParentDartFrogProject.returns(
         startRequest.params.workingDirectory
       );
+    });
+
+    test("when there are multiple resolved Dart Frog projects and user cancelled quick pick", async () => {
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+        "path",
+        startRequest.params.workingDirectory,
+      ]);
+      utilsStub.quickPickProject.resolves();
+
+      await command.startDevServer();
+
+      sinon.assert.neverCalledWith(daemon.send, startRequest);
     });
 
     test("when there is already a running server and user cancelled confirmation prompt", async () => {
@@ -647,9 +689,9 @@ suite("start-dev-server command", () => {
     });
 
     test("when Dart Frog project root path failed to be retrieved", async () => {
-      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
-        startRequest.params.workingDirectory
-      );
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+        startRequest.params.workingDirectory,
+      ]);
 
       await command.startDevServer();
 
@@ -657,9 +699,9 @@ suite("start-dev-server command", () => {
     });
 
     test("when port number is dismissed", async () => {
-      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
-        startRequest.params.workingDirectory
-      );
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+        startRequest.params.workingDirectory,
+      ]);
       vscodeStub.window.showInputBox
         .withArgs({
           prompt: "Which port number the server should start on",
@@ -676,9 +718,9 @@ suite("start-dev-server command", () => {
     });
 
     test("when Dart VM service port number is dismissed", async () => {
-      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
-        startRequest.params.workingDirectory
-      );
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+        startRequest.params.workingDirectory,
+      ]);
       vscodeStub.window.showInputBox
         .withArgs({
           prompt: "Which port number the server should start on",
@@ -720,9 +762,9 @@ suite("start-dev-server command", () => {
     let progress: any;
 
     beforeEach(() => {
-      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
-        startRequest.params.workingDirectory
-      );
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+        startRequest.params.workingDirectory,
+      ]);
       utilsStub.nearestParentDartFrogProject.returns(
         startRequest.params.workingDirectory
       );
@@ -751,6 +793,32 @@ suite("start-dev-server command", () => {
 
       progress = sinon.stub();
       progress.report = sinon.stub();
+    });
+
+    test("when there are multiple resolved Dart Frog projects", async () => {
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+        "path",
+        startRequest.params.workingDirectory,
+      ]);
+      utilsStub.quickPickProject.resolves(startRequest.params.workingDirectory);
+
+      await command.startDevServer();
+
+      const application = new DartFrogApplication(
+        startRequest.params.workingDirectory,
+        startRequest.params.port,
+        startRequest.params.dartVmServicePort
+      );
+      const registrationListener = daemon.applicationRegistry.on
+        .withArgs("add", sinon.match.any)
+        .getCall(0).args[1];
+      registrationListener(application);
+
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      await progressFunction(progress);
+
+      sinon.assert.calledOnceWithExactly(daemon.send, startRequest);
     });
 
     test("when there are no running applications", async () => {
@@ -874,9 +942,9 @@ suite("start-dev-server command", () => {
     let progress: any;
 
     beforeEach(() => {
-      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
-        startRequest.params.workingDirectory
-      );
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+        startRequest.params.workingDirectory,
+      ]);
       utilsStub.nearestParentDartFrogProject.returns(
         startRequest.params.workingDirectory
       );

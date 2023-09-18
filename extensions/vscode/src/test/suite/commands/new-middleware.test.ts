@@ -32,8 +32,10 @@ suite("new-middleware command", () => {
       resolveDartFrogProjectPathFromWorkspaceFolders: sinon.stub(),
       isDartFrogCLIInstalled: sinon.stub(),
       suggestInstallingDartFrogCLI: sinon.stub(),
+      quickPickProject: sinon.stub(),
     };
     utilsStub.isDartFrogCLIInstalled.returns(true);
+    utilsStub.quickPickProject.resolves(validUri.fsPath);
 
     utilsStub.nearestParentDartFrogProject
       .withArgs(invalidUri.fsPath)
@@ -74,6 +76,46 @@ suite("new-middleware command", () => {
     sinon.assert.notCalled(utilsStub.suggestInstallingDartFrogCLI);
   });
 
+  suite("quick pick project", () => {
+    test("is shown when Uri and active text editor are undefined and there is more than one Dart Frog project in workspace folders", async () => {
+      utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns();
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+        "/home/dart_frog/routes",
+        "/home/dart_frog2/routes",
+      ]);
+
+      await command.newMiddleware();
+
+      sinon.assert.calledOnceWithExactly(utilsStub.quickPickProject, {}, [
+        "/home/dart_frog/routes",
+        "/home/dart_frog2/routes",
+      ]);
+    });
+
+    suite("is not shown", () => {
+      beforeEach(() => {
+        utilsStub.nearestParentDartFrogProject.returns("/home/dart_frog/");
+        utilsStub.normalizeRoutePath.returns("/");
+      });
+
+      test("when Uri is defined", async () => {
+        await command.newMiddleware(validUri);
+
+        sinon.assert.notCalled(utilsStub.quickPickProject);
+      });
+
+      test("when Uri is undefined but resolves a Dart Frog project from active text editor", async () => {
+        utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns(
+          "/home/dart_frog/routes/index.dart"
+        );
+
+        await command.newMiddleware();
+
+        sinon.assert.notCalled(utilsStub.quickPickProject);
+      });
+    });
+  });
+
   suite("file open dialog", () => {
     test("is shown when Uri is undefined and fails to resolve a path from workspace folder", async () => {
       vscodeStub.window.showOpenDialog.resolves();
@@ -111,9 +153,9 @@ suite("new-middleware command", () => {
 
       test("when Uri and active text editor are undefined but resolves a path from workspace folder", async () => {
         utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns();
-        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
-          "/home/dart_frog/routes"
-        );
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+          "/home/dart_frog/routes",
+        ]);
         utilsStub.nearestParentDartFrogProject.returns("/home/dart_frog/");
         utilsStub.normalizeRoutePath.returns("/");
 
@@ -204,9 +246,9 @@ suite("new-middleware command", () => {
 
       test("when Uri and resolved active text editor are undefined but resolved workspace file is valid", async () => {
         vscodeStub.window.showInputBox.returns("animals/frog");
-        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
-          "home/routes/animals/frog"
-        );
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+          "home/routes/animals/frog",
+        ]);
         utilsStub.nearestParentDartFrogProject.returns(
           "home/routes/animals/frog"
         );
@@ -246,9 +288,9 @@ suite("new-middleware command", () => {
 
     beforeEach(() => {
       vscodeStub.window.showInputBox.returns("animals/frog");
-      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
-        "home/routes/animals/frog"
-      );
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+        "home/routes/animals/frog",
+      ]);
       utilsStub.nearestParentDartFrogProject.returns(
         "home/routes/animals/frog"
       );
@@ -294,6 +336,19 @@ suite("new-middleware command", () => {
       location: 15,
       title: `Creating '${routePath}' middleware...`,
     });
+  });
+
+  test("does not run `dart_frog new middleware` command when project selection is cancelled", async () => {
+    utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns();
+    utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+      "/home/dart_frog/routes",
+      "/home/dart_frog2/routes",
+    ]);
+    utilsStub.quickPickProject.resolves();
+
+    await command.newMiddleware();
+
+    sinon.assert.notCalled(childProcessStub.exec);
   });
 
   suite("runs `dart_frog new middleware` command with route", () => {
@@ -366,9 +421,9 @@ suite("new-middleware command", () => {
     });
 
     test("successfully with prompt route path", async () => {
-      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns(
-        "home/routes/animals/frog"
-      );
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+        "home/routes/animals/frog",
+      ]);
       utilsStub.nearestParentDartFrogProject.returns(
         "home/routes/animals/frog"
       );

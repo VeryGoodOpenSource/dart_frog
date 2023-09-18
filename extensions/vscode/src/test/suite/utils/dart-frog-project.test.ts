@@ -516,7 +516,7 @@ suite("resolveDartFrogProjectPathFromWorkspaceFolders", () => {
       nearestParentDartFrogProject
     );
 
-    assert.deepEqual(dartFrogProjectPath, projectUri.uri.fsPath);
+    assert.deepEqual(dartFrogProjectPath, [projectUri.uri.fsPath]);
   });
 
   suite("returns undefined", () => {
@@ -675,6 +675,20 @@ suite("quickPickProject", () => {
 
   afterEach(() => {
     sinon.restore();
+  });
+
+  test("returns undefined when there are no project paths", async () => {
+    const project = await quickPickProject({}, []);
+
+    assert.strictEqual(project, undefined);
+    sinon.assert.neverCalledWith(quickPick.show, sinon.match.any);
+  });
+
+  test("returns the only project path when there is a single project path", async () => {
+    const project = await quickPickProject({}, [projectPath1]);
+
+    assert.strictEqual(project, projectPath1);
+    sinon.assert.neverCalledWith(quickPick.show, sinon.match.any);
   });
 
   suite("placeholder", () => {

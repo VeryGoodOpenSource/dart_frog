@@ -9,6 +9,7 @@ import { Uri, commands, window } from "vscode";
 import {
   isDartFrogCLIInstalled,
   nearestParentDartFrogProject,
+  quickPickProject,
   resolveDartFrogProjectPathFromActiveTextEditor,
   resolveDartFrogProjectPathFromWorkspaceFolders,
   suggestInstallingDartFrogCLI,
@@ -57,13 +58,23 @@ export const startDevServer = async (): Promise<
     return;
   }
 
-  let workingPath = resolveDartFrogProjectPathFromWorkspaceFolders();
-  if (!workingPath) {
-    workingPath = resolveDartFrogProjectPathFromActiveTextEditor();
+  let projectPath: string | undefined;
+  const dartFrogProjectsPaths =
+    resolveDartFrogProjectPathFromWorkspaceFolders();
+  if (dartFrogProjectsPaths && dartFrogProjectsPaths.length > 0) {
+    const selection = await quickPickProject({}, dartFrogProjectsPaths);
+    if (!selection) {
+      return;
+    }
+    projectPath = selection;
   }
 
-  const workingDirectory = workingPath
-    ? nearestParentDartFrogProject(workingPath)
+  if (!projectPath) {
+    projectPath = resolveDartFrogProjectPathFromActiveTextEditor();
+  }
+
+  const workingDirectory = projectPath
+    ? nearestParentDartFrogProject(projectPath)
     : undefined;
   if (!workingDirectory) {
     await window.showErrorMessage(
