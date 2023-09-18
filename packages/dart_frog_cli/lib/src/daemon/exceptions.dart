@@ -29,8 +29,8 @@ class DartFrogDaemonMalformedMessageException
 }
 
 /// {@template dart_frog_daemon_missing_parameter_exception}
-/// An exception thrown when the daemon reports
-/// a missing parameter of a message.
+/// An exception thrown when the daemon reports a missing parameter of a
+/// message.
 /// {@endtemplate}
 class DartFrogDaemonMissingParameterException
     extends DartFrogDaemonMessageException {
