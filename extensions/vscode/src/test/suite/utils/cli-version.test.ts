@@ -27,20 +27,20 @@ suite("readDartFrogCLIVersion", () => {
     "returns the version of Dart Frog CLI installed in the user's system",
     () => {
       test("when on latest version", () => {
-        const dartFrogVersionCommandResult = "0.3.7\n";
+        const dartFrogVersionCommandResult = "1.1.1\n";
         const encodedDartFrogVersionCommandResult = new TextEncoder().encode(
           dartFrogVersionCommandResult
         );
         cpStub.execSync.returns(encodedDartFrogVersionCommandResult);
 
-        assert.strictEqual(cliVersion.readDartFrogCLIVersion(), "0.3.7");
+        assert.strictEqual(cliVersion.readDartFrogCLIVersion(), "1.1.1");
       });
 
       test("when new version is available", () => {
-        const dartFrogVersionCommandResult = `0.3.7
+        const dartFrogVersionCommandResult = `1.1.1
 
-        Update available! 0.3.7 → 0.3.9
-        Changelog: \u001b]8;;https://github.com/verygoodopensource/dart_frog/releases/tag/dart_frog_cli-v0.3.9\u001b\\https://github.com/verygoodopensource/dart_frog/releases/tag/dart_frog_cli-v0.3.9\u001b]8;;\u001b\\
+        Update available! 1.1.1 → 1.1.2
+        Changelog: \u001b]8;;https://github.com/verygoodopensource/dart_frog/releases/tag/dart_frog_cli-v1.1.2\u001b\\https://github.com/verygoodopensource/dart_frog/releases/tag/dart_frog_cli-v1.1.2\u001b]8;;\u001b\\
         Run dart_frog update to update
         `;
         const encodedDartFrogVersionCommandResult = new TextEncoder().encode(
@@ -48,7 +48,7 @@ suite("readDartFrogCLIVersion", () => {
         );
         cpStub.execSync.returns(encodedDartFrogVersionCommandResult);
 
-        assert.strictEqual(cliVersion.readDartFrogCLIVersion(), "0.3.7");
+        assert.strictEqual(cliVersion.readDartFrogCLIVersion(), "1.1.1");
       });
     }
   );
@@ -81,20 +81,20 @@ suite("readLatestDartFrogCLIVersion", () => {
 
   suite("returns the latest version of Dart Frog CLI", () => {
     test("when on latest version", () => {
-      const dartFrogVersionCommandResult = "0.3.9\n";
+      const dartFrogVersionCommandResult = "1.1.2\n";
       const encodedDartFrogVersionCommandResult = new TextEncoder().encode(
         dartFrogVersionCommandResult
       );
       cpStub.execSync.returns(encodedDartFrogVersionCommandResult);
 
-      assert.strictEqual(cliVersion.readLatestDartFrogCLIVersion(), "0.3.9");
+      assert.strictEqual(cliVersion.readLatestDartFrogCLIVersion(), "1.1.2");
     });
 
     test("when new version is available", () => {
-      const dartFrogVersionCommandResult = `0.3.7
+      const dartFrogVersionCommandResult = `1.1.1
 
-        Update available! 0.3.7 → 0.3.9
-        Changelog: \u001b]8;;https://github.com/verygoodopensource/dart_frog/releases/tag/dart_frog_cli-v0.3.9\u001b\\https://github.com/verygoodopensource/dart_frog/releases/tag/dart_frog_cli-v0.3.9\u001b]8;;\u001b\\
+        Update available! 1.1.1 → 1.1.2
+        Changelog: \u001b]8;;https://github.com/verygoodopensource/dart_frog/releases/tag/dart_frog_cli-v1.1.2\u001b\\https://github.com/verygoodopensource/dart_frog/releases/tag/dart_frog_cli-v1.1.2\u001b]8;;\u001b\\
         Run dart_frog update to update
         `;
       const encodedDartFrogVersionCommandResult = new TextEncoder().encode(
@@ -102,7 +102,7 @@ suite("readLatestDartFrogCLIVersion", () => {
       );
       cpStub.execSync.returns(encodedDartFrogVersionCommandResult);
 
-      assert.strictEqual(cliVersion.readLatestDartFrogCLIVersion(), "0.3.9");
+      assert.strictEqual(cliVersion.readLatestDartFrogCLIVersion(), "1.1.2");
     });
   });
 
@@ -122,15 +122,11 @@ suite("isCompatibleDartFrogCLIVersion", () => {
 
   test("returns true if the version of Dart Frog CLI installed in the user's system is compatible with this extension", () => {
     assert.strictEqual(
-      cliVersion.isCompatibleDartFrogCLIVersion("0.3.8"),
+      cliVersion.isCompatibleDartFrogCLIVersion("1.1.1"),
       true
     );
     assert.strictEqual(
-      cliVersion.isCompatibleDartFrogCLIVersion("0.3.7"),
-      true
-    );
-    assert.strictEqual(
-      cliVersion.isCompatibleDartFrogCLIVersion("1.0.0"),
+      cliVersion.isCompatibleDartFrogCLIVersion("1.1.2"),
       true
     );
   });
@@ -141,7 +137,7 @@ suite("isCompatibleDartFrogCLIVersion", () => {
       false
     );
     assert.strictEqual(
-      cliVersion.isCompatibleDartFrogCLIVersion("0.3.6"),
+      cliVersion.isCompatibleDartFrogCLIVersion("0.3.8"),
       false
     );
   });
