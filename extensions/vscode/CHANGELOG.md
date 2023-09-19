@@ -1,7 +1,18 @@
+# 0.2.2
+
+- chore: remove new-route-middleware.gif ([#1039](https://github.com/VeryGoodOpenSource/dart_frog/pull/1039))
+- fix: detach from debug session on premature application exit ([#1043](https://github.com/VeryGoodOpenSource/dart_frog/pull/1043))
+- fix: support async route handlers ([#1041](https://github.com/VeryGoodOpenSource/dart_frog/pull/1041))
+- fix: support CodeLens for very long route signatures ([#1046](https://github.com/VeryGoodOpenSource/dart_frog/pull/1046))
+- docs: add disclaimer to the extension ([#1047](https://github.com/VeryGoodOpenSource/dart_frog/pull/1047))
+- feat: implemented quickPickProject ([#1025](https://github.com/VeryGoodOpenSource/dart_frog/pull/1025))
+- fix: avoid keeping progress when spamming stop server ([#1053](https://github.com/VeryGoodOpenSource/dart_frog/pull/1053))
+- feat: show quickPickProject on monorepos ([#1026](https://github.com/VeryGoodOpenSource/dart_frog/pull/1026))
+
 # 0.2.1
 
-- docs(vscode): update README.md ([#1031](https://github.com/VeryGoodOpenSource/dart_frog/pull/1031))
-- chore(vscode): rollback engines.vscode version ([#1035](https://github.com/VeryGoodOpenSource/dart_frog/pull/1035))
+- docs: update README.md ([#1031](https://github.com/VeryGoodOpenSource/dart_frog/pull/1031))
+- chore: rollback engines.vscode version ([#1035](https://github.com/VeryGoodOpenSource/dart_frog/pull/1035))
 
 # 0.2.0
 
