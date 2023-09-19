@@ -122,6 +122,77 @@ void main() {
         ).called(1);
       });
 
+      group('missing parameters', () {
+        test('workingDirectory', () async {
+          expect(
+            await domain.handleRequest(
+              const DaemonRequest(
+                id: '12',
+                domain: 'dev_server',
+                method: 'start',
+                params: {'port': 3000, 'dartVmServicePort': 3001},
+              ),
+            ),
+            equals(
+              const DaemonResponse.error(
+                id: '12',
+                error: {
+                  'message': 'Missing parameter, workingDirectory not found',
+                },
+              ),
+            ),
+          );
+        });
+
+        test('port', () async {
+          expect(
+            await domain.handleRequest(
+              const DaemonRequest(
+                id: '12',
+                domain: 'dev_server',
+                method: 'start',
+                params: {
+                  'workingDirectory': '/',
+                  'dartVmServicePort': 3001,
+                },
+              ),
+            ),
+            equals(
+              const DaemonResponse.error(
+                id: '12',
+                error: {
+                  'message': 'Missing parameter, port not found',
+                },
+              ),
+            ),
+          );
+        });
+
+        test('dartVmServicePort', () async {
+          expect(
+            await domain.handleRequest(
+              const DaemonRequest(
+                id: '12',
+                domain: 'dev_server',
+                method: 'start',
+                params: {
+                  'workingDirectory': '/',
+                  'port': 3000,
+                },
+              ),
+            ),
+            equals(
+              const DaemonResponse.error(
+                id: '12',
+                error: {
+                  'message': 'Missing parameter, dartVmServicePort not found',
+                },
+              ),
+            ),
+          );
+        });
+      });
+
       group('malformed messages', () {
         test('workingDirectory', () async {
           expect(
@@ -277,6 +348,29 @@ void main() {
           );
         });
 
+        group('missing parameters', () {
+          test('applicationId', () async {
+            expect(
+              await domain.handleRequest(
+                const DaemonRequest(
+                  id: '12',
+                  domain: 'dev_server',
+                  method: 'reload',
+                  params: {},
+                ),
+              ),
+              equals(
+                const DaemonResponse.error(
+                  id: '12',
+                  error: {
+                    'message': 'Missing parameter, applicationId not found',
+                  },
+                ),
+              ),
+            );
+          });
+        });
+
         test('application not found', () async {
           expect(
             await domain.handleRequest(
@@ -385,6 +479,29 @@ void main() {
               ),
             ),
           );
+        });
+
+        group('missing parameters', () {
+          test('applicationId', () async {
+            expect(
+              await domain.handleRequest(
+                const DaemonRequest(
+                  id: '12',
+                  domain: 'dev_server',
+                  method: 'stop',
+                  params: {},
+                ),
+              ),
+              equals(
+                const DaemonResponse.error(
+                  id: '12',
+                  error: {
+                    'message': 'Missing parameter, applicationId not found',
+                  },
+                ),
+              ),
+            );
+          });
         });
 
         test('application not found', () async {
