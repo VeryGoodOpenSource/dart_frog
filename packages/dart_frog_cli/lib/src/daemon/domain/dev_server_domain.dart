@@ -36,24 +36,11 @@ class DevServerDomain extends DomainBase {
 
   /// Starts a [DevServerRunner] for the given [request].
   Future<DaemonResponse> _start(DaemonRequest request) async {
-    final workingDirectory = request.params?['workingDirectory'];
-    if (workingDirectory is! String) {
-      throw const DartFrogDaemonMalformedMessageException(
-        'invalid workingDirectory',
-      );
-    }
+    final workingDirectory = request.getParam<String>('workingDirectory');
 
-    final port = request.params?['port'];
-    if (port is! int) {
-      throw const DartFrogDaemonMalformedMessageException('invalid port');
-    }
+    final port = request.getParam<int>('port');
 
-    final dartVmServicePort = request.params?['dartVmServicePort'];
-    if (dartVmServicePort is! int) {
-      throw const DartFrogDaemonMalformedMessageException(
-        'invalid dartVmServicePort',
-      );
-    }
+    final dartVmServicePort = request.getParam<int>('dartVmServicePort');
 
     final applicationId = getId();
 
@@ -127,12 +114,7 @@ class DevServerDomain extends DomainBase {
   }
 
   Future<DaemonResponse> _reload(DaemonRequest request) async {
-    final applicationId = request.params?['applicationId'];
-    if (applicationId is! String) {
-      throw const DartFrogDaemonMalformedMessageException(
-        'invalid applicationId',
-      );
-    }
+    final applicationId = request.getParam<String>('applicationId');
 
     final runner = _devServerRunners[applicationId];
     if (runner == null) {
@@ -166,12 +148,7 @@ class DevServerDomain extends DomainBase {
   }
 
   Future<DaemonResponse> _stop(DaemonRequest request) async {
-    final applicationId = request.params?['applicationId'];
-    if (applicationId is! String) {
-      throw const DartFrogDaemonMalformedMessageException(
-        'invalid applicationId',
-      );
-    }
+    final applicationId = request.getParam<String>('applicationId');
 
     final runner = _devServerRunners.remove(applicationId);
     if (runner == null) {

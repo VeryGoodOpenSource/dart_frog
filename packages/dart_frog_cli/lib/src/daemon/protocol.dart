@@ -118,6 +118,46 @@ class DaemonRequest extends DaemonMessage {
 
   @override
   List<Object?> get props => [id, method, params, domain];
+
+  ///
+  /// Gets a parameter of this request.
+  ///
+  /// Throws a [DartFrogDaemonMissingParameterException] if the parameter
+  /// is not found and type [T] is not nullable.
+  ///
+  /// Throws a [DartFrogDaemonMalformedMessageException] if the parameter
+  /// is not of type [T].
+  ///
+  /// Required parameters should be typed as not nullable
+  ///   `final paramValue = getParam<String>('requiredValue')`.
+  ///
+  /// Optional parameters should be typed as nullable
+  ///  `final paramValue = getParam<String?>('optionalValue')`.
+  ///
+  T getParam<T>(String name) {
+    final params = this.params;
+
+    if (params == null) {
+      throw const DartFrogDaemonMalformedMessageException(
+        'Missing params object',
+      );
+    }
+
+    final param = params[name];
+    if (param is! T) {
+      // Check if param type is optional or not
+      if (param == null && null is! T) {
+        throw DartFrogDaemonMissingParameterException(
+          '$name not found',
+        );
+      }
+      throw DartFrogDaemonMalformedMessageException(
+        'invalid $name',
+      );
+    }
+
+    return param;
+  }
 }
 
 /// {@template daemon_response}
