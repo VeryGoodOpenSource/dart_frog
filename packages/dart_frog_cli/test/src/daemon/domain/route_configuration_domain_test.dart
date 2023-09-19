@@ -166,6 +166,29 @@ void main() {
         });
       });
 
+      group('missing parameters', () {
+        test('workingDirectory', () async {
+          expect(
+            await domain.handleRequest(
+              const DaemonRequest(
+                id: '12',
+                domain: 'route_configuration',
+                method: 'watcherStart',
+                params: {},
+              ),
+            ),
+            equals(
+              const DaemonResponse.error(
+                id: '12',
+                error: {
+                  'message': 'Missing parameter, workingDirectory not found',
+                },
+              ),
+            ),
+          );
+        });
+      });
+
       test('on dev server throw', () async {
         when(() => watcher.start()).thenThrow('error');
 
@@ -269,6 +292,29 @@ void main() {
                 error: {
                   'watcherId': 'different-id',
                   'message': 'Watcher not found',
+                },
+              ),
+            ),
+          );
+        });
+      });
+
+      group('missing parameters', () {
+        test('watcherId', () async {
+          expect(
+            await domain.handleRequest(
+              const DaemonRequest(
+                id: '12',
+                domain: 'route_configuration',
+                method: 'watcherStop',
+                params: {},
+              ),
+            ),
+            equals(
+              const DaemonResponse.error(
+                id: '12',
+                error: {
+                  'message': 'Missing parameter, watcherId not found',
                 },
               ),
             ),
@@ -414,6 +460,29 @@ void main() {
                 error: {
                   'watcherId': 'different-id',
                   'message': 'Watcher not found',
+                },
+              ),
+            ),
+          );
+        });
+      });
+
+      group('missing parameters', () {
+        test('watcherId', () async {
+          expect(
+            await domain.handleRequest(
+              const DaemonRequest(
+                id: '12',
+                domain: 'route_configuration',
+                method: 'watcherGenerateRouteConfiguration',
+                params: {},
+              ),
+            ),
+            equals(
+              const DaemonResponse.error(
+                id: '12',
+                error: {
+                  'message': 'Missing parameter, watcherId not found',
                 },
               ),
             ),

@@ -207,4 +207,98 @@ void main() {
       );
     });
   });
+
+  group('get request param', () {
+    group('required', () {
+      test('without params', () {
+        expect(
+          () => const DaemonRequest(
+            id: '1',
+            domain: 'foo',
+            method: 'bar',
+          ).getParam<String>('foo'),
+          throwsA(isA<DartFrogDaemonMalformedMessageException>()),
+        );
+      });
+      test('with empty params', () {
+        expect(
+          () => const DaemonRequest(
+            id: '1',
+            domain: 'foo',
+            method: 'bar',
+            params: <String, String>{},
+          ).getParam<String>('foo'),
+          throwsA(isA<DartFrogDaemonMissingParameterException>()),
+        );
+      });
+      test('with other params', () {
+        expect(
+          () => const DaemonRequest(
+            id: '1',
+            domain: 'foo',
+            method: 'bar',
+            params: {'bar': 'baz'},
+          ).getParam<String>('foo'),
+          throwsA(isA<DartFrogDaemonMissingParameterException>()),
+        );
+      });
+      test('with existing param', () {
+        expect(
+          const DaemonRequest(
+            id: '1',
+            domain: 'foo',
+            method: 'bar',
+            params: {'foo': 'bar'},
+          ).getParam<String>('foo'),
+          'bar',
+        );
+      });
+    });
+
+    group('optional', () {
+      test('without params', () {
+        expect(
+          () => const DaemonRequest(
+            id: '1',
+            domain: 'foo',
+            method: 'bar',
+          ).getParam<String?>('foo'),
+          throwsA(isA<DartFrogDaemonMalformedMessageException>()),
+        );
+      });
+      test('with empty params', () {
+        expect(
+          const DaemonRequest(
+            id: '1',
+            domain: 'foo',
+            method: 'bar',
+            params: <String, String>{},
+          ).getParam<String?>('foo'),
+          null,
+        );
+      });
+      test('with other params', () {
+        expect(
+          const DaemonRequest(
+            id: '1',
+            domain: 'foo',
+            method: 'foo.bar',
+            params: {'bar': 'baz'},
+          ).getParam<String?>('foo'),
+          null,
+        );
+      });
+      test('with existing param', () {
+        expect(
+          const DaemonRequest(
+            id: '1',
+            domain: 'foo',
+            method: 'bar',
+            params: {'foo': 'bar'},
+          ).getParam<String?>('foo'),
+          'bar',
+        );
+      });
+    });
+  });
 }
