@@ -185,7 +185,7 @@ suite("create command", () => {
 
     sinon.assert.calledOnceWithMatch(
       childProcessStub.exec,
-      "dart_frog create 'my_project'",
+      `dart_frog create "my_project"`,
       { cwd: targetUri.fsPath }
     );
   });
@@ -201,7 +201,7 @@ suite("create command", () => {
 
     sinon.assert.calledOnceWithMatch(
       childProcessStub.exec,
-      "dart_frog create 'my_project'",
+      `dart_frog create "my_project"`,
       { cwd: targetUri.fsPath }
     );
   });
