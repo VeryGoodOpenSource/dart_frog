@@ -362,7 +362,7 @@ suite("new-middleware command", () => {
 
       sinon.assert.calledWith(
         childProcessStub.exec,
-        `dart_frog new middleware 'food'`
+        `dart_frog new middleware "food"`
       );
     });
 
@@ -380,7 +380,7 @@ suite("new-middleware command", () => {
 
       sinon.assert.calledWith(
         childProcessStub.exec,
-        `dart_frog new middleware 'food/pizza'`
+        `dart_frog new middleware "food/pizza"`
       );
     });
 
@@ -398,7 +398,7 @@ suite("new-middleware command", () => {
 
       sinon.assert.calledWith(
         childProcessStub.exec,
-        `dart_frog new middleware '/'`
+        `dart_frog new middleware "/"`
       );
     });
 
@@ -416,7 +416,7 @@ suite("new-middleware command", () => {
 
       sinon.assert.calledWith(
         childProcessStub.exec,
-        `dart_frog new middleware 'food/italian'`
+        `dart_frog new middleware "food/italian"`
       );
     });
 
@@ -437,7 +437,7 @@ suite("new-middleware command", () => {
 
       sinon.assert.calledWith(
         childProcessStub.exec,
-        `dart_frog new middleware 'animals/lion'`
+        `dart_frog new middleware "animals/lion"`
       );
     });
   });

@@ -156,7 +156,7 @@ function executeDartFrogNewMiddlewareCommand(
   dartFrogProjectPath: string
 ): void {
   cp.exec(
-    `dart_frog new middleware '${routePath}'`,
+    `dart_frog new middleware "${routePath}"`,
     {
       cwd: dartFrogProjectPath,
     },
