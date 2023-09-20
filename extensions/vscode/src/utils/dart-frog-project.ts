@@ -73,8 +73,10 @@ export function normalizeRoutePath(
 export function nearestParentDartFrogProject(
   filePath: string
 ): string | undefined {
+  const root = path.parse(filePath).root;
+
   let currentPath = filePath;
-  while (currentPath !== path.sep) {
+  while (currentPath !== root) {
     if (isDartFrogProject(currentPath)) {
       return currentPath;
     }
