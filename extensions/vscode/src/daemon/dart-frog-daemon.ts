@@ -142,6 +142,7 @@ export class DartFrogDaemon {
 
     this.process = spawn("dart_frog", ["daemon"], {
       cwd: workingDirectory,
+      shell: true,
     });
     this.process.stdout.on("data", this.stdoutDataListener.bind(this));
 

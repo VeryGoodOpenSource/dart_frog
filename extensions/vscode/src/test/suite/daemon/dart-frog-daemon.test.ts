@@ -49,6 +49,7 @@ suite("DartFrogDaemon", () => {
       childProcessStub.spawn
         .withArgs("dart_frog", ["daemon"], {
           cwd: workingDirectory,
+          shell: true,
         })
         .returns(daemonProcess);
 
@@ -73,6 +74,7 @@ suite("DartFrogDaemon", () => {
       childProcessStub.spawn
         .withArgs("dart_frog", ["daemon"], {
           cwd: workingDirectory,
+          shell: true,
         })
         .returns(daemonProcess);
 
@@ -94,6 +96,7 @@ suite("DartFrogDaemon", () => {
       childProcessStub.spawn
         .withArgs("dart_frog", ["daemon"], {
           cwd: workingDirectory,
+          shell: true,
         })
         .returns(daemonProcess);
 
@@ -125,6 +128,7 @@ suite("DartFrogDaemon", () => {
       childProcessStub.spawn
         .withArgs("dart_frog", ["daemon"], {
           cwd: workingDirectory,
+          shell: true,
         })
         .returns(daemonProcess);
 
@@ -235,6 +239,7 @@ suite("DartFrogDaemon", () => {
       childProcessStub.spawn
         .withArgs("dart_frog", ["daemon"], {
           cwd: workingDirectory,
+          shell: true,
         })
         .returns(daemonProcess);
 
@@ -318,6 +323,7 @@ suite("DartFrogDaemon", () => {
       childProcessStub.spawn
         .withArgs("dart_frog", ["daemon"], {
           cwd: workingDirectory,
+          shell: true,
         })
         .returns(daemonProcess);
 
@@ -351,6 +357,7 @@ suite("DartFrogDaemon", () => {
         childProcessStub.spawn
           .withArgs("dart_frog", ["daemon"], {
             cwd: workingDirectory,
+            shell: true,
           })
           .returns(daemonProcess);
 
