@@ -154,7 +154,7 @@ function executeDartFrogNewRouteCommand(
   dartFrogProjectPath: string
 ): void {
   cp.exec(
-    `dart_frog new route '${routePath}'`,
+    `dart_frog new route "${routePath}"`,
     {
       cwd: dartFrogProjectPath,
     },

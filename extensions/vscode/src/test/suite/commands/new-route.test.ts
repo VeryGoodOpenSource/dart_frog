@@ -338,7 +338,7 @@ suite("new-route command", () => {
 
       sinon.assert.calledWith(
         childProcessStub.exec,
-        `dart_frog new route '${routePath}'`
+        `dart_frog new route "${routePath}"`
       );
     });
 
@@ -358,7 +358,7 @@ suite("new-route command", () => {
 
       sinon.assert.calledWith(
         childProcessStub.exec,
-        `dart_frog new route '${routePath}'`,
+        `dart_frog new route "${routePath}"`,
         {
           cwd: validUri.fsPath,
         }
