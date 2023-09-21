@@ -1,3 +1,15 @@
+# 0.2.3
+
+- chore(deps-dev): bump @types/node from 20.6.0 to 20.6.2 in /extensions/vscode ([#1054](https://github.com/VeryGoodOpenSource/dart_frog/pull/1054))
+- chore(deps-dev): bump @typescript-eslint/eslint-plugin from 6.7.0 to 6.7.2 in /extensions/vscode ([#1055](https://github.com/VeryGoodOpenSource/dart_frog/pull/1055))
+- chore(deps-dev): bump @typescript-eslint/parser from 6.7.0 to 6.7.2 in /extensions/vscode ([#1057](https://github.com/VeryGoodOpenSource/dart_frog/pull/1057))
+- chore(deps-dev): bump sinon from 15.2.0 to 16.0.0 in /extensions/vscode ([#1056](https://github.com/VeryGoodOpenSource/dart_frog/pull/1056))
+- fix(vscode): windows compatible new route and middleware ([#1062](https://github.com/VeryGoodOpenSource/dart_frog/pull/1062))
+- fix(vscode): ensure nearestParentDartFrogProject is Windows compatible ([#1064](https://github.com/VeryGoodOpenSource/dart_frog/pull/1064))
+- fix(vscode): ensure daemon spawns in shell for Windows compatibility ([#1065](https://github.com/VeryGoodOpenSource/dart_frog/pull/1065))
+- fix(vscode): ensure create command is Windows compatible ([#1068](https://github.com/VeryGoodOpenSource/dart_frog/pull/1068))
+- test(vscode): used double quotes on create stub ([#1070](https://github.com/VeryGoodOpenSource/dart_frog/pull/1070))
+
 # 0.2.2
 
 - chore: remove new-route-middleware.gif ([#1039](https://github.com/VeryGoodOpenSource/dart_frog/pull/1039))
