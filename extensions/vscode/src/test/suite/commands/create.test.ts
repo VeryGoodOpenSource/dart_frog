@@ -208,7 +208,7 @@ suite("create command", () => {
 
   test("shows error when `dart_frog create` command fails", async () => {
     const error = new Error("Command failed");
-    const createCommand = "dart_frog create 'my_project'";
+    const createCommand = `dart_frog create "my_project"`;
 
     vscodeStub.window.showInputBox.returns("my_project");
     childProcessStub.exec.withArgs(createCommand).yields(error);
