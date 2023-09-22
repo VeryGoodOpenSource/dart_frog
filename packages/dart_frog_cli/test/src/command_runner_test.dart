@@ -85,7 +85,9 @@ void main() {
     });
 
     test('can be instantiated without any explicit parameters', () {
-      final commandRunner = DartFrogCommandRunner();
+      final commandRunner = DartFrogCommandRunner(
+        stdin: _MockStdin(),
+      );
       expect(commandRunner, isNotNull);
     });
 
