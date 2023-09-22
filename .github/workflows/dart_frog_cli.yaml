@@ -42,7 +42,7 @@ jobs:
       - name: 🧪 Run Unit Tests
         run: |
           dart pub global activate coverage 1.6.3
-          dart test -j 4--coverage=coverage --platform="vm" &&
+          dart test -j 4 --coverage=coverage --platform="vm" &&
           dart pub global run coverage:format_coverage --lcov --check-ignore --in=coverage --out=coverage/lcov.info --package="." --report-on="lib"
 
       - name: 📊 Check Code Coverage
