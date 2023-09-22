@@ -1,6 +1,6 @@
 // ignore_for_file: no_adjacent_strings_in_list
 import 'dart:async';
-import 'dart:io';
+import 'dart:io' show ProcessSignal, Stdin;
 
 import 'package:dart_frog_cli/src/command_runner.dart';
 import 'package:dart_frog_cli/src/version.dart';
@@ -85,9 +85,9 @@ void main() {
     });
 
     test('can be instantiated without any explicit parameters', () {
-      final stdio2 = stdin;
-      final type = stdioType(stdio2);
-      print('type: $type');
+      // final stdio2 = stdin;
+      // final type = stdioType(stdio2);
+      // print('type: $type');
 
       final commandRunner = DartFrogCommandRunner();
       expect(commandRunner, isNotNull);
