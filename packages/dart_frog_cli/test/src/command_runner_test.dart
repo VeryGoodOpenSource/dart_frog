@@ -85,6 +85,10 @@ void main() {
     });
 
     test('can be instantiated without any explicit parameters', () {
+      final stdio2 = stdin;
+      final type = stdioType(stdio2);
+      print('type: $type');
+
       final commandRunner = DartFrogCommandRunner();
       expect(commandRunner, isNotNull);
     });
