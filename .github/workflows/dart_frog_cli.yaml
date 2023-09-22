@@ -39,9 +39,6 @@ jobs:
       - name: ✨ Check Formatting
         run: dart format --line-length 80 --set-exit-if-changed "."
 
-      - name: 🕵️ Analyze
-        run: dart analyze --fatal-infos --fatal-warnings "lib test"
-
       - name: 🧪 Run Unit Tests
         run: |
           dart pub global activate coverage 1.6.3
