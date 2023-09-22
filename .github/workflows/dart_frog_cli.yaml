@@ -20,10 +20,38 @@ on:
 
 jobs:
   build:
-    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@v1
-    with:
-      working_directory: packages/dart_frog_cli
-      runs_on: macos-latest
+    defaults:
+      run:
+        working-directory: packages/dart_frog_cli
+
+    runs-on: "macos-latest"
+
+    steps:
+      - name: 📚 Git Checkout
+        uses: actions/checkout@v4
+
+      - name: 🎯 Setup Dart
+        uses: dart-lang/setup-dart@v1
+
+      - name: 📦 Install Dependencies
+        run: dart pub get
+
+      - name: ✨ Check Formatting
+        run: dart format --line-length 80 --set-exit-if-changed "."
+
+      - name: 🕵️ Analyze
+        run: dart analyze --fatal-infos --fatal-warnings "lib test"
+
+      - name: 🧪 Run Unit Tests
+        run: |
+          dart pub global activate coverage 1.6.3
+          dart test -j 4--coverage=coverage --platform="vm" &&
+          dart pub global run coverage:format_coverage --lcov --check-ignore --in=coverage --out=coverage/lcov.info --package="." --report-on="lib"
+
+      - name: 📊 Check Code Coverage
+        uses: VeryGoodOpenSource/very_good_coverage@v2
+        with:
+          path: packages/dart_frog_cli/coverage/lcov.info
 
   e2e:
     defaults:
