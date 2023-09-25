@@ -52,5 +52,3 @@ Learn more about it on the [official docs][docs_link].
 [very_good_analysis_link]: https://pub.dev/packages/very_good_analysis
 [very_good_ventures_link]: https://verygood.ventures
 [docs_link]: https://dartfrog.vgv.dev/docs/overview
-
-<!-- -->
