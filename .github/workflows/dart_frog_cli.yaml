@@ -40,7 +40,7 @@ jobs:
         run: dart format --line-length 80 --set-exit-if-changed "."
 
       - name: 🧪 Run Unit Tests
-        run: dart test -j 4 --coverage=coverage --platform="vm" &&
+        run: dart test -j 4 --platform="vm"
 
   e2e:
     defaults:
