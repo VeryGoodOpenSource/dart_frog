@@ -20,27 +20,10 @@ on:
 
 jobs:
   build:
-    defaults:
-      run:
-        working-directory: packages/dart_frog_cli
-
-    runs-on: "macos-latest"
-
-    steps:
-      - name: 📚 Git Checkout
-        uses: actions/checkout@v4
-
-      - name: 🎯 Setup Dart
-        uses: dart-lang/setup-dart@v1
-
-      - name: 📦 Install Dependencies
-        run: dart pub get
-
-      - name: ✨ Check Formatting
-        run: dart format --line-length 80 --set-exit-if-changed "."
-
-      - name: 🧪 Run Unit Tests
-        run: dart test -j 4 --platform="vm"
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@v1
+    with:
+      working_directory: packages/dart_frog_cli
+      concurrency: 1
 
   e2e:
     defaults:
