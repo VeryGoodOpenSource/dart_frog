@@ -50,7 +50,7 @@ void main() {
       );
     });
 
-    // FIXME(alestiago): Throws FileSystemException on CI, seE:
+    // FIXME(alestiago): Throws FileSystemException on CI, see:
     // https://github.com/VeryGoodOpenSource/dart_frog/actions/runs/6296808354/job/17092520514?pr=1072
     // test('runs with default value', () async {
     //   final command = DaemonCommand();
