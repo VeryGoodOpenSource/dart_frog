@@ -50,17 +50,15 @@ void main() {
       );
     });
 
-    // FIXME(alestiago): Throws FileSystemException on CI, see:
-    // https://github.com/VeryGoodOpenSource/dart_frog/actions/runs/6296808354/job/17092520514?pr=1072
-    // test('runs with default value', () async {
-    //   final command = DaemonCommand();
+    test('runs with default value', () async {
+      final command = DaemonCommand();
 
-    //   final runFuture = command.run();
+      final runFuture = command.run();
 
-    //   await command.daemon.kill(ExitCode.success);
+      await command.daemon.kill(ExitCode.success);
 
-    //   await expectLater(runFuture, completion(ExitCode.success.code));
-    // });
+      await expectLater(runFuture, completion(ExitCode.success.code));
+    });
 
     test(
       'usage shows help text',
