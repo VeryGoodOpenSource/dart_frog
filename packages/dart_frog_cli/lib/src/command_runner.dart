@@ -6,7 +6,8 @@ import 'package:cli_completion/cli_completion.dart';
 import 'package:dart_frog_cli/src/commands/commands.dart';
 import 'package:dart_frog_cli/src/commands/update/update.dart';
 import 'package:dart_frog_cli/src/version.dart';
-import 'package:mason/mason.dart' hide packageVersion;
+import 'package:mason_logger/mason_logger.dart';
+
 import 'package:pub_updater/pub_updater.dart';
 
 /// Typedef for [io.exit].

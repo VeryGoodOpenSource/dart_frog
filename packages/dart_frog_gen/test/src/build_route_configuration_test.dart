@@ -2,7 +2,7 @@
 
 import 'dart:io';
 
-import 'package:dart_frog_gen/src/build_route_configuration.dart';
+import 'package:dart_frog_gen/src/route_config/build_route_configuration.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 

@@ -2,8 +2,9 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 import 'package:dart_frog_cli/src/command.dart';
-import 'package:dart_frog_cli/src/commands/commands.dart';
 import 'package:dart_frog_cli/src/commands/create/templates/create_dart_frog_bundle.dart';
+import 'package:dart_frog_gen/dart_frog_gen.dart';
+// ignore: depend_on_referenced_packages
 import 'package:mason/mason.dart';
 import 'package:path/path.dart' as path;
 

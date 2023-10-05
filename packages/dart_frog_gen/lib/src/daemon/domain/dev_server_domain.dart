@@ -1,10 +1,7 @@
 import 'dart:io';
 
-import 'package:dart_frog_cli/src/commands/commands.dart';
-import 'package:dart_frog_cli/src/commands/dev/templates/dart_frog_dev_server_bundle.dart';
-import 'package:dart_frog_cli/src/daemon/daemon.dart';
-import 'package:dart_frog_cli/src/dev_server_runner/dev_server_runner.dart';
-import 'package:mason/mason.dart';
+import 'package:dart_frog_gen/daemon.dart';
+import 'package:dart_frog_gen/dart_frog_gen.dart';
 import 'package:meta/meta.dart';
 
 /// {@template dev_server_domain}
@@ -16,9 +13,8 @@ class DevServerDomain extends DomainBase {
   DevServerDomain(
     super.daemon, {
     @visibleForTesting super.getId,
-    @visibleForTesting GeneratorBuilder? generator,
     @visibleForTesting DevServerRunnerBuilder? devServerRunnerBuilder,
-  })  : _generator = generator ?? MasonGenerator.fromBundle,
+  })  :
         _devServerRunnerBuilder =
             devServerRunnerBuilder ?? DevServerRunner.new {
     addHandler('start', _start);
@@ -31,7 +27,7 @@ class DevServerDomain extends DomainBase {
 
   final _devServerRunners = <String, DevServerRunner>{};
 
-  final GeneratorBuilder _generator;
+
   final DevServerRunnerBuilder _devServerRunnerBuilder;
 
   /// Starts a [DevServerRunner] for the given [request].
@@ -55,8 +51,6 @@ class DevServerDomain extends DomainBase {
       ),
     );
 
-    final devServerBundleGenerator = await _generator(dartFrogDevServerBundle);
-
     final logger = DaemonLogger(
       domain: domainName,
       params: {
@@ -71,7 +65,6 @@ class DevServerDomain extends DomainBase {
     final devServerRunner = _devServerRunnerBuilder(
       logger: logger,
       port: '$port',
-      devServerBundleGenerator: devServerBundleGenerator,
       dartVmServicePort: '$dartVmServicePort',
       workingDirectory: Directory(workingDirectory),
     );

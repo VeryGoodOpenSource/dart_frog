@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:dart_frog_cli/src/commands/commands.dart';
 import 'package:dart_frog_cli/src/dev_server_runner/dev_server_runner.dart';
-import 'package:dart_frog_cli/src/runtime_compatibility.dart';
+import 'package:dart_frog_cli/src/runtime_compatibility/runtime_compatibility.dart';
 import 'package:mason/mason.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';

@@ -1,5 +1,5 @@
 import 'package:dart_frog_cli/src/command.dart';
-import 'package:dart_frog_cli/src/daemon/daemon.dart';
+import 'package:dart_frog_gen/daemon.dart';
 import 'package:meta/meta.dart';
 
 /// Type definition for a function which creates a [DaemonServer].

@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:io' as io;
 
 import 'package:mason/mason.dart';
+import 'package:meta/meta.dart';
 
 /// Signature for the [DirectoryGeneratorTarget.createFile] method.
 typedef CreateFile = Future<GeneratedFile> Function(
@@ -15,7 +16,6 @@ typedef CreateFile = Future<GeneratedFile> Function(
 typedef RestorableDirectoryGeneratorTargetBuilder
     = RestorableDirectoryGeneratorTarget Function(
   io.Directory dir, {
-  CreateFile? createFile,
   Logger? logger,
 });
 
@@ -41,8 +41,8 @@ class RestorableDirectoryGeneratorTarget extends DirectoryGeneratorTarget {
   /// {@macro restorable_directory_generator_target}
   RestorableDirectoryGeneratorTarget(
     super.dir, {
-    CreateFile? createFile,
     Logger? logger,
+    @visibleForTesting CreateFile? createFile,
   })  : _cachedSnapshots = Queue<CachedFile>(),
         _createFile = createFile,
         _logger = logger;

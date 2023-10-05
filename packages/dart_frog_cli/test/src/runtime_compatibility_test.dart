@@ -2,7 +2,7 @@
 
 import 'dart:io';
 
-import 'package:dart_frog_cli/src/runtime_compatibility.dart';
+import 'package:dart_frog_cli/src/runtime_compatibility/runtime_compatibility.dart';
 import 'package:mason/mason.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';

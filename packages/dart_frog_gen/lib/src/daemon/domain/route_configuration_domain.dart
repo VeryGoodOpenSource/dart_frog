@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:io' as io;
 
-import 'package:dart_frog_cli/src/daemon/daemon.dart';
-import 'package:dart_frog_cli/src/route_configuration_watcher/route_configuration_watcher.dart';
+import 'package:dart_frog_gen/daemon.dart';
+import 'package:dart_frog_gen/dart_frog_gen.dart';
 import 'package:meta/meta.dart';
 
 /// {@template route_configuration_domain}

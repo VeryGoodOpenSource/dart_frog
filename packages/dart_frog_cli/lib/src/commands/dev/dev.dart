@@ -2,12 +2,8 @@ import 'dart:async';
 import 'dart:io' as io;
 
 import 'package:dart_frog_cli/src/command.dart';
-import 'package:dart_frog_cli/src/commands/commands.dart';
-import 'package:dart_frog_cli/src/commands/dev/templates/dart_frog_dev_server_bundle.dart';
-import 'package:dart_frog_cli/src/dev_server_runner/dev_server_runner.dart';
-import 'package:dart_frog_cli/src/runtime_compatibility.dart'
-    as runtime_compatibility;
-import 'package:mason/mason.dart';
+import 'package:dart_frog_gen/dart_frog_gen.dart';
+import 'package:mason_logger/mason_logger.dart';
 
 /// {@template dev_command}
 /// `dart_frog dev` command which starts the dev server`.
@@ -16,13 +12,10 @@ class DevCommand extends DartFrogCommand {
   /// {@macro dev_command}
   DevCommand({
     super.logger,
-    GeneratorBuilder? generator,
     DevServerRunnerBuilder? devServerRunnerBuilder,
-    runtime_compatibility.RuntimeCompatibilityCallback?
-        ensureRuntimeCompatibility,
-  })  : _ensureRuntimeCompatibility = ensureRuntimeCompatibility ??
-            runtime_compatibility.ensureRuntimeCompatibility,
-        _generator = generator ?? MasonGenerator.fromBundle,
+    RuntimeCompatibilityCallback? runtimeCompatibility,
+  })  : _ensureRuntimeCompatibility =
+            runtimeCompatibility ?? ensureRuntimeCompatibility,
         _devServerRunnerBuilder =
             devServerRunnerBuilder ?? DevServerRunner.new {
     argParser
@@ -42,10 +35,8 @@ class DevCommand extends DartFrogCommand {
 
   static const _defaultDartVmServicePort = '8181';
 
-  final GeneratorBuilder _generator;
   final DevServerRunnerBuilder _devServerRunnerBuilder;
-  final runtime_compatibility.RuntimeCompatibilityCallback
-      _ensureRuntimeCompatibility;
+  final RuntimeCompatibilityCallback _ensureRuntimeCompatibility;
 
   @override
   final String description = 'Run a local development server.';
@@ -108,10 +99,8 @@ class DevCommand extends DartFrogCommand {
     final port = io.Platform.environment['PORT'] ?? results['port'] as String;
     final dartVmServicePort = (results['dart-vm-service-port'] as String?) ??
         _defaultDartVmServicePort;
-    final generator = await _generator(dartFrogDevServerBundle);
 
     _devServerRunner = _devServerRunnerBuilder(
-      devServerBundleGenerator: generator,
       logger: logger,
       workingDirectory: cwd,
       port: port,

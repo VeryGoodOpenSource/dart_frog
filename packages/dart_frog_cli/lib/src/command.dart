@@ -3,7 +3,8 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:dart_frog_cli/src/command_runner.dart';
-import 'package:mason/mason.dart';
+import 'package:mason_logger/mason_logger.dart';
+
 import 'package:meta/meta.dart';
 
 /// {@template dart_frog_command}

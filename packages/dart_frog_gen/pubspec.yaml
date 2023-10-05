@@ -12,8 +12,13 @@ environment:
 
 dependencies:
   equatable: ^2.0.5
+  mason: ^0.1.0-dev.51
+  meta: ^1.10.0
   path: ^1.8.1
   pubspec_parse: ^1.2.2
+  stream_transform: ^2.1.0
+  uuid: ^4.1.0
+  watcher: ^1.1.0
 
 dev_dependencies:
   mocktail: ^1.0.0

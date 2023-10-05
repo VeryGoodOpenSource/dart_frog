@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:dart_frog_gen/src/path_to_route.dart';
+import 'package:dart_frog_gen/src/route_configuration/path_to_route.dart';
 import 'package:path/path.dart' as path;
 
 /// Build a [RouteConfiguration] based on the provided root project [directory].

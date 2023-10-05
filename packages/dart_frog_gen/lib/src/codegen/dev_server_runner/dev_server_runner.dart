@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io' as io;
 
-import 'package:dart_frog_cli/src/dev_server_runner/restorable_directory_generator_target.dart';
+import 'package:dart_frog_gen/src/codegen/bundles/dart_frog_dev_server_bundle.dart';
+import 'package:dart_frog_gen/src/codegen/codegen.dart';
+import 'package:dart_frog_gen/src/codegen/dev_server_runner/restorable_directory_generator_target.dart';
 import 'package:mason/mason.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
@@ -22,11 +24,6 @@ typedef ProcessRun = Future<io.ProcessResult> Function(
   List<String> arguments,
 );
 
-/// Typedef for [DirectoryWatcher.new].
-typedef DirectoryWatcherBuilder = DirectoryWatcher Function(
-  String directory,
-);
-
 /// Regex for detecting warnings in the output of `dart run`.
 final _warningRegex = RegExp(r'^.*:\d+:\d+: Warning: .*', multiLine: true);
 
@@ -41,7 +38,6 @@ final _dartVmServiceAlreadyInUseErrorRegex = RegExp(
 typedef DevServerRunnerBuilder = DevServerRunner Function({
   required Logger logger,
   required String port,
-  required MasonGenerator devServerBundleGenerator,
   required String dartVmServicePort,
   required io.Directory workingDirectory,
   void Function()? onHotReloadEnabled,
@@ -65,10 +61,10 @@ class DevServerRunner {
   DevServerRunner({
     required this.logger,
     required this.port,
-    required this.devServerBundleGenerator,
     required this.dartVmServicePort,
     required this.workingDirectory,
     this.onHotReloadEnabled,
+    @visibleForTesting GeneratorBuilder? generator,
     @visibleForTesting DirectoryWatcherBuilder? directoryWatcher,
     @visibleForTesting
     RestorableDirectoryGeneratorTargetBuilder? generatorTarget,
@@ -83,6 +79,7 @@ class DevServerRunner {
         _runProcess = runProcess ?? io.Process.run,
         _generatorTarget =
             generatorTarget ?? RestorableDirectoryGeneratorTarget.new,
+        _generator = generator ?? MasonGenerator.fromBundle,
         assert(port.isNotEmpty, 'port cannot be empty'),
         assert(
           dartVmServicePort.isNotEmpty,
@@ -98,8 +95,7 @@ class DevServerRunner {
   /// Which port number the dart vm service should listen on.
   final String dartVmServicePort;
 
-  /// The [MasonGenerator] used to generate the dev server runtime code.
-  final MasonGenerator devServerBundleGenerator;
+  final GeneratorBuilder _generator;
 
   /// The working directory of the dart_frog project.
   final io.Directory workingDirectory;
@@ -143,6 +139,10 @@ class DevServerRunner {
   Future<void> _codegen() async {
     logger.detail('[codegen] running pre-gen...');
     var vars = <String, dynamic>{'port': port};
+
+    final devServerBundleGenerator =  await _generator(dartFrogDevServerBundle);
+
+
     await devServerBundleGenerator.hooks.preGen(
       vars: vars,
       workingDirectory: workingDirectory.path,
