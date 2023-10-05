@@ -14,9 +14,7 @@ class DevServerDomain extends DomainBase {
     super.daemon, {
     @visibleForTesting super.getId,
     @visibleForTesting DevServerRunnerBuilder? devServerRunnerBuilder,
-  })  :
-        _devServerRunnerBuilder =
-            devServerRunnerBuilder ?? DevServerRunner.new {
+  }) : _devServerRunnerBuilder = devServerRunnerBuilder ?? DevServerRunner.new {
     addHandler('start', _start);
     addHandler('reload', _reload);
     addHandler('stop', _stop);
@@ -26,7 +24,6 @@ class DevServerDomain extends DomainBase {
   String get domainName => 'dev_server';
 
   final _devServerRunners = <String, DevServerRunner>{};
-
 
   final DevServerRunnerBuilder _devServerRunnerBuilder;
 

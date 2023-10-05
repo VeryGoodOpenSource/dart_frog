@@ -28,14 +28,13 @@ class ProdServerBuilder {
   final Logger logger;
 
   Future<ExitCode> build() async {
-
     final buildBundleGenerator = await _generator(dartFrogProdServerBundle);
 
     logger.detail('[codegen] running pre-gen...');
-   final vars =  await preGen(
-     projectDirectory: workingDirectory,
-     logger: logger,
-     dartVersion: dartVersion,
+    final vars = await preGen(
+      projectDirectory: workingDirectory,
+      logger: logger,
+      dartVersion: dartVersion,
     );
 
     logger.detail('[codegen] running generate...');

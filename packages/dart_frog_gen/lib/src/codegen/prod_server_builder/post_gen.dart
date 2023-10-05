@@ -3,9 +3,8 @@
 import 'dart:async';
 import 'dart:io' as io;
 
-import 'package:mason/mason.dart' show  Logger, lightCyan;
+import 'package:mason/mason.dart' show Logger, lightCyan;
 import 'package:path/path.dart' as path;
-
 
 // topo(renancaraujo): move this to the cli
 typedef ProcessRunner = Future<io.ProcessResult> Function(
@@ -46,7 +45,6 @@ Future<void> postGen({
   required io.Directory workingDirectory,
   ProcessRunner runProcess = io.Process.run,
 }) async {
-
   final buildDirectoryPath = path.join(workingDirectory.path, 'build');
 
   await _dartPubGet(
