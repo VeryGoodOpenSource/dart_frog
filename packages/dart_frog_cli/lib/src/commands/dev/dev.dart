@@ -3,7 +3,7 @@ import 'dart:io' as io;
 
 import 'package:dart_frog_cli/src/command.dart';
 import 'package:dart_frog_gen/dart_frog_gen.dart';
-import 'package:mason_logger/mason_logger.dart';
+import 'package:mason/mason.dart';
 
 /// {@template dev_command}
 /// `dart_frog dev` command which starts the dev server`.

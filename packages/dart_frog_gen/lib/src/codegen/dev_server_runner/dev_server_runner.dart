@@ -4,6 +4,7 @@ import 'dart:io' as io;
 
 import 'package:dart_frog_gen/src/codegen/bundles/dart_frog_dev_server_bundle.dart';
 import 'package:dart_frog_gen/src/codegen/codegen.dart';
+import 'package:dart_frog_gen/src/codegen/dev_server_runner/callbacks.dart';
 import 'package:dart_frog_gen/src/codegen/dev_server_runner/pre_gen.dart';
 import 'package:dart_frog_gen/src/codegen/dev_server_runner/restorable_directory_generator_target.dart';
 import 'package:mason/mason.dart';
@@ -41,6 +42,7 @@ typedef DevServerRunnerBuilder = DevServerRunner Function({
   required String port,
   required String dartVmServicePort,
   required io.Directory workingDirectory,
+  required DevServerCallbacks callbacks,
   void Function()? onHotReloadEnabled,
 });
 
@@ -64,6 +66,7 @@ class DevServerRunner {
     required this.port,
     required this.dartVmServicePort,
     required this.workingDirectory,
+    required this.callbacks,
     this.onHotReloadEnabled,
     @visibleForTesting GeneratorBuilder? generator,
     @visibleForTesting DirectoryWatcherBuilder? directoryWatcher,
@@ -137,6 +140,9 @@ class DevServerRunner {
   /// under which the dev server ended.
   Future<ExitCode> get exitCode => _exitCodeCompleter.future;
 
+  // ignore: public_member_api_docs
+  final DevServerCallbacks callbacks;
+
   Future<void> _codegen() async {
     logger.detail('[codegen] running pre-gen...');
 
@@ -146,14 +152,50 @@ class DevServerRunner {
       port: port,
       projectDirectory: workingDirectory,
       logger: logger,
+      callbacks: callbacks,
     );
 
     logger.detail('[codegen] running generate...');
-    final _ = await devServerBundleGenerator.generate(
+
+    callbacks.willStartCodegen((
+      port: port,
+      projectDirectory: workingDirectory,
+    ),);
+
+    _target
+      ..willCreateFile = (
+        String path,
+        List<int> contents, {
+        Logger? logger,
+        OverwriteRule? overwriteRule,
+      }) {
+        callbacks.willGenerateFile((
+          contents: contents,
+          filePath: path,
+          overwriteRule: overwriteRule,
+        ),);
+      }
+      ..didCreateFile = (
+        GeneratedFile generatedFile,
+      ) {
+        callbacks.didGenerateFile((generatedFile: generatedFile,));
+      };
+
+    final generatedFiles = await devServerBundleGenerator.generate(
       _target,
       vars: vars,
       fileConflictResolution: FileConflictResolution.overwrite,
     );
+    _target
+      ..willCreateFile = null
+      ..didCreateFile = null;
+
+    callbacks.didFinishCodegen((
+      port: port,
+      projectDirectory: workingDirectory,
+      generatedFiles: generatedFiles,
+    ),);
+
     logger.detail('[codegen] complete.');
   }
 
@@ -226,6 +268,8 @@ class DevServerRunner {
         'Cannot start a dev server while already running.',
       );
     }
+
+    callbacks.willStartDevServer((port: port,));
 
     Future<void> serve() async {
       var isHotReloadingEnabled = false;
@@ -320,6 +364,8 @@ class DevServerRunner {
     final progress = logger.progress('Serving');
     await _codegen();
     await serve();
+
+    callbacks.didStartDevServer((port: port,));
 
     final localhost = link(uri: Uri.parse('http://localhost:$port'));
     progress.complete('Running on $localhost');

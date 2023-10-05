@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:dart_frog_gen/daemon.dart';
+import 'package:dart_frog_cli/src/daemon/daemon.dart';
 import 'package:mason/mason.dart';
 import 'package:meta/meta.dart';
 

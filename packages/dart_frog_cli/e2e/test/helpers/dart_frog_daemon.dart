@@ -3,7 +3,8 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dart_frog_gen/daemon.dart';
+import 'package:dart_frog_cli/src/daemon/daemon.dart';
+
 import 'package:test/test.dart';
 
 /// Starts the dart_frog daemon in the given directory.

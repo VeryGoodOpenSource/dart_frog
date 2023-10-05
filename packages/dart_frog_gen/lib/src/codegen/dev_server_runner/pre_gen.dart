@@ -4,21 +4,36 @@ import 'dart:async';
 import 'dart:io' as io;
 
 import 'package:dart_frog_gen/dart_frog_gen.dart';
+import 'package:dart_frog_gen/src/codegen/dev_server_runner/callbacks.dart';
 import 'package:mason/mason.dart';
 
 Future<Map<String, dynamic>> preGen({
   required Logger logger,
   required String? port,
   required io.Directory projectDirectory,
+  required DevServerCallbacks callbacks,
   RouteConfigurationBuilder buildConfiguration = buildRouteConfiguration,
 }) async {
   final RouteConfiguration configuration;
+  callbacks.willBuildRouteConfig(
+    (
+      port: port,
+      projectDirectory: projectDirectory,
+    ),
+  );
   try {
     configuration = buildConfiguration(projectDirectory);
   } catch (error) {
     logger.err('$error');
     throw 'opsie';
   }
+  callbacks.didBuildRouteConfig(
+    (
+      port: port,
+      projectDirectory: projectDirectory,
+      routeConfig: configuration,
+    ),
+  );
 
   reportRouteConflicts(
     configuration,
@@ -45,6 +60,14 @@ Future<Map<String, dynamic>> preGen({
         '''Rogue route detected.${defaultForeground.wrap(' ')}Rename ${lightCyan.wrap(filePath)} to ${lightCyan.wrap(idealPath)}.''',
       );
     },
+  );
+
+  callbacks.didValidateProject(
+    (
+      port: port,
+      projectDirectory: projectDirectory,
+      routeConfig: configuration,
+    ),
   );
 
   return {

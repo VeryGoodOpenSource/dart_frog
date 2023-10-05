@@ -19,6 +19,18 @@ typedef RestorableDirectoryGeneratorTargetBuilder
   Logger? logger,
 });
 
+// ignore: public_member_api_docs
+typedef WillCreateFile = void Function(
+  String path,
+  List<int> contents, {
+  OverwriteRule? overwriteRule,
+});
+
+// ignore: public_member_api_docs
+typedef DidCreateFile = void Function(
+  GeneratedFile generatedFile,
+);
+
 /// {@template cached_file}
 /// A cached file which consists of the file path and contents.
 /// {@endtemplate}
@@ -50,6 +62,11 @@ class RestorableDirectoryGeneratorTarget extends DirectoryGeneratorTarget {
   final CreateFile? _createFile;
   final Logger? _logger;
   final Queue<CachedFile> _cachedSnapshots;
+
+  // ignore: public_member_api_docs
+  WillCreateFile? willCreateFile;
+  // ignore: public_member_api_docs
+  DidCreateFile? didCreateFile;
 
   CachedFile? get _cachedSnapshot {
     return _cachedSnapshots.isNotEmpty ? _cachedSnapshots.last : null;
@@ -100,13 +117,16 @@ class RestorableDirectoryGeneratorTarget extends DirectoryGeneratorTarget {
     List<int> contents, {
     Logger? logger,
     OverwriteRule? overwriteRule,
-  }) {
+  }) async {
     _latestSnapshot = CachedFile(path: path, contents: contents);
-    return (_createFile ?? super.createFile)(
+    willCreateFile?.call(path, contents, overwriteRule: overwriteRule);
+    final result = await (_createFile ?? super.createFile)(
       path,
       contents,
       logger: logger,
       overwriteRule: overwriteRule,
     );
+    didCreateFile?.call(result);
+    return result;
   }
 }

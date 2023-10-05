@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:dart_frog_cli/src/command.dart';
 import 'package:dart_frog_gen/dart_frog_gen.dart';
-import 'package:mason_logger/mason_logger.dart';
+import 'package:mason/mason.dart';
 
 /// {@template build_command}
 /// `dart_frog build` command which creates a production build`.

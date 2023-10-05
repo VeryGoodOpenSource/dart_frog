@@ -8,8 +8,8 @@ environment:
 dev_dependencies:
   dart_frog:
     path: ../../dart_frog
-  dart_frog_gen:
-    path: ../../dart_frog_gen
+  dart_frog_cli:
+    path: ..
   http: ^1.1.0
   meta: ^1.7.0
   path: ^1.8.2
