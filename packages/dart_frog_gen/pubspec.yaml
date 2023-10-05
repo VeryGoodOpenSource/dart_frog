@@ -12,9 +12,11 @@ environment:
 
 dependencies:
   equatable: ^2.0.5
+  io: ^1.0.4
   mason: ^0.1.0-dev.51
   meta: ^1.10.0
   path: ^1.8.1
+  pubspec_lock: ^3.0.2
   pubspec_parse: ^1.2.2
   stream_transform: ^2.1.0
   uuid: ^4.1.0

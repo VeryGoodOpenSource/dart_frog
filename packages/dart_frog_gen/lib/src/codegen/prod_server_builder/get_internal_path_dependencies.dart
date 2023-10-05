@@ -1,8 +1,9 @@
+// ignore_for_file: public_member_api_docs
+
 import 'dart:io' as io;
 
+import 'package:dart_frog_gen/src/codegen/prod_server_builder/get_pubspec_lock.dart';
 import 'package:path/path.dart' as path;
-
-import 'get_pubspec_lock.dart';
 
 Future<List<String>> getInternalPathDependencies(io.Directory directory) async {
   final pubspecLock = await getPubspecLock(directory.path);

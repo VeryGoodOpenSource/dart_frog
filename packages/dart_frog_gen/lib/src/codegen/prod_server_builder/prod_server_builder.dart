@@ -4,6 +4,8 @@ import 'dart:io' as io;
 
 import 'package:dart_frog_gen/dart_frog_gen.dart';
 import 'package:dart_frog_gen/src/codegen/bundles/dart_frog_prod_server_bundle.dart';
+import 'package:dart_frog_gen/src/codegen/prod_server_builder/post_gen.dart';
+import 'package:dart_frog_gen/src/codegen/prod_server_builder/pre_gen.dart';
 import 'package:mason/mason.dart';
 import 'package:meta/meta.dart';
 
@@ -26,17 +28,14 @@ class ProdServerBuilder {
   final Logger logger;
 
   Future<ExitCode> build() async {
-    var vars = <String, dynamic>{
-      'dartVersion': dartVersion,
-    };
 
     final buildBundleGenerator = await _generator(dartFrogProdServerBundle);
 
     logger.detail('[codegen] running pre-gen...');
-    await buildBundleGenerator.hooks.preGen(
-      vars: vars,
-      workingDirectory: workingDirectory.path,
-      onVarsChanged: (v) => vars = v,
+   final vars =  await preGen(
+     projectDirectory: workingDirectory,
+     logger: logger,
+     dartVersion: dartVersion,
     );
 
     logger.detail('[codegen] running generate...');
@@ -47,8 +46,9 @@ class ProdServerBuilder {
     );
 
     logger.detail('[codegen] running post-gen...');
-    await buildBundleGenerator.hooks.postGen(
-      workingDirectory: workingDirectory.path,
+    await postGen(
+      logger: logger,
+      workingDirectory: workingDirectory,
     );
 
     logger.detail('[codegen] complete.');

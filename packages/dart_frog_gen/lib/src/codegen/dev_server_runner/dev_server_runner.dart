@@ -4,6 +4,7 @@ import 'dart:io' as io;
 
 import 'package:dart_frog_gen/src/codegen/bundles/dart_frog_dev_server_bundle.dart';
 import 'package:dart_frog_gen/src/codegen/codegen.dart';
+import 'package:dart_frog_gen/src/codegen/dev_server_runner/pre_gen.dart';
 import 'package:dart_frog_gen/src/codegen/dev_server_runner/restorable_directory_generator_target.dart';
 import 'package:mason/mason.dart';
 import 'package:meta/meta.dart';
@@ -138,15 +139,13 @@ class DevServerRunner {
 
   Future<void> _codegen() async {
     logger.detail('[codegen] running pre-gen...');
-    var vars = <String, dynamic>{'port': port};
 
-    final devServerBundleGenerator =  await _generator(dartFrogDevServerBundle);
+    final devServerBundleGenerator = await _generator(dartFrogDevServerBundle);
 
-
-    await devServerBundleGenerator.hooks.preGen(
-      vars: vars,
-      workingDirectory: workingDirectory.path,
-      onVarsChanged: (v) => vars = v,
+    final vars = await preGen(
+      port: port,
+      projectDirectory: workingDirectory,
+      logger: logger,
     );
 
     logger.detail('[codegen] running generate...');
