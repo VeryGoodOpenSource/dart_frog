@@ -151,8 +151,6 @@ class DevServerRunner {
     final vars = await preGen(
       port: port,
       projectDirectory: workingDirectory,
-      logger: logger,
-      callbacks: callbacks,
     );
 
     logger.detail('[codegen] running generate...');

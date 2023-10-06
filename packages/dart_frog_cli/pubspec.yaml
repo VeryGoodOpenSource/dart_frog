@@ -16,6 +16,7 @@ environment:
 
 dependencies:
   args: ^2.1.0
+  build_runner_core: ^7.2.11
   cli_completion: ^0.4.0
   dart_frog_gen: ^2.0.0
   equatable: ^2.0.5

@@ -39,17 +39,5 @@ class DartFrogDevserverPlugin extends DevServerCallbacks {
 }
 
 //
-//
-// class MyDartFrogPlugin extends DartFrogDevserverPlugin {
-//    @override
-//   void willGenerateFile(WillGenerateFileContext context) {
-//     final path = context.filePath;
-//     final textContent = String.fromCharCodes(context.contents);
-//   }
-// }
-//
-//
-// void dartFrogPlugin(DartFrogPluginContext context) {
-//   context.registerDevserverPlugin(MyDartFrogPlugin());
-// }
-//
+
+
