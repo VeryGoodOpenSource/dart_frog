@@ -49,7 +49,7 @@ accepted.
 
 # For maintainers
 
-## Setting up environment
+## Setting up your local development environment
 
 Prerequisites:
 
