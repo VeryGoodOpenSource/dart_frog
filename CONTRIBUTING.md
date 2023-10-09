@@ -47,7 +47,7 @@ pull request reviewed, the reviewer(s) may ask you to complete additional
 work, tests, or other changes before your pull request can be ultimately
 accepted.
 
-# For maintainers
+# Maintaining Dart Frog
 
 ## Setting up your local development environment
 
