@@ -13,7 +13,7 @@ This is a mono repo. This means that this repository includes more than one indi
 The contents of the repo are divided into the following repositories: 
 
 - `tool/`: contains internal operation scripts
-- `assets/`: images to embed into readmes
+- `assets/`: images to embed into READMEs
 - `docs/`: source code for the [docs site][dart_frog_site].
 - `examples/`: example projects of some of the several usages of Dart Frog
 - `extensions/`: Integrations with IDEs such as VS Code.
