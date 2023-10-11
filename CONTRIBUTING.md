@@ -53,7 +53,7 @@ accepted.
 
 Prerequisites:
 
-- Dart SDK installed in the path, [standalone][dart_standalone_link], or included in the [Flutter SDK][dart_on_flutter_link].
+- Install a valid [Dart SDK](https://dart.dev/get-dart) in your local environment, it should be compatible with the latest version of [Dart Frog CLI](https://github.com/VeryGoodOpenSource/dart_frog/blob/main/packages/dart_frog_cli/pubspec.yaml). If you have Flutter installed, you likely have a valid Dart SDK version already installed.
 - [Mason CLI][mason_install_link] (to run and test the `bricks`);
 - [Node.js][node_js_dowload_link] (For the VS Code extension and the docs site);
 - Capability to run shell scripts (for the scripts under `tool/`).
