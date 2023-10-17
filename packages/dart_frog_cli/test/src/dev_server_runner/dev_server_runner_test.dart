@@ -232,7 +232,7 @@ void main() {
         devServerRunner = DevServerRunner(
           logger: logger,
           port: '4242',
-          address: InternetAddress.tryParse('192.162.1.2')!,
+          address: InternetAddress.tryParse('192.162.1.2'),
           devServerBundleGenerator: generator,
           dartVmServicePort: '4343',
           workingDirectory: Directory.current,
