@@ -41,6 +41,7 @@ final _dartVmServiceAlreadyInUseErrorRegex = RegExp(
 typedef DevServerRunnerBuilder = DevServerRunner Function({
   required Logger logger,
   required String port,
+  required io.InternetAddress? address,
   required MasonGenerator devServerBundleGenerator,
   required String dartVmServicePort,
   required io.Directory workingDirectory,
@@ -65,6 +66,7 @@ class DevServerRunner {
   DevServerRunner({
     required this.logger,
     required this.port,
+    required this.address,
     required this.devServerBundleGenerator,
     required this.dartVmServicePort,
     required this.workingDirectory,
@@ -94,6 +96,9 @@ class DevServerRunner {
 
   /// Which port number the server should start on.
   final String port;
+
+  /// Which host the server should start on.
+  final io.InternetAddress? address;
 
   /// Which port number the dart vm service should listen on.
   final String dartVmServicePort;
@@ -142,7 +147,12 @@ class DevServerRunner {
 
   Future<void> _codegen() async {
     logger.detail('[codegen] running pre-gen...');
-    var vars = <String, dynamic>{'port': port};
+    final address = this.address;
+    logger.detail('Starting devsercer on host ${address?.address}');
+    var vars = <String, dynamic>{
+      'port': port,
+      if (address != null) 'host': address.address,
+    };
     await devServerBundleGenerator.hooks.preGen(
       vars: vars,
       workingDirectory: workingDirectory.path,
