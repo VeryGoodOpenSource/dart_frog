@@ -12,13 +12,13 @@ This is a mono repo, a repository that includes more than one individual project
 
 The contents of the mono repo is divided into the following directories: 
 
-- `tool/`: contains internal operation scripts
-- `assets/`: images to embed into READMEs
-- `docs/`: source code for the [docs site][dart_frog_site].
-- `examples/`: example projects of some of the several usages of Dart Frog
-- `extensions/`: Integrations with IDEs such as VS Code.
-- `bricks/`: Internal mason bricks used by [dart_frog_cli][dart_frog_cli_link] to perform tasks such as creating new projects, starting a dev server, and building a prod server.
-- `packages/`: The source code of the packages that constitute the Dart Frog suite (`dart_frog_cli`, `dart_frog` and `dart_frog_gen`) as well as companion packages (such as `dart_frog_web_socket`).
+- [`tool/`](https://github.com/VeryGoodOpenSource/dart_frog/tree/main/tool): contains internal operation scripts
+- [`assets/`](https://github.com/VeryGoodOpenSource/dart_frog/tree/main/assets): images to embed into READMEs
+- [`docs/`](https://github.com/VeryGoodOpenSource/dart_frog/tree/main/docs): source code for the [docs site][dart_frog_site].
+- [`examples/`](https://github.com/VeryGoodOpenSource/dart_frog/tree/main/examples): example projects of some of the several usages of Dart Frog
+- [`extensions/`](https://github.com/VeryGoodOpenSource/dart_frog/tree/main/extensions): Integrations with IDEs such as VS Code.
+- [`bricks/`](https://github.com/VeryGoodOpenSource/dart_frog/tree/main/bricks): Internal mason bricks used by [dart_frog_cli][dart_frog_cli_link] to perform tasks such as creating new projects, starting a dev server, and building a prod server.
+- [`packages/`](https://github.com/VeryGoodOpenSource/dart_frog/tree/main/packages): The source code of the packages that constitute the Dart Frog suite (`dart_frog_cli`, `dart_frog` and `dart_frog_gen`) as well as companion packages (such as `dart_frog_web_socket`).
 
 Some of the included projects have more specific instructions on contribution. In these cases, the project root may include a `CONTRIBUTING.md` file with such instructions. 
 
