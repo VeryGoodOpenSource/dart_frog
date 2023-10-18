@@ -84,20 +84,32 @@ The other items under `packages/` are companion packages in which dart_frog user
 
 Before starting the release process of an individual package, first check:
 
-- If your local `main` branch is up to date;
-- If the pipeline is green for the given package;
-- How this release will possibly affect other packages. Make sure to open follow-up PRs updating this package usage in other Dart Frog packages that depend on it, after the release.
-
-Checkout on `main` and run the script under `./tool/release_ready.sh` in the package root repository with the desired new version. 
-
-Example:
+1. If your local `main` branch is up to date:
 ```shell
-# on packages/dart_frog, release dart frog v2 (lol)
-../../tool/release_ready.sh 2.0.0 
-```
+# ☁️ Ensure you're up to date with the GitHub remote
+git checkout main
+git fetch
+git status
+/```
 
-This will generate a Changelog and create a release branch. Review the changelog, make the desired changes, commit, push, and open a PR. 
-After the PR is merged, create a [release on GitHub][github_release_link]. A Workflow should take care of publishing the new version on pub.dev.
+2. Ensure the [GitHub pipeline](https://github.com/VeryGoodOpenSource/dart_frog/actions) is green (has passed successfuly) for your given package.
+
+3. Run the script under `tool/release_ready.sh` within the package root repository and the desired new version.
+
+```shell
+# 🚀 Run the release ready script (from packages/<package>)
+../../tool/release_ready.sh <version> 
+/```
+
+The above example will: update the version of <package> to <version>, update the dart_frog CHANGELOG.md, create and checkout to a local release branch.
+
+4. Review the recently updated CHANGELOG file. You should manually amend the content were necessary. For example, by removing the redundant scope of some semantic pull requests or removing superfluous or unrelated logged changes.
+
+5. Commit, push and open a pull request from the new release branch.
+
+6. Once merged, create a [release on GitHub][github_release_link]. The [publish workflow](https://github.com/VeryGoodOpenSource/dart_frog/blob/main/.github/workflows/publish.yaml) should take care of publishing the new version on the appropriate package manager.
+
+7. Open follow-up pull requests updating this package usage in any other Dart Frog package that depends on this new release.
 
 
 [conventional_commits_link]: https://www.conventionalcommits.org/en/v1.0.0
