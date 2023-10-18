@@ -10,7 +10,7 @@ This project is opinionated and follows patterns and practices used by the team 
 
 This is a mono repo, a repository that includes more than one individual project. In fact, the Dart Frog repository includes all the packages, example apps, CLIs, and IDE integration plugins that have a role in the Dart Frog developer experience. 
 
-The contents of the repo are divided into the following repositories: 
+The contents of the mono repo is divided into the following directories: 
 
 - `tool/`: contains internal operation scripts
 - `assets/`: images to embed into READMEs
