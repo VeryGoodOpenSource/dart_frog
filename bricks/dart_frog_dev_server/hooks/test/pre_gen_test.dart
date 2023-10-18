@@ -162,6 +162,43 @@ void main() {
         equals(
           {
             'port': customPort,
+            'host': '',
+            'directories': <RouteDirectory>[],
+            'routes': <RouteFile>[],
+            'middleware': <MiddlewareFile>[],
+            'globalMiddleware': false,
+            'serveStaticFiles': false,
+            'invokeCustomEntrypoint': false,
+            'invokeCustomInit': false,
+          },
+        ),
+      );
+    });
+
+    test('retains custom host if specified', () async {
+      const customHost = '192.168.1.2';
+      context.vars['host'] = customHost;
+      const configuration = RouteConfiguration(
+        middleware: [],
+        directories: [],
+        routes: [],
+        rogueRoutes: [],
+        endpoints: {},
+      );
+      final exitCalls = <int>[];
+      await preGen(
+        context,
+        buildConfiguration: (_) => configuration,
+        exit: exitCalls.add,
+      );
+      expect(exitCalls, isEmpty);
+      verifyNever(() => logger.err(any()));
+      expect(
+        context.vars,
+        equals(
+          {
+            'port': '8080',
+            'host': '192.168.1.2',
             'directories': <RouteDirectory>[],
             'routes': <RouteFile>[],
             'middleware': <MiddlewareFile>[],
@@ -198,6 +235,7 @@ void main() {
         equals(
           {
             'port': customPort,
+            'host': '',
             'directories': <RouteDirectory>[],
             'routes': <RouteFile>[],
             'middleware': <MiddlewareFile>[],
@@ -234,6 +272,7 @@ void main() {
         equals(
           {
             'port': customPort,
+            'host': '',
             'directories': <RouteDirectory>[],
             'routes': <RouteFile>[],
             'middleware': <MiddlewareFile>[],
@@ -335,6 +374,7 @@ void main() {
         equals(
           {
             'port': '8080',
+            'host': '',
             'directories': [
               {
                 'name': '_',
