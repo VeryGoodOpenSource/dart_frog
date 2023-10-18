@@ -92,7 +92,7 @@ git fetch
 git status
 /```
 
-2. Ensure the [GitHub pipeline](https://github.com/VeryGoodOpenSource/dart_frog/actions) is green (has passed successfuly) for your given package.
+2. Ensure the [GitHub pipeline](https://github.com/VeryGoodOpenSource/dart_frog/actions) is green (has passed successfully) for your given package.
 
 3. Run the script under `tool/release_ready.sh` within the package root repository and the desired new version.
 
