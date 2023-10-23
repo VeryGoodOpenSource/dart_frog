@@ -29,7 +29,7 @@
     "@babel/eslint-parser": "^7.22.11",
     "@docusaurus/eslint-plugin": "^2.4.3",
     "@docusaurus/module-type-aliases": "^2.4.0",
-    "eslint": "^8.51.0",
+    "eslint": "^8.52.0",
     "prettier": "^3.0.2"
   },
   "browserslist": {
