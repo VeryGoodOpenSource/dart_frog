@@ -148,7 +148,7 @@ class DevServerRunner {
   Future<void> _codegen() async {
     logger.detail('[codegen] running pre-gen...');
     final address = this.address;
-    logger.detail('Starting devsercer on host ${address?.address}');
+    logger.detail('Starting devserver host ${address?.address}');
     var vars = <String, dynamic>{
       'port': port,
       if (address != null) 'host': address.address,
