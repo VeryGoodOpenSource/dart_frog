@@ -223,6 +223,12 @@ void main() {
 
       await expectLater(command.run(), completion(ExitCode.software.code));
 
+      verify(
+        () => logger.err(
+          'Invalid hostname "ticarica": must be a valid IPv4 or IPv6 address.',
+        ),
+      ).called(1);
+
       verifyNever(() => runner.start());
     });
 

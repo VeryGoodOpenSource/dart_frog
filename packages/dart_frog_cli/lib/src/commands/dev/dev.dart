@@ -118,14 +118,13 @@ class DevCommand extends DartFrogCommand {
 
     final hostname = results['hostname'] as String?;
 
-    late final io.InternetAddress? ip;
-    if (hostname == null) {
-      ip = null;
-    } else {
+    io.InternetAddress? ip;
+    if (hostname != null) {
       ip = io.InternetAddress.tryParse(hostname);
       if (ip == null) {
-        logger.err('Invalid hostname "$hostname": must be a valid '
-            'IPv4 or IPv6 address.');
+        logger.err(
+          'Invalid hostname "$hostname": must be a valid IPv4 or IPv6 address.',
+        );
         return ExitCode.software.code;
       }
     }

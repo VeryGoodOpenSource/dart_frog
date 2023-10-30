@@ -59,15 +59,12 @@ class DevServerDomain extends DomainBase {
 
     final devServerBundleGenerator = await _generator(dartFrogDevServerBundle);
 
-    late final InternetAddress? ip;
-    if (hostname == null) {
-      ip = null;
-    } else {
+    InternetAddress? ip;
+    if (hostname != null) {
       ip = InternetAddress.tryParse(hostname);
       if (ip == null) {
         throw DartFrogDaemonMalformedMessageException(
-          'invalid hostname "$hostname": must be a valid '
-          'IPv4 or IPv6 address.',
+          'invalid hostname "$hostname": must be a valid IPv4 or IPv6 address.',
         );
       }
     }
