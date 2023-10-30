@@ -42,6 +42,7 @@ class DevCommand extends DartFrogCommand {
         'hostname',
         abbr: 'H',
         help: 'Which host name the server should bind to.',
+        defaultsTo: 'localhost',
       );
   }
 
@@ -119,7 +120,7 @@ class DevCommand extends DartFrogCommand {
     final hostname = results['hostname'] as String?;
 
     io.InternetAddress? ip;
-    if (hostname != null) {
+    if (hostname != null && hostname != 'localhost') {
       ip = io.InternetAddress.tryParse(hostname);
       if (ip == null) {
         logger.err(

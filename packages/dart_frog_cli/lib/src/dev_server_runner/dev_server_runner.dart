@@ -98,6 +98,7 @@ class DevServerRunner {
   final String port;
 
   /// Which host the server should start on.
+  /// It will default to localhost if empty.
   final io.InternetAddress? address;
 
   /// Which port number the dart vm service should listen on.
@@ -148,7 +149,7 @@ class DevServerRunner {
   Future<void> _codegen() async {
     logger.detail('[codegen] running pre-gen...');
     final address = this.address;
-    logger.detail('Starting devserver host ${address?.address}');
+    logger.detail('Starting development server on host ${address?.address}');
     var vars = <String, dynamic>{
       'port': port,
       if (address != null) 'host': address.address,
@@ -332,7 +333,9 @@ class DevServerRunner {
     await _codegen();
     await serve();
 
-    final localhost = link(uri: Uri.parse('http://localhost:$port'));
+    final hostAddress = address?.address ?? 'localhost';
+
+    final localhost = link(uri: Uri.parse('http://$hostAddress:$port'));
     progress.complete('Running on $localhost');
 
     final cwdPath = workingDirectory.path;

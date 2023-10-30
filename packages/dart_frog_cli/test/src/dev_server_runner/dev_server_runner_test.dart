@@ -148,6 +148,12 @@ void main() {
             onVarsChanged: any(named: 'onVarsChanged'),
           ),
         ).called(1);
+
+        verify(() {
+          progress.complete('Running on ${link(
+            uri: Uri.parse('http://localhost:8080'),
+          )}');
+        }).called(1);
       });
 
       test('throws when server process is already running', () async {
@@ -224,6 +230,12 @@ void main() {
             onVarsChanged: any(named: 'onVarsChanged'),
           ),
         ).called(1);
+
+        verify(() {
+          progress.complete('Running on ${link(
+            uri: Uri.parse('http://localhost:4242'),
+          )}');
+        }).called(1);
       });
 
       test('custom address', () async {
@@ -271,6 +283,12 @@ void main() {
             onVarsChanged: any(named: 'onVarsChanged'),
           ),
         ).called(1);
+
+        verify(() {
+          progress.complete('Running on ${link(
+            uri: Uri.parse('http://192.162.1.2:4242'),
+          )}');
+        }).called(1);
       });
 
       test(
