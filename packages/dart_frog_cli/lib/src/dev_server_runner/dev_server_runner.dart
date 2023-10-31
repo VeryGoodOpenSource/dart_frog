@@ -98,6 +98,8 @@ class DevServerRunner {
   final String port;
 
   /// Which host the server should start on.
+  /// Which host the server should start on.
+  ///
   /// It will default to localhost if empty.
   final io.InternetAddress? address;
 
