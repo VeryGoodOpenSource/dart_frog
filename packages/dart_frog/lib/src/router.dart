@@ -142,7 +142,18 @@ class Router {
       effectivePath = urlPath;
     }
     final modifiedRequestContext = RequestContext._(
-      request._request.change(path: effectivePath),
+      request._request.change(
+        path: effectivePath,
+        context: {
+          // Include the parameters captured here as mounted parameters.
+          // We also include previous mounted params in case there is double
+          // nesting of `mount`s
+          'dart_frog/mountedParams': {
+            ...context.mountedParams,
+            ...params,
+          },
+        },
+      ),
     );
 
     return await Function.apply(handler, [
