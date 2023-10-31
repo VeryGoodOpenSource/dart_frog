@@ -265,7 +265,7 @@ suite("quickPickApplication", () => {
   });
 
   suite("returns", () => {
-    test("returns undefined when dismissed", async () => {
+    test("undefined when dismissed", async () => {
       const application = quickPickApplication({}, [
         application1,
         application2,
@@ -280,7 +280,7 @@ suite("quickPickApplication", () => {
       assert.strictEqual(selection, undefined);
     });
 
-    test("returns application when selected", async () => {
+    test("application when selected", async () => {
       const application = quickPickApplication({}, [
         application1,
         application2,

@@ -1,7 +1,8 @@
 import {
   isDartFrogCLIInstalled,
-  nearestDartFrogProject,
-  resolveDartFrogProjectPathFromWorkspace,
+  nearestParentDartFrogProject,
+  resolveDartFrogProjectPathFromActiveTextEditor,
+  resolveDartFrogProjectPathFromWorkspaceFolders,
   suggestInstallingDartFrogCLI,
 } from "../utils";
 import { DartFrogDaemon } from "../daemon";
@@ -33,9 +34,18 @@ export const startDaemon = async (): Promise<void> => {
     return;
   }
 
-  const dartFrogProjectPath = resolveDartFrogProjectPathFromWorkspace();
+  let dartFrogProjectPath: string | undefined;
+  const dartFrogProjectsPaths =
+    resolveDartFrogProjectPathFromWorkspaceFolders();
+  if (dartFrogProjectsPaths && dartFrogProjectsPaths.length > 0) {
+    dartFrogProjectPath = dartFrogProjectsPaths[0];
+  }
+  if (!dartFrogProjectPath) {
+    dartFrogProjectPath = resolveDartFrogProjectPathFromActiveTextEditor();
+  }
+
   const rootDartFrogProjectPath = dartFrogProjectPath
-    ? nearestDartFrogProject(dartFrogProjectPath)
+    ? nearestParentDartFrogProject(dartFrogProjectPath)
     : undefined;
   if (!rootDartFrogProjectPath) {
     window.showErrorMessage(

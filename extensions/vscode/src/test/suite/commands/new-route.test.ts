@@ -28,17 +28,16 @@ suite("new-route command", () => {
     };
 
     utilsStub = {
-      nearestDartFrogProject: sinon.stub(),
+      nearestParentDartFrogProject: sinon.stub(),
       normalizeRoutePath: sinon.stub(),
-      resolveDartFrogProjectPathFromWorkspace: sinon.stub(),
+      resolveDartFrogProjectPathFromActiveTextEditor: sinon.stub(),
+      resolveDartFrogProjectPathFromWorkspaceFolders: sinon.stub(),
       isDartFrogCLIInstalled: sinon.stub(),
       suggestInstallingDartFrogCLI: sinon.stub(),
+      quickPickProject: sinon.stub(),
     };
 
-    utilsStub.nearestDartFrogProject
-      .withArgs(invalidUri.fsPath)
-      .returns(undefined);
-    utilsStub.nearestDartFrogProject
+    utilsStub.nearestParentDartFrogProject
       .withArgs(validUri.fsPath)
       .returns(validUri.fsPath);
     utilsStub.isDartFrogCLIInstalled.returns(true);
@@ -148,11 +147,50 @@ suite("new-route command", () => {
     });
   });
 
+  suite("quick pick project", () => {
+    test("is shown when Uri and active text editor are undefined and there is more than one Dart Frog project in workspace folders", async () => {
+      utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns();
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+        "/home/dart_frog/routes",
+        "/home/dart_frog2/routes",
+      ]);
+
+      await command.newRoute();
+
+      sinon.assert.calledOnceWithExactly(utilsStub.quickPickProject, {}, [
+        "/home/dart_frog/routes",
+        "/home/dart_frog2/routes",
+      ]);
+    });
+
+    suite("is not shown", () => {
+      beforeEach(() => {
+        utilsStub.normalizeRoutePath.returns("/");
+      });
+
+      test("when Uri is defined", async () => {
+        await command.newRoute(validUri);
+
+        sinon.assert.notCalled(utilsStub.quickPickProject);
+      });
+
+      test("when Uri is undefined but resolves a Dart Frog project from active text editor", async () => {
+        utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns(
+          "/home/dart_frog/routes/index.dart"
+        );
+
+        await command.newRoute();
+
+        sinon.assert.notCalled(utilsStub.quickPickProject);
+      });
+    });
+  });
+
   suite("file open dialog", () => {
     test("is shown when Uri is undefined and fails to resolve a path from workspace", async () => {
       vscodeStub.window.showInputBox.returns(validRouteName);
       vscodeStub.window.showOpenDialog.resolves();
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns();
 
       await command.newRoute();
 
@@ -164,23 +202,40 @@ suite("new-route command", () => {
       });
     });
 
-    test("is not shown when Uri is undefined but resolves a path from workspace", async () => {
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
-        validUri.fsPath
-      );
-      utilsStub.normalizeRoutePath.returns("/");
+    suite("is not shwon", () => {
+      test("when Uri is defined", async () => {
+        vscodeStub.window.showInputBox.returns(validRouteName);
 
-      await command.newRoute();
+        await command.newRoute(invalidUri);
 
-      sinon.assert.notCalled(vscodeStub.window.showOpenDialog);
-    });
+        sinon.assert.notCalled(vscodeStub.window.showOpenDialog);
+      });
 
-    test("is not shown when Uri is defined", async () => {
-      vscodeStub.window.showInputBox.returns(validRouteName);
+      test("when Uri is undefined but resolves a path from active text editor", async () => {
+        utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns(
+          validUri.fsPath
+        );
+        utilsStub.normalizeRoutePath.returns("/");
 
-      await command.newRoute(invalidUri);
+        await command.newRoute();
 
-      sinon.assert.notCalled(vscodeStub.window.showOpenDialog);
+        sinon.assert.notCalled(vscodeStub.window.showOpenDialog);
+      });
+
+      test("when Uri and active text editor are undefined but resolves a path from workspace folder", async () => {
+        utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns();
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+          validUri.fsPath,
+        ]);
+        utilsStub.normalizeRoutePath.returns("/");
+
+        await command.newRoute();
+
+        sinon.assert.called(
+          utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders
+        );
+        sinon.assert.notCalled(vscodeStub.window.showOpenDialog);
+      });
     });
   });
 
@@ -253,19 +308,62 @@ suite("new-route command", () => {
     });
   });
 
-  test("runs `dart_frog new route` command with prompted route successfully", async () => {
-    utilsStub.normalizeRoutePath.returns("/");
+  test("does not run `dart_frog new route` command when project selection is cancelled", async () => {
+    utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns();
+    utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+      "/home/dart_frog/routes",
+      "/home/dart_frog2/routes",
+    ]);
+    utilsStub.quickPickProject.resolves();
+
+    await command.newRoute();
+
+    sinon.assert.notCalled(childProcessStub.exec);
+  });
+
+  suite("runs `dart_frog new route` command", () => {
     const routePath = "pizza";
-    vscodeStub.window.showInputBox.returns(routePath);
 
-    await command.newRoute(validUri);
-    const progressFunction = vscodeStub.window.withProgress.getCall(0).args[1];
-    await progressFunction();
+    beforeEach(() => {
+      utilsStub.normalizeRoutePath.returns("/");
+      vscodeStub.window.showInputBox.returns(routePath);
+    });
 
-    sinon.assert.calledWith(
-      childProcessStub.exec,
-      `dart_frog new route '${routePath}'`
-    );
+    test("with prompted route successfully", async () => {
+      await command.newRoute(validUri);
+
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      await progressFunction();
+
+      sinon.assert.calledWith(
+        childProcessStub.exec,
+        `dart_frog new route "${routePath}"`
+      );
+    });
+
+    test("with cwd as selected project", async () => {
+      utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns();
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+        "/home/dart_frog/routes",
+        validUri.fsPath,
+      ]);
+      utilsStub.quickPickProject.resolves(validUri.fsPath);
+
+      await command.newRoute();
+
+      const progressFunction =
+        vscodeStub.window.withProgress.getCall(0).args[1];
+      await progressFunction();
+
+      sinon.assert.calledWith(
+        childProcessStub.exec,
+        `dart_frog new route "${routePath}"`,
+        {
+          cwd: validUri.fsPath,
+        }
+      );
+    });
   });
 
   test("shows error message when `dart_frog new route` fails", async () => {

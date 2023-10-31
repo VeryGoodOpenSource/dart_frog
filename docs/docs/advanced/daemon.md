@@ -10,6 +10,10 @@ application instances of the same project if necessary.
 
 To start using it, install the Dart Frog CLI and run the `dart_frog daemon` command. Once running, communicating with it can be done via [JSON-RPC](https://www.jsonrpc.org/) over stdin/stdout to receive and send messages.
 
+:::note
+For a concrete sample of how to interact with the daemon via `stdio`, see the [end-to-end tests](https://github.com/VeryGoodOpenSource/dart_frog/tree/main/packages/dart_frog_cli/e2e/test/daemon).
+:::
+
 There are three types of messages:
 
 - **Request**: A request is a message sent by a client to the daemon. The daemon will process the
@@ -20,6 +24,10 @@ There are three types of messages:
 
 Every request should be met with a response as soon as possible so the caller can work with
 timeouts. The daemon will send events to the client as they happen.
+
+:::warning
+The daemon is still in its early stages of development. Therefore, the API is not stable and may change.
+:::
 
 ---
 
@@ -39,6 +47,10 @@ $ dart_frog daemon
 ```
 
 The `id` field on the request is used to match the request with the response. As the client sets it arbitrarily, the client is responsible for ensuring that all request ids are unique.
+
+:::warning
+The requests should be strictly in the format `[{...}]`. Therefore, sending a request with any of these formats: `[{...},]`, `[{...}, {...}]` or `[{...}]\n[{...}]` is currently not accepted.
+:::
 
 ---
 
@@ -65,6 +77,19 @@ Request the daemon version.
 | ------- | ------ | ------------------ |
 | version | string | The daemon version |
 
+```sh
+$ dart_frog daemon
+
+// ready event sent via stdout
+[{"event":"daemon.ready","params":{"version":"0.0.1","processId":75941}}]
+
+// request inserted via stdin
+[{"method": "daemon.requestVersion", "id": "12"}]
+
+// response sent via stdout
+[{"id":"12","result":{"version":"0.0.1"}}]
+```
+
 ### Method: `kill`
 
 Shuts down the daemon
@@ -74,6 +99,19 @@ Shuts down the daemon
 | Field   | type   | Description       |
 | ------- | ------ | ----------------- |
 | message | string | A goodbye message |
+
+```sh
+$ dart_frog daemon
+
+// ready event sent via stdout
+[{"event":"daemon.ready","params":{"version":"0.0.1","processId":75941}}]
+
+// request inserted via stdin
+[{"method": "daemon.kill", "id": "12"}]
+
+// response sent via stdout
+[{"id":"12","result":{"message":"Hogarth. You stay, I go. No following."}}]
+```
 
 ### Event: `ready`
 
@@ -108,6 +146,21 @@ Start a dev server on a given project.
 | ------------- | ------ | ----------------------------------------------- |
 | applicationId | String | A unique identifier for the dev server instance |
 
+```sh
+$ dart_frog daemon
+
+// ready event sent via stdout
+[{"event":"daemon.ready","params":{"version":"0.0.1","processId":75941}}]
+
+// request inserted via stdin
+[{"method":"dev_server.start","id":"12","params":{"workingDirectory":"./","port":8080,"dartVmServicePort":8091}}]
+
+// response sent via stdout
+[{"event":"dev_server.applicationStarting","params":{"applicationId":"9e531349","requestId":"12"}}]
+
+// Few logs omitted
+```
+
 ### Method: `reload`
 
 Reload a running dev server.
@@ -123,6 +176,25 @@ Reload a running dev server.
 | Field         | Type   | Description                                     |
 | ------------- | ------ | ----------------------------------------------- |
 | applicationId | String | A unique identifier for the dev server instance |
+
+```sh
+$ dart_frog daemon
+
+// ready event sent via stdout
+[{"event":"daemon.ready","params":{"version":"0.0.1","processId":75941}}]
+
+// start server before reloading (use dev_server.start)
+
+// request inserted via stdin
+[{"method":"dev_server.reload","id":"12","params":{"applicationId":"9e531349"}}]
+
+// Few logs omitted
+
+// response sent via stdout
+[{"id":"12","result":{"applicationId":"9e531349"}}]
+
+// Few logs omitted
+```
 
 ### Method: `stop`
 
@@ -140,6 +212,23 @@ Stop a running dev server.
 | ------------- | ------ | ----------------------------------------------- |
 | applicationId | String | A unique identifier for the dev server instance |
 | exitCode      | int    | The exit code of the dev server process         |
+
+```sh
+$ dart_frog daemon
+
+// ready event sent via stdout
+[{"event":"daemon.ready","params":{"version":"0.0.1","processId":75941}}]
+
+// start server before stopping (use dev_server.start)
+
+// request inserted via stdin
+[{"method":"dev_server.stop","id":"12","params":{"applicationId":"9e531349"}}]
+
+// Few logs omitted
+
+// response sent via stdout
+[{"id":"12","result":{"applicationId":"9e531349","exitCode":0}}]
+```
 
 ### Event: `applicationStarting`
 
@@ -203,6 +292,22 @@ when the route configuration of a project changes.
 | --------- | ------ | -------------------------------------------- |
 | watcherId | String | A unique identifier for the watcher instance |
 
+```sh
+$ dart_frog daemon
+
+// ready event sent via stdout
+[{"event":"daemon.ready","params":{"version":"0.0.1","processId":75941}}]
+
+// request inserted via stdin
+[{"method":"route_configuration.watcherStart","id":"12","params":{"workingDirectory":"./"}}]
+
+// response sent via stdout
+[{"id":"12","result":{"watcherId":"29f9ad21"}}]
+
+// An event is sent via stdout for every change detected
+[{"event":"route_configuration.changed","params":{"watcherId":"29f9ad21","requestId":"12","routeConfiguration":{ ... }}}]
+```
+
 ### Method: `watcherStop`
 
 Stops a route configuration watcher created by `watcherStart`.
@@ -219,6 +324,23 @@ Stops a route configuration watcher created by `watcherStart`.
 | --------- | ------ | -------------------------------------------- |
 | watcherId | String | A unique identifier for the watcher instance |
 | exitCode  | int    | The exit code of the watcher process         |
+
+```sh
+$ dart_frog daemon
+
+// ready event sent via stdout
+[{"event":"daemon.ready","params":{"version":"0.0.1","processId":75941}}]
+
+// start watcher before stopping (use route_configuration.watcherStart)
+
+// request inserted via stdin
+[{"method":"route_configuration.watcherStop","id":"12","params":{"watcherId":"29f9ad21"}}]
+
+// Few logs omitted
+
+// response sent via stdout
+[{"id":"12","result":{"watcherId":"29f9ad21","exitCode":0}}]
+```
 
 ### Method: `watcherGenerateRouteConfiguration`
 
@@ -237,6 +359,23 @@ Also, returns the generated route configuration.
 | ------------------ | ------ | -------------------------------------------- |
 | watcherId          | String | A unique identifier for the watcher instance |
 | routeConfiguration | String | The generated route configuration            |
+
+```sh
+$ dart_frog daemon
+
+// ready event sent via stdout
+[{"event":"daemon.ready","params":{"version":"0.0.1","processId":75941}}]
+
+// start watcher before stopping (use route_configuration.watcherStart)
+
+// request inserted via stdin
+[{"method":"route_configuration.watcherGenerateRouteConfiguration","id":"12","params":{"watcherId":"29f9ad21"}}]
+
+// Few logs omitted
+
+// response sent via stdout
+[{"id":"12","result":{"watcherId":"29f9ad21","routeConfiguration":{ ... }}}]
+```
 
 ### Event: `changed`
 

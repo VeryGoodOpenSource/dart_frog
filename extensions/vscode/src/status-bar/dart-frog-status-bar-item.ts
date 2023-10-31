@@ -5,7 +5,7 @@ import {
   window,
   workspace,
 } from "vscode";
-import { resolveDartFrogProjectPathFromWorkspace } from "../utils";
+import { canResolveDartFrogProjectPath } from "../utils";
 
 /**
  * Wraps a status bar item so that is only visible when the current workspace
@@ -35,8 +35,7 @@ export abstract class DartFrogStatusBarItem implements Disposable {
   public abstract update(): any;
 
   private onChangeSetup(): void {
-    const isDartFrogProject = resolveDartFrogProjectPathFromWorkspace();
-    if (isDartFrogProject) {
+    if (canResolveDartFrogProjectPath()) {
       this.update();
     } else {
       this.statusBarItem.hide();

@@ -1,6 +1,6 @@
 name: dart_frog_cli
 description: The official command line interface for Dart Frog. Built by Very Good Ventures.
-version: 1.1.0
+version: 1.1.1
 homepage: https://dartfrog.vgv.dev
 repository: https://github.com/VeryGoodOpenSource/dart_frog
 issue_tracker: https://github.com/VeryGoodOpenSource/dart_frog/issues
@@ -16,13 +16,13 @@ environment:
 
 dependencies:
   args: ^2.1.0
-  cli_completion: ^0.3.0
+  cli_completion: ">=0.3.0 <0.5.0"
   dart_frog_gen: ^2.0.0
   equatable: ^2.0.5
-  mason: 0.1.0-dev.50
+  mason: 0.1.0-dev.51
   meta: ^1.7.0
   path: ^1.8.1
-  pub_updater: ^0.3.1
+  pub_updater: ">=0.3.1 <0.5.0"
   pubspec_parse: ^1.2.0
   stream_transform: ^2.0.0
   uuid: ^4.0.0

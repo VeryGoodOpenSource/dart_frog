@@ -50,5 +50,5 @@ In the interest of transparency, we want to share high-level details of our road
   - [x] Create a new project
   - [x] New Routes
   - [x] New Middleware
-  - [ ] Attach Debugger
+  - [x] Attach Debugger
 - [ ] CLI `deploy` command to support deploying to supported cloud platforms (e.g: Cloud Run)

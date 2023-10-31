@@ -185,7 +185,7 @@ suite("create command", () => {
 
     sinon.assert.calledOnceWithMatch(
       childProcessStub.exec,
-      "dart_frog create 'my_project'",
+      `dart_frog create "my_project"`,
       { cwd: targetUri.fsPath }
     );
   });
@@ -201,14 +201,14 @@ suite("create command", () => {
 
     sinon.assert.calledOnceWithMatch(
       childProcessStub.exec,
-      "dart_frog create 'my_project'",
+      `dart_frog create "my_project"`,
       { cwd: targetUri.fsPath }
     );
   });
 
   test("shows error when `dart_frog create` command fails", async () => {
     const error = new Error("Command failed");
-    const createCommand = "dart_frog create 'my_project'";
+    const createCommand = `dart_frog create "my_project"`;
 
     vscodeStub.window.showInputBox.returns("my_project");
     childProcessStub.exec.withArgs(createCommand).yields(error);

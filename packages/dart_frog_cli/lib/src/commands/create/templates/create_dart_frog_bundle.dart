@@ -12,6 +12,12 @@ final createDartFrogBundle = MasonBundle.fromJson(<String, dynamic>{
       "type": "text"
     },
     {
+      "path": ".vscode/extensions.json",
+      "data":
+          "ewoJInJlY29tbWVuZGF0aW9ucyI6IFsiVmVyeUdvb2RWZW50dXJlcy5kYXJ0LWZyb2ciXQp9",
+      "type": "text"
+    },
+    {
       "path": "analysis_options.yaml",
       "data":
           "aW5jbHVkZTogcGFja2FnZTp2ZXJ5X2dvb2RfYW5hbHlzaXMvYW5hbHlzaXNfb3B0aW9ucy41LjEuMC55YW1sCmFuYWx5emVyOgogIGV4Y2x1ZGU6CiAgICAtIGJ1aWxkLyoqCmxpbnRlcjoKICBydWxlczoKICAgIGZpbGVfbmFtZXM6IGZhbHNlCg==",

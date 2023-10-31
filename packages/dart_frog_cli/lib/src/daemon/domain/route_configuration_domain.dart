@@ -34,12 +34,7 @@ class RouteConfigurationDomain extends DomainBase {
   final RouteConfigurationWatcherBuilder _routeConfigWatcherBuilder;
 
   Future<DaemonResponse> _watcherStart(DaemonRequest request) async {
-    final workingDirectory = request.params?['workingDirectory'];
-    if (workingDirectory is! String) {
-      throw const DartFrogDaemonMalformedMessageException(
-        'invalid workingDirectory',
-      );
-    }
+    final workingDirectory = request.getParam<String>('workingDirectory');
 
     final watcherId = getId();
 
@@ -128,12 +123,7 @@ class RouteConfigurationDomain extends DomainBase {
   Future<DaemonResponse> _watcherGenerateRouteConfiguration(
     DaemonRequest request,
   ) async {
-    final watcherId = request.params?['watcherId'];
-    if (watcherId is! String) {
-      throw const DartFrogDaemonMalformedMessageException(
-        'invalid watcherId',
-      );
-    }
+    final watcherId = request.getParam<String>('watcherId');
 
     final watcher = _routeConfigurationWatchers[watcherId];
     if (watcher == null) {
@@ -168,14 +158,9 @@ class RouteConfigurationDomain extends DomainBase {
   }
 
   Future<DaemonResponse> _watcherStop(DaemonRequest request) async {
-    final watcherId = request.params?['watcherId'];
-    if (watcherId is! String) {
-      throw const DartFrogDaemonMalformedMessageException(
-        'invalid watcherId',
-      );
-    }
+    final watcherId = request.getParam<String>('watcherId');
 
-    final watcher = _routeConfigurationWatchers[watcherId];
+    final watcher = _routeConfigurationWatchers.remove(watcherId);
     if (watcher == null) {
       return DaemonResponse.error(
         id: request.id,
@@ -189,8 +174,6 @@ class RouteConfigurationDomain extends DomainBase {
     try {
       await watcher.stop();
 
-      _routeConfigurationWatchers.remove(watcherId);
-
       final exitCode = await watcher.exitCode;
 
       return DaemonResponse.success(
@@ -201,11 +184,15 @@ class RouteConfigurationDomain extends DomainBase {
         },
       );
     } catch (e) {
+      if (!watcher.isCompleted) {
+        _routeConfigurationWatchers[watcherId] = watcher;
+      }
       return DaemonResponse.error(
         id: request.id,
         error: {
           'watcherId': watcherId,
           'message': e.toString(),
+          'finished': watcher.isCompleted,
         },
       );
     }

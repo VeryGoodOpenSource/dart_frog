@@ -8,7 +8,7 @@ import {
   TextDocument,
   workspace,
 } from "vscode";
-import { nearestDartFrogProject } from "../utils";
+import { nearestParentDartFrogProject } from "../utils";
 import path = require("path");
 
 abstract class ConfigurableCodeLensProvider implements CodeLensProvider {
@@ -75,14 +75,18 @@ abstract class RegularExpressionCodeLensProvider extends ConfigurableCodeLensPro
 
 // eslint-disable-next-line max-len
 abstract class OnRequestCodeLensProvider extends RegularExpressionCodeLensProvider {
-  readonly regex: RegExp = /Response\s*onRequest\(RequestContext .*?\)\s*{/g;
+  readonly regex: RegExp =
+    // eslint-disable-next-line max-len
+    /(Response|Future<Response>|FutureOr<Response>)\s*onRequest\(.*?/g;
 
   public provideCodeLenses(document: TextDocument): ProviderResult<CodeLens[]> {
     if (document.languageId !== "dart") {
       return undefined;
     }
 
-    const dartFrogProjectPath = nearestDartFrogProject(document.uri.fsPath);
+    const dartFrogProjectPath = nearestParentDartFrogProject(
+      document.uri.fsPath
+    );
     if (!dartFrogProjectPath) {
       return undefined;
     }

@@ -110,7 +110,7 @@ async function executeDartFrogCreateCommand(
   projectName: string
 ): Promise<void> {
   return cp.exec(
-    `dart_frog create '${projectName}'`,
+    `dart_frog create "${projectName}"`,
     {
       cwd: outputDirectory,
     },

@@ -49,6 +49,7 @@ void main() {
       completer = Completer();
       when(() => runner.start()).thenAnswer((_) async {});
       when(() => runner.exitCode).thenAnswer((_) async => completer.future);
+      when(() => runner.isCompleted).thenReturn(true);
     });
 
     test('can be instantiated', () {
@@ -119,6 +120,77 @@ void main() {
             ),
           ),
         ).called(1);
+      });
+
+      group('missing parameters', () {
+        test('workingDirectory', () async {
+          expect(
+            await domain.handleRequest(
+              const DaemonRequest(
+                id: '12',
+                domain: 'dev_server',
+                method: 'start',
+                params: {'port': 3000, 'dartVmServicePort': 3001},
+              ),
+            ),
+            equals(
+              const DaemonResponse.error(
+                id: '12',
+                error: {
+                  'message': 'Missing parameter, workingDirectory not found',
+                },
+              ),
+            ),
+          );
+        });
+
+        test('port', () async {
+          expect(
+            await domain.handleRequest(
+              const DaemonRequest(
+                id: '12',
+                domain: 'dev_server',
+                method: 'start',
+                params: {
+                  'workingDirectory': '/',
+                  'dartVmServicePort': 3001,
+                },
+              ),
+            ),
+            equals(
+              const DaemonResponse.error(
+                id: '12',
+                error: {
+                  'message': 'Missing parameter, port not found',
+                },
+              ),
+            ),
+          );
+        });
+
+        test('dartVmServicePort', () async {
+          expect(
+            await domain.handleRequest(
+              const DaemonRequest(
+                id: '12',
+                domain: 'dev_server',
+                method: 'start',
+                params: {
+                  'workingDirectory': '/',
+                  'port': 3000,
+                },
+              ),
+            ),
+            equals(
+              const DaemonResponse.error(
+                id: '12',
+                error: {
+                  'message': 'Missing parameter, dartVmServicePort not found',
+                },
+              ),
+            ),
+          );
+        });
       });
 
       group('malformed messages', () {
@@ -276,6 +348,29 @@ void main() {
           );
         });
 
+        group('missing parameters', () {
+          test('applicationId', () async {
+            expect(
+              await domain.handleRequest(
+                const DaemonRequest(
+                  id: '12',
+                  domain: 'dev_server',
+                  method: 'reload',
+                  params: {},
+                ),
+              ),
+              equals(
+                const DaemonResponse.error(
+                  id: '12',
+                  error: {
+                    'message': 'Missing parameter, applicationId not found',
+                  },
+                ),
+              ),
+            );
+          });
+        });
+
         test('application not found', () async {
           expect(
             await domain.handleRequest(
@@ -386,6 +481,29 @@ void main() {
           );
         });
 
+        group('missing parameters', () {
+          test('applicationId', () async {
+            expect(
+              await domain.handleRequest(
+                const DaemonRequest(
+                  id: '12',
+                  domain: 'dev_server',
+                  method: 'stop',
+                  params: {},
+                ),
+              ),
+              equals(
+                const DaemonResponse.error(
+                  id: '12',
+                  error: {
+                    'message': 'Missing parameter, applicationId not found',
+                  },
+                ),
+              ),
+            );
+          });
+        });
+
         test('application not found', () async {
           expect(
             await domain.handleRequest(
@@ -424,7 +542,37 @@ void main() {
           equals(
             const DaemonResponse.error(
               id: '12',
-              error: {'applicationId': 'id', 'message': 'error'},
+              error: {
+                'applicationId': 'id',
+                'message': 'error',
+                'finished': true,
+              },
+            ),
+          ),
+        );
+      });
+
+      test('on non completed dev server throw', () async {
+        when(() => runner.stop()).thenThrow('error');
+        when(() => runner.isCompleted).thenReturn(false);
+
+        expect(
+          await domain.handleRequest(
+            const DaemonRequest(
+              id: '12',
+              domain: 'dev_server',
+              method: 'stop',
+              params: {'applicationId': 'id'},
+            ),
+          ),
+          equals(
+            const DaemonResponse.error(
+              id: '12',
+              error: {
+                'applicationId': 'id',
+                'message': 'error',
+                'finished': false,
+              },
             ),
           ),
         );

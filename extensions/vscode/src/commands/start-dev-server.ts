@@ -8,8 +8,10 @@ import {
 import { Uri, commands, window } from "vscode";
 import {
   isDartFrogCLIInstalled,
-  nearestDartFrogProject,
-  resolveDartFrogProjectPathFromWorkspace,
+  nearestParentDartFrogProject,
+  quickPickProject,
+  resolveDartFrogProjectPathFromActiveTextEditor,
+  resolveDartFrogProjectPathFromWorkspaceFolders,
   suggestInstallingDartFrogCLI,
 } from "../utils";
 
@@ -56,9 +58,23 @@ export const startDevServer = async (): Promise<
     return;
   }
 
-  const workingPath = resolveDartFrogProjectPathFromWorkspace();
-  const workingDirectory = workingPath
-    ? nearestDartFrogProject(workingPath)
+  let projectPath: string | undefined;
+  const dartFrogProjectsPaths =
+    resolveDartFrogProjectPathFromWorkspaceFolders();
+  if (dartFrogProjectsPaths && dartFrogProjectsPaths.length > 0) {
+    const selection = await quickPickProject({}, dartFrogProjectsPaths);
+    if (!selection) {
+      return;
+    }
+    projectPath = selection;
+  }
+
+  if (!projectPath) {
+    projectPath = resolveDartFrogProjectPathFromActiveTextEditor();
+  }
+
+  const workingDirectory = projectPath
+    ? nearestParentDartFrogProject(projectPath)
     : undefined;
   if (!workingDirectory) {
     await window.showErrorMessage(

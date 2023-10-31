@@ -26,18 +26,21 @@ suite("new-middleware command", () => {
       exec: sinon.stub(),
     };
     utilsStub = {
-      nearestDartFrogProject: sinon.stub(),
+      nearestParentDartFrogProject: sinon.stub(),
       normalizeRoutePath: sinon.stub(),
-      resolveDartFrogProjectPathFromWorkspace: sinon.stub(),
+      resolveDartFrogProjectPathFromActiveTextEditor: sinon.stub(),
+      resolveDartFrogProjectPathFromWorkspaceFolders: sinon.stub(),
       isDartFrogCLIInstalled: sinon.stub(),
       suggestInstallingDartFrogCLI: sinon.stub(),
+      quickPickProject: sinon.stub(),
     };
     utilsStub.isDartFrogCLIInstalled.returns(true);
+    utilsStub.quickPickProject.resolves(validUri.fsPath);
 
-    utilsStub.nearestDartFrogProject
+    utilsStub.nearestParentDartFrogProject
       .withArgs(invalidUri.fsPath)
-      .returns(undefined);
-    utilsStub.nearestDartFrogProject
+      .returns();
+    utilsStub.nearestParentDartFrogProject
       .withArgs(validUri.fsPath)
       .returns(validUri.fsPath);
 
@@ -73,10 +76,51 @@ suite("new-middleware command", () => {
     sinon.assert.notCalled(utilsStub.suggestInstallingDartFrogCLI);
   });
 
+  suite("quick pick project", () => {
+    test("is shown when Uri and active text editor are undefined and there is more than one Dart Frog project in workspace folders", async () => {
+      utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns();
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+        "/home/dart_frog/routes",
+        "/home/dart_frog2/routes",
+      ]);
+
+      await command.newMiddleware();
+
+      sinon.assert.calledOnceWithExactly(utilsStub.quickPickProject, {}, [
+        "/home/dart_frog/routes",
+        "/home/dart_frog2/routes",
+      ]);
+    });
+
+    suite("is not shown", () => {
+      beforeEach(() => {
+        utilsStub.nearestParentDartFrogProject.returns("/home/dart_frog/");
+        utilsStub.normalizeRoutePath.returns("/");
+      });
+
+      test("when Uri is defined", async () => {
+        await command.newMiddleware(validUri);
+
+        sinon.assert.notCalled(utilsStub.quickPickProject);
+      });
+
+      test("when Uri is undefined but resolves a Dart Frog project from active text editor", async () => {
+        utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns(
+          "/home/dart_frog/routes/index.dart"
+        );
+
+        await command.newMiddleware();
+
+        sinon.assert.notCalled(utilsStub.quickPickProject);
+      });
+    });
+  });
+
   suite("file open dialog", () => {
-    test("is shown when Uri is undefined and fails to resolve a path from workspace", async () => {
+    test("is shown when Uri is undefined and fails to resolve a path from workspace folder", async () => {
       vscodeStub.window.showOpenDialog.resolves();
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(undefined);
+      utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns();
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns();
 
       await command.newMiddleware();
 
@@ -88,22 +132,40 @@ suite("new-middleware command", () => {
       });
     });
 
-    test("is not shown when Uri is undefined but resolves a path from workspace", async () => {
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
-        "/home/dart_frog/routes"
-      );
-      utilsStub.nearestDartFrogProject.returns("/home/dart_frog/");
-      utilsStub.normalizeRoutePath.returns("/");
+    suite("is not shown", () => {
+      test("when Uri is defined", async () => {
+        await command.newMiddleware(invalidUri);
 
-      await command.newMiddleware();
+        sinon.assert.notCalled(vscodeStub.window.showOpenDialog);
+      });
 
-      sinon.assert.notCalled(vscodeStub.window.showOpenDialog);
-    });
+      test("when Uri is undefined but resolves a path from active text editor", async () => {
+        utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns(
+          "/home/dart_frog/routes/index.dart"
+        );
+        utilsStub.nearestParentDartFrogProject.returns("/home/dart_frog/");
+        utilsStub.normalizeRoutePath.returns("/");
 
-    test("is not shown when Uri is defined", async () => {
-      await command.newMiddleware(invalidUri);
+        await command.newMiddleware();
 
-      sinon.assert.notCalled(vscodeStub.window.showOpenDialog);
+        sinon.assert.notCalled(vscodeStub.window.showOpenDialog);
+      });
+
+      test("when Uri and active text editor are undefined but resolves a path from workspace folder", async () => {
+        utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns();
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+          "/home/dart_frog/routes",
+        ]);
+        utilsStub.nearestParentDartFrogProject.returns("/home/dart_frog/");
+        utilsStub.normalizeRoutePath.returns("/");
+
+        await command.newMiddleware();
+
+        sinon.assert.called(
+          utilsStub.resolveDartFrogProjectPathFromActiveTextEditor
+        );
+        sinon.assert.notCalled(vscodeStub.window.showOpenDialog);
+      });
     });
   });
 
@@ -159,25 +221,56 @@ suite("new-middleware command", () => {
   );
 
   suite("prompts for route path", () => {
-    test("is shown when Uri is undefined and selected file is valid", async () => {
-      vscodeStub.window.showInputBox.returns("animals/frog");
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
-        "home/routes/animals/frog"
-      );
-      utilsStub.nearestDartFrogProject.returns("home/routes/animals/frog");
-      utilsStub.normalizeRoutePath.returns("/animals/frog");
+    suite("is shown", () => {
+      test("when Uri is undefined and resolved active text editor is valid", async () => {
+        vscodeStub.window.showInputBox.returns("animals/frog");
+        utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns(
+          "home/routes/animals/frog"
+        );
+        utilsStub.nearestParentDartFrogProject.returns(
+          "home/routes/animals/frog"
+        );
+        utilsStub.normalizeRoutePath.returns("/animals/frog");
 
-      await command.newMiddleware();
+        await command.newMiddleware();
 
-      sinon.assert.calledWith(vscodeStub.window.showInputBox, {
-        prompt: "Middleware's route path",
-        value: "/animals/frog",
-        placeHolder: "_middleware",
+        sinon.assert.notCalled(
+          utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders
+        );
+        sinon.assert.calledWith(vscodeStub.window.showInputBox, {
+          prompt: "Middleware's route path",
+          value: "/animals/frog",
+          placeHolder: "_middleware",
+        });
+      });
+
+      test("when Uri and resolved active text editor are undefined but resolved workspace file is valid", async () => {
+        vscodeStub.window.showInputBox.returns("animals/frog");
+        utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+          "home/routes/animals/frog",
+        ]);
+        utilsStub.nearestParentDartFrogProject.returns(
+          "home/routes/animals/frog"
+        );
+        utilsStub.normalizeRoutePath.returns("/animals/frog");
+
+        await command.newMiddleware();
+
+        sinon.assert.called(
+          utilsStub.resolveDartFrogProjectPathFromActiveTextEditor
+        );
+        sinon.assert.calledWith(vscodeStub.window.showInputBox, {
+          prompt: "Middleware's route path",
+          value: "/animals/frog",
+          placeHolder: "_middleware",
+        });
       });
     });
 
     test("is not shown when Uri is defined and selected file is valid", async () => {
-      utilsStub.nearestDartFrogProject.returns("home/routes/animals/frog");
+      utilsStub.nearestParentDartFrogProject.returns(
+        "home/routes/animals/frog"
+      );
       utilsStub.normalizeRoutePath.returns("/animals/frog");
 
       await command.newMiddleware(validUri);
@@ -195,10 +288,12 @@ suite("new-middleware command", () => {
 
     beforeEach(() => {
       vscodeStub.window.showInputBox.returns("animals/frog");
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+        "home/routes/animals/frog",
+      ]);
+      utilsStub.nearestParentDartFrogProject.returns(
         "home/routes/animals/frog"
       );
-      utilsStub.nearestDartFrogProject.returns("home/routes/animals/frog");
       utilsStub.normalizeRoutePath.returns("/animals/frog");
     });
 
@@ -219,7 +314,7 @@ suite("new-middleware command", () => {
     });
 
     test("is shown when prompt is undefined", async () => {
-      vscodeStub.window.showInputBox.returns(undefined);
+      vscodeStub.window.showInputBox.returns();
 
       await command.newMiddleware();
 
@@ -232,7 +327,7 @@ suite("new-middleware command", () => {
     const selectedUri = {
       fsPath: `${validUri.fsPath}${routePath}`,
     };
-    utilsStub.nearestDartFrogProject.returns(selectedUri);
+    utilsStub.nearestParentDartFrogProject.returns(selectedUri);
     utilsStub.normalizeRoutePath.returns(routePath);
 
     await command.newMiddleware(validUri);
@@ -241,6 +336,19 @@ suite("new-middleware command", () => {
       location: 15,
       title: `Creating '${routePath}' middleware...`,
     });
+  });
+
+  test("does not run `dart_frog new middleware` command when project selection is cancelled", async () => {
+    utilsStub.resolveDartFrogProjectPathFromActiveTextEditor.returns();
+    utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+      "/home/dart_frog/routes",
+      "/home/dart_frog2/routes",
+    ]);
+    utilsStub.quickPickProject.resolves();
+
+    await command.newMiddleware();
+
+    sinon.assert.notCalled(childProcessStub.exec);
   });
 
   suite("runs `dart_frog new middleware` command with route", () => {
@@ -254,7 +362,7 @@ suite("new-middleware command", () => {
 
       sinon.assert.calledWith(
         childProcessStub.exec,
-        `dart_frog new middleware 'food'`
+        `dart_frog new middleware "food"`
       );
     });
 
@@ -262,7 +370,7 @@ suite("new-middleware command", () => {
       const selectedUri = {
         fsPath: `${validUri.fsPath}/food/pizza.dart`,
       };
-      utilsStub.nearestDartFrogProject.returns(selectedUri);
+      utilsStub.nearestParentDartFrogProject.returns(selectedUri);
       utilsStub.normalizeRoutePath.returns(`food/pizza`);
 
       await command.newMiddleware(selectedUri);
@@ -272,7 +380,7 @@ suite("new-middleware command", () => {
 
       sinon.assert.calledWith(
         childProcessStub.exec,
-        `dart_frog new middleware 'food/pizza'`
+        `dart_frog new middleware "food/pizza"`
       );
     });
 
@@ -280,7 +388,7 @@ suite("new-middleware command", () => {
       const selectedUri = {
         fsPath: `${validUri.fsPath}/index.dart`,
       };
-      utilsStub.nearestDartFrogProject.returns(selectedUri);
+      utilsStub.nearestParentDartFrogProject.returns(selectedUri);
       utilsStub.normalizeRoutePath.returns("/");
 
       await command.newMiddleware(validUri);
@@ -290,7 +398,7 @@ suite("new-middleware command", () => {
 
       sinon.assert.calledWith(
         childProcessStub.exec,
-        `dart_frog new middleware '/'`
+        `dart_frog new middleware "/"`
       );
     });
 
@@ -298,7 +406,7 @@ suite("new-middleware command", () => {
       const selectedUri = {
         fsPath: `${validUri.fsPath}/food/italian/index.dart`,
       };
-      utilsStub.nearestDartFrogProject.returns(selectedUri);
+      utilsStub.nearestParentDartFrogProject.returns(selectedUri);
       utilsStub.normalizeRoutePath.returns("food/italian");
 
       await command.newMiddleware(selectedUri);
@@ -308,15 +416,17 @@ suite("new-middleware command", () => {
 
       sinon.assert.calledWith(
         childProcessStub.exec,
-        `dart_frog new middleware 'food/italian'`
+        `dart_frog new middleware "food/italian"`
       );
     });
 
     test("successfully with prompt route path", async () => {
-      utilsStub.resolveDartFrogProjectPathFromWorkspace.returns(
+      utilsStub.resolveDartFrogProjectPathFromWorkspaceFolders.returns([
+        "home/routes/animals/frog",
+      ]);
+      utilsStub.nearestParentDartFrogProject.returns(
         "home/routes/animals/frog"
       );
-      utilsStub.nearestDartFrogProject.returns("home/routes/animals/frog");
       utilsStub.normalizeRoutePath.returns("/animals/frog");
       vscodeStub.window.showInputBox.returns("animals/lion");
 
@@ -327,7 +437,7 @@ suite("new-middleware command", () => {
 
       sinon.assert.calledWith(
         childProcessStub.exec,
-        `dart_frog new middleware 'animals/lion'`
+        `dart_frog new middleware "animals/lion"`
       );
     });
   });
@@ -336,7 +446,7 @@ suite("new-middleware command", () => {
     const error = Error("Failed to run `dart_frog new middleware`");
     childProcessStub.exec.yields(error);
 
-    utilsStub.nearestDartFrogProject.returns(validUri);
+    utilsStub.nearestParentDartFrogProject.returns(validUri);
     utilsStub.normalizeRoutePath.returns("/");
 
     await command.newMiddleware(validUri);

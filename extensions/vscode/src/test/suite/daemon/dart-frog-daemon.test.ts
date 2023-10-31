@@ -49,6 +49,7 @@ suite("DartFrogDaemon", () => {
       childProcessStub.spawn
         .withArgs("dart_frog", ["daemon"], {
           cwd: workingDirectory,
+          shell: true,
         })
         .returns(daemonProcess);
 
@@ -73,6 +74,7 @@ suite("DartFrogDaemon", () => {
       childProcessStub.spawn
         .withArgs("dart_frog", ["daemon"], {
           cwd: workingDirectory,
+          shell: true,
         })
         .returns(daemonProcess);
 
@@ -94,6 +96,7 @@ suite("DartFrogDaemon", () => {
       childProcessStub.spawn
         .withArgs("dart_frog", ["daemon"], {
           cwd: workingDirectory,
+          shell: true,
         })
         .returns(daemonProcess);
 
@@ -125,6 +128,7 @@ suite("DartFrogDaemon", () => {
       childProcessStub.spawn
         .withArgs("dart_frog", ["daemon"], {
           cwd: workingDirectory,
+          shell: true,
         })
         .returns(daemonProcess);
 
@@ -235,6 +239,7 @@ suite("DartFrogDaemon", () => {
       childProcessStub.spawn
         .withArgs("dart_frog", ["daemon"], {
           cwd: workingDirectory,
+          shell: true,
         })
         .returns(daemonProcess);
 
@@ -318,6 +323,7 @@ suite("DartFrogDaemon", () => {
       childProcessStub.spawn
         .withArgs("dart_frog", ["daemon"], {
           cwd: workingDirectory,
+          shell: true,
         })
         .returns(daemonProcess);
 
@@ -351,6 +357,7 @@ suite("DartFrogDaemon", () => {
         childProcessStub.spawn
           .withArgs("dart_frog", ["daemon"], {
             cwd: workingDirectory,
+            shell: true,
           })
           .returns(daemonProcess);
 
@@ -405,6 +412,29 @@ suite("DartFrogDaemon", () => {
         const expectedResponse = {
           id: "1",
           result: {
+            version: "0.0.1",
+          },
+        };
+
+        assert.deepEqual(actualResponse, expectedResponse);
+      });
+
+      test("resolves correct response upon error", async () => {
+        const request = new RequestVersionDaemonRequest("1");
+
+        const responsePromise = daemon.send(request);
+
+        const anotherResponse = `[{"id":"2","result":{"version":"0.0.1"}}]`;
+        stdout.emit("data", anotherResponse);
+
+        const response = `[{"id":"1","error":{"version":"0.0.1"}}]`;
+        stdout.emit("data", response);
+
+        const actualResponse = await responsePromise;
+
+        const expectedResponse = {
+          id: "1",
+          error: {
             version: "0.0.1",
           },
         };

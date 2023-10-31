@@ -80,6 +80,7 @@ void main() {
 
       when(() => watcher.start()).thenAnswer((_) async {});
       when(() => watcher.exitCode).thenAnswer((_) async => completer.future);
+      when(() => watcher.isCompleted).thenReturn(true);
     });
 
     test('can be instantiated', () {
@@ -158,6 +159,29 @@ void main() {
                 id: '12',
                 error: {
                   'message': 'Malformed message, invalid workingDirectory',
+                },
+              ),
+            ),
+          );
+        });
+      });
+
+      group('missing parameters', () {
+        test('workingDirectory', () async {
+          expect(
+            await domain.handleRequest(
+              const DaemonRequest(
+                id: '12',
+                domain: 'route_configuration',
+                method: 'watcherStart',
+                params: {},
+              ),
+            ),
+            equals(
+              const DaemonResponse.error(
+                id: '12',
+                error: {
+                  'message': 'Missing parameter, workingDirectory not found',
                 },
               ),
             ),
@@ -275,6 +299,29 @@ void main() {
         });
       });
 
+      group('missing parameters', () {
+        test('watcherId', () async {
+          expect(
+            await domain.handleRequest(
+              const DaemonRequest(
+                id: '12',
+                domain: 'route_configuration',
+                method: 'watcherStop',
+                params: {},
+              ),
+            ),
+            equals(
+              const DaemonResponse.error(
+                id: '12',
+                error: {
+                  'message': 'Missing parameter, watcherId not found',
+                },
+              ),
+            ),
+          );
+        });
+      });
+
       test('on dev server throw', () async {
         when(() => watcher.stop()).thenThrow('error');
 
@@ -292,7 +339,39 @@ void main() {
           equals(
             const DaemonResponse.error(
               id: '12',
-              error: {'watcherId': 'id', 'message': 'error'},
+              error: {
+                'watcherId': 'id',
+                'message': 'error',
+                'finished': true,
+              },
+            ),
+          ),
+        );
+      });
+
+      test('on non completed dev server throw', () async {
+        when(() => watcher.stop()).thenThrow('error');
+        when(() => watcher.isCompleted).thenReturn(false);
+
+        expect(
+          await domain.handleRequest(
+            const DaemonRequest(
+              id: '12',
+              domain: 'route_configuration',
+              method: 'watcherStop',
+              params: {
+                'watcherId': 'id',
+              },
+            ),
+          ),
+          equals(
+            const DaemonResponse.error(
+              id: '12',
+              error: {
+                'watcherId': 'id',
+                'message': 'error',
+                'finished': false,
+              },
             ),
           ),
         );
@@ -381,6 +460,29 @@ void main() {
                 error: {
                   'watcherId': 'different-id',
                   'message': 'Watcher not found',
+                },
+              ),
+            ),
+          );
+        });
+      });
+
+      group('missing parameters', () {
+        test('watcherId', () async {
+          expect(
+            await domain.handleRequest(
+              const DaemonRequest(
+                id: '12',
+                domain: 'route_configuration',
+                method: 'watcherGenerateRouteConfiguration',
+                params: {},
+              ),
+            ),
+            equals(
+              const DaemonResponse.error(
+                id: '12',
+                error: {
+                  'message': 'Missing parameter, watcherId not found',
                 },
               ),
             ),
