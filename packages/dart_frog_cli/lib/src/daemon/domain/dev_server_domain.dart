@@ -42,6 +42,8 @@ class DevServerDomain extends DomainBase {
 
     final dartVmServicePort = request.getParam<int>('dartVmServicePort');
 
+    final hostname = request.getParam<String?>('hostname');
+
     final applicationId = getId();
 
     daemon.sendEvent(
@@ -57,6 +59,16 @@ class DevServerDomain extends DomainBase {
 
     final devServerBundleGenerator = await _generator(dartFrogDevServerBundle);
 
+    InternetAddress? ip;
+    if (hostname != null) {
+      ip = InternetAddress.tryParse(hostname);
+      if (ip == null) {
+        throw DartFrogDaemonMalformedMessageException(
+          'invalid hostname "$hostname": must be a valid IPv4 or IPv6 address.',
+        );
+      }
+    }
+
     final logger = DaemonLogger(
       domain: domainName,
       params: {
@@ -71,6 +83,7 @@ class DevServerDomain extends DomainBase {
     final devServerRunner = _devServerRunnerBuilder(
       logger: logger,
       port: '$port',
+      address: ip,
       devServerBundleGenerator: devServerBundleGenerator,
       dartVmServicePort: '$dartVmServicePort',
       workingDirectory: Directory(workingDirectory),

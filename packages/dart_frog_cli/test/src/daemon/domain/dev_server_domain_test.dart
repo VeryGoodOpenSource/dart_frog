@@ -38,6 +38,7 @@ void main() {
         devServerRunnerBuilder: ({
           required logger,
           required port,
+          required address,
           required devServerBundleGenerator,
           required dartVmServicePort,
           required workingDirectory,
@@ -60,6 +61,7 @@ void main() {
       test('starts application', () async {
         late Logger passedLogger;
         late String passedPort;
+        late InternetAddress? passedAddress;
         late MasonGenerator passedDevServerBundleGenerator;
         late String passedDartVmServicePort;
         late Directory passedWorkingDirectory;
@@ -70,6 +72,7 @@ void main() {
           devServerRunnerBuilder: ({
             required logger,
             required port,
+            required address,
             required devServerBundleGenerator,
             required dartVmServicePort,
             required workingDirectory,
@@ -77,6 +80,7 @@ void main() {
           }) {
             passedLogger = logger;
             passedPort = port;
+            passedAddress = address;
             passedDevServerBundleGenerator = devServerBundleGenerator;
             passedDartVmServicePort = dartVmServicePort;
             passedWorkingDirectory = workingDirectory;
@@ -93,6 +97,7 @@ void main() {
               params: {
                 'workingDirectory': '/',
                 'port': 3000,
+                'hostname': '192.168.1.2',
                 'dartVmServicePort': 3001,
               },
             ),
@@ -107,6 +112,7 @@ void main() {
 
         expect(passedLogger, isA<DaemonLogger>());
         expect(passedPort, equals('3000'));
+        expect(passedAddress, InternetAddress.tryParse('192.168.1.2'));
         expect(passedDevServerBundleGenerator, same(generator));
         expect(passedDartVmServicePort, equals('3001'));
         expect(passedWorkingDirectory.path, equals('/'));
@@ -256,6 +262,33 @@ void main() {
                 id: '12',
                 error: {
                   'message': 'Malformed message, invalid dartVmServicePort',
+                },
+              ),
+            ),
+          );
+        });
+
+        test('hostname', () async {
+          expect(
+            await domain.handleRequest(
+              const DaemonRequest(
+                id: '12',
+                domain: 'dev_server',
+                method: 'start',
+                params: {
+                  'workingDirectory': '/',
+                  'port': 4040,
+                  'dartVmServicePort': 4041,
+                  'hostname': 'lol',
+                },
+              ),
+            ),
+            equals(
+              const DaemonResponse.error(
+                id: '12',
+                error: {
+                  'message': 'Malformed message, invalid hostname "lol": '
+                      'must be a valid IPv4 or IPv6 address.',
                 },
               ),
             ),
@@ -593,6 +626,7 @@ void main() {
         devServerRunnerBuilder: ({
           required logger,
           required port,
+          required address,
           required devServerBundleGenerator,
           required dartVmServicePort,
           required workingDirectory,

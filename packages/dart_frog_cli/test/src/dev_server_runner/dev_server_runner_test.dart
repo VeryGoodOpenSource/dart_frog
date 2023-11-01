@@ -73,6 +73,7 @@ void main() {
     devServerRunner = DevServerRunner(
       logger: logger,
       port: port,
+      address: null,
       devServerBundleGenerator: generator,
       dartVmServicePort: dartVmServicePort,
       workingDirectory: Directory.current,
@@ -118,6 +119,7 @@ void main() {
         DevServerRunner(
           logger: Logger(),
           port: '8080',
+          address: null,
           devServerBundleGenerator: _MockMasonGenerator(),
           dartVmServicePort: '8081',
           workingDirectory: Directory.current,
@@ -146,6 +148,12 @@ void main() {
             onVarsChanged: any(named: 'onVarsChanged'),
           ),
         ).called(1);
+
+        verify(() {
+          progress.complete('Running on ${link(
+            uri: Uri.parse('http://localhost:8080'),
+          )}');
+        }).called(1);
       });
 
       test('throws when server process is already running', () async {
@@ -186,6 +194,7 @@ void main() {
         devServerRunner = DevServerRunner(
           logger: logger,
           port: '4242',
+          address: null,
           devServerBundleGenerator: generator,
           dartVmServicePort: '4343',
           workingDirectory: Directory.current,
@@ -221,6 +230,65 @@ void main() {
             onVarsChanged: any(named: 'onVarsChanged'),
           ),
         ).called(1);
+
+        verify(() {
+          progress.complete('Running on ${link(
+            uri: Uri.parse('http://localhost:4242'),
+          )}');
+        }).called(1);
+      });
+
+      test('custom address', () async {
+        late List<String> receivedArgs;
+
+        devServerRunner = DevServerRunner(
+          logger: logger,
+          port: '4242',
+          address: InternetAddress.tryParse('192.162.1.2'),
+          devServerBundleGenerator: generator,
+          dartVmServicePort: '4343',
+          workingDirectory: Directory.current,
+          directoryWatcher: (_) => directoryWatcher,
+          generatorTarget: (_, {createFile, logger}) => generatorTarget,
+          isWindows: isWindows,
+          startProcess: (
+            String executable,
+            List<String> arguments, {
+            bool runInShell = false,
+          }) async {
+            receivedArgs = arguments;
+            return process;
+          },
+          sigint: sigint,
+          runProcess: (_, __) async => processResult,
+        );
+
+        await expectLater(devServerRunner.start(), completes);
+
+        expect(devServerRunner.isWatching, isTrue);
+        expect(devServerRunner.isServerRunning, isTrue);
+        expect(devServerRunner.isCompleted, isFalse);
+
+        expect(
+          receivedArgs,
+          contains('--enable-vm-service=4343'),
+        );
+        verify(
+          () => generatorHooks.preGen(
+            vars: <String, dynamic>{
+              'port': '4242',
+              'host': '192.162.1.2',
+            },
+            workingDirectory: any(named: 'workingDirectory'),
+            onVarsChanged: any(named: 'onVarsChanged'),
+          ),
+        ).called(1);
+
+        verify(() {
+          progress.complete('Running on ${link(
+            uri: Uri.parse('http://192.162.1.2:4242'),
+          )}');
+        }).called(1);
       });
 
       test(
@@ -238,6 +306,7 @@ void main() {
           devServerRunner = DevServerRunner(
             logger: logger,
             port: port,
+            address: null,
             devServerBundleGenerator: generator,
             dartVmServicePort: dartVmServicePort,
             workingDirectory: Directory.current,
@@ -389,6 +458,7 @@ void main() {
         devServerRunner = DevServerRunner(
           logger: logger,
           port: '4242',
+          address: null,
           devServerBundleGenerator: generator,
           dartVmServicePort: '4343',
           workingDirectory: Directory.current,
@@ -720,6 +790,7 @@ runs codegen with debounce when changes are made to the public or routes directo
           devServerRunner = DevServerRunner(
             logger: logger,
             port: port,
+            address: null,
             devServerBundleGenerator: generator,
             dartVmServicePort: dartVmServicePort,
             workingDirectory: Directory.current,
@@ -821,6 +892,7 @@ runs codegen with debounce when changes are made to the public or routes directo
           devServerRunner = DevServerRunner(
             logger: logger,
             port: port,
+            address: null,
             devServerBundleGenerator: generator,
             dartVmServicePort: dartVmServicePort,
             workingDirectory: Directory.current,
@@ -861,6 +933,7 @@ lib/my_model.g.dart:53:20: Warning: Operand of null-aware operation '!' has type
           devServerRunner = DevServerRunner(
             logger: logger,
             port: port,
+            address: null,
             devServerBundleGenerator: generator,
             dartVmServicePort: dartVmServicePort,
             workingDirectory: Directory.current,
@@ -902,6 +975,7 @@ Could not start the VM service: localhost:8181 is already in use.''';
           devServerRunner = DevServerRunner(
             logger: logger,
             port: port,
+            address: null,
             devServerBundleGenerator: generator,
             dartVmServicePort: dartVmServicePort,
             workingDirectory: Directory.current,

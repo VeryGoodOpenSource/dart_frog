@@ -37,6 +37,12 @@ class DevCommand extends DartFrogCommand {
         abbr: 'd',
         defaultsTo: _defaultDartVmServicePort,
         help: 'Which port number the dart vm service should listen on.',
+      )
+      ..addOption(
+        'hostname',
+        abbr: 'H',
+        help: 'Which host name the server should bind to.',
+        defaultsTo: 'localhost',
       );
   }
 
@@ -106,15 +112,30 @@ class DevCommand extends DartFrogCommand {
     _ensureRuntimeCompatibility(cwd);
 
     final port = io.Platform.environment['PORT'] ?? results['port'] as String;
+
     final dartVmServicePort = (results['dart-vm-service-port'] as String?) ??
         _defaultDartVmServicePort;
     final generator = await _generator(dartFrogDevServerBundle);
+
+    final hostname = results['hostname'] as String?;
+
+    io.InternetAddress? ip;
+    if (hostname != null && hostname != 'localhost') {
+      ip = io.InternetAddress.tryParse(hostname);
+      if (ip == null) {
+        logger.err(
+          'Invalid hostname "$hostname": must be a valid IPv4 or IPv6 address.',
+        );
+        return ExitCode.software.code;
+      }
+    }
 
     _devServerRunner = _devServerRunnerBuilder(
       devServerBundleGenerator: generator,
       logger: logger,
       workingDirectory: cwd,
       port: port,
+      address: ip,
       dartVmServicePort: dartVmServicePort,
       onHotReloadEnabled: _startListeningForHelpers,
     );

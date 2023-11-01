@@ -54,6 +54,7 @@ void main() {
         devServerRunnerBuilder: ({
           required logger,
           required port,
+          required address,
           required devServerBundleGenerator,
           required dartVmServicePort,
           required workingDirectory,
@@ -78,6 +79,7 @@ void main() {
         (_) => Future.value(ExitCode.success),
       );
 
+      when(() => argResults['hostname']).thenReturn('192.168.1.2');
       when(() => argResults['port']).thenReturn('1234');
       when(() => argResults['dart-vm-service-port']).thenReturn('5678');
 
@@ -85,6 +87,7 @@ void main() {
 
       late String givenPort;
       late String givenDartVmServicePort;
+      late InternetAddress? givenAddress;
       late MasonGenerator givenDevServerBundleGenerator;
       late Directory givenWorkingDirectory;
       late void Function()? givenOnHotReloadEnabled;
@@ -95,12 +98,14 @@ void main() {
         devServerRunnerBuilder: ({
           required logger,
           required port,
+          required address,
           required devServerBundleGenerator,
           required dartVmServicePort,
           required workingDirectory,
           void Function()? onHotReloadEnabled,
         }) {
           givenPort = port;
+          givenAddress = address;
           givenDartVmServicePort = dartVmServicePort;
           givenDevServerBundleGenerator = devServerBundleGenerator;
           givenWorkingDirectory = workingDirectory;
@@ -118,6 +123,7 @@ void main() {
       verify(() => runner.start()).called(1);
 
       expect(givenPort, equals('1234'));
+      expect(givenAddress, InternetAddress.tryParse('192.168.1.2'));
       expect(givenDartVmServicePort, equals('5678'));
       expect(givenDevServerBundleGenerator, same(generator));
       expect(givenWorkingDirectory, same(cwd));
@@ -131,6 +137,7 @@ void main() {
         devServerRunnerBuilder: ({
           required logger,
           required port,
+          required address,
           required devServerBundleGenerator,
           required dartVmServicePort,
           required workingDirectory,
@@ -161,6 +168,7 @@ void main() {
         devServerRunnerBuilder: ({
           required logger,
           required port,
+          required address,
           required devServerBundleGenerator,
           required dartVmServicePort,
           required workingDirectory,
@@ -179,6 +187,49 @@ void main() {
 
       await expectLater(command.run(), completion(ExitCode.software.code));
       verify(() => logger.err('oops')).called(1);
+    });
+
+    test('fails if hostname is invalid', () async {
+      when(() => runner.start()).thenAnswer((_) => Future.value());
+      when(() => runner.exitCode).thenAnswer(
+        (_) => Future.value(ExitCode.success),
+      );
+
+      when(() => argResults['hostname']).thenReturn('ticarica');
+      when(() => argResults['port']).thenReturn('1234');
+      when(() => argResults['dart-vm-service-port']).thenReturn('5678');
+
+      final cwd = Directory.systemTemp;
+
+      final command = DevCommand(
+        generator: (_) async => generator,
+        ensureRuntimeCompatibility: (_) {},
+        devServerRunnerBuilder: ({
+          required logger,
+          required port,
+          required address,
+          required devServerBundleGenerator,
+          required dartVmServicePort,
+          required workingDirectory,
+          void Function()? onHotReloadEnabled,
+        }) {
+          return runner;
+        },
+        logger: logger,
+      )
+        ..testStdin = stdin
+        ..testArgResults = argResults
+        ..testCwd = cwd;
+
+      await expectLater(command.run(), completion(ExitCode.software.code));
+
+      verify(
+        () => logger.err(
+          'Invalid hostname "ticarica": must be a valid IPv4 or IPv6 address.',
+        ),
+      ).called(1);
+
+      verifyNever(() => runner.start());
     });
 
     group('listening to stdin', () {
@@ -228,6 +279,7 @@ void main() {
           devServerRunnerBuilder: ({
             required logger,
             required port,
+            required address,
             required devServerBundleGenerator,
             required dartVmServicePort,
             required workingDirectory,
