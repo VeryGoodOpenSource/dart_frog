@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'dart:io' as io;
 
 import 'package:dart_frog_cli/src/dev_server_runner/restorable_directory_generator_target.dart';
+import 'package:dart_frog_cli/src/runtime_compatibility.dart';
 import 'package:mason/mason.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
 import 'package:stream_transform/stream_transform.dart';
 import 'package:watcher/watcher.dart';
-import 'package:dart_frog_cli/src/runtime_compatibility.dart';
 
 /// Typedef for [io.Process.start].
 typedef ProcessStart = Future<io.Process> Function(
