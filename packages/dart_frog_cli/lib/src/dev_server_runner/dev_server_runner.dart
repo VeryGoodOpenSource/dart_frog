@@ -171,19 +171,25 @@ class DevServerRunner {
     logger.detail('[codegen] complete.');
   }
 
-  Future<void> _reload([bool verbose = false]) async {
-    final void Function(String) log;
-    if (verbose) {
-      log = logger.info;
-    } else {
-      log = logger.detail;
+  //  keep the params as it is for the progress indicator
+  Future<void> _reload([bool verbose = false, bool progress = true]) async {
+    final logInfoOrDetail = verbose ? logger.info : logger.detail;
+    final logProgress =
+        progress ? logger.progress('[codegen] reloading...') : null;
+
+    if (logProgress == null) {
+      logInfoOrDetail('[codegen] reloading...');
     }
 
-    log('[codegen] reloading...');
     _isReloading = true;
     await _codegen();
     _isReloading = false;
-    log('[codegen] reload complete.');
+
+    if (logProgress == null) {
+      logInfoOrDetail('[codegen] reload complete.');
+    } else {
+      logProgress.complete('[codegen] reload complete.');
+    }
   }
 
   // Internal method to kill the server process.
@@ -397,7 +403,7 @@ class DevServerRunner {
   /// server.
   Future<void> reload() async {
     if (isCompleted || !isServerRunning || _isReloading) return;
-    return _reload(true);
+    return _reload();
   }
 }
 
