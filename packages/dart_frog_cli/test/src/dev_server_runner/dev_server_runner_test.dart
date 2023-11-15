@@ -366,6 +366,81 @@ void main() {
       });
     });
 
+    test('reload with progress', () async {
+      // Arrange
+      bool progressLogged = true;
+      bool infoOrDetailLogged = false;
+
+      // Mock logger functions
+      when(() => logger.progress(any())).thenAnswer((_) {
+        progressLogged = true;
+        return progress;
+      });
+      when(() => logger.info(any())).thenAnswer((_) {
+        infoOrDetailLogged = true;
+      });
+      when(() => logger.detail(any())).thenAnswer((_) {
+        infoOrDetailLogged = true;
+      });
+      // Act
+      await devServerRunner.reload(infoOrDetailLogged, progressLogged);
+
+      // Assert
+
+      expect(infoOrDetailLogged, isFalse);
+      expect(progressLogged, isTrue);
+    });
+
+    test('reload with info', () async {
+      // Arrange
+      bool progressLogged = false;
+      bool infoOrDetailLogged = true;
+
+      // Mock logger functions
+      when(() => logger.progress(any())).thenAnswer((_) {
+        progressLogged = true;
+        return progress;
+      });
+      when(() => logger.info(any())).thenAnswer((_) {
+        infoOrDetailLogged = true;
+      });
+      when(() => logger.detail(any())).thenAnswer((_) {
+        infoOrDetailLogged = true;
+      });
+      // Act
+      await devServerRunner.reload(infoOrDetailLogged, progressLogged);
+
+      // Assert
+
+      expect(infoOrDetailLogged, isTrue);
+      expect(progressLogged, isFalse);
+    });
+
+    test('reload with detail', () async {
+      // Arrange
+      bool progressLogged = false;
+      bool infoOrDetailLogged = false;
+
+      // Mock logger functions
+      when(() => logger.progress(any())).thenAnswer((_) {
+        progressLogged = true;
+        return progress;
+      });
+      when(() => logger.info(any())).thenAnswer((_) {
+        infoOrDetailLogged = true;
+      });
+      when(() => logger.detail(any())).thenAnswer((_) {
+        infoOrDetailLogged = true;
+      });
+      // Act
+      await devServerRunner.reload(infoOrDetailLogged, progressLogged);
+
+      // Assert
+
+      expect(infoOrDetailLogged, isFalse);
+      expect(progressLogged, isFalse);
+    });
+
     group('reload and codegen', () {
       test('reloads successfully when .reload is called', () async {
         await expectLater(devServerRunner.start(), completes);

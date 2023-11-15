@@ -401,9 +401,9 @@ class DevServerRunner {
 
   /// Regenerates the dev server code and sends a hot reload signal to the
   /// server.
-  Future<void> reload() async {
+  Future<void> reload([bool infoOrDetail = false, bool progress = true]) async {
     if (isCompleted || !isServerRunning || _isReloading) return;
-    return _reload();
+    return _reload(infoOrDetail, progress);
   }
 }
 
