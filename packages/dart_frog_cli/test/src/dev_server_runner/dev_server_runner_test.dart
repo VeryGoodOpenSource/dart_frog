@@ -368,8 +368,8 @@ void main() {
 
     test('reload with progress', () async {
       // Arrange
-      bool progressLogged = true;
-      bool infoOrDetailLogged = false;
+      var progressLogged = true;
+      var infoOrDetailLogged = false;
 
       // Mock logger functions
       when(() => logger.progress(any())).thenAnswer((_) {
@@ -383,7 +383,10 @@ void main() {
         infoOrDetailLogged = true;
       });
       // Act
-      await devServerRunner.reload(infoOrDetailLogged, progressLogged);
+      await devServerRunner.reload(
+        infoOrDetail: infoOrDetailLogged,
+        progress: progressLogged,
+      );
 
       // Assert
 
@@ -393,8 +396,8 @@ void main() {
 
     test('reload with info', () async {
       // Arrange
-      bool progressLogged = false;
-      bool infoOrDetailLogged = true;
+      var progressLogged = false;
+      var infoOrDetailLogged = true;
 
       // Mock logger functions
       when(() => logger.progress(any())).thenAnswer((_) {
@@ -408,7 +411,10 @@ void main() {
         infoOrDetailLogged = true;
       });
       // Act
-      await devServerRunner.reload(infoOrDetailLogged, progressLogged);
+      await devServerRunner.reload(
+        infoOrDetail: infoOrDetailLogged,
+        progress: progressLogged,
+      );
 
       // Assert
 
@@ -418,8 +424,8 @@ void main() {
 
     test('reload with detail', () async {
       // Arrange
-      bool progressLogged = false;
-      bool infoOrDetailLogged = false;
+      var progressLogged = false;
+      var infoOrDetailLogged = false;
 
       // Mock logger functions
       when(() => logger.progress(any())).thenAnswer((_) {
@@ -433,7 +439,10 @@ void main() {
         infoOrDetailLogged = true;
       });
       // Act
-      await devServerRunner.reload(infoOrDetailLogged, progressLogged);
+      await devServerRunner.reload(
+        infoOrDetail: infoOrDetailLogged,
+        progress: progressLogged,
+      );
 
       // Assert
 
