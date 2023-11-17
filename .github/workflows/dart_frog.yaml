@@ -26,8 +26,3 @@ jobs:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/pana.yml@v1
     with:
       working_directory: packages/dart_frog
-
-  license_check:
-    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/license_check.yml@v1
-    with:
-      working_directory: packages/dart_frog
