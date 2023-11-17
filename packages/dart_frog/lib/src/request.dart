@@ -4,7 +4,7 @@ part of '_internal.dart';
 /// An HTTP request.
 /// {@endtemplate}
 class Request {
-  /// {@template request}
+  /// {@macro request}
   Request(
     String method,
     Uri uri, {
