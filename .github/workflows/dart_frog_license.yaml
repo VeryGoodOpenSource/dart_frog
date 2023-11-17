@@ -8,11 +8,13 @@ on:
   pull_request:
     paths:
       - "packages/dart_frog/pubspec.yaml"
+      - ".github/workflows/dart_frog_license.yaml"
   push:
     branches:
       - main
     paths:
       - "packages/dart_frog/pubspec.yaml"
+      - ".github/workflows/dart_frog_license.yaml"
 
 jobs:
   license_check:
