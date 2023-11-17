@@ -45,6 +45,6 @@ jobs:
         run: npm test
 
       - name: 📊 Check Code Coverage
-        uses: VeryGoodOpenSource/very_good_coverage@v2.1.0
+        uses: VeryGoodOpenSource/very_good_coverage@v2.2.0
         with:
           path: extensions/vscode/coverage/lcov.info
