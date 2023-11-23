@@ -47,6 +47,7 @@ class ProdServerBuilder {
 
   final RuntimeCompatibilityCallback _ensureRuntimeCompatibility;
 
+  /// Builds the production server runtime code.
   Future<ExitCode> build() async {
     _ensureRuntimeCompatibility(workingDirectory);
 

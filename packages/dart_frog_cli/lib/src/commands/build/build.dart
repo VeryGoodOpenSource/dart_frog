@@ -1,12 +1,9 @@
-import 'dart:io';
-
 import 'package:dart_frog_cli/src/command.dart';
 import 'package:dart_frog_cli/src/commands/build/templates/dart_frog_prod_server_bundle.dart';
 import 'package:dart_frog_cli/src/commands/commands.dart';
 import 'package:dart_frog_cli/src/prod_server_builder/prod_server_builder.dart';
-import 'package:dart_frog_cli/src/runtime_compatibility.dart'
-    as runtime_compatibility;
 import 'package:mason/mason.dart';
+import 'package:meta/meta.dart';
 
 /// {@template build_command}
 /// `dart_frog build` command which creates a production build`.
@@ -15,8 +12,11 @@ class BuildCommand extends DartFrogCommand {
   /// {@macro build_command}
   BuildCommand({
     super.logger,
-    GeneratorBuilder? generator,
-  }) : _generator = generator ?? MasonGenerator.fromBundle {
+    @visibleForTesting GeneratorBuilder? generator,
+    @visibleForTesting ProdServerBuilderBuilder? prodServerBuilderBuilder,
+  })  : _generator = generator ?? MasonGenerator.fromBundle,
+        _prodServerBuilderBuilder =
+            prodServerBuilderBuilder ?? ProdServerBuilder.new {
     argParser.addOption(
       'dart-version',
       defaultsTo: 'stable',
@@ -26,6 +26,7 @@ class BuildCommand extends DartFrogCommand {
   }
 
   final GeneratorBuilder _generator;
+  final ProdServerBuilderBuilder _prodServerBuilderBuilder;
 
   @override
   final String description = 'Create a production build.';
@@ -38,7 +39,7 @@ class BuildCommand extends DartFrogCommand {
     final dartVersion = results['dart-version'] as String;
     final generator = await _generator(dartFrogProdServerBundle);
 
-    final builder = ProdServerBuilder(
+    final builder = _prodServerBuilderBuilder(
       logger: logger,
       dartVersion: dartVersion,
       workingDirectory: cwd,
