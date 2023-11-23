@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dart_frog_cli/src/command.dart';
 import 'package:dart_frog_cli/src/commands/build/templates/dart_frog_prod_server_bundle.dart';
 import 'package:dart_frog_cli/src/commands/commands.dart';
+import 'package:dart_frog_cli/src/prod_server_builder/prod_server_builder.dart';
 import 'package:dart_frog_cli/src/runtime_compatibility.dart'
     as runtime_compatibility;
 import 'package:mason/mason.dart';
@@ -14,11 +15,8 @@ class BuildCommand extends DartFrogCommand {
   /// {@macro build_command}
   BuildCommand({
     super.logger,
-    void Function(Directory)? ensureRuntimeCompatibility,
     GeneratorBuilder? generator,
-  })  : _ensureRuntimeCompatibility = ensureRuntimeCompatibility ??
-            runtime_compatibility.ensureRuntimeCompatibility,
-        _generator = generator ?? MasonGenerator.fromBundle {
+  }) : _generator = generator ?? MasonGenerator.fromBundle {
     argParser.addOption(
       'dart-version',
       defaultsTo: 'stable',
@@ -27,7 +25,6 @@ class BuildCommand extends DartFrogCommand {
     );
   }
 
-  final void Function(Directory) _ensureRuntimeCompatibility;
   final GeneratorBuilder _generator;
 
   @override
@@ -38,31 +35,21 @@ class BuildCommand extends DartFrogCommand {
 
   @override
   Future<int> run() async {
-    _ensureRuntimeCompatibility(cwd);
-
+    final dartVersion = results['dart-version'] as String;
     final generator = await _generator(dartFrogProdServerBundle);
-    var vars = <String, dynamic>{
-      'dartVersion': results['dart-version'],
-    };
 
-    logger.detail('[codegen] running pre-gen...');
-    await generator.hooks.preGen(
-      vars: vars,
-      workingDirectory: cwd.path,
-      onVarsChanged: (v) => vars = v,
+    final builder = ProdServerBuilder(
+      logger: logger,
+      dartVersion: dartVersion,
+      workingDirectory: cwd,
+      prodServerBundleGenerator: generator,
     );
 
-    logger.detail('[codegen] running generate...');
-    final _ = await generator.generate(
-      DirectoryGeneratorTarget(cwd),
-      vars: vars,
-      fileConflictResolution: FileConflictResolution.overwrite,
-    );
-
-    logger.detail('[codegen] running post-gen...');
-    await generator.hooks.postGen(workingDirectory: cwd.path);
-
-    logger.detail('[codegen] complete.');
-    return ExitCode.success.code;
+    try {
+      return (await builder.build()).code;
+    } catch (e) {
+      logger.err(e.toString());
+      return ExitCode.software.code;
+    }
   }
 }
