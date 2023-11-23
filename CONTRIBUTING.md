@@ -100,7 +100,7 @@ git status
 ../../tool/release_ready.sh <version>
 ```
 
-The above example will: update the version of ` <package>` to `<version>`, update the dart_frog CHANGELOG.md, create and checkout to a local release branch.
+The above example will: update the version of `<package>` to `<version>`, update the dart_frog CHANGELOG.md, create and checkout to a local release branch.
 
 4. Review the recently updated CHANGELOG file. You should manually amend the content were necessary. For example, by removing the redundant scope of some semantic pull requests or removing superfluous or unrelated logged changes.
 
