@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io' as io;
 
 import 'package:dart_frog_cli/src/dev_server_runner/restorable_directory_generator_target.dart';
+import 'package:dart_frog_cli/src/runtime_compatibility.dart';
 import 'package:mason/mason.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
@@ -78,6 +79,8 @@ class DevServerRunner {
     @visibleForTesting io.ProcessSignal? sigint,
     @visibleForTesting ProcessStart? startProcess,
     @visibleForTesting ProcessRun? runProcess,
+    @visibleForTesting
+    RuntimeCompatibilityCallback? runtimeCompatibilityCallback,
   })  : _directoryWatcher = directoryWatcher ?? DirectoryWatcher.new,
         _isWindows = isWindows ?? io.Platform.isWindows,
         _sigint = sigint ?? io.ProcessSignal.sigint,
@@ -85,6 +88,8 @@ class DevServerRunner {
         _runProcess = runProcess ?? io.Process.run,
         _generatorTarget =
             generatorTarget ?? RestorableDirectoryGeneratorTarget.new,
+        _ensureRuntimeCompatibility =
+            runtimeCompatibilityCallback ?? ensureRuntimeCompatibility,
         assert(port.isNotEmpty, 'port cannot be empty'),
         assert(
           dartVmServicePort.isNotEmpty,
@@ -121,6 +126,7 @@ class DevServerRunner {
   final RestorableDirectoryGeneratorTargetBuilder _generatorTarget;
   final bool _isWindows;
   final io.ProcessSignal _sigint;
+  final RuntimeCompatibilityCallback _ensureRuntimeCompatibility;
 
   late final _generatedDirectory = io.Directory(
     path.join(workingDirectory.path, '.dart_frog'),
@@ -240,6 +246,8 @@ class DevServerRunner {
         'Cannot start a dev server while already running.',
       );
     }
+
+    _ensureRuntimeCompatibility(workingDirectory);
 
     Future<void> serve() async {
       var isHotReloadingEnabled = false;

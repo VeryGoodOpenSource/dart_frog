@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:dart_frog_cli/src/commands/commands.dart';
 import 'package:dart_frog_cli/src/dev_server_runner/dev_server_runner.dart';
-import 'package:dart_frog_cli/src/runtime_compatibility.dart';
 import 'package:mason/mason.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
@@ -45,34 +44,6 @@ void main() {
       expect(command, isNotNull);
     });
 
-    test('throws if ensureRuntimeCompatibility fails', () {
-      final command = DevCommand(
-        generator: (_) async => generator,
-        ensureRuntimeCompatibility: (_) {
-          throw const DartFrogCompatibilityException('oops');
-        },
-        devServerRunnerBuilder: ({
-          required logger,
-          required port,
-          required address,
-          required devServerBundleGenerator,
-          required dartVmServicePort,
-          required workingDirectory,
-          void Function()? onHotReloadEnabled,
-        }) {
-          return runner;
-        },
-        logger: logger,
-      )
-        ..testArgResults = argResults
-        ..testStdin = stdin;
-
-      expect(
-        command.run(),
-        throwsA(isA<DartFrogCompatibilityException>()),
-      );
-    });
-
     test('run the dev server with the given parameters', () async {
       when(() => runner.start()).thenAnswer((_) => Future.value());
       when(() => runner.exitCode).thenAnswer(
@@ -94,7 +65,6 @@ void main() {
 
       final command = DevCommand(
         generator: (_) async => generator,
-        ensureRuntimeCompatibility: (_) {},
         devServerRunnerBuilder: ({
           required logger,
           required port,
@@ -133,7 +103,6 @@ void main() {
     test('results with dev server exit code', () async {
       final command = DevCommand(
         generator: (_) async => generator,
-        ensureRuntimeCompatibility: (_) {},
         devServerRunnerBuilder: ({
           required logger,
           required port,
@@ -164,7 +133,6 @@ void main() {
     test('fails if dev server runner fails on start', () async {
       final command = DevCommand(
         generator: (_) async => generator,
-        ensureRuntimeCompatibility: (_) {},
         devServerRunnerBuilder: ({
           required logger,
           required port,
@@ -203,7 +171,6 @@ void main() {
 
       final command = DevCommand(
         generator: (_) async => generator,
-        ensureRuntimeCompatibility: (_) {},
         devServerRunnerBuilder: ({
           required logger,
           required port,
@@ -275,7 +242,6 @@ void main() {
 
         command = DevCommand(
           generator: (_) async => generator,
-          ensureRuntimeCompatibility: (_) {},
           devServerRunnerBuilder: ({
             required logger,
             required port,
