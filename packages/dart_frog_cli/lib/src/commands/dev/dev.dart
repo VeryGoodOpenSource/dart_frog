@@ -44,6 +44,7 @@ class DevCommand extends DartFrogCommand {
 
   final GeneratorBuilder _generator;
   final DevServerRunnerConstructor _devServerRunnerConstructor;
+
   @override
   final String description = 'Run a local development server.';
 
