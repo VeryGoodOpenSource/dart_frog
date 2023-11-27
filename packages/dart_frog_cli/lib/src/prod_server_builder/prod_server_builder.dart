@@ -5,7 +5,7 @@ import 'package:mason/mason.dart';
 import 'package:meta/meta.dart';
 
 /// Typedef for [ProdServerBuilder.new].
-typedef ProdServerBuilderBuilder = ProdServerBuilder Function({
+typedef ProdServerBuilderConstructor = ProdServerBuilder Function({
   required Logger logger,
   required String dartVersion,
   required io.Directory workingDirectory,

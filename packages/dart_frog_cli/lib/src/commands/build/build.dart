@@ -13,10 +13,11 @@ class BuildCommand extends DartFrogCommand {
   BuildCommand({
     super.logger,
     @visibleForTesting GeneratorBuilder? generator,
-    @visibleForTesting ProdServerBuilderBuilder? prodServerBuilderBuilder,
+    @visibleForTesting
+    ProdServerBuilderConstructor? prodServerBuilderConstructor,
   })  : _generator = generator ?? MasonGenerator.fromBundle,
-        _prodServerBuilderBuilder =
-            prodServerBuilderBuilder ?? ProdServerBuilder.new {
+        _prodServerBuilderConstructor =
+            prodServerBuilderConstructor ?? ProdServerBuilder.new {
     argParser.addOption(
       'dart-version',
       defaultsTo: 'stable',
@@ -26,7 +27,7 @@ class BuildCommand extends DartFrogCommand {
   }
 
   final GeneratorBuilder _generator;
-  final ProdServerBuilderBuilder _prodServerBuilderBuilder;
+  final ProdServerBuilderConstructor _prodServerBuilderConstructor;
 
   @override
   final String description = 'Create a production build.';
@@ -39,7 +40,7 @@ class BuildCommand extends DartFrogCommand {
     final dartVersion = results['dart-version'] as String;
     final generator = await _generator(dartFrogProdServerBundle);
 
-    final builder = _prodServerBuilderBuilder(
+    final builder = _prodServerBuilderConstructor(
       logger: logger,
       dartVersion: dartVersion,
       workingDirectory: cwd,

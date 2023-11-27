@@ -54,7 +54,7 @@ void main() {
       final command = BuildCommand(
         logger: logger,
         generator: (_) async => generator,
-        prodServerBuilderBuilder: ({
+        prodServerBuilderConstructor: ({
           required Logger logger,
           required String dartVersion,
           required Directory workingDirectory,
@@ -84,7 +84,7 @@ void main() {
       final command = BuildCommand(
         logger: logger,
         generator: (_) async => generator,
-        prodServerBuilderBuilder: ({
+        prodServerBuilderConstructor: ({
           required Logger logger,
           required String dartVersion,
           required Directory workingDirectory,
