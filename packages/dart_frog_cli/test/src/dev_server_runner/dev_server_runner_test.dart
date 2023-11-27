@@ -4,6 +4,7 @@ import 'dart:io' hide exitCode;
 
 import 'package:dart_frog_cli/src/dev_server_runner/dev_server_runner.dart';
 import 'package:dart_frog_cli/src/dev_server_runner/restorable_directory_generator_target.dart';
+import 'package:dart_frog_cli/src/runtime_compatibility.dart';
 import 'package:mason/mason.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:path/path.dart' as path;
@@ -83,6 +84,7 @@ void main() {
       startProcess: (_, __, {runInShell = false}) async => process,
       sigint: sigint,
       runProcess: (_, __) async => processResult,
+      runtimeCompatibilityCallback: (_) {},
     );
 
     when(() => process.stdout).thenAnswer((_) => const Stream.empty());
@@ -156,6 +158,37 @@ void main() {
         }).called(1);
       });
 
+      test('throws if ensureRuntimeCompatibility fails', () async {
+        devServerRunner = DevServerRunner(
+          logger: logger,
+          port: port,
+          address: null,
+          devServerBundleGenerator: generator,
+          dartVmServicePort: dartVmServicePort,
+          workingDirectory: Directory.current,
+          directoryWatcher: (_) => directoryWatcher,
+          generatorTarget: (_, {createFile, logger}) => generatorTarget,
+          isWindows: isWindows,
+          startProcess: (_, __, {runInShell = false}) async => process,
+          sigint: sigint,
+          runProcess: (_, __) async => processResult,
+          runtimeCompatibilityCallback: (_) {
+            throw const DartFrogCompatibilityException('oops');
+          },
+        );
+
+        await expectLater(
+          devServerRunner.start(),
+          throwsA(
+            isA<DartFrogCompatibilityException>().having(
+              (e) => e.message,
+              'message',
+              'oops',
+            ),
+          ),
+        );
+      });
+
       test('throws when server process is already running', () async {
         await expectLater(devServerRunner.start(), completes);
 
@@ -211,6 +244,7 @@ void main() {
           },
           sigint: sigint,
           runProcess: (_, __) async => processResult,
+          runtimeCompatibilityCallback: (_) => true,
         );
 
         await expectLater(devServerRunner.start(), completes);
@@ -261,6 +295,7 @@ void main() {
           },
           sigint: sigint,
           runProcess: (_, __) async => processResult,
+          runtimeCompatibilityCallback: (_) => true,
         );
 
         await expectLater(devServerRunner.start(), completes);
@@ -318,6 +353,7 @@ void main() {
               processRunCalls.add([executable, ...arguments]);
               return processResult;
             },
+            runtimeCompatibilityCallback: (_) => true,
           );
           await expectLater(devServerRunner.start(), completes);
 
@@ -480,6 +516,7 @@ void main() {
           },
           sigint: sigint,
           runProcess: (_, __) async => processResult,
+          runtimeCompatibilityCallback: (_) => true,
         );
         await expectLater(devServerRunner.start(), completes);
 
@@ -802,6 +839,7 @@ runs codegen with debounce when changes are made to the public or routes directo
               processRunCalls.add([executable, ...arguments]);
               return processResult;
             },
+            runtimeCompatibilityCallback: (_) => true,
           );
 
           await expectLater(devServerRunner.start(), completes);
@@ -903,6 +941,7 @@ runs codegen with debounce when changes are made to the public or routes directo
               processRunCalls.add([executable, ...arguments]);
               return processResult;
             },
+            runtimeCompatibilityCallback: (_) => true,
           );
 
           await expectLater(devServerRunner.start(), completes);
@@ -940,6 +979,7 @@ lib/my_model.g.dart:53:20: Warning: Operand of null-aware operation '!' has type
             directoryWatcher: (_) => directoryWatcher,
             startProcess: (_, __, {runInShell = false}) async => process,
             sigint: sigint,
+            runtimeCompatibilityCallback: (_) => true,
           );
 
           await expectLater(devServerRunner.start(), completes);
@@ -986,6 +1026,7 @@ Could not start the VM service: localhost:8181 is already in use.''';
               processRunCalls.add([executable, ...arguments]);
               return processResult;
             },
+            runtimeCompatibilityCallback: (_) => true,
           );
 
           await expectLater(devServerRunner.start(), completes);
