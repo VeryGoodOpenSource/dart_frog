@@ -11,8 +11,6 @@ class _MockLogger extends Mock implements Logger {}
 
 class _MockMasonGenerator extends Mock implements MasonGenerator {}
 
-class _MockProgress extends Mock implements Progress {}
-
 class _MockArgResults extends Mock implements ArgResults {}
 
 class _FakeDirectoryGeneratorTarget extends Fake

@@ -169,7 +169,7 @@ class DevServerRunner {
     );
 
     logger.detail('[codegen] running generate...');
-    final _ = await devServerBundleGenerator.generate(
+    await devServerBundleGenerator.generate(
       _target,
       vars: vars,
       fileConflictResolution: FileConflictResolution.overwrite,

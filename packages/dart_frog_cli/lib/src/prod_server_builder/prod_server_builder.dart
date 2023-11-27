@@ -63,7 +63,7 @@ class ProdServerBuilder {
     );
 
     logger.detail('[codegen] running generate...');
-    final _ = await prodServerBundleGenerator.generate(
+    await prodServerBundleGenerator.generate(
       DirectoryGeneratorTarget(workingDirectory),
       vars: vars,
       fileConflictResolution: FileConflictResolution.overwrite,

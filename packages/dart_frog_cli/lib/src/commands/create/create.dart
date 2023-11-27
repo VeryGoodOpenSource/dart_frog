@@ -48,7 +48,7 @@ class CreateCommand extends DartFrogCommand {
     };
 
     logger.detail('[codegen] running generate...');
-    final _ = await generator.generate(
+    await generator.generate(
       DirectoryGeneratorTarget(outputDirectory),
       vars: vars,
     );
