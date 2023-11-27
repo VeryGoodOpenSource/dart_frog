@@ -39,7 +39,7 @@ final _dartVmServiceAlreadyInUseErrorRegex = RegExp(
 );
 
 /// Typedef for [DevServerRunner.new].
-typedef DevServerRunnerBuilder = DevServerRunner Function({
+typedef DevServerRunnerConstructor = DevServerRunner Function({
   required Logger logger,
   required String port,
   required io.InternetAddress? address,
@@ -169,7 +169,7 @@ class DevServerRunner {
     );
 
     logger.detail('[codegen] running generate...');
-    final _ = await devServerBundleGenerator.generate(
+    await devServerBundleGenerator.generate(
       _target,
       vars: vars,
       fileConflictResolution: FileConflictResolution.overwrite,

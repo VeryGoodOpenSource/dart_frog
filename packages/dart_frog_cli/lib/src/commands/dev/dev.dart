@@ -15,10 +15,10 @@ class DevCommand extends DartFrogCommand {
   DevCommand({
     super.logger,
     GeneratorBuilder? generator,
-    DevServerRunnerBuilder? devServerRunnerBuilder,
+    DevServerRunnerConstructor? devServerRunnerConstructor,
   })  : _generator = generator ?? MasonGenerator.fromBundle,
-        _devServerRunnerBuilder =
-            devServerRunnerBuilder ?? DevServerRunner.new {
+        _devServerRunnerConstructor =
+            devServerRunnerConstructor ?? DevServerRunner.new {
     argParser
       ..addOption(
         'port',
@@ -43,7 +43,8 @@ class DevCommand extends DartFrogCommand {
   static const _defaultDartVmServicePort = '8181';
 
   final GeneratorBuilder _generator;
-  final DevServerRunnerBuilder _devServerRunnerBuilder;
+  final DevServerRunnerConstructor _devServerRunnerConstructor;
+
   @override
   final String description = 'Run a local development server.';
 
@@ -119,7 +120,7 @@ class DevCommand extends DartFrogCommand {
       }
     }
 
-    _devServerRunner = _devServerRunnerBuilder(
+    _devServerRunner = _devServerRunnerConstructor(
       devServerBundleGenerator: generator,
       logger: logger,
       workingDirectory: cwd,

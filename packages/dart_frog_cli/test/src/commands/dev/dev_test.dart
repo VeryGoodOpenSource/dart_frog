@@ -65,7 +65,7 @@ void main() {
 
       final command = DevCommand(
         generator: (_) async => generator,
-        devServerRunnerBuilder: ({
+        devServerRunnerConstructor: ({
           required logger,
           required port,
           required address,
@@ -103,7 +103,7 @@ void main() {
     test('results with dev server exit code', () async {
       final command = DevCommand(
         generator: (_) async => generator,
-        devServerRunnerBuilder: ({
+        devServerRunnerConstructor: ({
           required logger,
           required port,
           required address,
@@ -133,7 +133,7 @@ void main() {
     test('fails if dev server runner fails on start', () async {
       final command = DevCommand(
         generator: (_) async => generator,
-        devServerRunnerBuilder: ({
+        devServerRunnerConstructor: ({
           required logger,
           required port,
           required address,
@@ -171,7 +171,7 @@ void main() {
 
       final command = DevCommand(
         generator: (_) async => generator,
-        devServerRunnerBuilder: ({
+        devServerRunnerConstructor: ({
           required logger,
           required port,
           required address,
@@ -242,7 +242,7 @@ void main() {
 
         command = DevCommand(
           generator: (_) async => generator,
-          devServerRunnerBuilder: ({
+          devServerRunnerConstructor: ({
             required logger,
             required port,
             required address,
