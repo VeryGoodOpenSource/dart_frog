@@ -139,6 +139,7 @@ Start a dev server on a given project.
 | workingDirectory  | String | The project directory                  | Yes      |
 | port              | int    | The port to run the dev server on      | Yes      |
 | dartVmServicePort | int    | The port to run the Dart VM Service on | Yes      |
+| hostname          | String | The hostname to run the dev server on  | No       |
 
 - **Response**:
 

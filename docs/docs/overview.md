@@ -47,13 +47,13 @@ dart_frog dev
 ```
 
 :::tip
-By default port `8080` is used. A custom port can be used via the `--port` option.
-:::
 
-:::tip
-It's also possible to set a custom port for the Dart VM service using the `--dart-vm-service-port` argument.
+To customize the running dev server, you can use the following options:
 
-This is required when trying to run multiple `dart_frog dev` commands simultaneously on the same host.
+- `--port` - The port to run the dev server on. Defaults to `8080`.
+- `--dart-vm-service-port` - The port to run the Dart VM service on. Defaults to `8181`. This is required when trying to run multiple dev servers simultaneously on the same host.
+- `--host` - The host to run the dev server on. Defaults to `localhost`.
+
 :::
 
 :::caution
