@@ -44,10 +44,10 @@ Make sure you are at the root of your project and not in `build`, as this comman
 clever create --type docker <app-name> --region <zone> --org <org>
 ```
 
-For example, if my project's name is _amazing\_api_ and I want it to be [deployed in _Paris_](https://www.clever-cloud.com/blog/features/2020/11/05/ovh-clever-cloud-zones/) I will run
+For example, if my project's name is _api_ and I want it to be [deployed in _Paris_](https://www.clever-cloud.com/blog/features/2020/11/05/ovh-clever-cloud-zones/) I will run
 
 ```bash
-clever create --type docker amazing_api --region par
+clever create --type docker api --region par
 ```
 
 :::note
