@@ -30,7 +30,7 @@ clever  login
 
 ### 1. Create the Clever Cloud application
 
-_Clever Cloud_ has [many available runtimes](https://www.clever-cloud.com/product/) that are optimized for the type of application you want to deploy. Unfortunately, **dart** is **not** _yet_ one of them.
+_Clever Cloud_ has [many available runtime](https://www.clever-cloud.com/product/) that are optimized for the type of application you want to deploy. Unfortunately, **dart** is **not** _yet_ one of them.
 
 In order to deploy those type of applications, there is a [_Docker_ runtime](https://www.clever-cloud.com/doc/deploy/application/docker/docker/) available, and we will this one.
 
@@ -44,17 +44,17 @@ Make sure you are at the root of your project and not in `build`, as this comman
 clever create --type docker <app-name> --region <zone> --org <org>
 ```
 
-For example, if my project's name is _amzingapi_ and I want it to be [deployed in _Paris_](https://www.clever-cloud.com/blog/features/2020/11/05/ovh-clever-cloud-zones/) I will run
+For example, if my project's name is _amazing\_api_ and I want it to be [deployed in _Paris_](https://www.clever-cloud.com/blog/features/2020/11/05/ovh-clever-cloud-zones/) I will run
 
 ```bash
-clever create --type docker amzingapi --region par
+clever create --type docker amazing_api --region par
 ```
 
 :::note
 You can choose the region you want looking at the [available zones](https://www.clever-cloud.com/blog/features/2020/11/05/ovh-clever-cloud-zones/).
 
-In `<org>` you can sepcify the id of your organisation.
-You'll find it in the [console](https://console.clever-cloud.com/). If you only have one organisation, you can skip this parameter.
+In `<org>` you can specify the id of your organization.
+You'll find it in the [console](https://console.clever-cloud.com/). If you only have one organization, you can skip this parameter.
 :::
 
 As a result, you should have `Your application has been successfully created!`
