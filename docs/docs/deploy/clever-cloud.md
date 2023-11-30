@@ -14,12 +14,11 @@ Before you get started, if you don't already have these, you'll need to create:
 - A [Clever Cloud Account](https://api.clever-cloud.com/v2/sessions/signup)
 - Add billing information
 
-:::caution 
-As any PaaS service you might need to check the price before going on. Clever Cloud has a transparent pricing policy depending on the runtime type and size, see the [Clever Cloud Pricing Page](https://www.clever-cloud.com/pricing/). 
+:::caution
+As any PaaS service you might need to check the price before going on. Clever Cloud has a transparent pricing policy depending on the runtime type and size, see the [Clever Cloud Pricing Page](https://www.clever-cloud.com/pricing/).
 :::
 
-
-You might be able to do everything in the console, but for this tutorial, we will use the [Clever Cloud CLI](https://www.clever-cloud.com/doc/reference/clever-tools/getting_started/), so you'll have to install it on your computer. 
+You might be able to do everything in the console, but for this tutorial, we will use the [Clever Cloud CLI](https://www.clever-cloud.com/doc/reference/clever-tools/getting_started/), so you'll have to install it on your computer.
 
 Then log in running:
 
@@ -32,12 +31,12 @@ clever  login
 ### 1. Create the Clever Cloud application
 
 _Clever Cloud_ has [many available runtimes](https://www.clever-cloud.com/product/) that are optimized for the type of application you want to deploy. Unfortunately, **dart** is **not** _yet_ one of them.
- 
- In order to deploy those type of applications, there is a [_Docker_ runtime](https://www.clever-cloud.com/doc/deploy/application/docker/docker/) available, and we will this one.
+
+In order to deploy those type of applications, there is a [_Docker_ runtime](https://www.clever-cloud.com/doc/deploy/application/docker/docker/) available, and we will this one.
 
 So first thing first, lets create a _Docker_ runtime
 
-:::tip 
+:::tip
 Make sure you are at the root of your project and not in `build`, as this command will produce a `.clever.json` file in the current folder.
 :::
 
@@ -51,10 +50,10 @@ For example, if my project's name is _amzingapi_ and I want it to be [deployed i
 clever create --type docker amzingapi --region par
 ```
 
-:::note 
+:::note
 You can choose the region you want looking at the [available zones](https://www.clever-cloud.com/blog/features/2020/11/05/ovh-clever-cloud-zones/).
 
-In `<org>` you can sepcify the id of your organisation. 
+In `<org>` you can sepcify the id of your organisation.
 You'll find it in the [console](https://console.clever-cloud.com/). If you only have one organisation, you can skip this parameter.
 :::
 
@@ -76,8 +75,8 @@ And if you look in your project's file, you'll find a `.clever.json` file contai
 }
 ```
 
-:::note 
-Note you **can** add this file to your git repository. 
+:::note
+Note you **can** add this file to your git repository.
 :::
 
 :::tip
@@ -95,11 +94,11 @@ Giving the output `App rescaled successfully`
 As it works with `git` we do not send our binaries to them, the deployment on Clever Cloud is therefore in two steps
 
     (0. send the sources)
-	1. build the app
-	2. run the app
+    1. build the app
+    2. run the app
 
 :::note
-_Clever Cloud_ listen for `8080` and this is great because dart\_frog's is listening on 8080 to, so there is nothing to do with that, it will work out of the box. 
+_Clever Cloud_ listen for `8080` and this is great because dart_frog's is listening on 8080 to, so there is nothing to do with that, it will work out of the box.
 :::
 
 In order to tell _Clever Cloud_ how to build our project, we will need to create a `Dockerfile`, because the one created by `dart_frog build` is a built item and not sent to _Clever Cloud_ with _git_.
@@ -109,7 +108,7 @@ Here is the `Dockerfile` you can add at the root of your project.
 ```docker
 # This stage will compile sources to get the build folder
 FROM dart:stable AS build
-  
+
 # Install the dart_frog cli from pub.dev
 RUN dart pub global activate dart_frog_cli
 
@@ -147,20 +146,21 @@ COPY --from=build /app/build/bin/server /app/bin/server
 
 # Expose the server port (useful for binding)
 EXPOSE 8080
- 
+
 # Run the server
 CMD ["/app/bin/server"]
 ```
 
-:::tip 
-If you already have a `Dockerfile` you can rename it and specify to _Clever Cloud_ that the docker file to run is not `Dockerfile` using 
+:::tip
+If you already have a `Dockerfile` you can rename it and specify to _Clever Cloud_ that the docker file to run is not `Dockerfile` using
 
 ```bash
 clever env set CC_DOCKERFILE <the  name of your file>
 ```
+
 :::
 
-Add the newly created `Dockerfile`  to `git`  via `git add Dockerfile`, commit and then run
+Add the newly created `Dockerfile` to `git` via `git add Dockerfile`, commit and then run
 
 ```bash
 clever deploy
@@ -168,10 +168,10 @@ clever deploy
 
 Your **source code** will be sent to Clever Cloud.
 
-:::warning 
-Consider Clever Cloud like a new origin and clever deploy a git push. 
+:::warning
+Consider Clever Cloud like a new origin and clever deploy a git push.
 :::
-  
+
 And watch the magic happening
 
 ```
@@ -187,16 +187,16 @@ Waiting for application logs…
 Deployment successful
 ```
 
-### 3. Congratulations! 🎉 
+### 3. Congratulations! 🎉
 
 You have successfully built and deployed your API to _Clever Cloud_
-  
+
 To access your app you can go to
 
 `https://app-\<your app id\>.cleverapps.io/`
 
-:::tip 
-Your app's id is in the `.clever.json` file. 
+:::tip
+Your app's id is in the `.clever.json` file.
 
 Please note that the app id is `app_XX` and the url is `app-XX` (underscore in file, hyphen in url).
 :::
