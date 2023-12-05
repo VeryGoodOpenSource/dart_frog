@@ -161,7 +161,7 @@
     "@types/node": "20.10.3",
     "@types/vscode": "^1.79.0",
     "@typescript-eslint/eslint-plugin": "^6.13.1",
-    "@typescript-eslint/parser": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.2",
     "@vscode/test-electron": "^2.3.8",
     "c8": "^8.0.0",
     "eslint": "^8.54.0",
