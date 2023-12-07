@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import clsx from 'clsx';
 import Link from '@docusaurus/Link';
+import Heading from '@theme/Heading';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import styles from './index.module.css';
