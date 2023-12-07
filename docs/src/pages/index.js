@@ -84,7 +84,7 @@ function Feature({ Svg, title, description }) {
         <Svg className={styles.featureSvg} role="img" />
       </div>
       <div className="text--center padding-horiz--md">
-        <h3>{title}</h3>
+        <Heading as="h3">{title}</Heading>
         <p>{description}</p>
       </div>
     </div>
@@ -115,9 +115,9 @@ const FeatureList = [
     description: (
       <>
         Tap into the powerful Dart ecosystem with{' '}
-        <a href="https://pub.dev/packages/shelf">Shelf</a>,{' '}
-        <a href="https://dart.dev/tools/dart-devtools">DevTools</a>,{' '}
-        <a href="https://dart.dev/guides/testing">testing</a>, and more.
+        <Link to="https://pub.dev/packages/shelf">Shelf</Link>,{' '}
+        <Link to="https://dart.dev/tools/dart-devtools">DevTools</Link>,{' '}
+        <Link to="https://dart.dev/guides/testing">testing</Link>, and more.
       </>
     ),
   },
@@ -152,7 +152,7 @@ function HomepageBlogs() {
         </div>
         <div className={styles.column}>
           <div className={styles.content}>
-            <h2>Dart Frog 1.0 is here! 🎉</h2>
+            <Heading as="h2">Dart Frog 1.0 is here! 🎉</Heading>
             <p>
               Announcing Dart Frog 1.0! Learn about the main features of this
               release, the history of Dart Frog, and why you should consider
@@ -180,7 +180,7 @@ function HomepageBlogs() {
         </div>
         <div className={styles.column}>
           <div className={styles.content}>
-            <h2>Dart Frog full stack tutorial</h2>
+            <Heading as="h2">Dart Frog full stack tutorial</Heading>
             <p>
               Learn how to build a real-time Flutter counter app using
               WebSockets and Dart Frog.
