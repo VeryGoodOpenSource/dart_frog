@@ -49,6 +49,7 @@ gcloud run deploy [SERVICE_NAME] \
   --project=[PROJECT_ID] \
   --region=[REGION] \
   --allow-unauthenticated
+  --execution-environment=gen2 # helpful if using CloudSQL
 ```
 
 - `[SERVICE_NAME]`: The name of the Cloud Run service you want to create/update
