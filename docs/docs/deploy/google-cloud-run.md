@@ -49,7 +49,6 @@ gcloud run deploy [SERVICE_NAME] \
   --project=[PROJECT_ID] \
   --region=[REGION] \
   --allow-unauthenticated
-  --execution-environment=gen2 # helpful if using CloudSQL
 ```
 
 - `[SERVICE_NAME]`: The name of the Cloud Run service you want to create/update
@@ -61,6 +60,8 @@ Running this command will do three things:
 - Upload the code in the `/build` directory
 - Build the Docker image in [Cloud Build](https://cloud.google.com/build) and upload it to [Artifact Registry](https://cloud.google.com/artifact-registry)
 - Deploy the image to the specified Cloud Run service
+
+There is an ongoing [issue](https://github.com/google/gvisor/issues/7331) that is preventing Dart Unix Sockets from working correctly in the gen1 version of the Cloud Run environment. In that case, it is recommended to deploy to gen2 by adding `--execution-environment=gen2`
 
 3. Congratulations! 🎉 You have successfully built and deployed your API to Cloud Run. You can now access your API at the Service URL that is printed in the last line of output.
 
