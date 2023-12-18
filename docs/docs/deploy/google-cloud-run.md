@@ -55,15 +55,15 @@ gcloud run deploy [SERVICE_NAME] \
 - `[PROJECT_ID]`: The ID of the Google Cloud project
 - `[REGION]`: The GCP region you wish to deploy to (ex: us-central1)
 
+:::caution
+There is an ongoing [issue](https://github.com/google/gvisor/issues/7331) that is preventing Dart Unix Sockets from working correctly in the gen1 version of the Cloud Run environment. In that case, it is recommended to deploy to gen2 by adding `--execution-environment=gen2`.
+:::
+
 Running this command will do three things:
 
 - Upload the code in the `/build` directory
 - Build the Docker image in [Cloud Build](https://cloud.google.com/build) and upload it to [Artifact Registry](https://cloud.google.com/artifact-registry)
 - Deploy the image to the specified Cloud Run service
-
-:::caution
-There is an ongoing [issue](https://github.com/google/gvisor/issues/7331) that is preventing Dart Unix Sockets from working correctly in the gen1 version of the Cloud Run environment. In that case, it is recommended to deploy to gen2 by adding `--execution-environment=gen2`.
-:::
 
 3. Congratulations! 🎉 You have successfully built and deployed your API to Cloud Run. You can now access your API at the Service URL that is printed in the last line of output.
 
