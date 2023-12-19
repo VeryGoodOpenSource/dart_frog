@@ -28,7 +28,7 @@ globe login
 1. Deploy your API for production use by running:
 
 ```bash
-globe deploy
+globe deploy --prod
 ```
 
 2. Congratulations! 🎉 You have successfully deployed your API to Globe. You can now access your API at the Deployment URL that is available through the Globe dashboard.
