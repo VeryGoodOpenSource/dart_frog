@@ -158,3 +158,106 @@ Middleware cachedAsyncGreetingProvider() {
 ```
 
 With the above implementations, the greeting will only be computed once and the cached value will be used for the duration of the application lifecycle.
+
+### Order matter
+
+In a real life application you will find yourself adding multiple `providers` to your project.
+
+Also, some `providers` **will depends** on others, as in any application relying on dependency injection.
+
+Here is an example with two `providers`
+
+1. A first `provider`, called `databaseConnectionMiddlewareProvider`, that connects to a database and provides a `Connection` object
+
+```dart
+final _connection = MyDatabaseConnection(host, port, user, password, everythingelse);
+
+/// Provides a [Connection] instance.
+Middleware databaseConnectionMiddlewareProvider() {
+  return provider<Connection>(
+    (_) => _connection,
+  );
+}
+```
+
+2. A second `provider`, called `myItemsDataSourcesMiddlewareProvider`, that provides a **repository** for a specific entity, over the database
+
+```dart
+class DatabaseItemDataSource implements ItemDataSource {
+  final Connection connection;
+
+  Connection({
+    required this.connection;
+  });
+
+  // Create, Update, Delete and other stuff
+}
+
+/// Middleware to inject the ItemDataSource repository in our controllers
+Middleware myItemsDataSourcesMiddlewareProvider() {
+  return provider<ItemDataSource>(
+    (context) => DatabaseItemDataSource(
+      connection: context.read<Connection>(),
+    ),
+  );
+}
+```
+
+:::note
+You can find a complete example of data source implementation in the [todos tutorial](/docs/tutorials/todos)
+:::
+
+At this point, it seems clear that `myItemsDataSourcesMiddlewareProvider` depends on `databaseConnectionMiddlewareProvider`.
+
+When you'll try to access the instance of `ItemDataSource` using `context.read<ItemDataSource>()`, here is what will happen:
+
+1. _dart_frog_ will try to create the instance and return it. To do so, it will create a `DatabaseItemDataSource` object and to fullfill its `connection` parameter
+2. It will look "above" in the dependency graph for a provider of `Connection`
+3. It will find it with `databaseConnectionMiddlewareProvider`, and so on.
+
+This is how DI works, but the question is "what look "above" means ?"
+
+It means that you have to tell _dart_frog_ how to build a `Connection` **before** how to build a `ItemDataSource`.
+
+How do we do so ? By ordering the _Providers_.
+
+:::tip
+In _dart_frog_, dependencies are resolved from **bottom** to **top**  
+:::
+
+So if `B` depends on `A`, make sure you declare them this way
+
+```dart
+Handler middleware(Handler handler) {
+  return handler
+      .use(B())
+      .use(A())
+}
+```
+
+In our example, `myItemsDataSourcesMiddlewareProvider` depends on `databaseConnectionMiddlewareProvider`, so this will work
+
+```dart
+Handler middleware(Handler handler) {
+  return handler
+      .use(myItemsDataSourcesMiddlewareProvider())
+      .use(databaseConnectionMiddlewareProvider())
+}
+```
+
+but this won't !
+
+```dart
+Handler middleware(Handler handler) {
+  return handler
+      // This won't work because dart frog is bottom top
+      .use(databaseConnectionMiddlewareProvider())
+      .use(myItemsDataSourcesMiddlewareProvider())
+}
+```
+
+:::note
+Right now, there is an issue about this [fix: Improve dependency injection order #745](https://github.com/VeryGoodOpenSource/dart_frog/issues/745) because some other DI frameworks are working top to bottom and dart_frog is bottom to top.
+
+So you might want to keep that in mind for future releases, but as it would be a breaking change, the version will take this in account.
+:::
