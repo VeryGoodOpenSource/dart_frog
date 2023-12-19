@@ -163,7 +163,7 @@ With the above implementations, the greeting will only be computed once and the 
 
 In a real life application you will find yourself adding multiple `providers` to your project.
 
-Also, some `providers` **will depends** on others, as in any application relying on dependency injection.
+Also, some `providers` **will depend** on others, as in any application relying on dependency injection.
 
 Here is an example with two `providers`
 
@@ -211,15 +211,15 @@ At this point, it seems clear that `myItemsDataSourcesMiddlewareProvider` depend
 
 When you'll try to access the instance of `ItemDataSource` using `context.read<ItemDataSource>()`, here is what will happen:
 
-1. _dart_frog_ will try to create the instance and return it. To do so, it will create a `DatabaseItemDataSource` object and to fullfill its `connection` parameter
+1. _dart_frog_ will try to create the instance and return it. To do so, it will create a `DatabaseItemDataSource` object and to fulfill its `connection` parameter
 2. It will look "above" in the dependency graph for a provider of `Connection`
 3. It will find it with `databaseConnectionMiddlewareProvider`, and so on.
 
-This is how DI works, but the question is "what look "above" means ?"
+This is how DI works, but the question is "what look "above" means?"
 
 It means that you have to tell _dart_frog_ how to build a `Connection` **before** how to build a `ItemDataSource`.
 
-How do we do so ? By ordering the _Providers_.
+How do we do so? By ordering the _Providers_.
 
 :::tip
 In _dart_frog_, dependencies are resolved from **bottom** to **top**  
@@ -259,5 +259,5 @@ Handler middleware(Handler handler) {
 :::note
 Right now, there is an issue about this [fix: Improve dependency injection order #745](https://github.com/VeryGoodOpenSource/dart_frog/issues/745) because some other DI frameworks are working top to bottom and dart_frog is bottom to top.
 
-So you might want to keep that in mind for future releases, but as it would be a breaking change, the version will take this in account.
+So you might want to keep that in mind for future releases, but as it would be a breaking change, the release version will reflect this.
 :::
