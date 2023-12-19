@@ -170,7 +170,7 @@ Here is an example with two `providers`
 1. A first `provider`, called `databaseConnectionMiddlewareProvider`, that connects to a database and provides a `Connection` object
 
 ```dart
-final _connection = MyDatabaseConnection(host, port, user, password, everythingelse);
+final _connection = MyDatabaseConnection(host, port, user, password, everything else);
 
 /// Provides a [Connection] instance.
 Middleware databaseConnectionMiddlewareProvider() {
