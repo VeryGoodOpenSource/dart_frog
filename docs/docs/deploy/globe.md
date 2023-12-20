@@ -36,5 +36,5 @@ globe deploy --prod
 ## Additional Resources
 
 - [Globe documentation](https://docs.globe.dev/)
-- [`globe deploy` documentation](https://docs.globe.dev/cli/commands/deployy)
+- [`globe deploy` documentation](https://docs.globe.dev/cli/commands/deploy)
 - [Globe's Dart Frog documentation](https://docs.globe.dev/frameworks/dart-frog)
