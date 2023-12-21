@@ -56,7 +56,7 @@ gcloud run deploy [SERVICE_NAME] \
 - `[REGION]`: The GCP region you wish to deploy to (ex: us-central1)
 
 :::caution
-There is an ongoing [issue](https://github.com/google/gvisor/issues/7331) that is preventing Dart Unix Sockets from working correctly in the gen1 version of the Cloud Run environment. In that case, it is recommended to deploy to gen2 by adding `--execution-environment=gen2`.
+There is an ongoing [issue](https://github.com/google/gvisor/issues/7331) that is preventing Dart Unix Sockets from working correctly in the gen1 version of the [Cloud Run execution environment](https://cloud.google.com/run/docs/about-execution-environments). In that case, it is recommended to deploy to gen2 by adding `--execution-environment=gen2`.
 :::
 
 Running this command will do three things:
