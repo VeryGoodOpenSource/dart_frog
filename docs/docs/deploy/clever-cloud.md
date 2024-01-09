@@ -5,7 +5,7 @@ title: 💎 Clever Cloud
 
 # Clever Cloud 💎
 
-[Clever Cloud](https://www.clever-cloud.com/) is a PaaS provider that allows you to start apps quickly using `git` while they manage the infrastructure, the scalability and the run lifetime.
+[Clever Cloud](https://www.clever-cloud.com/) is a PaaS provider that enables you to start apps quickly using `git` while they manage the infrastructure, scalability, and run lifetime.
 
 ## Prerequisites
 
