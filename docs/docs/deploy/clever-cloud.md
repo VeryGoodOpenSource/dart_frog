@@ -98,7 +98,7 @@ As Clever Cloud uses `git` we don't have to compile binaries and share them, Cle
     2. run the app
 
 :::note
-_Clever Cloud_ listen for `8080` and this is great because dart_frog's is listening on 8080 to, so there is nothing to do with that, it will work out of the box.
+_Clever Cloud_ listens on port `8080` by default which is also Dart Frog's default port, it works out of the box!
 :::
 
 In order to tell _Clever Cloud_ how to build our project, we will need to create a `Dockerfile`, because the one created by `dart_frog build` is a built item and not sent to _Clever Cloud_ with _git_.
