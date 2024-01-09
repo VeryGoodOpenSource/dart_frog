@@ -59,7 +59,7 @@ You'll find it in the [console](https://console.clever-cloud.com/). If you only 
 
 As a result, you should have `Your application has been successfully created!`
 
-And if you look in your project's file, you'll find a `.clever.json` file containing something like this:
+If you check your project's file, you'll find a `.clever.json` file containing something like this:
 
 ```json
 {
