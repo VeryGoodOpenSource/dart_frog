@@ -76,7 +76,7 @@ And if you look in your project's file, you'll find a `.clever.json` file contai
 ```
 
 :::note
-Note you **can** add this file to your git repository.
+You **can** add this file to your git repository.
 :::
 
 :::tip
