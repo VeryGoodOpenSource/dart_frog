@@ -91,7 +91,7 @@ Giving the output `App rescaled successfully`
 
 ### 2. Deploy your API to Clever Cloud
 
-As it works with `git` we do not send our binaries to them, the deployment on Clever Cloud is therefore in two steps
+As Clever Cloud uses `git` we don't have to compile binaries and share them, Clever Cloud handles that for us, making the deployment steps as followed:
 
     (0. send the sources)
     1. build the app
