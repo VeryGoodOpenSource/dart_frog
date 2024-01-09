@@ -80,7 +80,7 @@ You **can** add this file to your git repository.
 :::
 
 :::tip
-By default, our runtime is scaled to **XS**, which is 1 CPU / 1Gio RAM, if you want less for the tests you can scale it down using.
+By default, the runtime is scaled to **XS**, which is 1 CPU / 1Gio RAM, if you want to scale it down for testing purposes you can use the following:
 
 ```bash
 clever scale --flavor nano
