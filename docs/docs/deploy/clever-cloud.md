@@ -15,7 +15,7 @@ Before you get started, if you don't already have these, you'll need to create:
 - Add billing information
 
 :::caution
-As any PaaS service you might need to check the price before going on. Clever Cloud has a transparent pricing policy depending on the runtime type and size, see the [Clever Cloud Pricing Page](https://www.clever-cloud.com/pricing/).
+As with any PaaS service you should check the pricing before continuing. Clever Cloud has a transparent pricing policy depending on the runtime type and size, see the [Clever Cloud Pricing Page](https://www.clever-cloud.com/pricing/).
 :::
 
 You might be able to do everything in the console, but for this tutorial, we will use the [Clever Cloud CLI](https://www.clever-cloud.com/doc/reference/clever-tools/getting_started/), so you'll have to install it on your computer.
