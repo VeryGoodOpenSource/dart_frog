@@ -34,7 +34,7 @@ _Clever Cloud_ has [many available runtime](https://www.clever-cloud.com/product
 
 In order to deploy those type of applications, there is a [_Docker_ runtime](https://www.clever-cloud.com/doc/deploy/application/docker/docker/) available, and we will this one.
 
-So first thing first, lets create a _Docker_ runtime
+So, first things first, lets create a _Docker_ runtime
 
 :::tip
 Make sure you are at the root of your project and not in `build`, as this command will produce a `.clever.json` file in the current folder.
