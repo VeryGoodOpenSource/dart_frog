@@ -152,7 +152,7 @@ CMD ["/app/bin/server"]
 ```
 
 :::tip
-If you already have a `Dockerfile` you can rename it and specify to _Clever Cloud_ that the docker file to run is not `Dockerfile` using
+If you already have a `Dockerfile` you can rename it and specify to _Clever Cloud_ that the docker file to run is not `Dockerfile`:
 
 ```bash
 clever env set CC_DOCKERFILE <the  name of your file>
