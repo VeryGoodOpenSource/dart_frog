@@ -51,7 +51,6 @@ clever create --type docker api --region par
 ```
 
 The `<org>` argument is optional if you only have one Clever Cloud organization.
-The `<org>` argument is optional if you only have one Clever Cloud organization.
 :::note
 For a full list of all the available zones refer to [Clever Cloud's zones list](https://www.clever-cloud.com/blog/features/2020/11/05/ovh-clever-cloud-zones/).
 
