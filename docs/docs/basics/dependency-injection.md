@@ -209,7 +209,7 @@ You can find a complete example of data source implementation in the [todos tuto
 
 At this point, it seems clear that `myItemsDataSourcesMiddlewareProvider` depends on `databaseConnectionMiddlewareProvider`.
 
-When you'll try to access the instance of `ItemDataSource` using `context.read<ItemDataSource>()`, here is what will happen:
+When you try to access the instance of `ItemDataSource` using `context.read<ItemDataSource>()`, here is what will happen:
 
 1. _dart_frog_ will try to create the instance and return it. To do so, it will create a `DatabaseItemDataSource` object and to fulfill its `connection` parameter
 2. It will look "above" in the dependency graph for a provider of `Connection`
