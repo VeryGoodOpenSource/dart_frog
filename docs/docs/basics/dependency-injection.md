@@ -217,9 +217,7 @@ When you'll try to access the instance of `ItemDataSource` using `context.read<I
 
 This is how dependency injections works, but let's clarify what "look "above" means.
 
-It means that you have to tell _dart_frog_ how to build a `Connection` **before** how to build a `ItemDataSource`.
-
-How do we do so? By ordering the _Providers_.
+We can tell Dart Frog how to build a `Connection` **before** it builds a `ItemDataSource`. We do that by defining the order of the providers.
 
 :::tip
 In _dart_frog_, dependencies are resolved from **bottom** to **top**  
