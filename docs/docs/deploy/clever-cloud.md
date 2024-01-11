@@ -134,7 +134,7 @@ RUN dart_frog build
 RUN dart compile exe /app/build/bin/server.dart -o /app/build/bin/server
 
 
-# This stage build minimal serving image from AOT-compiled `/server` and required system
+# Build minimal serving image from AOT-compiled `/server` and required system
 # libraries and configuration files stored in `/runtime/` from the build stage.
 FROM scratch
 
