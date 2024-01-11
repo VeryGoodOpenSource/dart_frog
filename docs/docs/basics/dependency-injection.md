@@ -165,7 +165,7 @@ In a real life application you will find yourself adding multiple `providers` to
 
 Some `providers` **will depend** on others, as with any application relying on dependency injection.
 
-Here is an example with two `providers`
+Here is an example with two `providers` where the second one depends on the first one for it to work:
 
 1. A first `provider`, called `databaseConnectionMiddlewareProvider`, that connects to a database and provides a `Connection` object
 
