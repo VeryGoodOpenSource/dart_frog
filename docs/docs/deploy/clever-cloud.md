@@ -121,8 +121,7 @@ COPY routes /app/routes
 # Uncomment the following line if you are serving static files.
 # COPY --from=build public /app/public
 
-##### Add all of your custom directories here, for example if you have a "models" directory
-##### Add a line like this :
+# Add all of your custom directories here, for example if you have a "models" directory:
 # COPY models /app/models
 
 # Get dependencies
