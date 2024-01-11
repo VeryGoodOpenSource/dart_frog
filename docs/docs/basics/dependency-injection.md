@@ -233,7 +233,7 @@ Handler middleware(Handler handler) {
 }
 ```
 
-In our example, `myItemsDataSourcesMiddlewareProvider` depends on `databaseConnectionMiddlewareProvider`, so this will work
+In the example we gave at the beginning where `myItemsDataSourcesMiddlewareProvider` depends on `databaseConnectionMiddlewareProvider` we know it will work when we provided them like so:
 
 ```dart
 Handler middleware(Handler handler) {
