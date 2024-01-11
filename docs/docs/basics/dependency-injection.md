@@ -215,7 +215,7 @@ When you'll try to access the instance of `ItemDataSource` using `context.read<I
 2. It will look "above" in the dependency graph for a provider of `Connection`
 3. It will find it with `databaseConnectionMiddlewareProvider`, and so on.
 
-This is how DI works, but the question is "what look "above" means?"
+This is how dependency injections works, but let's clarify what "look "above" means.
 
 It means that you have to tell _dart_frog_ how to build a `Connection` **before** how to build a `ItemDataSource`.
 
