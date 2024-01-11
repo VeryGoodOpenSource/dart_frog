@@ -169,7 +169,7 @@ clever deploy
 Your **source code** will be sent to Clever Cloud.
 
 :::warning
-Consider Clever Cloud like a new origin and clever deploy a git push.
+Consider Clever Cloud like a new [remote (from a git point of view)](https://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes) and clever deploy a git push.
 :::
 
 And watch the magic happening
