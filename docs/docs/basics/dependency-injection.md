@@ -243,7 +243,7 @@ Handler middleware(Handler handler) {
 }
 ```
 
-but this won't !
+But if we change the order of the providers it will not work:
 
 ```dart
 Handler middleware(Handler handler) {
