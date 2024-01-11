@@ -163,7 +163,7 @@ With the above implementations, the greeting will only be computed once and the 
 
 In a real life application you will find yourself adding multiple `providers` to your project.
 
-Also, some `providers` **will depend** on others, as in any application relying on dependency injection.
+Some `providers` **will depend** on others, as with any application relying on dependency injection.
 
 Here is an example with two `providers`
 
