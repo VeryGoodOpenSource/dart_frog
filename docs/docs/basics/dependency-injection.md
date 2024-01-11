@@ -223,7 +223,7 @@ We can tell Dart Frog how to build a `Connection` **before** it builds a `ItemDa
 In _dart_frog_, dependencies are resolved from **bottom** to **top**  
 :::
 
-So if `B` depends on `A`, make sure you declare them this way
+So if provider `B` depends on provider `A`, you will have to declare them as followed:
 
 ```dart
 Handler middleware(Handler handler) {
