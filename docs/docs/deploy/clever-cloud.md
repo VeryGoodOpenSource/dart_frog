@@ -50,6 +50,7 @@ For example, if the project's name is _api_ and you want it to be deployed in _P
 clever create --type docker api --region par
 ```
 
+The `<org>` argument is optional if you only have one Clever Cloud organization.
 :::note
 For a full list of all the available zones refer to [Clever Cloud's zones list](https://www.clever-cloud.com/blog/features/2020/11/05/ovh-clever-cloud-zones/).
 
