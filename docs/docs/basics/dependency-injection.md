@@ -220,7 +220,7 @@ This is how dependency injections works, but let's clarify what "look "above" me
 We can tell Dart Frog how to build a `Connection` **before** it builds a `ItemDataSource`. We do that by defining the order of the providers.
 
 :::tip
-In _dart_frog_, dependencies are resolved from **bottom** to **top**  
+In Dart Frog, dependencies are resolved from **bottom** to **top**  
 :::
 
 So if provider `B` depends on provider `A`, you will have to declare them as followed:
