@@ -23,7 +23,7 @@ You might be able to do everything in the console, but for this tutorial, we wil
 Then log in running:
 
 ```bash
-clever  login
+clever login
 ```
 
 ## Deploying
