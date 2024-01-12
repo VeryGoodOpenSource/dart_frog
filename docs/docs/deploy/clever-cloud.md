@@ -154,6 +154,7 @@ If you already have a `Dockerfile` you can rename it and specify to _Clever Clou
 ```bash
 clever env set CC_DOCKERFILE <the  name of your file>
 ```
+
 :::
 
 Add the newly created `Dockerfile` to `git` via `git add Dockerfile`, commit and then run:
