@@ -1,0 +1,23 @@
+name: license_dart_frog_auth
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+    paths:
+      - "packages/dart_frog_auth/pubspec.yaml"
+      - ".github/workflows/license_dart_frog_auth.yaml"
+  push:
+    branches:
+      - main
+    paths:
+      - "packages/dart_frog_auth/pubspec.yaml"
+      - ".github/workflows/license_dart_frog_auth.yaml"
+
+jobs:
+  license_check:
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/license_check.yml@v1
+    with:
+      working_directory: packages/dart_frog_auth
