@@ -212,10 +212,10 @@ At this point, it seems clear that `myItemsDataSourcesMiddlewareProvider` depend
 When you try to access the instance of `ItemDataSource` using `context.read<ItemDataSource>()`, here is what will happen:
 
 1. _dart_frog_ will try to create the instance and return it. To do so, it will create a `DatabaseItemDataSource` object and to fulfill its `connection` parameter
-2. It will look "above" in the dependency graph for a provider of `Connection`
+2. It will "look above" in the dependency graph for a provider of `Connection`
 3. It will find it with `databaseConnectionMiddlewareProvider`, and so on.
 
-This is how dependency injections works, but let's clarify what "look "above" means.
+This is how dependency injections works, but let's clarify what "look above" means.
 
 We can tell Dart Frog how to build a `Connection` **before** it builds a `ItemDataSource`. We do that by defining the order of the providers.
 
