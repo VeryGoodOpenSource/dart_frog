@@ -65,7 +65,9 @@ Be creative - registry names must be unique across all Digital Ocean container r
 
 ## Deploying
 
-1. Build your API for production use by running:
+### 1. Build your API for production use 
+
+Simply run:
 
 ```bash
 dart_frog build
@@ -73,7 +75,9 @@ dart_frog build
 
 This will create a `/build` directory with all the files needed to deploy your API.
 
-2. Build your API using Docker by running:
+### 2. Build your API using Docker
+
+In order to build a Docker image, you can run this command:
 
 ```bash
 docker build build \
@@ -95,7 +99,7 @@ For example, if you build on an M1 CPU, the generated image will not be able to 
 We recommend using an automated workflow via GitHub Actions to automate deployments and ensure a consistent environment when building your image.
 :::
 
-3. Push the image to Container Registry by running:
+### 3. Push the image to Container Registry
 
 ```bash
 docker push registry.digitalocean.com/[REGISTRY]/[IMAGE_NAME]
@@ -103,9 +107,13 @@ docker push registry.digitalocean.com/[REGISTRY]/[IMAGE_NAME]
 
 You should now see your repository in the [Container Registry page](https://cloud.digitalocean.com/registry)
 
-4. Create your App by following [these instructions](https://docs.digitalocean.com/products/app-platform/how-to/deploy-from-container-images/#deploy-resource-using-a-container-image-as-the-source).
+### 4. Create your App
 
-5. Congratulations! You have successfully built and deployed your API to App Platform. You can now access your API via the URL at the top of the app’s overview page 🎉
+Create an application on Digital Ocean by following [these instructions](https://docs.digitalocean.com/products/app-platform/how-to/deploy-from-container-images/#deploy-resource-using-a-container-image-as-the-source).
+
+### 5. Enjoy your API on Digital Ocean!  
+
+Congratulations 🎉, you have successfully built and deployed your API to App Platform. You can now access your API via the URL at the top of the app’s overview page 🎉
 
 ## Additional Resources
 
