@@ -139,6 +139,7 @@ Start a dev server on a given project.
 | workingDirectory  | String | The project directory                  | Yes      |
 | port              | int    | The port to run the dev server on      | Yes      |
 | dartVmServicePort | int    | The port to run the Dart VM Service on | Yes      |
+| hostname          | String | The hostname to run the dev server on  | No       |
 
 - **Response**:
 
@@ -256,7 +257,7 @@ Signals that a dev server has exited.
 ### Dev server logging events
 
 The dev server will send logging events to the client as they happen. These events are identified by
-"dev_server.logger<Severity\>". See the [Logging events](#logging-events) section for more details.
+"dev_server.logger\<Severity\>". See the [Logging events](#logging-events) section for more details.
 
 - **Content**:
 
@@ -417,7 +418,7 @@ Signals that a route configuration watcher has exited.
 ### Route configuration watcher logging events
 
 Each watcher instance will send logging events to the client as they happen. These events are identified by
-"route_configuration.logger<Severity\>". See the [Logging events](#logging-events) section for more details.
+"route_configuration.logger\<Severity\>". See the [Logging events](#logging-events) section for more details.
 
 - **Content**:
 

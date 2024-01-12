@@ -157,19 +157,19 @@
   },
   "devDependencies": {
     "@types/glob": "^8.1.0",
-    "@types/mocha": "^10.0.4",
-    "@types/node": "20.9.0",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "20.10.6",
     "@types/vscode": "^1.79.0",
-    "@typescript-eslint/eslint-plugin": "^6.11.0",
-    "@typescript-eslint/parser": "^6.11.0",
-    "@vscode/test-electron": "^2.3.6",
-    "c8": "^8.0.0",
-    "eslint": "^8.53.0",
+    "@typescript-eslint/eslint-plugin": "^6.18.1",
+    "@typescript-eslint/parser": "^6.18.0",
+    "@vscode/test-electron": "^2.3.8",
+    "c8": "^9.0.0",
+    "eslint": "^8.56.0",
     "glob": "^10.3.10",
     "mocha": "^10.2.0",
     "proxyquire": "^2.1.3",
     "sinon": "^17.0.1",
-    "typescript": "^5.2.2"
+    "typescript": "^5.3.3"
   },
   "dependencies": {
     "semver": "^7.5.4"

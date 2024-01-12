@@ -17,10 +17,10 @@ class DevServerDomain extends DomainBase {
     super.daemon, {
     @visibleForTesting super.getId,
     @visibleForTesting GeneratorBuilder? generator,
-    @visibleForTesting DevServerRunnerBuilder? devServerRunnerBuilder,
+    @visibleForTesting DevServerRunnerConstructor? devServerRunnerConstructor,
   })  : _generator = generator ?? MasonGenerator.fromBundle,
-        _devServerRunnerBuilder =
-            devServerRunnerBuilder ?? DevServerRunner.new {
+        _devServerRunnerConstructor =
+            devServerRunnerConstructor ?? DevServerRunner.new {
     addHandler('start', _start);
     addHandler('reload', _reload);
     addHandler('stop', _stop);
@@ -32,7 +32,7 @@ class DevServerDomain extends DomainBase {
   final _devServerRunners = <String, DevServerRunner>{};
 
   final GeneratorBuilder _generator;
-  final DevServerRunnerBuilder _devServerRunnerBuilder;
+  final DevServerRunnerConstructor _devServerRunnerConstructor;
 
   /// Starts a [DevServerRunner] for the given [request].
   Future<DaemonResponse> _start(DaemonRequest request) async {
@@ -80,7 +80,7 @@ class DevServerDomain extends DomainBase {
       idGenerator: getId,
     );
 
-    final devServerRunner = _devServerRunnerBuilder(
+    final devServerRunner = _devServerRunnerConstructor(
       logger: logger,
       port: '$port',
       address: ip,

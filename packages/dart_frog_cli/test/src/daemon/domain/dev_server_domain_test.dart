@@ -35,7 +35,7 @@ void main() {
         daemonServer,
         getId: () => 'id',
         generator: (_) async => generator,
-        devServerRunnerBuilder: ({
+        devServerRunnerConstructor: ({
           required logger,
           required port,
           required address,
@@ -69,7 +69,7 @@ void main() {
           daemonServer,
           getId: () => 'id',
           generator: (_) async => generator,
-          devServerRunnerBuilder: ({
+          devServerRunnerConstructor: ({
             required logger,
             required port,
             required address,
@@ -623,7 +623,7 @@ void main() {
       final domain = DevServerDomain(
         daemonServer,
         generator: (_) async => generator,
-        devServerRunnerBuilder: ({
+        devServerRunnerConstructor: ({
           required logger,
           required port,
           required address,

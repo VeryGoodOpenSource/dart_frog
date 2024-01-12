@@ -1,3 +1,14 @@
+# 1.2.0
+
+- fix(dart_frog_cli): report daemon missing parameters ([#1050](https://github.com/VeryGoodOpenSource/dart_frog/pull/1050))
+- chore(deps): bump cli_completion from 0.3.0 to 0.4.0 in /packages/dart_frog_cli ([#1060](https://github.com/VeryGoodOpenSource/dart_frog/pull/1060))
+- feat(dart_frog_cli): update cli bundles ([#1115](https://github.com/VeryGoodOpenSource/dart_frog/pull/1115))
+- chore(deps): bump pub_updater from 0.3.1 to 0.4.0 in /packages/dart_frog_cli ([#1061](https://github.com/VeryGoodOpenSource/dart_frog/pull/1061))
+- chore(deps): bump mason from 0.1.0-dev.50 to 0.1.0-dev.51 in /packages/dart_frog_cli ([#1073](https://github.com/VeryGoodOpenSource/dart_frog/pull/1073))
+- feat(dart_frog_cli): add host option to `dev` ([#1114](https://github.com/VeryGoodOpenSource/dart_frog/pull/1114))
+- refactor(dart_frog_cli): move runtime compatibility check to dev server runner ([#1138](https://github.com/VeryGoodOpenSource/dart_frog/pull/1138))
+- feat: add prod server builder ([#1161](https://github.com/VeryGoodOpenSource/dart_frog/pull/1161))
+
 # 1.1.1
 
 - feat(dart_frog_cli): update cli bundles ([#1005](https://github.com/VeryGoodOpenSource/dart_frog/pull/1005))
