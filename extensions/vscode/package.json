@@ -160,7 +160,7 @@
     "@types/mocha": "^10.0.6",
     "@types/node": "20.10.6",
     "@types/vscode": "^1.79.0",
-    "@typescript-eslint/eslint-plugin": "^6.17.0",
+    "@typescript-eslint/eslint-plugin": "^6.18.1",
     "@typescript-eslint/parser": "^6.18.0",
     "@vscode/test-electron": "^2.3.8",
     "c8": "^8.0.0",
