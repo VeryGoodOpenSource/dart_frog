@@ -33,7 +33,9 @@ gcloud auth login
 
 ## Deploying
 
-1. Build your API for production use by running:
+### 1. Build your API for production use 
+
+Simply run:
 
 ```bash
 dart_frog build
@@ -41,7 +43,9 @@ dart_frog build
 
 This will create a `/build` directory with all the files needed to deploy your API.
 
-2. Deploy your API to Cloud Run by running:
+### 2. Deploy your API to Cloud Run
+
+In order to deploy to Cloud Run, you can run the following command:
 
 ```bash
 gcloud run deploy [SERVICE_NAME] \
@@ -65,7 +69,9 @@ Running this command will do three things:
 - Build the Docker image in [Cloud Build](https://cloud.google.com/build) and upload it to [Artifact Registry](https://cloud.google.com/artifact-registry)
 - Deploy the image to the specified Cloud Run service
 
-3. Congratulations! 🎉 You have successfully built and deployed your API to Cloud Run. You can now access your API at the Service URL that is printed in the last line of output.
+### 5. Enjoy your API on Cloud Run!  
+
+Congratulations 🎉, you have successfully built and deployed your API to Cloud Run. You can now access your API at the Service URL that is printed in the last line of output.
 
 :::note
 If you have not already enabled the necessary Google Cloud APIs to deploy your API, `gcloud` can enable them for you. Just select `Y` when prompted.
