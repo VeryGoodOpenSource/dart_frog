@@ -65,7 +65,7 @@ Be creative - registry names must be unique across all Digital Ocean container r
 
 ## Deploying
 
-### 1. Build your API for production use 
+### 1. Build your API for production use
 
 Simply run:
 
@@ -111,7 +111,7 @@ You should now see your repository in the [Container Registry page](https://clou
 
 Create an application on Digital Ocean by following [these instructions](https://docs.digitalocean.com/products/app-platform/how-to/deploy-from-container-images/#deploy-resource-using-a-container-image-as-the-source).
 
-### 5. Enjoy your API on Digital Ocean!  
+### 5. Enjoy your API on Digital Ocean!
 
 Congratulations 🎉, you have successfully built and deployed your API to App Platform. You can now access your API via the URL at the top of the app’s overview page 🎉
 

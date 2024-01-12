@@ -33,7 +33,7 @@ In order to deploy, you can simply run:
 globe deploy --prod
 ```
 
-### 5. Enjoy your API on Globe!  
+### 5. Enjoy your API on Globe!
 
 Congratulations 🎉, you have successfully built and deployed your API on Globe. You can now access your API at the Deployment URL that is available through the Globe dashboard.
 
