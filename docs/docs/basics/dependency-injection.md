@@ -248,7 +248,7 @@ But if we change the order of the providers it will not work:
 ```dart
 Handler middleware(Handler handler) {
   return handler
-      // This won't work because dart frog is bottom top
+      // This won't work because Dart Frog is bottom top
       .use(databaseConnectionMiddlewareProvider())
       .use(myItemsDataSourcesMiddlewareProvider())
 }
