@@ -532,7 +532,9 @@ Future<Response> _get(RequestContext context) async {
 
 Future<Response> _post(RequestContext context) async {
   final dataSource = context.read<TodosDataSource>();
-  final todo = Todo.fromJson(await context.request.json());
+  final todo = Todo.fromJson(
+    await context.request.json() as Map<String, dynamic>,
+  );
 
   return Response.json(
     statusCode: HttpStatus.created,
@@ -599,7 +601,9 @@ Future<Response> _get(RequestContext context, Todo todo) async {
 
 Future<Response> _put(RequestContext context, String id, Todo todo) async {
   final dataSource = context.read<TodosDataSource>();
-  final updatedTodo = Todo.fromJson(await context.request.json());
+  final updatedTodo = Todo.fromJson(
+    await context.request.json() as Map<String, dynamic>,
+  );
   final newTodo = await dataSource.update(
     id,
     todo.copyWith(
