@@ -599,7 +599,9 @@ Future<Response> _get(RequestContext context, Todo todo) async {
 
 Future<Response> _put(RequestContext context, String id, Todo todo) async {
   final dataSource = context.read<TodosDataSource>();
-  final updatedTodo = Todo.fromJson(await context.request.json()as Map<String, dynamic>);
+  final updatedTodo = Todo.fromJson(
+    await context.request.json() as Map<String, dynamic>,
+  );
   final newTodo = await dataSource.update(
     id,
     todo.copyWith(
