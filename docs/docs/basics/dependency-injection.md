@@ -159,7 +159,7 @@ Middleware cachedAsyncGreetingProvider() {
 
 With the above implementations, the greeting will only be computed once and the cached value will be used for the duration of the application lifecycle.
 
-### Order matter
+### Order matters
 
 In a real life application you will find yourself adding multiple `providers` to your project.
 
