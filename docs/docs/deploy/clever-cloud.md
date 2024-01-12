@@ -184,7 +184,7 @@ Waiting for application logs…
 Deployment successful
 ```
 
-### 3. Congratulations! 🎉
+### 3. Enjoy your API on Clever Cloud ! 🎉
 
 You have successfully built and deployed your API to _Clever Cloud_
 
