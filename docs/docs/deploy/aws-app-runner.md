@@ -52,7 +52,9 @@ aws ecr create-repository --repository-name [REPOSITORY_NAME]
 
 ## Deploying
 
-1. Build your API for production use by running:
+### 1. Build your API for production use 
+
+Simply run:
 
 ```bash
 dart_frog build
@@ -60,7 +62,9 @@ dart_frog build
 
 This will create a /build directory with all the files needed to deploy your API.
 
-2. Build your API using Docker by running:
+### 2. Build your API using Docker
+
+In order to build a Docker image, you can run this command:
 
 ```bash
 docker build build \
@@ -72,9 +76,11 @@ docker build build \
 - `[REPOSITORY_NAME]`: The name of the repository you created earlier
 - `[IMAGE_TAG]`: A name given to this image to identify it in the repository
 
-This command will build the Docker image on your computer and can take a few seconds to a few minutes.
+It will build the Docker image on your computer, this can take a few seconds to a few minutes.
 
-3. Push the image to ECR by running:
+### 3. Push the image to ECR
+
+Now that you have the image on your computer, you can push it to ECR 
 
 ```bash
 docker push [AWS_ACCOUNT_ID].dkr.ecr.[REGION].amazonaws.com/[REPOSITORY_NAME]:[IMAGE_TAG]
@@ -82,9 +88,13 @@ docker push [AWS_ACCOUNT_ID].dkr.ecr.[REGION].amazonaws.com/[REPOSITORY_NAME]:[I
 
 You should now see your repository in the [ECR console](https://console.aws.amazon.com/ecr)
 
-4. Create your App Runner service following [these instructions](https://docs.aws.amazon.com/apprunner/latest/dg/manage-create.html#:~:text=Create%20a%20service%20from%20an%20Amazon%20ECR%20image). Look for the `Create a service from an Amazon ECR image` section.
+### 4. Create your App Runner Service 
 
-5. Congratulations! 🎉 You have successfully built and deployed your API to App Runner. You can now access your API at the Default domain on the [App Runner console](https://console.aws.amazon.com/apprunner)
+Follow [these instructions](https://docs.aws.amazon.com/apprunner/latest/dg/manage-create.html#:~:text=Create%20a%20service%20from%20an%20Amazon%20ECR%20image). Look for the `Create a service from an Amazon ECR image` section.
+
+### 5. Enjoy your API on AWS!  
+
+Congratulations 🎉, you have successfully built and deployed your API to App Runner. You can now access your API at the Default domain on the [App Runner console](https://console.aws.amazon.com/apprunner)
 
 ## Additional Resources
 
