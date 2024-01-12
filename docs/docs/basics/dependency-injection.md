@@ -165,59 +165,55 @@ In a real life application you will find yourself adding multiple `providers` to
 
 Some `providers` **will depend** on others, as with any application relying on dependency injection.
 
-Here is an example with two `providers` where the second one depends on the first one for it to work:
+Let's take the example of a `Car` that depends on a `Wheel`.
 
-1. A first `provider`, called `databaseConnectionMiddlewareProvider`, that connects to a database and provides a `Connection` object
+We will have two `providers` where the second one depends on the first one for it to work:
+
+1. A first `provider`, called `wheelMiddlewareProvider`, that creates the `Wheel` object
 
 ```dart
-final _connection = MyDatabaseConnection(host, port, user, password, everything else);
+final _wheel = Wheel();
 
-/// Provides a [Connection] instance.
-Middleware databaseConnectionMiddlewareProvider() {
-  return provider<Connection>(
-    (_) => _connection,
+/// Provides a [Wheel] instance.
+Middleware wheelMiddlewareProvider() {
+  return provider<Wheel>(
+    (_) => _wheel,
   );
 }
 ```
 
-2. A second `provider`, called `myItemsDataSourcesMiddlewareProvider`, that provides a **repository** for a specific entity, over the database
+2. A second `provider`, called `carMiddlewareProvider`, that provides a `Car` object
 
 ```dart
-class DatabaseItemDataSource implements ItemDataSource {
-  final Connection connection;
+class Car {
+  final Wheel wheel;
 
-  Connection({
-    required this.connection;
+  Car({
+    required this.wheel;
   });
-
-  // Create, Update, Delete and other stuff
 }
 
-/// Middleware to inject the ItemDataSource repository in our controllers
-Middleware myItemsDataSourcesMiddlewareProvider() {
-  return provider<ItemDataSource>(
-    (context) => DatabaseItemDataSource(
-      connection: context.read<Connection>(),
+/// Middleware to create the Car object
+Middleware carMiddlewareProvider() {
+  return provider<Car>(
+    (context) => Car(
+      wheel: context.read<Wheel>(),
     ),
   );
 }
 ```
 
-:::note
-You can find a complete example of data source implementation in the [todos tutorial](/docs/tutorials/todos)
-:::
+At this point, it seems clear that `carMiddlewareProvider` depends on `wheelMiddlewareProvider`.
 
-At this point, it seems clear that `myItemsDataSourcesMiddlewareProvider` depends on `databaseConnectionMiddlewareProvider`.
+When you try to access the instance of `Car` using `context.read<Car>()`, here is what will happen:
 
-When you try to access the instance of `ItemDataSource` using `context.read<ItemDataSource>()`, here is what will happen:
-
-1. _dart_frog_ will try to create the instance and return it. To do so, it will create a `DatabaseItemDataSource` object and to fulfill its `connection` parameter
-2. It will "look above" in the dependency graph for a provider of `Connection`
-3. It will find it with `databaseConnectionMiddlewareProvider`, and so on.
+1. _Dart Frog_ will try to create the instance and return it. To do so, it will create a `Car` object and to fulfill its `wheel` parameter
+2. It will "look above" in the dependency graph for a provider of `Wheel`
+3. It will find it with `wheelMiddlewareProvider`, and so on.
 
 This is how dependency injections works, but let's clarify what "look above" means.
 
-We can tell Dart Frog how to build a `Connection` **before** it builds a `ItemDataSource`. We do that by defining the order of the providers.
+We have to tell Dart Frog how to build a `Wheel` **before** it builds a `Car`. We do that by defining the order of the providers.
 
 :::tip
 In Dart Frog, dependencies are resolved from **bottom** to **top**  
@@ -233,13 +229,13 @@ Handler middleware(Handler handler) {
 }
 ```
 
-In the example we gave at the beginning where `myItemsDataSourcesMiddlewareProvider` depends on `databaseConnectionMiddlewareProvider` we know it will work when we provided them like so:
+In the example we gave at the beginning where `carMiddlewareProvider` depends on `wheelMiddlewareProvider` we know it will work when we provided them like so:
 
 ```dart
 Handler middleware(Handler handler) {
   return handler
-      .use(myItemsDataSourcesMiddlewareProvider())
-      .use(databaseConnectionMiddlewareProvider())
+      .use(carMiddlewareProvider())
+      .use(wheelMiddlewareProvider())
 }
 ```
 
@@ -249,8 +245,8 @@ But if we change the order of the providers it will not work:
 Handler middleware(Handler handler) {
   return handler
       // This won't work because Dart Frog is bottom top
-      .use(databaseConnectionMiddlewareProvider())
-      .use(myItemsDataSourcesMiddlewareProvider())
+      .use(wheelMiddlewareProvider())
+      .use(carMiddlewareProvider())
 }
 ```
 
