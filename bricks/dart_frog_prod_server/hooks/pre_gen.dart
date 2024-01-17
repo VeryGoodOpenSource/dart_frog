@@ -113,7 +113,6 @@ Future<void> preGen(
     'invokeCustomInit': configuration.invokeCustomInit,
     'pathDependencies': internalPathDependencies,
     'hasExternalDependencies': externalDependencies.isNotEmpty,
-    'externalPathDependencies': externalDependencies,
     'dartVersion': context.vars['dartVersion'],
     'addDockerfile': addDockerfile,
   };
