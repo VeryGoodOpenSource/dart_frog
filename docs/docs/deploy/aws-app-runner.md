@@ -80,7 +80,7 @@ It will build the Docker image on your computer, this can take a few seconds to 
 
 ### 3. Push the image to ECR
 
-Now that you have the image on your computer, you can push it to ECR
+Now that you have the image on your computer, you can push it to ECR:
 
 ```bash
 docker push [AWS_ACCOUNT_ID].dkr.ecr.[REGION].amazonaws.com/[REPOSITORY_NAME]:[IMAGE_TAG]
