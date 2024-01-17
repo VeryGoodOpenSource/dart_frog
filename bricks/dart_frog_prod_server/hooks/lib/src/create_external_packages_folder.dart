@@ -15,36 +15,32 @@ Future<List<String>> createExternalPackagesFolder({
     pathContext: path.context,
   );
 
-  final externalPathDependencies = pubspecLock.packages
-      .map(
-        (p) => p.iswitch(
-          sdk: (_) => null,
-          hosted: (_) => null,
-          git: (_) => null,
-          path: (d) => d.path,
-        ),
-      )
-      .whereType<String>()
-      .where((dependencyPath) {
-    return !pathResolver.isWithin('', dependencyPath);
+  final pathDependencies = pubspecLock.packages.map(
+    (p) => p.iswitch(
+      sdk: (_) => null,
+      hosted: (_) => null,
+      git: (_) => null,
+      path: (d) => _DartPackage(
+        name: p.package(),
+        packagePath: d.path,
+      ),
+    ),
+  );
+  final externalPathDependencies =
+      pathDependencies.whereType<_DartPackage>().where((dependency) {
+    return !pathResolver.isWithin('', dependency.packagePath);
   }).toList();
 
   if (externalPathDependencies.isEmpty) {
     return [];
   }
-  final mappedDependencies = externalPathDependencies
-      .map(
-    (dependencyPath) => (
-      pathResolver.basename(dependencyPath),
-      dependencyPath,
-    ),
-  )
-      .fold(<String, String>{}, (map, dependency) {
-    map[dependency.$1] = dependency.$2;
-    return map;
-  });
 
-  buildDirectory.createSync();
+  final buildDirectory = Directory(
+    pathResolver.join(
+      projectDirectory.path,
+      'build',
+    ),
+  )..createSync();
 
   final packagesDirectory = Directory(
     pathResolver.join(
@@ -53,36 +49,60 @@ Future<List<String>> createExternalPackagesFolder({
     ),
   )..createSync();
 
-  final copiedPaths = <String>[];
-  for (final entry in mappedDependencies.entries) {
-    final from = pathResolver.join(projectDirectory.path, entry.value);
-    final to = pathResolver.join(packagesDirectory.path, entry.key);
+  final copiedExternalPathDependencies = <_DartPackage>[];
+  for (final dependency in externalPathDependencies) {
+    final from = pathResolver.relative(dependency.packagePath,
+        from: projectDirectory.path);
+    final to = pathResolver.join(packagesDirectory.path, dependency.name);
 
     await copyPath(from, to);
-    copiedPaths.add(
-      path.relative(to, from: buildDirectory.path),
+
+    final copiedPackage = _DartPackage(
+      name: dependency.name,
+      packagePath: to,
     );
+    copiedExternalPathDependencies.add(copiedPackage);
   }
 
-  final mappedPaths = mappedDependencies.map(
-    (key, value) => MapEntry(
-      key,
-      pathResolver.relative(
-        path.join(packagesDirectory.path, key),
-        from: buildDirectory.path,
-      ),
-    ),
-  );
-
-  await File(
+  final dependencyOverridesFile = File(
     pathResolver.join(
       buildDirectory.path,
       'pubspec_overrides.yaml',
     ),
-  ).writeAsString('''
+  );
+  await dependencyOverridesFile.writeAsString('''
 dependency_overrides:
-${mappedPaths.entries.map((entry) => '  ${entry.key}:\n    path: ${entry.value}').join('\n')}
+${copiedExternalPathDependencies.map(
+            (dependency) => dependency.asPubspecEntry(
+              pubspecPath: dependencyOverridesFile.path,
+            ),
+          ).join('\n')}
 ''');
 
-  return copiedPaths;
+  return copiedExternalPathDependencies
+      .map((dependency) => dependency.packagePath)
+      .toList();
+}
+
+class _DartPackage {
+  const _DartPackage({
+    required this.name,
+    required this.packagePath,
+  });
+
+  final String name;
+  final String packagePath;
+
+  /// Derives a [String] to be used as an entry in a `pubspec_overrides.yaml`.
+  ///
+  /// For example:
+  /// ```yaml
+  /// dependency_overrides:
+  ///   my_package:
+  ///     path: ../my_package
+  /// ```
+  String asPubspecEntry({required String pubspecPath}) {
+    final relativePath = path.relative(packagePath, from: pubspecPath);
+    return '  $name:\n    path: $relativePath';
+  }
 }
