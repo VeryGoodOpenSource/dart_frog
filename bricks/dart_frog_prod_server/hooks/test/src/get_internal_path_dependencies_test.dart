@@ -1,9 +1,8 @@
 import 'dart:io';
 
+import 'package:dart_frog_prod_server_hooks/dart_frog_prod_server_hooks.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
-
-import '../../src/get_internal_path_dependencies.dart';
 
 void main() {
   group('getPathDependencies', () {

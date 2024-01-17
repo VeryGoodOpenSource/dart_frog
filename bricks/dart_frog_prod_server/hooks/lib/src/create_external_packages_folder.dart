@@ -1,9 +1,8 @@
 import 'dart:io';
 
+import 'package:dart_frog_prod_server_hooks/dart_frog_prod_server_hooks.dart';
 import 'package:io/io.dart' as io;
 import 'package:path/path.dart' as path;
-
-import 'get_pubspec_lock.dart';
 
 Future<List<String>> createExternalPackagesFolder(
   Directory directory, {

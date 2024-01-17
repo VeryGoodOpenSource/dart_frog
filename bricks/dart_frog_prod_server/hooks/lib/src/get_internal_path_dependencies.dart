@@ -1,8 +1,7 @@
 import 'dart:io' as io;
 
+import 'package:dart_frog_prod_server_hooks/dart_frog_prod_server_hooks.dart';
 import 'package:path/path.dart' as path;
-
-import 'get_pubspec_lock.dart';
 
 Future<List<String>> getInternalPathDependencies(io.Directory directory) async {
   final pubspecLock = await getPubspecLock(directory.path);

@@ -1,11 +1,10 @@
 import 'dart:io';
 
+import 'package:dart_frog_prod_server_hooks/dart_frog_prod_server_hooks.dart';
 import 'package:mason/mason.dart' hide createBundle;
 import 'package:mocktail/mocktail.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
-
-import '../../src/create_bundle.dart';
 
 class _MockLogger extends Mock implements Logger {}
 
