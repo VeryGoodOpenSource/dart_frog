@@ -6,13 +6,12 @@ import 'package:path/path.dart' as path;
 
 Future<List<String>> createExternalPackagesFolder(
   Directory directory, {
-  path.Context? pathContext,
   Future<void> Function(String from, String to) copyPath = io.copyPath,
 }) async {
-  final pathResolver = pathContext ?? path.context;
+  final pathResolver = path.context;
   final pubspecLock = await getPubspecLock(
     directory.path,
-    pathContext: pathResolver,
+    pathContext: path.context,
   );
 
   final externalPathDependencies = pubspecLock.packages
