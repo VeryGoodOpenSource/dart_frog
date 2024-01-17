@@ -4,13 +4,12 @@ import 'package:io/io.dart' show copyPath;
 import 'package:mason/mason.dart';
 import 'package:path/path.dart' as path;
 
-Future<void> createBundle(
-  HookContext context,
-  io.Directory projectDirectory,
-  void Function(int exitCode) exit,
-) async {
-  final buildDirectoryPath = path.join(projectDirectory.path, 'build');
-  final buildDirectory = io.Directory(buildDirectoryPath);
+Future<void> createBundle({
+  required HookContext context,
+  required io.Directory projectDirectory,
+  required io.Directory buildDirectory,
+  required void Function(int exitCode) exit,
+}) async {
   final dartFrogDirectoryPath = path.join(projectDirectory.path, '.dart_frog');
   final dartFrogDirectory = io.Directory(dartFrogDirectoryPath);
   final bundlingProgress = context.logger.progress('Bundling sources');

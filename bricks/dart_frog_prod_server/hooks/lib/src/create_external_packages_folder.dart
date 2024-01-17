@@ -4,13 +4,14 @@ import 'package:dart_frog_prod_server_hooks/dart_frog_prod_server_hooks.dart';
 import 'package:io/io.dart' as io;
 import 'package:path/path.dart' as path;
 
-Future<List<String>> createExternalPackagesFolder(
-  Directory directory, {
+Future<List<String>> createExternalPackagesFolder({
+  required Directory projectDirectory,
+  required Directory buildDirectory,
   Future<void> Function(String from, String to) copyPath = io.copyPath,
 }) async {
   final pathResolver = path.context;
   final pubspecLock = await getPubspecLock(
-    directory.path,
+    projectDirectory.path,
     pathContext: path.context,
   );
 
@@ -43,12 +44,7 @@ Future<List<String>> createExternalPackagesFolder(
     return map;
   });
 
-  final buildDirectory = Directory(
-    pathResolver.join(
-      directory.path,
-      'build',
-    ),
-  )..createSync();
+  buildDirectory.createSync();
 
   final packagesDirectory = Directory(
     pathResolver.join(
@@ -59,7 +55,7 @@ Future<List<String>> createExternalPackagesFolder(
 
   final copiedPaths = <String>[];
   for (final entry in mappedDependencies.entries) {
-    final from = pathResolver.join(directory.path, entry.value);
+    final from = pathResolver.join(projectDirectory.path, entry.value);
     final to = pathResolver.join(packagesDirectory.path, entry.key);
 
     await copyPath(from, to);
