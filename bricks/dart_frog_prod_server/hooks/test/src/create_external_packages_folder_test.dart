@@ -11,8 +11,9 @@ void main() {
     test(
       'bundles external dependencies with external dependencies',
       () async {
-        final directory = Directory.systemTemp.createTempSync();
-        File(path.join(directory.path, 'pubspec.yaml')).writeAsStringSync(
+        final projectDirectory = Directory.systemTemp.createTempSync();
+        File(path.join(projectDirectory.path, 'pubspec.yaml'))
+            .writeAsStringSync(
           '''
 name: example
 version: 0.1.0
@@ -26,22 +27,24 @@ dev_dependencies:
   test: any
 ''',
         );
-        File(path.join(directory.path, 'pubspec.lock')).writeAsStringSync(
+        File(path.join(projectDirectory.path, 'pubspec.lock'))
+            .writeAsStringSync(
           fooPath,
         );
         final copyCalls = <String>[];
 
         await createExternalPackagesFolder(
-          directory,
+          projectDirectory: projectDirectory,
+          buildDirectory: Directory(path.join(projectDirectory.path, 'build')),
           copyPath: (from, to) {
             copyCalls.add('$from -> $to');
             return Future.value();
           },
         );
 
-        final from = path.join(directory.path, '../../foo');
+        final from = path.join(projectDirectory.path, '../../foo');
         final to = path.join(
-          directory.path,
+          projectDirectory.path,
           'build',
           '.dart_frog_path_dependencies',
           'foo',
@@ -53,8 +56,9 @@ dev_dependencies:
     test(
       "don't bundle internal path dependencies",
       () async {
-        final directory = Directory.systemTemp.createTempSync();
-        File(path.join(directory.path, 'pubspec.yaml')).writeAsStringSync(
+        final projectDirectory = Directory.systemTemp.createTempSync();
+        File(path.join(projectDirectory.path, 'pubspec.yaml'))
+            .writeAsStringSync(
           '''
 name: example
 version: 0.1.0
@@ -70,14 +74,15 @@ dev_dependencies:
   test: any
 ''',
         );
-        File(path.join(directory.path, 'pubspec.lock')).writeAsStringSync(
+        File(path.join(projectDirectory.path, 'pubspec.lock'))
+            .writeAsStringSync(
           fooPathWithInternalDependency,
         );
         final copyCalls = <String>[];
 
         File(
           path.join(
-            directory.path,
+            projectDirectory.path,
             'packages',
             'bar',
             'pubspec.yaml',
@@ -95,16 +100,17 @@ environment:
           );
 
         await createExternalPackagesFolder(
-          directory,
+          projectDirectory: projectDirectory,
+          buildDirectory: Directory(path.join(projectDirectory.path, 'build')),
           copyPath: (from, to) {
             copyCalls.add('$from -> $to');
             return Future.value();
           },
         );
 
-        final from = path.join(directory.path, '../../foo');
+        final from = path.join(projectDirectory.path, '../../foo');
         final to = path.join(
-          directory.path,
+          projectDirectory.path,
           'build',
           '.dart_frog_path_dependencies',
           'foo',

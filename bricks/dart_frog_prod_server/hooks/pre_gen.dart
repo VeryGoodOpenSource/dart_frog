@@ -34,7 +34,16 @@ Future<void> preGen(
     exit: exit,
   );
 
-  await createBundle(context, projectDirectory, exit);
+  final buildDirectory = io.Directory(
+    path.join(projectDirectory.path, 'build'),
+  );
+
+  await createBundle(
+    context: context,
+    projectDirectory: projectDirectory,
+    buildDirectory: buildDirectory,
+    exit: exit,
+  );
 
   final RouteConfiguration configuration;
   try {
@@ -81,7 +90,8 @@ Future<void> preGen(
   );
 
   final externalDependencies = await createExternalPackagesFolder(
-    projectDirectory,
+    projectDirectory: projectDirectory,
+    buildDirectory: buildDirectory,
     copyPath: copyPath,
   );
 
