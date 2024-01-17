@@ -1,0 +1,4 @@
+dependency_overrides:
+{{#externalPathDependencies}}  {{{name}}}: 
+    path: {{{path}}}
+{{/externalPathDependencies}}

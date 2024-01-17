@@ -89,7 +89,7 @@ Future<void> preGen(
     projectDirectory,
   );
 
-  final externalDependencies = await createExternalPackagesFolder(
+  final externalPathDependencies = await createExternalPackagesFolder(
     projectDirectory: projectDirectory,
     buildDirectory: buildDirectory,
     copyPath: copyPath,
@@ -112,7 +112,8 @@ Future<void> preGen(
     'invokeCustomEntrypoint': configuration.invokeCustomEntrypoint,
     'invokeCustomInit': configuration.invokeCustomInit,
     'pathDependencies': internalPathDependencies,
-    'hasExternalDependencies': externalDependencies.isNotEmpty,
+    'hasExternalDependencies': externalPathDependencies.isNotEmpty,
+    'externalPathDependencies': externalPathDependencies,
     'dartVersion': context.vars['dartVersion'],
     'addDockerfile': addDockerfile,
   };
