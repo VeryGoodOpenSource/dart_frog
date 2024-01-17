@@ -2,16 +2,11 @@ import 'dart:async';
 import 'dart:io' as io;
 
 import 'package:dart_frog_gen/dart_frog_gen.dart';
+import 'package:dart_frog_prod_server_hooks/dart_frog_prod_server_hooks.dart';
 import 'package:io/io.dart' as io_expanded;
 import 'package:mason/mason.dart'
     show HookContext, defaultForeground, lightCyan;
 import 'package:path/path.dart' as path;
-
-import 'src/create_bundle.dart';
-import 'src/create_external_packages_folder.dart';
-import 'src/dart_pub_get.dart';
-import 'src/exit_overrides.dart';
-import 'src/get_internal_path_dependencies.dart';
 
 typedef RouteConfigurationBuilder = RouteConfiguration Function(
   io.Directory directory,

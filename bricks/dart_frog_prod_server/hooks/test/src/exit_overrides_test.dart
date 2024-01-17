@@ -1,8 +1,7 @@
 import 'dart:io';
 
+import 'package:dart_frog_prod_server_hooks/dart_frog_prod_server_hooks.dart';
 import 'package:test/test.dart';
-
-import '../../src/exit_overrides.dart';
 
 void main() {
   group('ExitOverrides', () {

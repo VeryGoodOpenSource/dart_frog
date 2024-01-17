@@ -1,15 +1,15 @@
 import 'dart:io';
 
 import 'package:dart_frog_gen/dart_frog_gen.dart';
+import 'package:dart_frog_prod_server_hooks/dart_frog_prod_server_hooks.dart';
 import 'package:mason/mason.dart'
     show HookContext, Logger, Progress, defaultForeground, lightCyan;
 import 'package:mocktail/mocktail.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
-import '../pre_gen.dart';
-import '../src/exit_overrides.dart';
-import 'pubspeck_locks.dart';
+import '../pre_gen.dart' as pre_gen;
+import 'pubspec_locks.dart';
 
 class _FakeHookContext extends Fake implements HookContext {
   _FakeHookContext({Logger? logger}) : _logger = logger ?? _MockLogger();
@@ -56,7 +56,7 @@ void main() {
     test('run completes', () {
       expect(
         ExitOverrides.runZoned(
-          () => run(_FakeHookContext(logger: logger)),
+          () => pre_gen.run(_FakeHookContext(logger: logger)),
           exit: (_) {},
         ),
         completes,
@@ -66,7 +66,7 @@ void main() {
     test('exit(1) if buildRouteConfiguration throws', () async {
       final exitCalls = <int>[];
       final exception = Exception('oops');
-      await preGen(
+      await pre_gen.preGen(
         context,
         buildConfiguration: (_) => throw exception,
         exit: exitCalls.add,
@@ -112,7 +112,7 @@ void main() {
       );
 
       final exitCalls = <int>[];
-      await preGen(
+      await pre_gen.preGen(
         context,
         buildConfiguration: (_) => configuration,
         exit: exitCalls.add,
@@ -146,7 +146,7 @@ void main() {
       );
 
       final exitCalls = <int>[];
-      await preGen(
+      await pre_gen.preGen(
         context,
         buildConfiguration: (_) => configuration,
         exit: exitCalls.add,
@@ -191,7 +191,7 @@ dev_dependencies:
           fooPath,
         );
         final exitCalls = <int>[];
-        await preGen(
+        await pre_gen.preGen(
           context,
           buildConfiguration: (_) => configuration,
           exit: exitCalls.add,
@@ -215,7 +215,7 @@ dev_dependencies:
         invokeCustomEntrypoint: true,
       );
       final exitCalls = <int>[];
-      await preGen(
+      await pre_gen.preGen(
         context,
         buildConfiguration: (_) => configuration,
         exit: exitCalls.add,
@@ -273,7 +273,7 @@ dependencies:
       );
 
       final exitCalls = <int>[];
-      await preGen(
+      await pre_gen.preGen(
         context,
         buildConfiguration: (_) => configuration,
         exit: exitCalls.add,
@@ -311,7 +311,7 @@ dependencies:
         invokeCustomInit: true,
       );
       final exitCalls = <int>[];
-      await preGen(
+      await pre_gen.preGen(
         context,
         buildConfiguration: (_) => configuration,
         exit: exitCalls.add,
@@ -416,7 +416,7 @@ dependencies:
           serveStaticFiles: true,
         );
         final exitCalls = <int>[];
-        await preGen(
+        await pre_gen.preGen(
           context,
           buildConfiguration: (_) => configuration,
           exit: exitCalls.add,

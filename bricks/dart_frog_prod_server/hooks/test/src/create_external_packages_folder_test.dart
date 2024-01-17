@@ -1,10 +1,10 @@
 import 'dart:io';
 
+import 'package:dart_frog_prod_server_hooks/dart_frog_prod_server_hooks.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
-import '../../src/create_external_packages_folder.dart';
-import '../pubspeck_locks.dart';
+import '../pubspec_locks.dart';
 
 void main() {
   group('createExternalPackagesFolder', () {

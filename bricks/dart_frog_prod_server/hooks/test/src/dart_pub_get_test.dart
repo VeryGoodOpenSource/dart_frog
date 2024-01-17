@@ -1,10 +1,9 @@
 import 'dart:io';
 
+import 'package:dart_frog_prod_server_hooks/dart_frog_prod_server_hooks.dart';
 import 'package:mason/mason.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
-
-import '../../src/dart_pub_get.dart';
 
 class _FakeHookContext extends Fake implements HookContext {
   _FakeHookContext({Logger? logger}) : _logger = logger ?? _MockLogger();
