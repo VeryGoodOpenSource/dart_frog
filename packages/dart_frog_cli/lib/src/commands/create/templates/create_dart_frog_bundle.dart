@@ -58,7 +58,7 @@ final createDartFrogBundle = MasonBundle.fromJson(<String, dynamic>{
     {
       "path": "pubspec.yaml",
       "data":
-          "bmFtZTogY3JlYXRlX2RhcnRfZnJvZ19ob29rcwoKZW52aXJvbm1lbnQ6CiAgc2RrOiAiPj0zLjAuMCA8NC4wLjAiCgpkZXBlbmRlbmNpZXM6CiAgbWFzb246IF4wLjEuMC1kZXYuMzkKICBwYXRoOiBeMS44LjEKCmRldl9kZXBlbmRlbmNpZXM6CiAgbW9ja3RhaWw6IF4xLjAuMAogIHRlc3Q6IF4xLjE5LjIKICB2ZXJ5X2dvb2RfYW5hbHlzaXM6IF41LjEuMAo=",
+          "bmFtZTogY3JlYXRlX2RhcnRfZnJvZ19ob29rcwoKZW52aXJvbm1lbnQ6CiAgc2RrOiAiPj0zLjAuMCA8NC4wLjAiCgpkZXBlbmRlbmNpZXM6CiAgbWFzb246IF4wLjEuMC1kZXYuMzkKICBwYXRoOiBeMS44LjEKCmRldl9kZXBlbmRlbmNpZXM6CiAgbW9ja3RhaWw6IF4xLjAuMAogIHRlc3Q6IF4xLjI1LjAKICB2ZXJ5X2dvb2RfYW5hbHlzaXM6IF41LjEuMAo=",
       "type": "text"
     },
     {
