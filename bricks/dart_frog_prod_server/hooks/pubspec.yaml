@@ -8,7 +8,6 @@ dependencies:
   dart_frog_gen: ^2.0.0
   io: ^1.0.3
   mason: ^0.1.0-dev.39
-  meta: ^1.11.0
   path: ^1.8.1
   pubspec_lock: ^3.0.2
 

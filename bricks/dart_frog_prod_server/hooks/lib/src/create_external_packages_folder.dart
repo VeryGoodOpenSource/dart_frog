@@ -2,10 +2,8 @@ import 'dart:io';
 
 import 'package:dart_frog_prod_server_hooks/dart_frog_prod_server_hooks.dart';
 import 'package:io/io.dart' as io;
-import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
 
-@visibleForTesting
 typedef CopyPath = Future<void> Function(String from, String to);
 
 /// {@template external_path_dependency}
@@ -36,7 +34,7 @@ class _ExternalPathDependency {
   /// Copies the [_ExternalPathDependency] to [targetDirectory].
   Future<_ExternalPathDependency> copyTo({
     required Directory targetDirectory,
-    @visibleForTesting CopyPath copyPath = io.copyPath,
+    CopyPath copyPath = io.copyPath,
   }) async {
     await copyPath(path, targetDirectory.path);
     return _ExternalPathDependency(name: name, path: targetDirectory.path);
@@ -46,7 +44,7 @@ class _ExternalPathDependency {
 Future<List<String>> createExternalPackagesFolder({
   required Directory projectDirectory,
   required Directory buildDirectory,
-  @visibleForTesting CopyPath copyPath = io.copyPath,
+  CopyPath copyPath = io.copyPath,
 }) async {
   final pathResolver = path.context;
   final pubspecLock = await getPubspecLock(
