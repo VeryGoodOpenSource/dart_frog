@@ -30,7 +30,7 @@ class _ExternalPathDependency {
   /// The name of the package.
   final String name;
 
-  /// The path to the package.
+  /// The absolute path to the package.
   final String path;
 
   /// Copies the [_ExternalPathDependency] to [targetDirectory].
