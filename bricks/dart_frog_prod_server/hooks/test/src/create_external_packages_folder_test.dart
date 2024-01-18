@@ -25,14 +25,27 @@ void main() {
           },
         );
 
-        final from = path.join(projectDirectory.path, '../../foo');
-        final to = path.join(
+        final fooPackageDirectory =
+            path.join(projectDirectory.path, '../../foo');
+        final fooPackageDirectoryTarget = path.join(
           projectDirectory.path,
           'build',
           '.dart_frog_path_dependencies',
           'foo',
         );
-        expect(copyCalls, ['$from -> $to']);
+
+        final secondFooPackageDirectory =
+            path.join(projectDirectory.path, '../../foo2');
+        final secondFooPackageDirectoryTarget = path.join(
+          projectDirectory.path,
+          'build',
+          '.dart_frog_path_dependencies',
+          'second_foo',
+        );
+        expect(copyCalls, [
+          '$fooPackageDirectory -> $fooPackageDirectoryTarget',
+          '$secondFooPackageDirectory -> $secondFooPackageDirectoryTarget',
+        ]);
       },
     );
 

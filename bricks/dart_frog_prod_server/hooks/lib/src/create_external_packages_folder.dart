@@ -29,7 +29,7 @@ Future<List<String>> createExternalPackagesFolder({
             if (!isExternal) return null;
 
             return _ExternalPathDependency(
-              name: pathResolver.basename(d.path),
+              name: p.package(),
               path: path.join(projectDirectory.path, d.path),
             );
           },
