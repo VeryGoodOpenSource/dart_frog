@@ -4,6 +4,7 @@ import 'package:dart_frog_prod_server_hooks/dart_frog_prod_server_hooks.dart';
 import 'package:io/io.dart' as io;
 import 'package:path/path.dart' as path;
 
+/// Signature of [io.copyPath].
 typedef CopyPath = Future<void> Function(String from, String to);
 
 Future<List<String>> createExternalPackagesFolder({
