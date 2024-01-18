@@ -6,6 +6,8 @@ library pubspec_locks;
 /// * A transitive dependency.
 /// * A direct main path dependency that is not a child of the project
 /// directory.
+/// * A direct main path dependency that is not a child of the project
+/// directory and has a different package name than the directory name.
 /// * A direct main dependency that is hosted.
 /// * A direct dev main dependency that is hosted.
 const fooPath = '''
@@ -22,6 +24,13 @@ packages:
     dependency: "direct main"
     description:
       path: "../../foo"
+      relative: true
+    source: path
+    version: "0.0.0"
+  second_foo:
+    dependency: "direct main"
+    description:
+      path: "../../foo2"
       relative: true
     source: path
     version: "0.0.0"
