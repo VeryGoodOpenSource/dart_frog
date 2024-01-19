@@ -4,10 +4,13 @@ import 'package:dart_frog_prod_server_hooks/dart_frog_prod_server_hooks.dart';
 import 'package:io/io.dart' as io;
 import 'package:path/path.dart' as path;
 
+/// Signature of [io.copyPath].
+typedef CopyPath = Future<void> Function(String from, String to);
+
 Future<List<String>> createExternalPackagesFolder({
   required Directory projectDirectory,
   required Directory buildDirectory,
-  Future<void> Function(String from, String to) copyPath = io.copyPath,
+  CopyPath copyPath = io.copyPath,
 }) async {
   final pathResolver = path.context;
   final pubspecLock = await getPubspecLock(
@@ -21,55 +24,41 @@ Future<List<String>> createExternalPackagesFolder({
           sdk: (_) => null,
           hosted: (_) => null,
           git: (_) => null,
-          path: (d) => d.path,
+          path: (d) {
+            final isExternal = !pathResolver.isWithin('', d.path);
+            if (!isExternal) return null;
+
+            return _ExternalPathDependency(
+              name: p.package(),
+              path: path.join(projectDirectory.path, d.path),
+            );
+          },
         ),
       )
-      .whereType<String>()
-      .where((dependencyPath) {
-    return !pathResolver.isWithin('', dependencyPath);
-  }).toList();
+      .whereType<_ExternalPathDependency>()
+      .toList();
 
   if (externalPathDependencies.isEmpty) {
     return [];
   }
-  final mappedDependencies = externalPathDependencies
-      .map(
-    (dependencyPath) => (
-      pathResolver.basename(dependencyPath),
-      dependencyPath,
-    ),
-  )
-      .fold(<String, String>{}, (map, dependency) {
-    map[dependency.$1] = dependency.$2;
-    return map;
-  });
-
-  buildDirectory.createSync();
 
   final packagesDirectory = Directory(
     pathResolver.join(
       buildDirectory.path,
       '.dart_frog_path_dependencies',
     ),
-  )..createSync();
+  )..createSync(recursive: true);
 
-  final copiedPaths = <String>[];
-  for (final entry in mappedDependencies.entries) {
-    final from = pathResolver.join(projectDirectory.path, entry.value);
-    final to = pathResolver.join(packagesDirectory.path, entry.key);
-
-    await copyPath(from, to);
-    copiedPaths.add(
-      path.relative(to, from: buildDirectory.path),
-    );
-  }
-
-  final mappedPaths = mappedDependencies.map(
-    (key, value) => MapEntry(
-      key,
-      pathResolver.relative(
-        path.join(packagesDirectory.path, key),
-        from: buildDirectory.path,
+  final copiedExternalPathDependencies = await Future.wait(
+    externalPathDependencies.map(
+      (externalPathDependency) => externalPathDependency.copyTo(
+        copyPath: copyPath,
+        targetDirectory: Directory(
+          pathResolver.join(
+            packagesDirectory.path,
+            externalPathDependency.name,
+          ),
+        ),
       ),
     ),
   );
@@ -81,8 +70,52 @@ Future<List<String>> createExternalPackagesFolder({
     ),
   ).writeAsString('''
 dependency_overrides:
-${mappedPaths.entries.map((entry) => '  ${entry.key}:\n    path: ${entry.value}').join('\n')}
+${copiedExternalPathDependencies.map(
+    (dependency) {
+      final name = dependency.name;
+      final path =
+          pathResolver.relative(dependency.path, from: buildDirectory.path);
+      return '  $name:\n    path: $path';
+    },
+  ).join('\n')}
 ''');
 
-  return copiedPaths;
+  return copiedExternalPathDependencies
+      .map((dependency) => dependency.path)
+      .toList();
+}
+
+/// {@template external_path_dependency}
+/// A path dependency that is not within the bundled Dart Frog project
+/// directory.
+///
+/// For example:
+/// ```yaml
+/// name: my_dart_frog_project
+/// dependencies:
+///   my_package:
+///     path: ../my_package
+/// ```
+/// {@endtemplate}
+class _ExternalPathDependency {
+  /// {@macro external_path_dependency}
+  const _ExternalPathDependency({
+    required this.name,
+    required this.path,
+  });
+
+  /// The name of the package.
+  final String name;
+
+  /// The absolute path to the package.
+  final String path;
+
+  /// Copies the [_ExternalPathDependency] to [targetDirectory].
+  Future<_ExternalPathDependency> copyTo({
+    required Directory targetDirectory,
+    CopyPath copyPath = io.copyPath,
+  }) async {
+    await copyPath(path, targetDirectory.path);
+    return _ExternalPathDependency(name: name, path: targetDirectory.path);
+  }
 }

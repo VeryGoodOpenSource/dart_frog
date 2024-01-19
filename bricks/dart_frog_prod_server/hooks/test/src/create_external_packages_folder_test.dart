@@ -12,25 +12,8 @@ void main() {
       'bundles external dependencies with external dependencies',
       () async {
         final projectDirectory = Directory.systemTemp.createTempSync();
-        File(path.join(projectDirectory.path, 'pubspec.yaml'))
-            .writeAsStringSync(
-          '''
-name: example
-version: 0.1.0
-environment:
-  sdk: ^2.17.0
-dependencies:
-  mason: any
-  foo:
-    path: ../../foo
-dev_dependencies:
-  test: any
-''',
-        );
         File(path.join(projectDirectory.path, 'pubspec.lock'))
-            .writeAsStringSync(
-          fooPath,
-        );
+            .writeAsStringSync(fooPath);
         final copyCalls = <String>[];
 
         await createExternalPackagesFolder(
@@ -42,14 +25,27 @@ dev_dependencies:
           },
         );
 
-        final from = path.join(projectDirectory.path, '../../foo');
-        final to = path.join(
+        final fooPackageDirectory =
+            path.join(projectDirectory.path, '../../foo');
+        final fooPackageDirectoryTarget = path.join(
           projectDirectory.path,
           'build',
           '.dart_frog_path_dependencies',
           'foo',
         );
-        expect(copyCalls, ['$from -> $to']);
+
+        final secondFooPackageDirectory =
+            path.join(projectDirectory.path, '../../foo2');
+        final secondFooPackageDirectoryTarget = path.join(
+          projectDirectory.path,
+          'build',
+          '.dart_frog_path_dependencies',
+          'second_foo',
+        );
+        expect(copyCalls, [
+          '$fooPackageDirectory -> $fooPackageDirectoryTarget',
+          '$secondFooPackageDirectory -> $secondFooPackageDirectoryTarget',
+        ]);
       },
     );
 
@@ -57,47 +53,9 @@ dev_dependencies:
       "don't bundle internal path dependencies",
       () async {
         final projectDirectory = Directory.systemTemp.createTempSync();
-        File(path.join(projectDirectory.path, 'pubspec.yaml'))
-            .writeAsStringSync(
-          '''
-name: example
-version: 0.1.0
-environment:
-  sdk: ^2.17.0
-dependencies:
-  mason: any
-  foo:
-    path: ../../foo
-  bar:
-    path: packages/bar
-dev_dependencies:
-  test: any
-''',
-        );
         File(path.join(projectDirectory.path, 'pubspec.lock'))
-            .writeAsStringSync(
-          fooPathWithInternalDependency,
-        );
+            .writeAsStringSync(fooPathWithInternalDependency);
         final copyCalls = <String>[];
-
-        File(
-          path.join(
-            projectDirectory.path,
-            'packages',
-            'bar',
-            'pubspec.yaml',
-          ),
-        )
-          ..createSync(recursive: true)
-          ..writeAsStringSync(
-            '''
-
-name: bar
-version: 0.1.0
-environment:
-  sdk: ^2.17.0
-            ''',
-          );
 
         await createExternalPackagesFolder(
           projectDirectory: projectDirectory,

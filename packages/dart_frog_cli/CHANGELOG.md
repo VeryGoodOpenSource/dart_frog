@@ -1,3 +1,9 @@
+# 1.2.1
+
+- chore(deps): bump mason from 0.1.0-dev.51 to 0.1.0-dev.52 in /packages/dart_frog_cli ([#1235](https://github.com/VeryGoodOpenSource/dart_frog/pull/1235))
+- fix(dart_frog_prod_server): stop assuming directory name is package name when bundling ([#1253](https://github.com/VeryGoodOpenSource/dart_frog/pull/1253))
+- feat(dart_frog_cli): update cli bundles ([#1210](https://github.com/VeryGoodOpenSource/dart_frog/pull/1210))
+
 # 1.2.0
 
 - fix(dart_frog_cli): report daemon missing parameters ([#1050](https://github.com/VeryGoodOpenSource/dart_frog/pull/1050))
