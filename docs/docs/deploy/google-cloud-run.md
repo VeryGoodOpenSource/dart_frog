@@ -69,7 +69,7 @@ Running this command will do three things:
 - Build the Docker image in [Cloud Build](https://cloud.google.com/build) and upload it to [Artifact Registry](https://cloud.google.com/artifact-registry)
 - Deploy the image to the specified Cloud Run service
 
-### 5. Enjoy your API on Cloud Run!
+### 3. Enjoy your API on Cloud Run!
 
 Congratulations 🎉, you have successfully built and deployed your API to Cloud Run. You can now access your API at the Service URL that is printed in the last line of output.
 
