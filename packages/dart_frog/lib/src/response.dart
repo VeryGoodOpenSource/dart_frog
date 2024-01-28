@@ -24,11 +24,13 @@ class Response {
     int statusCode = 200,
     Stream<List<int>>? body,
     Map<String, Object>? headers,
+    bool useBufferOutput = true,
   }) : this._(
           shelf.Response(
             statusCode,
             body: body,
             headers: headers,
+            context: {'shelf.io.buffer_output': useBufferOutput},
           ),
         );
 
