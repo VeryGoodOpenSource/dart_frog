@@ -20,6 +20,16 @@ class Response {
         );
 
   /// Create a [Response] with a stream of bytes.
+  ///
+  /// If [useBufferOutput] is `true` (the default), streamed responses will be
+  /// buffered to improve performance. If `false`, all chunks will be pushed
+  /// over the wire as they're received. Note that, disabling buffering of the
+  /// output can result in very poor performance, when writing many small
+  /// chunks.
+  ///
+  /// See also:
+  ///
+  /// * [HttpResponse.bufferOutput](https://api.flutter.dev/flutter/dart-io/HttpResponse/bufferOutput.html)
   Response.stream({
     int statusCode = 200,
     Stream<List<int>>? body,
