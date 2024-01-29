@@ -108,42 +108,42 @@ void main() {
         expect(response.bytes(), emits(equals(bytes)));
       });
 
-      group('useBufferOutput', () {
+      group('bufferOutput', () {
         test('is omitted by default', () {
           final response = Response.stream(
             body: const Stream.empty(),
             // ignore: avoid_redundant_argument_values
-            useBufferOutput: true,
+            bufferOutput: true,
           );
 
           expect(
             response.context,
-            isNot(contains(Response.shelfUseBufferOutputContextKey)),
+            isNot(contains(Response.shelfBufferOutputContextKey)),
             reason:
-                '''The context should not have the '${Response.shelfUseBufferOutputContextKey}' key.''',
+                '''The context should not have the '${Response.shelfBufferOutputContextKey}' key.''',
           );
         });
 
         test('can be disabled', () {
           final response = Response.stream(
             body: const Stream.empty(),
-            useBufferOutput: false,
+            bufferOutput: false,
           );
 
           expect(
             response.context,
-            contains(Response.shelfUseBufferOutputContextKey),
+            contains(Response.shelfBufferOutputContextKey),
             reason:
-                '''The context should have the '${Response.shelfUseBufferOutputContextKey}' key.''',
+                '''The context should have the '${Response.shelfBufferOutputContextKey}' key.''',
           );
 
-          final useBufferOutput =
-              response.context[Response.shelfUseBufferOutputContextKey];
+          final bufferOutput =
+              response.context[Response.shelfBufferOutputContextKey];
           expect(
-            useBufferOutput,
+            bufferOutput,
             isFalse,
             reason:
-                '''The '${Response.shelfUseBufferOutputContextKey}' should be 'false' when disabled.''',
+                '''The '${Response.shelfBufferOutputContextKey}' should be 'false' when disabled.''',
           );
         });
       });

@@ -22,7 +22,7 @@ class Response {
 
   /// Create a [Response] with a stream of bytes.
   ///
-  /// If [useBufferOutput] is `true` (the default), streamed responses will be
+  /// If [bufferOutput] is `true` (the default), streamed responses will be
   /// buffered to improve performance. If `false`, all chunks will be pushed
   /// over the wire as they're received. Note that, disabling buffering of the
   /// output can result in very poor performance, when writing many small
@@ -35,14 +35,14 @@ class Response {
     int statusCode = 200,
     Stream<List<int>>? body,
     Map<String, Object>? headers,
-    bool useBufferOutput = true,
+    bool bufferOutput = true,
   }) : this._(
           shelf.Response(
             statusCode,
             body: body,
             headers: headers,
-            context: !useBufferOutput
-                ? {Response.shelfUseBufferOutputContextKey: useBufferOutput}
+            context: !bufferOutput
+                ? {Response.shelfBufferOutputContextKey: bufferOutput}
                 : null,
           ),
         );
@@ -103,7 +103,7 @@ class Response {
   /// * [shelf_io library](https://pub.dev/documentation/shelf/latest/shelf_io/shelf_io-library.html)
   /// * [HttpResponse.bufferOutput](https://api.flutter.dev/flutter/dart-io/HttpResponse/bufferOutput.html)
   @visibleForTesting
-  static const shelfUseBufferOutputContextKey = 'shelf.io.buffer_output';
+  static const shelfBufferOutputContextKey = 'shelf.io.buffer_output';
 
   shelf.Response _response;
 
