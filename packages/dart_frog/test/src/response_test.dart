@@ -107,6 +107,46 @@ void main() {
         final response = Response.stream(body: stream);
         expect(response.bytes(), emits(equals(bytes)));
       });
+
+      group('useBufferOutput', () {
+        test('is omitted by default', () {
+          final response = Response.stream(
+            body: const Stream.empty(),
+            // ignore: avoid_redundant_argument_values
+            useBufferOutput: true,
+          );
+
+          expect(
+            response.context,
+            isNot(contains(Response.shelfUseBufferOutputContextKey)),
+            reason:
+                '''The context should not have the '${Response.shelfUseBufferOutputContextKey}' key.''',
+          );
+        });
+
+        test('can be disabled', () {
+          final response = Response.stream(
+            body: const Stream.empty(),
+            useBufferOutput: false,
+          );
+
+          expect(
+            response.context,
+            contains(Response.shelfUseBufferOutputContextKey),
+            reason:
+                '''The context should have the '${Response.shelfUseBufferOutputContextKey}' key.''',
+          );
+
+          final useBufferOutput =
+              response.context[Response.shelfUseBufferOutputContextKey];
+          expect(
+            useBufferOutput,
+            isFalse,
+            reason:
+                '''The '${Response.shelfUseBufferOutputContextKey}' should be 'false' when disabled.''',
+          );
+        });
+      });
     });
 
     group('formData', () {

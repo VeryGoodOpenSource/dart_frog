@@ -18,6 +18,7 @@ class Response {
             encoding: encoding,
           ),
         );
+  Response._(this._response);
 
   /// Create a [Response] with a stream of bytes.
   ///
@@ -40,7 +41,9 @@ class Response {
             statusCode,
             body: body,
             headers: headers,
-            context: {'shelf.io.buffer_output': useBufferOutput},
+            context: !useBufferOutput
+                ? {Response.shelfUseBufferOutputContextKey: useBufferOutput}
+                : null,
           ),
         );
 
@@ -92,7 +95,15 @@ class Response {
           encoding: encoding,
         );
 
-  Response._(this._response);
+  /// A [shelf.Response.context] key used to determine if if the
+  /// [HttpResponse.bufferOutput] should be enabled or disabled.
+  ///
+  /// See also:
+  ///
+  /// * [shelf_io library](https://pub.dev/documentation/shelf/latest/shelf_io/shelf_io-library.html)
+  /// * [HttpResponse.bufferOutput](https://api.flutter.dev/flutter/dart-io/HttpResponse/bufferOutput.html)
+  @visibleForTesting
+  static const shelfUseBufferOutputContextKey = 'shelf.io.buffer_output';
 
   shelf.Response _response;
 
@@ -102,6 +113,12 @@ class Response {
   /// The HTTP headers with case-insensitive keys.
   /// The returned map is unmodifiable.
   Map<String, String> get headers => _response.headers;
+
+  /// Extra context that can be used by for middleware and handlers.
+  ///
+  /// The value is immutable.
+  @visibleForTesting
+  Map<String, Object> get context => _response.context;
 
   /// Returns a [Stream] representing the body.
   Stream<List<int>> bytes() => _response.read();
