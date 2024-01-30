@@ -137,8 +137,7 @@ void main() {
                 '''The context should have the '${Response.shelfBufferOutputContextKey}' key.''',
           );
 
-          final bufferOutput =
-              response.context[Response.shelfBufferOutputContextKey];
+          final bufferOutput = response.context[Response.shelfBufferOutputContextKey];
           expect(
             bufferOutput,
             isFalse,
@@ -297,7 +296,6 @@ void main() {
         );
       });
     });
-
 
     group('shelfContext', () {
       test('allow access of the shelf context ', () async {
