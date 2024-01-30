@@ -1,9 +1,8 @@
 /// A simple parser for pubspec.lock files.
 ///
-/// This is used by the `packages check license` command to check the type and
-/// source of the dependencies to analyze. Hence, it is not a complete parser,
-/// it only parses the information that is needed for the
-/// `packages check license` command.
+/// This is used by the bundling process to check for those dependencies that
+/// are external path dependencies. Hence, it is not a complete parser, it only
+/// parses the information that is needed for the bundling process.
 library pubspec_lock;
 
 import 'dart:collection';
