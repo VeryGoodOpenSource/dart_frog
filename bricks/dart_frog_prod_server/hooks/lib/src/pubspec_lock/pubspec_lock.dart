@@ -10,17 +10,15 @@ import 'dart:collection';
 import 'package:equatable/equatable.dart';
 import 'package:yaml/yaml.dart';
 
-/// {@template PubspecLockParseException}
+/// {@template pubspec_lock_parse_exception}
 /// Thrown when a [PubspecLock] fails to parse.
 /// {@endtemplate}
 class PubspecLockParseException implements Exception {
-  /// {@macro PubspecLockParseException}
+  /// {@macro pubspec_lock_parse_exception}
   const PubspecLockParseException();
 }
 
-/// {@template PubspecLock}
 /// A representation of a pubspec.lock file.
-/// {@endtemplate}
 class PubspecLock {
   const PubspecLock._({
     required this.packages,
@@ -74,11 +72,11 @@ class PubspecLock {
   final UnmodifiableListView<PubspecLockPackage> packages;
 }
 
-/// {@template PubspecLockDependency}
+/// {@template pubspec_lock_dependency}
 /// A representation of a dependency in a pubspec.lock file.
 /// {@endtemplate}
 class PubspecLockPackage extends Equatable {
-  /// {@macro PubspecLockDependency}
+  /// {@macro pubspec_lock_dependency}
   const PubspecLockPackage({
     required this.name,
     required this.type,
@@ -108,17 +106,17 @@ class PubspecLockPackage extends Equatable {
   /// The name of the dependency.
   final String name;
 
-  /// {@macro PubspecLockDependencyType}
+  /// {@macro pubspec_lock_dependency_type}
   final PubspecLockPackageDependencyType type;
 
-  /// {@macro PubspecPackagePathDescription}
+  /// {@macro pubspec_package_path_description}
   final PubspecPackagePathDescription? pathDescription;
 
   @override
   List<Object?> get props => [name, type, pathDescription];
 }
 
-/// {@template PubspecLockDependencyType}
+/// {@template pubspec_lock_dependency_type}
 /// The type of a [PubspecLockPackage].
 /// {@endtemplate}
 enum PubspecLockPackageDependencyType {
@@ -179,7 +177,7 @@ enum PubspecLockPackageDependencyType {
   final String value;
 }
 
-/// {@template PubspecPackagePathDescription}
+/// {@template pubspec_package_path_description}
 /// The description of a path dependency in a pubspec.lock file.
 ///
 /// For example, in:
