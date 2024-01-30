@@ -257,5 +257,35 @@ void main() {
         );
       });
     });
+
+
+    group('shelfContext', () {
+      test('allow access of the shelf context ', () async {
+        late Map<String, Object> contextFromShelf;
+        late Map<String, Object> contextFromFrog;
+        final server = await serve(
+          ((RequestContext context) async {
+            final response = Response();
+            contextFromFrog = response.shelfContext;
+            return response;
+          }).use(
+            fromShelfMiddleware((innerHandler) {
+              return (request) async {
+                final response = await innerHandler(request);
+                contextFromShelf = response.context;
+                return response;
+              };
+            }),
+          ),
+          'localhost',
+          3000,
+        );
+        final client = HttpClient();
+        final request = await client.getUrl(Uri.parse('http://localhost:3000'));
+        await request.close();
+        expect(contextFromFrog, equals(contextFromShelf));
+        await server.close();
+      });
+    });
   });
 }
