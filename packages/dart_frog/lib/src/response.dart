@@ -18,17 +18,32 @@ class Response {
             encoding: encoding,
           ),
         );
+  Response._(this._response);
 
   /// Create a [Response] with a stream of bytes.
+  ///
+  /// If [bufferOutput] is `true` (the default), streamed responses will be
+  /// buffered to improve performance. If `false`, all chunks will be pushed
+  /// over the wire as they're received. Note that, disabling buffering of the
+  /// output can result in very poor performance, when writing many small
+  /// chunks.
+  ///
+  /// See also:
+  ///
+  /// * [HttpResponse.bufferOutput](https://api.flutter.dev/flutter/dart-io/HttpResponse/bufferOutput.html)
   Response.stream({
     int statusCode = 200,
     Stream<List<int>>? body,
     Map<String, Object>? headers,
+    bool bufferOutput = true,
   }) : this._(
           shelf.Response(
             statusCode,
             body: body,
             headers: headers,
+            context: !bufferOutput
+                ? {Response.shelfBufferOutputContextKey: bufferOutput}
+                : null,
           ),
         );
 
@@ -80,7 +95,15 @@ class Response {
           encoding: encoding,
         );
 
-  Response._(this._response);
+  /// A [shelf.Response.context] key used to determine if if the
+  /// [HttpResponse.bufferOutput] should be enabled or disabled.
+  ///
+  /// See also:
+  ///
+  /// * [shelf_io library](https://pub.dev/documentation/shelf/latest/shelf_io/shelf_io-library.html)
+  /// * [HttpResponse.bufferOutput](https://api.flutter.dev/flutter/dart-io/HttpResponse/bufferOutput.html)
+  @visibleForTesting
+  static const shelfBufferOutputContextKey = 'shelf.io.buffer_output';
 
   shelf.Response _response;
 
@@ -93,6 +116,12 @@ class Response {
   /// The HTTP headers with case-insensitive keys.
   /// The returned map is unmodifiable.
   Map<String, String> get headers => _response.headers;
+
+  /// Extra context that can be used by for middleware and handlers.
+  ///
+  /// The value is immutable.
+  @visibleForTesting
+  Map<String, Object> get context => _response.context;
 
   /// Returns a [Stream] representing the body.
   Stream<List<int>> bytes() => _response.read();
