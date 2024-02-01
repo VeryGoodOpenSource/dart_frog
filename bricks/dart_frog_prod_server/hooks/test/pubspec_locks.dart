@@ -10,7 +10,7 @@ library pubspec_locks;
 /// directory and has a different package name than the directory name.
 /// * A direct main dependency that is hosted.
 /// * A direct dev main dependency that is hosted.
-/// * A direct overridden dependency that is hosted.
+/// * A direct overridden dependency from git.
 const fooPath = '''
 packages:
   args:
