@@ -10,6 +10,7 @@ library pubspec_locks;
 /// directory and has a different package name than the directory name.
 /// * A direct main dependency that is hosted.
 /// * A direct dev main dependency that is hosted.
+/// * A direct overridden dependency that is hosted.
 const fooPath = '''
 packages:
   args:
@@ -34,10 +35,10 @@ packages:
       relative: true
     source: path
     version: "0.0.0"
-  mason:
+  direct_main:
     dependency: "direct main"
     description:
-      name: mason
+      name: direct_main
       sha256: fdc9ea905e7c690fe39d2f9946b7aead86fd976f8edf97d2521a65d260bbf509
       url: "https://pub.dev"
     source: hosted
@@ -50,6 +51,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.24.6"
+  direct_overridden:
+    dependency: "direct overridden"
+    description:
+      path: "packages/mason"
+      ref: "72c306a8d8abf306b5d024f95aac29ba5fd96577"
+      resolved-ref: "72c306a8d8abf306b5d024f95aac29ba5fd96577"
+      url: "https://github.com/alestiago/mason"
+    source: git
+    version: "0.1.0-dev.52"
 sdks:
   dart: ">=3.0.0 <4.0.0"
 ''';
