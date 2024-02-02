@@ -20,20 +20,20 @@ Future<List<String>> createExternalPackagesFolder({
 
   final externalPathDependencies = pubspecLock.packages
       .map(
-        (p) => p.iswitch(
-          sdk: (_) => null,
-          hosted: (_) => null,
-          git: (_) => null,
-          path: (d) {
-            final isExternal = !pathResolver.isWithin('', d.path);
-            if (!isExternal) return null;
+        (dependency) {
+          final pathDescription = dependency.pathDescription;
+          if (pathDescription == null) {
+            return null;
+          }
 
-            return _ExternalPathDependency(
-              name: p.package(),
-              path: path.join(projectDirectory.path, d.path),
-            );
-          },
-        ),
+          final isExternal = !pathResolver.isWithin('', pathDescription.path);
+          if (!isExternal) return null;
+
+          return _ExternalPathDependency(
+            name: dependency.name,
+            path: path.join(projectDirectory.path, pathDescription.path),
+          );
+        },
       )
       .whereType<_ExternalPathDependency>()
       .toList();

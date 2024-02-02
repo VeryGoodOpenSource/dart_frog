@@ -1,7 +1,7 @@
 import 'dart:io';
 
+import 'package:dart_frog_prod_server_hooks/src/pubspec_lock/pubspec_lock.dart';
 import 'package:path/path.dart' as path;
-import 'package:pubspec_lock/pubspec_lock.dart';
 
 Future<PubspecLock> getPubspecLock(
   String workingDirectory, {
@@ -15,5 +15,5 @@ Future<PubspecLock> getPubspecLock(
   );
 
   final content = await pubspecLockFile.readAsString();
-  return content.loadPubspecLockFromYaml();
+  return PubspecLock.fromString(content);
 }
