@@ -1,3 +1,9 @@
+# 1.0.2
+
+- feat: support reuse of nested router ([#393](https://github.com/VeryGoodOpenSource/dart_frog/pull/393))
+- docs: fix bad "request" template ([#1152](https://github.com/VeryGoodOpenSource/dart_frog/pull/1152))
+- feat: allow disabling Response buffer output ([#1261](https://github.com/VeryGoodOpenSource/dart_frog/pull/1261))
+
 # 1.0.1
 
 - chore: add topics ([#901](https://github.com/VeryGoodOpenSource/dart_frog/pull/901))
