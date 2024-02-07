@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io' as io;
 
 import 'package:dart_frog_cli/src/dev_server_runner/restorable_directory_generator_target.dart';
+import 'package:dart_frog_cli/src/runtime_compatibility.dart';
 import 'package:mason/mason.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
@@ -27,9 +28,6 @@ typedef DirectoryWatcherBuilder = DirectoryWatcher Function(
   String directory,
 );
 
-/// Typedef for [io.exit].
-typedef Exit = dynamic Function(int exitCode);
-
 /// Regex for detecting warnings in the output of `dart run`.
 final _warningRegex = RegExp(r'^.*:\d+:\d+: Warning: .*', multiLine: true);
 
@@ -41,9 +39,10 @@ final _dartVmServiceAlreadyInUseErrorRegex = RegExp(
 );
 
 /// Typedef for [DevServerRunner.new].
-typedef DevServerRunnerBuilder = DevServerRunner Function({
+typedef DevServerRunnerConstructor = DevServerRunner Function({
   required Logger logger,
   required String port,
+  required io.InternetAddress? address,
   required MasonGenerator devServerBundleGenerator,
   required String dartVmServicePort,
   required io.Directory workingDirectory,
@@ -68,6 +67,7 @@ class DevServerRunner {
   DevServerRunner({
     required this.logger,
     required this.port,
+    required this.address,
     required this.devServerBundleGenerator,
     required this.dartVmServicePort,
     required this.workingDirectory,
@@ -79,6 +79,8 @@ class DevServerRunner {
     @visibleForTesting io.ProcessSignal? sigint,
     @visibleForTesting ProcessStart? startProcess,
     @visibleForTesting ProcessRun? runProcess,
+    @visibleForTesting
+    RuntimeCompatibilityCallback? runtimeCompatibilityCallback,
   })  : _directoryWatcher = directoryWatcher ?? DirectoryWatcher.new,
         _isWindows = isWindows ?? io.Platform.isWindows,
         _sigint = sigint ?? io.ProcessSignal.sigint,
@@ -86,6 +88,8 @@ class DevServerRunner {
         _runProcess = runProcess ?? io.Process.run,
         _generatorTarget =
             generatorTarget ?? RestorableDirectoryGeneratorTarget.new,
+        _ensureRuntimeCompatibility =
+            runtimeCompatibilityCallback ?? ensureRuntimeCompatibility,
         assert(port.isNotEmpty, 'port cannot be empty'),
         assert(
           dartVmServicePort.isNotEmpty,
@@ -97,6 +101,11 @@ class DevServerRunner {
 
   /// Which port number the server should start on.
   final String port;
+
+  /// Which host the server should start on.
+  ///
+  /// It will default to localhost if empty.
+  final io.InternetAddress? address;
 
   /// Which port number the dart vm service should listen on.
   final String dartVmServicePort;
@@ -116,6 +125,7 @@ class DevServerRunner {
   final RestorableDirectoryGeneratorTargetBuilder _generatorTarget;
   final bool _isWindows;
   final io.ProcessSignal _sigint;
+  final RuntimeCompatibilityCallback _ensureRuntimeCompatibility;
 
   late final _generatedDirectory = io.Directory(
     path.join(workingDirectory.path, '.dart_frog'),
@@ -145,7 +155,12 @@ class DevServerRunner {
 
   Future<void> _codegen() async {
     logger.detail('[codegen] running pre-gen...');
-    var vars = <String, dynamic>{'port': port};
+    final address = this.address;
+    logger.detail('Starting development server on host ${address?.address}');
+    var vars = <String, dynamic>{
+      'port': port,
+      if (address != null) 'host': address.address,
+    };
     await devServerBundleGenerator.hooks.preGen(
       vars: vars,
       workingDirectory: workingDirectory.path,
@@ -153,7 +168,7 @@ class DevServerRunner {
     );
 
     logger.detail('[codegen] running generate...');
-    final _ = await devServerBundleGenerator.generate(
+    await devServerBundleGenerator.generate(
       _target,
       vars: vars,
       fileConflictResolution: FileConflictResolution.overwrite,
@@ -230,6 +245,8 @@ class DevServerRunner {
         'Cannot start a dev server while already running.',
       );
     }
+
+    _ensureRuntimeCompatibility(workingDirectory);
 
     Future<void> serve() async {
       var isHotReloadingEnabled = false;
@@ -325,7 +342,9 @@ class DevServerRunner {
     await _codegen();
     await serve();
 
-    final localhost = link(uri: Uri.parse('http://localhost:$port'));
+    final hostAddress = address?.address ?? 'localhost';
+
+    final localhost = link(uri: Uri.parse('http://$hostAddress:$port'));
     progress.complete('Running on $localhost');
 
     final cwdPath = workingDirectory.path;

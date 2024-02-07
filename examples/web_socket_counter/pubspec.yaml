@@ -4,7 +4,7 @@ version: 1.0.0+1
 publish_to: none
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ">=3.1.0 <4.0.0"
 
 dependencies:
   broadcast_bloc: ^0.1.0-dev.1
@@ -15,6 +15,6 @@ dev_dependencies:
   bloc_test: ^9.1.0
   http: ^1.0.0
   mocktail: ^1.0.0
-  test: ^1.19.2
-  very_good_analysis: ^5.0.0
+  test: ^1.25.0
+  very_good_analysis: ^5.1.0
   web_socket_client: ^0.1.0-dev.1

@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:dart_frog_cli/src/commands/commands.dart';
 import 'package:dart_frog_cli/src/dev_server_runner/dev_server_runner.dart';
-import 'package:dart_frog_cli/src/runtime_compatibility.dart';
 import 'package:mason/mason.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
@@ -45,38 +44,13 @@ void main() {
       expect(command, isNotNull);
     });
 
-    test('throws if ensureRuntimeCompatibility fails', () {
-      final command = DevCommand(
-        generator: (_) async => generator,
-        ensureRuntimeCompatibility: (_) {
-          throw const DartFrogCompatibilityException('oops');
-        },
-        devServerRunnerBuilder: ({
-          required logger,
-          required port,
-          required devServerBundleGenerator,
-          required dartVmServicePort,
-          required workingDirectory,
-          void Function()? onHotReloadEnabled,
-        }) {
-          return runner;
-        },
-        logger: logger,
-        stdin: stdin,
-      )..testArgResults = argResults;
-
-      expect(
-        command.run(),
-        throwsA(isA<DartFrogCompatibilityException>()),
-      );
-    });
-
     test('run the dev server with the given parameters', () async {
       when(() => runner.start()).thenAnswer((_) => Future.value());
       when(() => runner.exitCode).thenAnswer(
         (_) => Future.value(ExitCode.success),
       );
 
+      when(() => argResults['hostname']).thenReturn('192.168.1.2');
       when(() => argResults['port']).thenReturn('1234');
       when(() => argResults['dart-vm-service-port']).thenReturn('5678');
 
@@ -84,22 +58,24 @@ void main() {
 
       late String givenPort;
       late String givenDartVmServicePort;
+      late InternetAddress? givenAddress;
       late MasonGenerator givenDevServerBundleGenerator;
       late Directory givenWorkingDirectory;
       late void Function()? givenOnHotReloadEnabled;
 
       final command = DevCommand(
         generator: (_) async => generator,
-        ensureRuntimeCompatibility: (_) {},
-        devServerRunnerBuilder: ({
+        devServerRunnerConstructor: ({
           required logger,
           required port,
+          required address,
           required devServerBundleGenerator,
           required dartVmServicePort,
           required workingDirectory,
           void Function()? onHotReloadEnabled,
         }) {
           givenPort = port;
+          givenAddress = address;
           givenDartVmServicePort = dartVmServicePort;
           givenDevServerBundleGenerator = devServerBundleGenerator;
           givenWorkingDirectory = workingDirectory;
@@ -107,8 +83,8 @@ void main() {
           return runner;
         },
         logger: logger,
-        stdin: stdin,
       )
+        ..testStdin = stdin
         ..testArgResults = argResults
         ..testCwd = cwd;
 
@@ -117,6 +93,7 @@ void main() {
       verify(() => runner.start()).called(1);
 
       expect(givenPort, equals('1234'));
+      expect(givenAddress, InternetAddress.tryParse('192.168.1.2'));
       expect(givenDartVmServicePort, equals('5678'));
       expect(givenDevServerBundleGenerator, same(generator));
       expect(givenWorkingDirectory, same(cwd));
@@ -126,10 +103,10 @@ void main() {
     test('results with dev server exit code', () async {
       final command = DevCommand(
         generator: (_) async => generator,
-        ensureRuntimeCompatibility: (_) {},
-        devServerRunnerBuilder: ({
+        devServerRunnerConstructor: ({
           required logger,
           required port,
+          required address,
           required devServerBundleGenerator,
           required dartVmServicePort,
           required workingDirectory,
@@ -138,8 +115,14 @@ void main() {
           return runner;
         },
         logger: logger,
-        stdin: stdin,
-      )..testArgResults = argResults;
+      )
+        ..testArgResults = argResults
+        ..testStdin = stdin;
+
+      when(() => runner.start()).thenAnswer((_) => Future.value());
+      when(() => runner.exitCode).thenAnswer(
+        (_) => Future.value(ExitCode.success),
+      );
 
       when(() => runner.start()).thenAnswer((_) => Future.value());
       when(() => runner.exitCode).thenAnswer((_) async => ExitCode.unavailable);
@@ -150,10 +133,10 @@ void main() {
     test('fails if dev server runner fails on start', () async {
       final command = DevCommand(
         generator: (_) async => generator,
-        ensureRuntimeCompatibility: (_) {},
-        devServerRunnerBuilder: ({
+        devServerRunnerConstructor: ({
           required logger,
           required port,
+          required address,
           required devServerBundleGenerator,
           required dartVmServicePort,
           required workingDirectory,
@@ -162,8 +145,9 @@ void main() {
           return runner;
         },
         logger: logger,
-        stdin: stdin,
-      )..testArgResults = argResults;
+      )
+        ..testArgResults = argResults
+        ..testStdin = stdin;
 
       when(() => runner.start()).thenAnswer((_) async {
         throw DartFrogDevServerException('oops');
@@ -171,6 +155,48 @@ void main() {
 
       await expectLater(command.run(), completion(ExitCode.software.code));
       verify(() => logger.err('oops')).called(1);
+    });
+
+    test('fails if hostname is invalid', () async {
+      when(() => runner.start()).thenAnswer((_) => Future.value());
+      when(() => runner.exitCode).thenAnswer(
+        (_) => Future.value(ExitCode.success),
+      );
+
+      when(() => argResults['hostname']).thenReturn('ticarica');
+      when(() => argResults['port']).thenReturn('1234');
+      when(() => argResults['dart-vm-service-port']).thenReturn('5678');
+
+      final cwd = Directory.systemTemp;
+
+      final command = DevCommand(
+        generator: (_) async => generator,
+        devServerRunnerConstructor: ({
+          required logger,
+          required port,
+          required address,
+          required devServerBundleGenerator,
+          required dartVmServicePort,
+          required workingDirectory,
+          void Function()? onHotReloadEnabled,
+        }) {
+          return runner;
+        },
+        logger: logger,
+      )
+        ..testStdin = stdin
+        ..testArgResults = argResults
+        ..testCwd = cwd;
+
+      await expectLater(command.run(), completion(ExitCode.software.code));
+
+      verify(
+        () => logger.err(
+          'Invalid hostname "ticarica": must be a valid IPv4 or IPv6 address.',
+        ),
+      ).called(1);
+
+      verifyNever(() => runner.start());
     });
 
     group('listening to stdin', () {
@@ -216,10 +242,10 @@ void main() {
 
         command = DevCommand(
           generator: (_) async => generator,
-          ensureRuntimeCompatibility: (_) {},
-          devServerRunnerBuilder: ({
+          devServerRunnerConstructor: ({
             required logger,
             required port,
+            required address,
             required devServerBundleGenerator,
             required dartVmServicePort,
             required workingDirectory,
@@ -229,11 +255,12 @@ void main() {
             return runner;
           },
           logger: logger,
-          stdin: stdin,
-        )..testArgResults = argResults;
+        )
+          ..testArgResults = argResults
+          ..testStdin = stdin;
       });
 
-      test('listens for R on hot reload enabled', () async {
+      Future<void> hotReloadTest(int asciiValue, String character) async {
         command.run().ignore();
         await Future<void>.delayed(Duration.zero);
 
@@ -245,7 +272,7 @@ void main() {
             cancelOnError: true,
           ),
         );
-        verifyNever(() => logger.info('Press R to reload'));
+        verifyNever(() => logger.info('Press $character to reload'));
 
         givenOnHotReloadEnabled();
 
@@ -258,7 +285,8 @@ void main() {
             cancelOnError: true,
           ),
         ).called(1);
-        verify(() => logger.info('Press R to reload')).called(1);
+
+        verify(() => logger.info('Press either R or r to reload')).called(1);
 
         verify(() => stdin.echoMode = false).called(1);
         verify(() => stdin.lineMode = false).called(1);
@@ -268,19 +296,26 @@ void main() {
 
         verifyNever(() => runner.reload());
 
-        stdinController.add([82, 42]);
+        stdinController.add([asciiValue, 42]);
         await Future<void>.delayed(Duration.zero);
 
         verifyNever(() => runner.reload());
 
-        stdinController.add([82]);
+        stdinController.add([asciiValue]);
         await Future<void>.delayed(Duration.zero);
 
         verify(() => runner.reload()).called(1);
 
         exitCodeCompleter.complete(ExitCode.success);
+      }
+
+      test('listens for uppercase R on hot reload enabled', () async {
+        await hotReloadTest(82, 'R');
       });
 
+      test('listens for lowercase r on hot reload enabled', () async {
+        await hotReloadTest(114, 'r');
+      });
       test('cancels subscription when dev server stops', () async {
         command.run().ignore();
         await Future<void>.delayed(Duration.zero);

@@ -8,6 +8,7 @@ suite("create command", () => {
 
   let vscodeStub: any;
   let childProcessStub: any;
+  let utilsStub: any;
   let command: any;
 
   beforeEach(() => {
@@ -22,16 +23,42 @@ suite("create command", () => {
     childProcessStub = {
       exec: sinon.stub(),
     };
+    utilsStub = {
+      isDartFrogCLIInstalled: sinon.stub(),
+      suggestInstallingDartFrogCLI: sinon.stub(),
+    };
+    utilsStub.isDartFrogCLIInstalled.returns(true);
 
     command = proxyquire("../../../commands/create", {
       vscode: vscodeStub,
       // eslint-disable-next-line @typescript-eslint/naming-convention
       child_process: childProcessStub,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      "../utils": utilsStub,
     });
   });
 
   afterEach(() => {
     sinon.restore();
+  });
+
+  test("suggests installing Dart Frog CLI when not installed", async () => {
+    utilsStub.isDartFrogCLIInstalled.returns(false);
+
+    await command.create(targetUri);
+
+    sinon.assert.calledWith(
+      utilsStub.suggestInstallingDartFrogCLI,
+      "Running this command requires Dart Frog CLI to be installed."
+    );
+  });
+
+  test("does not suggest installing Dart Frog CLI when installed", async () => {
+    utilsStub.isDartFrogCLIInstalled.returns(true);
+
+    await command.create(targetUri);
+
+    sinon.assert.notCalled(utilsStub.suggestInstallingDartFrogCLI);
   });
 
   test("project input box is shown with directory name as value", async () => {
@@ -158,7 +185,7 @@ suite("create command", () => {
 
     sinon.assert.calledOnceWithMatch(
       childProcessStub.exec,
-      "dart_frog create 'my_project'",
+      `dart_frog create "my_project"`,
       { cwd: targetUri.fsPath }
     );
   });
@@ -174,14 +201,14 @@ suite("create command", () => {
 
     sinon.assert.calledOnceWithMatch(
       childProcessStub.exec,
-      "dart_frog create 'my_project'",
+      `dart_frog create "my_project"`,
       { cwd: targetUri.fsPath }
     );
   });
 
   test("shows error when `dart_frog create` command fails", async () => {
     const error = new Error("Command failed");
-    const createCommand = "dart_frog create 'my_project'";
+    const createCommand = `dart_frog create "my_project"`;
 
     vscodeStub.window.showInputBox.returns("my_project");
     childProcessStub.exec.withArgs(createCommand).yields(error);

@@ -1,11 +1,10 @@
 import 'dart:io';
 
+import 'package:dart_frog_prod_server_hooks/dart_frog_prod_server_hooks.dart';
 import 'package:mason/mason.dart' hide createBundle;
 import 'package:mocktail/mocktail.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
-
-import '../../src/create_bundle.dart';
 
 class _MockLogger extends Mock implements Logger {}
 
@@ -42,23 +41,36 @@ void main() {
 
     test('exit(1) if bundling throws', () async {
       final exitCalls = <int>[];
-      await createBundle(context, Directory('/invalid/dir'), exitCalls.add);
+      await createBundle(
+        context: context,
+        projectDirectory: Directory('/invalid/dir'),
+        buildDirectory: Directory('/invalid/dir/build'),
+        exit: exitCalls.add,
+      );
       expect(exitCalls, equals([1]));
       verify(() => logger.err(any())).called(1);
     });
 
     test('does not throw when bundling succeeds', () async {
       final exitCalls = <int>[];
-      final directory = Directory.systemTemp.createTempSync();
-      final dotDartFrogDir = Directory(path.join(directory.path, '.dart_frog'))
-        ..createSync();
-      final buildDir = Directory(path.join(directory.path, 'build'))
-        ..createSync();
-      final oldBuildArtifact = File(path.join(buildDir.path, 'artifact.txt'))
-        ..createSync();
-      await createBundle(context, directory, exitCalls.add);
+      final projectDirectory = Directory.systemTemp.createTempSync();
+      final dotDartFrogDir =
+          Directory(path.join(projectDirectory.path, '.dart_frog'))
+            ..createSync();
+      final buildDirectory =
+          Directory(path.join(projectDirectory.path, 'build'))..createSync();
+      final oldBuildArtifact =
+          File(path.join(buildDirectory.path, 'artifact.txt'))..createSync();
+
+      await createBundle(
+        context: context,
+        projectDirectory: projectDirectory,
+        buildDirectory: buildDirectory,
+        exit: exitCalls.add,
+      );
+
       expect(dotDartFrogDir.existsSync(), isFalse);
-      expect(buildDir.existsSync(), isTrue);
+      expect(buildDirectory.existsSync(), isTrue);
       expect(oldBuildArtifact.existsSync(), isFalse);
       expect(exitCalls, isEmpty);
       verifyNever(() => logger.err(any()));

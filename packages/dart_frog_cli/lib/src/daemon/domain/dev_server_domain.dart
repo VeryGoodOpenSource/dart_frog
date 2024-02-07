@@ -17,10 +17,10 @@ class DevServerDomain extends DomainBase {
     super.daemon, {
     @visibleForTesting super.getId,
     @visibleForTesting GeneratorBuilder? generator,
-    @visibleForTesting DevServerRunnerBuilder? devServerRunnerBuilder,
+    @visibleForTesting DevServerRunnerConstructor? devServerRunnerConstructor,
   })  : _generator = generator ?? MasonGenerator.fromBundle,
-        _devServerRunnerBuilder =
-            devServerRunnerBuilder ?? DevServerRunner.new {
+        _devServerRunnerConstructor =
+            devServerRunnerConstructor ?? DevServerRunner.new {
     addHandler('start', _start);
     addHandler('reload', _reload);
     addHandler('stop', _stop);
@@ -32,28 +32,17 @@ class DevServerDomain extends DomainBase {
   final _devServerRunners = <String, DevServerRunner>{};
 
   final GeneratorBuilder _generator;
-  final DevServerRunnerBuilder _devServerRunnerBuilder;
+  final DevServerRunnerConstructor _devServerRunnerConstructor;
 
   /// Starts a [DevServerRunner] for the given [request].
   Future<DaemonResponse> _start(DaemonRequest request) async {
-    final workingDirectory = request.params?['workingDirectory'];
-    if (workingDirectory is! String) {
-      throw const DartFrogDaemonMalformedMessageException(
-        'invalid workingDirectory',
-      );
-    }
+    final workingDirectory = request.getParam<String>('workingDirectory');
 
-    final port = request.params?['port'];
-    if (port is! int) {
-      throw const DartFrogDaemonMalformedMessageException('invalid port');
-    }
+    final port = request.getParam<int>('port');
 
-    final dartVmServicePort = request.params?['dartVmServicePort'];
-    if (dartVmServicePort is! int) {
-      throw const DartFrogDaemonMalformedMessageException(
-        'invalid dartVmServicePort',
-      );
-    }
+    final dartVmServicePort = request.getParam<int>('dartVmServicePort');
+
+    final hostname = request.getParam<String?>('hostname');
 
     final applicationId = getId();
 
@@ -70,6 +59,16 @@ class DevServerDomain extends DomainBase {
 
     final devServerBundleGenerator = await _generator(dartFrogDevServerBundle);
 
+    InternetAddress? ip;
+    if (hostname != null) {
+      ip = InternetAddress.tryParse(hostname);
+      if (ip == null) {
+        throw DartFrogDaemonMalformedMessageException(
+          'invalid hostname "$hostname": must be a valid IPv4 or IPv6 address.',
+        );
+      }
+    }
+
     final logger = DaemonLogger(
       domain: domainName,
       params: {
@@ -81,9 +80,10 @@ class DevServerDomain extends DomainBase {
       idGenerator: getId,
     );
 
-    final devServerRunner = _devServerRunnerBuilder(
+    final devServerRunner = _devServerRunnerConstructor(
       logger: logger,
       port: '$port',
+      address: ip,
       devServerBundleGenerator: devServerBundleGenerator,
       dartVmServicePort: '$dartVmServicePort',
       workingDirectory: Directory(workingDirectory),
@@ -127,12 +127,7 @@ class DevServerDomain extends DomainBase {
   }
 
   Future<DaemonResponse> _reload(DaemonRequest request) async {
-    final applicationId = request.params?['applicationId'];
-    if (applicationId is! String) {
-      throw const DartFrogDaemonMalformedMessageException(
-        'invalid applicationId',
-      );
-    }
+    final applicationId = request.getParam<String>('applicationId');
 
     final runner = _devServerRunners[applicationId];
     if (runner == null) {
@@ -166,14 +161,9 @@ class DevServerDomain extends DomainBase {
   }
 
   Future<DaemonResponse> _stop(DaemonRequest request) async {
-    final applicationId = request.params?['applicationId'];
-    if (applicationId is! String) {
-      throw const DartFrogDaemonMalformedMessageException(
-        'invalid applicationId',
-      );
-    }
+    final applicationId = request.getParam<String>('applicationId');
 
-    final runner = _devServerRunners[applicationId];
+    final runner = _devServerRunners.remove(applicationId);
     if (runner == null) {
       return DaemonResponse.error(
         id: request.id,
@@ -187,8 +177,6 @@ class DevServerDomain extends DomainBase {
     try {
       await runner.stop();
 
-      _devServerRunners.remove(applicationId);
-
       final exitCode = await runner.exitCode;
 
       return DaemonResponse.success(
@@ -199,11 +187,16 @@ class DevServerDomain extends DomainBase {
         },
       );
     } catch (e) {
+      if (!runner.isCompleted) {
+        _devServerRunners[applicationId] = runner;
+      }
+
       return DaemonResponse.error(
         id: request.id,
         error: {
           'applicationId': applicationId,
           'message': e.toString(),
+          'finished': runner.isCompleted,
         },
       );
     }

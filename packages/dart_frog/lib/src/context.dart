@@ -42,4 +42,14 @@ This can happen if $T was not provided to the request context:
     }
     return (value as T Function())();
   }
+
+  /// Get URL parameters captured by the [Router.mount].
+  /// They can be accessed from inside the mounted routes.
+  Map<String, String> get mountedParams {
+    final p = request._request.context['dart_frog/mountedParams'];
+    if (p is Map<String, String>) {
+      return UnmodifiableMapView(p);
+    }
+    return _emptyParams;
+  }
 }

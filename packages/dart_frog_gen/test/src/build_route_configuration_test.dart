@@ -140,8 +140,8 @@ Future<void>init(InternetAddress ip,int port)async{}
         equals({
           '/users': [
             isARouteFile(path: '../routes/users.dart'),
-            isARouteFile(path: '../routes/users/index.dart')
-          ]
+            isARouteFile(path: '../routes/users/index.dart'),
+          ],
         }),
       );
     });
@@ -161,7 +161,7 @@ Future<void>init(InternetAddress ip,int port)async{}
               'wildcard': false,
             }
           ],
-          'directory_params': []
+          'directory_params': [],
         }
       ];
 
@@ -176,7 +176,7 @@ Future<void>init(InternetAddress ip,int port)async{}
       expect(
         configuration.endpoints,
         equals({
-          '/': [isARouteFile(path: '../routes/index.dart')]
+          '/': [isARouteFile(path: '../routes/index.dart')],
         }),
       );
     });
@@ -203,7 +203,7 @@ Future<void>init(InternetAddress ip,int port)async{}
               'wildcard': false,
             }
           ],
-          'directory_params': []
+          'directory_params': [],
         }
       ];
 
@@ -224,7 +224,7 @@ Future<void>init(InternetAddress ip,int port)async{}
         configuration.endpoints,
         equals({
           '/': [isARouteFile(path: '../routes/index.dart')],
-          '/hello': [isARouteFile(path: '../routes/hello.dart')]
+          '/hello': [isARouteFile(path: '../routes/hello.dart')],
         }),
       );
     });
@@ -244,7 +244,7 @@ Future<void>init(InternetAddress ip,int port)async{}
               'wildcard': false,
             }
           ],
-          'directory_params': []
+          'directory_params': [],
         },
         {
           'name': '_echo',
@@ -259,7 +259,7 @@ Future<void>init(InternetAddress ip,int port)async{}
               'wildcard': false,
             }
           ],
-          'directory_params': []
+          'directory_params': [],
         }
       ];
 
@@ -280,7 +280,7 @@ Future<void>init(InternetAddress ip,int port)async{}
         configuration.endpoints,
         equals({
           '/': [isARouteFile(path: '../routes/index.dart')],
-          '/echo/message': [isARouteFile(path: '../routes/echo/message.dart')]
+          '/echo/message': [isARouteFile(path: '../routes/echo/message.dart')],
         }),
       );
     });
@@ -300,7 +300,7 @@ Future<void>init(InternetAddress ip,int port)async{}
               'wildcard': false,
             }
           ],
-          'directory_params': []
+          'directory_params': [],
         }
       ];
 
@@ -318,8 +318,8 @@ Future<void>init(InternetAddress ip,int port)async{}
         configuration.endpoints,
         equals({
           '/echo/message': [
-            isARouteFile(path: '../routes/echo/message/index.dart')
-          ]
+            isARouteFile(path: '../routes/echo/message/index.dart'),
+          ],
         }),
       );
     });
@@ -339,7 +339,7 @@ Future<void>init(InternetAddress ip,int port)async{}
               'wildcard': false,
             }
           ],
-          'directory_params': []
+          'directory_params': [],
         },
         {
           'name': '_echo',
@@ -354,7 +354,7 @@ Future<void>init(InternetAddress ip,int port)async{}
               'wildcard': false,
             }
           ],
-          'directory_params': []
+          'directory_params': [],
         }
       ];
 
@@ -379,7 +379,7 @@ Future<void>init(InternetAddress ip,int port)async{}
           ],
           '/echo/<message>': [
             isARouteFile(path: '../routes/echo/[message].dart'),
-          ]
+          ],
         }),
       );
     });
@@ -399,7 +399,7 @@ Future<void>init(InternetAddress ip,int port)async{}
               'wildcard': false,
             }
           ],
-          'directory_params': []
+          'directory_params': [],
         },
         {
           'name': r'_$user',
@@ -414,7 +414,7 @@ Future<void>init(InternetAddress ip,int port)async{}
               'wildcard': false,
             }
           ],
-          'directory_params': ['user']
+          'directory_params': ['user'],
         },
         {
           'name': r'_$user_$id',
@@ -422,7 +422,7 @@ Future<void>init(InternetAddress ip,int port)async{}
           'middleware': [
             {
               'name': r'$user_$id__middleware',
-              'path': '../routes/[user]/[id]/_middleware.dart'
+              'path': '../routes/[user]/[id]/_middleware.dart',
             }
           ],
           'files': [
@@ -434,7 +434,7 @@ Future<void>init(InternetAddress ip,int port)async{}
               'wildcard': false,
             }
           ],
-          'directory_params': ['user', 'id']
+          'directory_params': ['user', 'id'],
         }
       ];
 
@@ -464,7 +464,7 @@ Future<void>init(InternetAddress ip,int port)async{}
           ],
           '/<user>/<id>': [
             isARouteFile(path: '../routes/[user]/[id]/index.dart'),
-          ]
+          ],
         }),
       );
     });
@@ -484,7 +484,7 @@ Future<void>init(InternetAddress ip,int port)async{}
               'wildcard': false,
             }
           ],
-          'directory_params': []
+          'directory_params': [],
         },
         {
           'name': '_api',
@@ -499,7 +499,7 @@ Future<void>init(InternetAddress ip,int port)async{}
               'wildcard': false,
             }
           ],
-          'directory_params': []
+          'directory_params': [],
         },
         {
           'name': r'_$user',
@@ -507,7 +507,7 @@ Future<void>init(InternetAddress ip,int port)async{}
           'middleware': [
             {
               'name': r'$user__middleware',
-              'path': '../routes/[user]/_middleware.dart'
+              'path': '../routes/[user]/_middleware.dart',
             }
           ],
           'files': [
@@ -519,7 +519,7 @@ Future<void>init(InternetAddress ip,int port)async{}
               'wildcard': false,
             }
           ],
-          'directory_params': ['user']
+          'directory_params': ['user'],
         },
         {
           'name': r'_$user_$id',
@@ -527,11 +527,11 @@ Future<void>init(InternetAddress ip,int port)async{}
           'middleware': [
             {
               'name': r'$user__middleware',
-              'path': '../routes/[user]/_middleware.dart'
+              'path': '../routes/[user]/_middleware.dart',
             },
             {
               'name': r'$user_$id__middleware',
-              'path': '../routes/[user]/[id]/_middleware.dart'
+              'path': '../routes/[user]/[id]/_middleware.dart',
             }
           ],
           'files': [
@@ -543,7 +543,7 @@ Future<void>init(InternetAddress ip,int port)async{}
               'wildcard': false,
             }
           ],
-          'directory_params': ['user', 'id']
+          'directory_params': ['user', 'id'],
         }
       ];
 
@@ -578,7 +578,7 @@ Future<void>init(InternetAddress ip,int port)async{}
           ],
           '/<user>/<id>': [
             isARouteFile(path: '../routes/[user]/[id]/index.dart'),
-          ]
+          ],
         }),
       );
     });
@@ -598,7 +598,7 @@ Future<void>init(InternetAddress ip,int port)async{}
               'wildcard': false,
             }
           ],
-          'directory_params': []
+          'directory_params': [],
         },
         {
           'name': r'_$id_api',
@@ -613,7 +613,7 @@ Future<void>init(InternetAddress ip,int port)async{}
               'wildcard': false,
             }
           ],
-          'directory_params': ['id']
+          'directory_params': ['id'],
         }
       ];
 
@@ -654,7 +654,7 @@ Future<void>init(InternetAddress ip,int port)async{}
               'wildcard': false,
             }
           ],
-          'directory_params': []
+          'directory_params': [],
         },
         {
           'name': r'_$id_api',
@@ -669,7 +669,7 @@ Future<void>init(InternetAddress ip,int port)async{}
               'wildcard': false,
             }
           ],
-          'directory_params': ['id']
+          'directory_params': ['id'],
         }
       ];
 
@@ -714,7 +714,7 @@ Future<void>init(InternetAddress ip,int port)async{}
               'wildcard': false,
             }
           ],
-          'directory_params': []
+          'directory_params': [],
         },
         {
           'name': r'_$id_api_$name',
@@ -729,7 +729,7 @@ Future<void>init(InternetAddress ip,int port)async{}
               'wildcard': false,
             }
           ],
-          'directory_params': ['id', 'name']
+          'directory_params': ['id', 'name'],
         }
       ];
 
@@ -774,7 +774,7 @@ Future<void>init(InternetAddress ip,int port)async{}
               'wildcard': false,
             }
           ],
-          'directory_params': []
+          'directory_params': [],
         },
         {
           'name': r'_$id_api_$name',
@@ -789,7 +789,7 @@ Future<void>init(InternetAddress ip,int port)async{}
               'wildcard': false,
             }
           ],
-          'directory_params': ['id', 'name']
+          'directory_params': ['id', 'name'],
         }
       ];
 
@@ -834,7 +834,7 @@ Future<void>init(InternetAddress ip,int port)async{}
               'wildcard': false,
             }
           ],
-          'directory_params': []
+          'directory_params': [],
         }
       ];
 
@@ -871,7 +871,7 @@ Future<void>init(InternetAddress ip,int port)async{}
               'wildcard': false,
             }
           ],
-          'directory_params': []
+          'directory_params': [],
         }
       ];
 
@@ -908,7 +908,7 @@ Future<void>init(InternetAddress ip,int port)async{}
               'wildcard': false,
             }
           ],
-          'directory_params': ['a', 'b']
+          'directory_params': ['a', 'b'],
         }
       ];
 
@@ -945,7 +945,7 @@ Future<void>init(InternetAddress ip,int port)async{}
               'wildcard': false,
             }
           ],
-          'directory_params': []
+          'directory_params': [],
         }
       ];
 
@@ -982,7 +982,7 @@ Future<void>init(InternetAddress ip,int port)async{}
               'wildcard': false,
             }
           ],
-          'directory_params': []
+          'directory_params': [],
         }
       ];
 
@@ -1019,7 +1019,7 @@ Future<void>init(InternetAddress ip,int port)async{}
               'wildcard': false,
             }
           ],
-          'directory_params': []
+          'directory_params': [],
         }
       ];
 
@@ -1120,28 +1120,28 @@ Future<void>init(InternetAddress ip,int port)async{}
               (r) => r.path,
               'path',
               '../routes/api.dart',
-            )
+            ),
           ],
           '/api/v1': [
             isA<RouteFile>().having(
               (r) => r.path,
               'path',
               '../routes/api/v1.dart',
-            )
+            ),
           ],
           '/api/<id>': [
             isA<RouteFile>().having(
               (r) => r.path,
               'path',
               '../routes/api/[id].dart',
-            )
+            ),
           ],
           '/api/v1/hello': [
             isA<RouteFile>().having(
               (r) => r.path,
               'path',
               '../routes/api/v1/hello.dart',
-            )
+            ),
           ],
         }),
       );
@@ -1157,7 +1157,7 @@ Future<void>init(InternetAddress ip,int port)async{}
             (r) => r.path,
             'path',
             '../routes/api/v1.dart',
-          )
+          ),
         ]),
       );
     });
@@ -1244,7 +1244,7 @@ Future<void>init(InternetAddress ip,int port)async{}
               'wildcard': true,
             }
           ],
-          'directory_params': []
+          'directory_params': [],
         }
       ];
 
@@ -1259,7 +1259,7 @@ Future<void>init(InternetAddress ip,int port)async{}
       expect(
         configuration.endpoints,
         equals({
-          '/test': [isARouteFile(path: '../routes/test/[...value].dart')]
+          '/test': [isARouteFile(path: '../routes/test/[...value].dart')],
         }),
       );
     });
@@ -1283,6 +1283,202 @@ Future<void>init(InternetAddress ip,int port)async{}
         '/blog/content/[...slug].dart'.toParams(),
         equals(
           ['slug'],
+        ),
+      );
+    });
+  });
+
+  group('RouteConfiguration', () {
+    test('toJson transforms everything into json', () {
+      const configuration = RouteConfiguration(
+        globalMiddleware: MiddlewareFile(
+          name: 'middleware',
+          path: '../routes/_middleware.dart',
+        ),
+        middleware: [
+          MiddlewareFile(
+            name: 'middleware',
+            path: '../routes/_middleware.dart',
+          ),
+          MiddlewareFile(
+            name: r'$id__middleware',
+            path: '../routes/[id]/_middleware.dart',
+          ),
+        ],
+        directories: [
+          RouteDirectory(
+            name: '_',
+            route: '/',
+            middleware: [],
+            files: [],
+            params: [],
+          ),
+          RouteDirectory(
+            name: r'_$id',
+            route: '/<id>',
+            middleware: [],
+            files: [],
+            params: [],
+          ),
+          RouteDirectory(
+            name: r'_$id_existing_as_directory',
+            route: '/<id>/existing_as_dir',
+            files: [],
+            middleware: [],
+            params: [],
+          ),
+        ],
+        routes: [
+          RouteFile(
+            name: 'index',
+            path: '../routes/index.dart',
+            route: '/',
+            params: [],
+            wildcard: false,
+          ),
+          RouteFile(
+            name: r'$id_existing_as_file',
+            path: '../routes/[id]/existing_as_file.dart',
+            route: '/existing_as_file',
+            params: [],
+            wildcard: false,
+          ),
+          RouteFile(
+            name: r'$id_existing_as_dir_index',
+            path: '../routes/[id]/existing_as_dir/index.dart',
+            route: '/',
+            params: [],
+            wildcard: false,
+          ),
+        ],
+        endpoints: {
+          '/': <RouteFile>[
+            RouteFile(
+              name: 'index',
+              path: '../routes/index.dart',
+              route: '/',
+              params: [],
+              wildcard: false,
+            ),
+          ],
+          '/<id>/existing_as_file': <RouteFile>[
+            RouteFile(
+              name: r'$id_existing_as_file',
+              path: '../routes/[id]/existing_as_file.dart',
+              route: '/existing_as_file',
+              params: [],
+              wildcard: false,
+            ),
+          ],
+          '/<id>/existing_as_dir': <RouteFile>[
+            RouteFile(
+              name: r'$id_existing_as_dir_index',
+              path: '../routes/[id]/existing_as_dir/index.dart',
+              route: '/',
+              params: [],
+              wildcard: false,
+            ),
+          ],
+        },
+        rogueRoutes: [],
+        serveStaticFiles: true,
+      );
+
+      expect(
+        configuration.toJson(),
+        equals(
+          {
+            'invokeCustomEntrypoint': false,
+            'invokeCustomInit': false,
+            'serveStaticFiles': true,
+            'globalMiddleware': {
+              'name': 'middleware',
+              'path': '../routes/_middleware.dart',
+            },
+            'middleware': [
+              {'name': 'middleware', 'path': '../routes/_middleware.dart'},
+              {
+                'name': r'$id__middleware',
+                'path': '../routes/[id]/_middleware.dart',
+              }
+            ],
+            'directories': [
+              {
+                'name': '_',
+                'route': '/',
+                'middleware': [],
+                'files': [],
+                'directory_params': [],
+              },
+              {
+                'name': r'_$id',
+                'route': '/<id>',
+                'middleware': [],
+                'files': [],
+                'directory_params': [],
+              },
+              {
+                'name': r'_$id_existing_as_directory',
+                'route': '/<id>/existing_as_dir',
+                'middleware': [],
+                'files': [],
+                'directory_params': [],
+              }
+            ],
+            'routes': [
+              {
+                'name': 'index',
+                'path': '../routes/index.dart',
+                'route': '/',
+                'file_params': [],
+                'wildcard': false,
+              },
+              {
+                'name': r'$id_existing_as_file',
+                'path': '../routes/[id]/existing_as_file.dart',
+                'route': '/existing_as_file',
+                'file_params': [],
+                'wildcard': false,
+              },
+              {
+                'name': r'$id_existing_as_dir_index',
+                'path': '../routes/[id]/existing_as_dir/index.dart',
+                'route': '/',
+                'file_params': [],
+                'wildcard': false,
+              }
+            ],
+            'endpoints': {
+              '/': [
+                {
+                  'name': 'index',
+                  'path': '../routes/index.dart',
+                  'route': '/',
+                  'file_params': [],
+                  'wildcard': false,
+                }
+              ],
+              '/<id>/existing_as_file': [
+                {
+                  'name': r'$id_existing_as_file',
+                  'path': '../routes/[id]/existing_as_file.dart',
+                  'route': '/existing_as_file',
+                  'file_params': [],
+                  'wildcard': false,
+                }
+              ],
+              '/<id>/existing_as_dir': [
+                {
+                  'name': r'$id_existing_as_dir_index',
+                  'path': '../routes/[id]/existing_as_dir/index.dart',
+                  'route': '/',
+                  'file_params': [],
+                  'wildcard': false,
+                }
+              ],
+            },
+            'rogueRoutes': [],
+          },
         ),
       );
     });

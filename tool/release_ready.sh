@@ -5,9 +5,9 @@
 # Set it up for a new version:
 # `./release_ready.sh <version>
 
-# Check if current directory has a pubspec.yaml, if so we assume it is correctly set up.
-if [ ! -f "pubspec.yaml" ] && [ ! -f "brick.yaml" ]; then
-  echo "$(pwd) is not a valid package or brick."
+# Check if current directory is usable for this script, if so we assume it is correctly set up.
+if [ ! -f "pubspec.yaml" ] && [ ! -f "brick.yaml" ] && [ ! -f "package.json" ]; then
+  echo "$(pwd) is not a valid (dart/npm) package or brick."
   exit 1
 fi
 
@@ -26,6 +26,9 @@ if [ -f "pubspec.yaml" ]; then
 elif [ -f "brick.yaml" ]; then
   old_version=$(cat brick.yaml | pcregrep 'version: (.*?)' | tr " " "\n" | tail -1)
   current_name=$(cat brick.yaml | pcregrep 'name: (.*?)' | tr " " "\n" | tail -1)
+elif [ -f "package.json" ]; then
+  old_version=$(cat package.json | pcregrep -o1 -i '"version": "(.*?)"' | head -1)
+  current_name="vscode"
 fi
 
 if [ -z "$old_version" ] || [ -z "$current_name" ]; then
@@ -58,7 +61,14 @@ fi
 commits=$(echo "$markdown_commits" | sed -En "s/^/- /p")
 
 echo "Updating version to $new_version"
-sed -i '' "s/version: $old_version/version: $new_version/g" pubspec.yaml
+if [ -f "pubspec.yaml" ]; then
+  sed -i '' "s/version: $old_version/version: $new_version/g" pubspec.yaml
+elif [ -f "brick.yaml" ]; then
+  sed -i '' "s/version: $old_version/version: $new_version/g" brick.yaml
+elif [ -f "package.json" ]; then
+  sed -i '' "s/\"version\": \"$old_version\"/\"version\": \"$new_version\"/g" package.json
+  npm i
+fi
 
 # Update dart file with new version.
 dart run build_runner build --delete-conflicting-outputs > /dev/null

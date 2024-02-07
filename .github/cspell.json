@@ -15,5 +15,13 @@
     }
   ],
   "useGitignore": true,
-  "words": ["doctl", "endtemplate", "hotreload", "intelli", "sigint", "devserver"]
+  "words": [
+    "doctl",
+    "endtemplate",
+    "hotreload",
+    "intelli",
+    "sigint",
+    "devserver"
+  ],
+  "ignoreWords": ["cleverapps", "WORKDIR"]
 }

@@ -17,12 +17,9 @@ Future<void> run(HookContext context) async => preGen(context);
 
 Future<void> preGen(
   HookContext context, {
-  io.Directory? directory,
   RouteConfigurationBuilder buildConfiguration = buildRouteConfiguration,
   void Function(int exitCode) exit = _defaultExit,
 }) async {
-  final projectDirectory = directory ?? io.Directory.current;
-
   final RouteConfiguration configuration;
   try {
     configuration = buildConfiguration(io.Directory.current);
@@ -57,20 +54,9 @@ Future<void> preGen(
       );
     },
   );
-  await reportExternalPathDependencies(
-    projectDirectory,
-    onViolationStart: () {
-      context.logger
-        ..info('')
-        ..err('All path dependencies must be within the project.')
-        ..err('External path dependencies detected:');
-    },
-    onExternalPathDependency: (dependencyName, dependencyPath) {
-      context.logger.err('  \u{2022} $dependencyName from $dependencyPath');
-    },
-  );
 
   context.vars = {
+    'host': context.vars['host'] ?? '',
     'port': context.vars['port'] ?? '8080',
     'directories': configuration.directories
         .map((c) => c.toJson())

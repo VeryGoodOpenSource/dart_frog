@@ -19,6 +19,8 @@ class _MockLogger extends Mock implements Logger {}
 
 class _MockProcessSignal extends Mock implements ProcessSignal {}
 
+class _MockStdin extends Mock implements Stdin {}
+
 const expectedUsage = [
   // ignore: no_adjacent_strings_in_list
   'Start the Dart Frog daemon\n'
@@ -44,6 +46,7 @@ void main() {
         pubUpdater: _MockPubUpdater(),
         exit: (_) {},
         sigint: sigint,
+        stdin: _MockStdin(),
       );
     });
 

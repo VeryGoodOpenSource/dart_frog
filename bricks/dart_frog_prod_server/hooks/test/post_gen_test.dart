@@ -1,13 +1,13 @@
 import 'dart:io';
 
+import 'package:dart_frog_prod_server_hooks/dart_frog_prod_server_hooks.dart';
 import 'package:mason/mason.dart'
     show ExitCode, HookContext, Logger, Progress, lightCyan;
 import 'package:mocktail/mocktail.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
-import '../post_gen.dart';
-import '../src/exit_overrides.dart';
+import '../post_gen.dart' as post_gen;
 
 class _FakeHookContext extends Fake implements HookContext {
   _FakeHookContext({Logger? logger}) : _logger = logger ?? _MockLogger();
@@ -53,7 +53,7 @@ void main() {
     test('run completes', () {
       expect(
         ExitOverrides.runZoned(
-          () => run(_FakeHookContext(logger: logger)),
+          () => post_gen.run(_FakeHookContext(logger: logger)),
           exit: (_) {},
         ),
         completes,
@@ -64,7 +64,7 @@ void main() {
       var processRunnerCallCount = 0;
       final exitCalls = <int>[];
 
-      await postGen(
+      await post_gen.postGen(
         context,
         runProcess: (
           executable,

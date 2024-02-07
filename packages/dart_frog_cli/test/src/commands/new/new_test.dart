@@ -29,6 +29,8 @@ class _MockProgress extends Mock implements Progress {}
 class _FakeDirectoryGeneratorTarget extends Fake
     implements DirectoryGeneratorTarget {}
 
+class _MockStdin extends Mock implements Stdin {}
+
 const expectedUsage = [
   'Create a new route or middleware for dart_frog\n'
       '\n'
@@ -79,6 +81,7 @@ void main() {
         pubUpdater: _MockPubUpdater(),
         exit: (_) {},
         sigint: sigint,
+        stdin: _MockStdin(),
       );
     });
 
@@ -463,7 +466,7 @@ void main() {
             vars: {
               'route_path': '/user/[id]/posts/[post_id]/comments',
               'type': 'route',
-              'dir_path': '${directory.path}/routes/something'
+              'dir_path': '${directory.path}/routes/something',
             },
             workingDirectory: any(named: 'workingDirectory'),
             onVarsChanged: any(named: 'onVarsChanged'),

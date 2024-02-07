@@ -9,7 +9,7 @@ There are many different approaches, protocols, and services when tackling authe
 
 Because of this Dart Frog does not bundle any feature, helpers or resources for authentication out of the box. This means that developers have full freedom to implement server authentication in the best way that fits their needs.
 
-Nevertheless, there are a few common patterns that can used in many different approaches to give the developer a head start. For example, there is a package called `dart_frog_auth`, which makes it easy for a simple authentication method to be implemented while also
+Nevertheless, there are a few common patterns that can used in many different approaches to give the developer a head start. For example, there is a package called [`dart_frog_auth`](https://pub.dev/packages/dart_frog_auth), which makes it easy for a simple authentication method to be implemented while also
 layering the foundation for more advanced authentication. See below for more details:
 
 ## Dart Frog Auth
@@ -82,13 +82,16 @@ Handler middleware(Handler handler) {
       .use(requestLogger())
       .use(
         basicAuthentication<User>(
-          userFromCredentials: userRepository.fetchFromCredentials,
+          authenticator: (context, username, password) {
+            final userRepository = context.read<UserRepository>();
+            return userRepository.fetchFromCredentials(username, password);
+          },
         ),
       );
 }
 ```
 
-The `userFromCredentials` parameter must be a method that receives two positional arguments (username
+The `authenticator` parameter must be a method that receives three positional arguments (context, username
 and password) and returns a user if any is found for those credentials, otherwise it should return null.
 
 If a user is returned (authenticated), it will be set in the request context and can be read by request handlers, for example:
@@ -122,14 +125,18 @@ Handler middleware(Handler handler) {
       .use(requestLogger())
       .use(
         bearerTokenAuthentication<User>(
-          userFromToken: userRepository.fetchFromAccessToken,
-        ).build(),
+          authenticator: (context, token) {
+            final userRepository = context.read<UserRepository>();
+            return userRepository.fetchFromAccessToken(token);
+          }
+        ),
       );
 }
 ```
 
-The `userFromToken` parameter must be a function that receives one positional argument (the
-token sent on the authorization header) and returns a user if any is found for that token.
+The `authenticator` parameter must be a function that receives two positional argument the
+context and the token sent on the authorization header and returns a user if any is found
+for that token.
 
 Again, just like in the basic method, if a user is returned, it will be set in the request
 context and can be read on request handlers, for example:
@@ -185,7 +192,10 @@ Handler middleware(Handler handler) {
       .use(provider<UserRepository>((_) => userRepository))
       .use(
         basicAuthentication<User>(
-          userFromCredentials: userFromCredentials(userRepository),
+          authenticator: (context, username, password) {
+            final userRepository = context.read<UserRepository>();
+            return userRepository.userFromCredentials(username, password);
+          },
           applies: (RequestContext context) async =>
               context.request.method != HttpMethod.post,
         ),

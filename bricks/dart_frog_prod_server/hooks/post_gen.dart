@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'dart:io' as io;
 
+import 'package:dart_frog_prod_server_hooks/dart_frog_prod_server_hooks.dart';
 import 'package:mason/mason.dart' show HookContext, lightCyan;
 import 'package:path/path.dart' as path;
-
-import 'src/dart_pub_get.dart';
-import 'src/exit_overrides.dart';
 
 void _defaultExit(int code) => ExitOverrides.current?.exit ?? io.exit;
 

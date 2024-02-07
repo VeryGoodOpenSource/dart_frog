@@ -17,6 +17,8 @@ class _MockPubUpdater extends Mock implements PubUpdater {}
 
 class _MockProcessSignal extends Mock implements ProcessSignal {}
 
+class _MockStdin extends Mock implements Stdin {}
+
 const expectedUsage = [
   'A fast, minimalistic backend framework for Dart.\n'
       '\n'
@@ -30,6 +32,7 @@ const expectedUsage = [
       'Available commands:\n'
       '  build       Create a production build.\n'
       '  create      Creates a new Dart Frog app.\n'
+      '  daemon      Start the Dart Frog daemon\n'
       '  dev         Run a local development server.\n'
       '  list        Lists the routes on a Dart Frog project.\n'
       '  new         Create a new route or middleware for dart_frog\n'
@@ -77,6 +80,7 @@ void main() {
         pubUpdater: pubUpdater,
         exit: (_) {},
         sigint: sigint,
+        stdin: _MockStdin(),
       );
     });
 
@@ -113,6 +117,7 @@ void main() {
           pubUpdater: pubUpdater,
           exit: exitCalls.add,
           sigint: sigint,
+          stdin: _MockStdin(),
         );
         when(() => sigint.watch()).thenAnswer((_) => Stream.value(sigint));
         await commandRunner.run(['--version']);

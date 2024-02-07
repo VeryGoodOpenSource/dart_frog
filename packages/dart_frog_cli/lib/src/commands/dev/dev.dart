@@ -5,8 +5,6 @@ import 'package:dart_frog_cli/src/command.dart';
 import 'package:dart_frog_cli/src/commands/commands.dart';
 import 'package:dart_frog_cli/src/commands/dev/templates/dart_frog_dev_server_bundle.dart';
 import 'package:dart_frog_cli/src/dev_server_runner/dev_server_runner.dart';
-import 'package:dart_frog_cli/src/runtime_compatibility.dart'
-    as runtime_compatibility;
 import 'package:mason/mason.dart';
 
 /// {@template dev_command}
@@ -17,15 +15,10 @@ class DevCommand extends DartFrogCommand {
   DevCommand({
     super.logger,
     GeneratorBuilder? generator,
-    DevServerRunnerBuilder? devServerRunnerBuilder,
-    runtime_compatibility.RuntimeCompatibilityCallback?
-        ensureRuntimeCompatibility,
-    io.Stdin? stdin,
-  })  : _ensureRuntimeCompatibility = ensureRuntimeCompatibility ??
-            runtime_compatibility.ensureRuntimeCompatibility,
-        _generator = generator ?? MasonGenerator.fromBundle,
-        _devServerRunnerBuilder = devServerRunnerBuilder ?? DevServerRunner.new,
-        _stdin = stdin ?? io.stdin {
+    DevServerRunnerConstructor? devServerRunnerConstructor,
+  })  : _generator = generator ?? MasonGenerator.fromBundle,
+        _devServerRunnerConstructor =
+            devServerRunnerConstructor ?? DevServerRunner.new {
     argParser
       ..addOption(
         'port',
@@ -38,16 +31,19 @@ class DevCommand extends DartFrogCommand {
         abbr: 'd',
         defaultsTo: _defaultDartVmServicePort,
         help: 'Which port number the dart vm service should listen on.',
+      )
+      ..addOption(
+        'hostname',
+        abbr: 'H',
+        help: 'Which host name the server should bind to.',
+        defaultsTo: 'localhost',
       );
   }
 
   static const _defaultDartVmServicePort = '8181';
 
   final GeneratorBuilder _generator;
-  final DevServerRunnerBuilder _devServerRunnerBuilder;
-  final runtime_compatibility.RuntimeCompatibilityCallback
-      _ensureRuntimeCompatibility;
-  final io.Stdin _stdin;
+  final DevServerRunnerConstructor _devServerRunnerConstructor;
 
   @override
   final String description = 'Run a local development server.';
@@ -61,16 +57,18 @@ class DevCommand extends DartFrogCommand {
 
   void _startListeningForHelpers() {
     if (_stdinSubscription != null) return;
-    if (!_stdin.hasTerminal) return;
+    if (!stdin.hasTerminal) return;
 
     // listen for the R key
-    _stdin
+    stdin
       ..echoMode = false
       ..lineMode = false;
 
-    _stdinSubscription = _stdin.listen(
+    _stdinSubscription = stdin.listen(
       (event) {
-        if (event.length == 1 && event.first == 'R'.codeUnitAt(0)) {
+        if (event.length == 1 &&
+            (event.first == 'R'.codeUnitAt(0) ||
+                event.first == 'r'.codeUnitAt(0))) {
           _devServerRunner.reload();
         }
       },
@@ -82,7 +80,7 @@ class DevCommand extends DartFrogCommand {
       onDone: _stopListeningForHelpers,
     );
 
-    logger.info('Press R to reload');
+    logger.info('Press either R or r to reload');
   }
 
   void _stopListeningForHelpers() {
@@ -94,27 +92,40 @@ class DevCommand extends DartFrogCommand {
     // devserver started.
     // That is why this check is made after the subscription
     // is canceled, if existent.
-    if (!_stdin.hasTerminal) return;
+    if (!stdin.hasTerminal) return;
 
-    _stdin
+    stdin
       ..lineMode = true
       ..echoMode = true;
   }
 
   @override
   Future<int> run() async {
-    _ensureRuntimeCompatibility(cwd);
-
     final port = io.Platform.environment['PORT'] ?? results['port'] as String;
+
     final dartVmServicePort = (results['dart-vm-service-port'] as String?) ??
         _defaultDartVmServicePort;
     final generator = await _generator(dartFrogDevServerBundle);
 
-    _devServerRunner = _devServerRunnerBuilder(
+    final hostname = results['hostname'] as String?;
+
+    io.InternetAddress? ip;
+    if (hostname != null && hostname != 'localhost') {
+      ip = io.InternetAddress.tryParse(hostname);
+      if (ip == null) {
+        logger.err(
+          'Invalid hostname "$hostname": must be a valid IPv4 or IPv6 address.',
+        );
+        return ExitCode.software.code;
+      }
+    }
+
+    _devServerRunner = _devServerRunnerConstructor(
       devServerBundleGenerator: generator,
       logger: logger,
       workingDirectory: cwd,
       port: port,
+      address: ip,
       dartVmServicePort: dartVmServicePort,
       onHotReloadEnabled: _startListeningForHelpers,
     );

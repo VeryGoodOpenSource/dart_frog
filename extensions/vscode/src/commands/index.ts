@@ -3,3 +3,8 @@ export * from "./install-cli";
 export * from "./update-cli";
 export * from "./new-route";
 export * from "./new-middleware";
+export * from "./start-daemon";
+export * from "./start-dev-server";
+export * from "./stop-dev-server";
+export * from "./debug-dev-server";
+export * from "./start-debug-dev-server";

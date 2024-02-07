@@ -23,6 +23,7 @@ jobs:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@v1
     with:
       working_directory: packages/dart_frog_cli
+      concurrency: 1
 
   e2e:
     defaults:
@@ -38,7 +39,7 @@ jobs:
 
     steps:
       - name: 📚 Git Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: 🎯 Setup Dart
         uses: dart-lang/setup-dart@v1

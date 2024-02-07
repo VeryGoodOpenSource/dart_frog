@@ -23,10 +23,6 @@ class DaemonCommand extends DartFrogCommand {
   @override
   String get name => 'daemon';
 
-  @override
-  // TODO(renancaraujo): unhide this command when it's ready
-  bool get hidden => true;
-
   /// The [DaemonServer] instance used by this command.
   ///
   /// Visible for testing purposes only.

@@ -1,14 +1,15 @@
 import 'dart:io';
 
 import 'package:dart_frog_gen/dart_frog_gen.dart';
+import 'package:dart_frog_prod_server_hooks/dart_frog_prod_server_hooks.dart';
 import 'package:mason/mason.dart'
     show HookContext, Logger, Progress, defaultForeground, lightCyan;
 import 'package:mocktail/mocktail.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
-import '../pre_gen.dart';
-import '../src/exit_overrides.dart';
+import '../pre_gen.dart' as pre_gen;
+import 'pubspec_locks.dart';
 
 class _FakeHookContext extends Fake implements HookContext {
   _FakeHookContext({Logger? logger}) : _logger = logger ?? _MockLogger();
@@ -36,6 +37,14 @@ void main() {
     late HookContext context;
     late Logger logger;
 
+    Future<ProcessResult> successRunProcess(
+      executable,
+      args, {
+      String? workingDirectory,
+      bool? runInShell,
+    }) =>
+        Future.value(ProcessResult(0, 0, '', ''));
+
     setUp(() {
       logger = _MockLogger();
       context = _FakeHookContext(logger: logger)
@@ -47,7 +56,7 @@ void main() {
     test('run completes', () {
       expect(
         ExitOverrides.runZoned(
-          () => run(_FakeHookContext(logger: logger)),
+          () => pre_gen.run(_FakeHookContext(logger: logger)),
           exit: (_) {},
         ),
         completes,
@@ -57,10 +66,11 @@ void main() {
     test('exit(1) if buildRouteConfiguration throws', () async {
       final exitCalls = <int>[];
       final exception = Exception('oops');
-      await preGen(
+      await pre_gen.preGen(
         context,
         buildConfiguration: (_) => throw exception,
         exit: exitCalls.add,
+        runProcess: successRunProcess,
       );
       expect(exitCalls, equals([1]));
       verify(() => logger.err(exception.toString())).called(1);
@@ -96,16 +106,17 @@ void main() {
               route: '/',
               params: [],
               wildcard: false,
-            )
-          ]
+            ),
+          ],
         },
       );
 
       final exitCalls = <int>[];
-      await preGen(
+      await pre_gen.preGen(
         context,
         buildConfiguration: (_) => configuration,
         exit: exitCalls.add,
+        runProcess: successRunProcess,
       );
 
       verify(
@@ -135,10 +146,11 @@ void main() {
       );
 
       final exitCalls = <int>[];
-      await preGen(
+      await pre_gen.preGen(
         context,
         buildConfiguration: (_) => configuration,
         exit: exitCalls.add,
+        runProcess: successRunProcess,
       );
 
       verify(
@@ -149,18 +161,20 @@ void main() {
       expect(exitCalls, equals([1]));
     });
 
-    test('exit(1) for external dependencies', () async {
-      const configuration = RouteConfiguration(
-        middleware: [],
-        directories: [],
-        routes: [],
-        rogueRoutes: [],
-        endpoints: {},
-      );
+    test(
+      'works with external dependencies',
+      () async {
+        const configuration = RouteConfiguration(
+          middleware: [],
+          directories: [],
+          routes: [],
+          rogueRoutes: [],
+          endpoints: {},
+        );
 
-      final directory = Directory.systemTemp.createTempSync();
-      File(path.join(directory.path, 'pubspec.yaml')).writeAsStringSync(
-        '''
+        final directory = Directory.systemTemp.createTempSync();
+        File(path.join(directory.path, 'pubspec.yaml')).writeAsStringSync(
+          '''
 name: example
 version: 0.1.0
 environment:
@@ -172,28 +186,24 @@ dependencies:
 dev_dependencies:
   test: any
 ''',
-      );
+        );
+        File(path.join(directory.path, 'pubspec.lock')).writeAsStringSync(
+          fooPath,
+        );
+        final exitCalls = <int>[];
+        await pre_gen.preGen(
+          context,
+          buildConfiguration: (_) => configuration,
+          exit: exitCalls.add,
+          directory: directory,
+          runProcess: successRunProcess,
+          copyPath: (_, __) async {},
+        );
 
-      final exitCalls = <int>[];
-      await preGen(
-        context,
-        buildConfiguration: (_) => configuration,
-        exit: exitCalls.add,
-        directory: directory,
-      );
-
-      expect(exitCalls, equals([1]));
-      verify(
-        () => logger.err('All path dependencies must be within the project.'),
-      ).called(1);
-      verify(
-        () => logger.err('External path dependencies detected:'),
-      ).called(1);
-      verify(
-        () => logger.err('  \u{2022} foo from ../../foo'),
-      ).called(1);
-      directory.delete(recursive: true).ignore();
-    });
+        expect(exitCalls, isEmpty);
+        directory.delete(recursive: true).ignore();
+      },
+    );
 
     test('retains invokeCustomEntrypoint (true)', () async {
       const configuration = RouteConfiguration(
@@ -205,10 +215,11 @@ dev_dependencies:
         invokeCustomEntrypoint: true,
       );
       final exitCalls = <int>[];
-      await preGen(
+      await pre_gen.preGen(
         context,
         buildConfiguration: (_) => configuration,
         exit: exitCalls.add,
+        runProcess: successRunProcess,
       );
       expect(exitCalls, isEmpty);
       verifyNever(() => logger.err(any()));
@@ -223,6 +234,7 @@ dev_dependencies:
           'invokeCustomEntrypoint': true,
           'invokeCustomInit': false,
           'pathDependencies': <String>[],
+          'hasExternalDependencies': false,
           'dartVersion': 'stable',
           'addDockerfile': true,
         }),
@@ -251,16 +263,21 @@ dependencies:
   test: any
 ''',
       );
+
+      File(path.join(directory.path, 'pubspec.lock')).writeAsStringSync(
+        noPathDependencies,
+      );
       File(path.join(directory.path, 'Dockerfile')).writeAsStringSync(
         '',
       );
 
       final exitCalls = <int>[];
-      await preGen(
+      await pre_gen.preGen(
         context,
         buildConfiguration: (_) => configuration,
         exit: exitCalls.add,
         directory: directory,
+        runProcess: successRunProcess,
       );
 
       expect(
@@ -273,6 +290,7 @@ dependencies:
           'serveStaticFiles': false,
           'invokeCustomEntrypoint': false,
           'invokeCustomInit': false,
+          'hasExternalDependencies': false,
           'pathDependencies': <String>[],
           'dartVersion': 'stable',
           'addDockerfile': false,
@@ -291,10 +309,11 @@ dependencies:
         invokeCustomInit: true,
       );
       final exitCalls = <int>[];
-      await preGen(
+      await pre_gen.preGen(
         context,
         buildConfiguration: (_) => configuration,
         exit: exitCalls.add,
+        runProcess: successRunProcess,
       );
       expect(exitCalls, isEmpty);
       verifyNever(() => logger.err(any()));
@@ -308,6 +327,7 @@ dependencies:
           'serveStaticFiles': false,
           'invokeCustomEntrypoint': false,
           'invokeCustomInit': true,
+          'hasExternalDependencies': false,
           'pathDependencies': <String>[],
           'dartVersion': 'stable',
           'addDockerfile': true,
@@ -327,7 +347,7 @@ dependencies:
             MiddlewareFile(
               name: 'hello_middleware',
               path: 'hello/middleware.dart',
-            )
+            ),
           ],
           directories: [
             RouteDirectory(
@@ -351,7 +371,7 @@ dependencies:
                 ),
               ],
               params: [],
-            )
+            ),
           ],
           routes: [
             RouteFile(
@@ -388,15 +408,16 @@ dependencies:
                 params: [],
                 wildcard: false,
               ),
-            ]
+            ],
           },
           serveStaticFiles: true,
         );
         final exitCalls = <int>[];
-        await preGen(
+        await pre_gen.preGen(
           context,
           buildConfiguration: (_) => configuration,
           exit: exitCalls.add,
+          runProcess: successRunProcess,
         );
         expect(exitCalls, isEmpty);
         verifyNever(() => logger.err(any()));
@@ -444,15 +465,19 @@ dependencies:
               }
             ],
             'middleware': [
-              {'name': 'hello_middleware', 'path': 'hello/middleware.dart'}
+              {
+                'name': 'hello_middleware',
+                'path': 'hello/middleware.dart',
+              },
             ],
             'globalMiddleware': {
               'name': 'middleware',
-              'path': 'middleware.dart'
+              'path': 'middleware.dart',
             },
             'serveStaticFiles': true,
             'invokeCustomEntrypoint': false,
             'invokeCustomInit': false,
+            'hasExternalDependencies': false,
             'pathDependencies': <String>[],
             'dartVersion': 'stable',
             'addDockerfile': true,

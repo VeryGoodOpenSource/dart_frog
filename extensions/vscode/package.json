@@ -2,7 +2,7 @@
   "name": "dart-frog",
   "displayName": "Dart Frog",
   "description": "Support for Dart Frog, a minimalistic backend framework.",
-  "version": "0.1.1",
+  "version": "0.2.3",
   "publisher": "VeryGoodVentures",
   "bugs": {
     "url": "https://github.com/VeryGoodOpenSource/dart_frog/issues",
@@ -13,6 +13,7 @@
     "url": "https://github.com/VeryGoodOpenSource/dart_frog"
   },
   "homepage": "https://dartfrog.vgv.dev/",
+  "license": "MIT",
   "engines": {
     "vscode": "^1.79.0"
   },
@@ -34,44 +35,113 @@
   "contributes": {
     "commands": [
       {
-        "command": "extension.create",
+        "command": "dart-frog.create",
         "title": "Dart Frog: Create Project"
       },
       {
-        "command": "extension.install-cli",
+        "command": "dart-frog.install-cli",
         "title": "Dart Frog: Install CLI"
       },
       {
-        "command": "extension.update-cli",
+        "command": "dart-frog.update-cli",
         "title": "Dart Frog: Update CLI"
       },
       {
-        "command": "extension.new-route",
+        "command": "dart-frog.new-route",
         "title": "Dart Frog: New Route"
       },
       {
-        "command": "extension.new-middleware",
+        "command": "dart-frog.new-middleware",
         "title": "Dart Frog: New Middleware"
+      },
+      {
+        "command": "dart-frog.start-daemon",
+        "title": "Dart Frog: Start Daemon"
+      },
+      {
+        "command": "dart-frog.start-dev-server",
+        "title": "Dart Frog: Start Development Server"
+      },
+      {
+        "command": "dart-frog.stop-dev-server",
+        "title": "Dart Frog: Stop Development Server",
+        "icon": {
+          "dark": "./assets/commands/stop-dev-server--dark.svg",
+          "light": "./assets/commands/stop-dev-server--light.svg"
+        }
+      },
+      {
+        "command": "dart-frog.debug-dev-server",
+        "title": "Dart Frog: Debug Development Server"
+      },
+      {
+        "command": "dart-frog.start-debug-dev-server",
+        "title": "Dart Frog: Start and Debug Development Server"
       }
     ],
     "menus": {
       "explorer/context": [
         {
-          "command": "extension.new-route",
+          "command": "dart-frog.new-route",
           "group": "dartFrogGroup@1",
-          "when": "(resourceDirname =~ /routes/ && (explorerResourceIsFolder || resourceExtname == .dart)) || (explorerResourceIsFolder && resourceFilename == routes)"
+          "when": "dart-frog:anyDartFrogProjectLoaded && (resourceDirname =~ /routes/ && (explorerResourceIsFolder || resourceExtname == .dart)) || (explorerResourceIsFolder && resourceFilename == routes)"
         },
         {
-          "command": "extension.new-middleware",
+          "command": "dart-frog.new-middleware",
           "group": "dartFrogGroup@1",
-          "when": "(resourceDirname =~ /routes/ && (explorerResourceIsFolder || resourceExtname == .dart)) || (explorerResourceIsFolder && resourceFilename == routes)"
+          "when": "dart-frog:anyDartFrogProjectLoaded && (resourceDirname =~ /routes/ && (explorerResourceIsFolder || resourceExtname == .dart)) || (explorerResourceIsFolder && resourceFilename == routes)"
         },
         {
-          "command": "extension.create",
+          "command": "dart-frog.create",
           "group": "dartFrogGroup@2",
           "when": "!(resourceDirname =~ /routes/) && !(explorerResourceIsFolder && resourceFilename == routes)"
         }
+      ],
+      "debug/toolBar": [
+        {
+          "command": "dart-frog.stop-dev-server",
+          "group": "navigation@50",
+          "when": "dart-frog:anyDartFrogProjectLoaded && inDebugMode && debugType == dart"
+        }
       ]
+    },
+    "icons": {
+      "dart-frog": {
+        "description": "Dart Frog logo",
+        "default": {
+          "fontPath": "./assets/dart-frog.woff",
+          "fontCharacter": "\\e900"
+        }
+      },
+      "dart-frog-start": {
+        "description": "Dart Frog logo with a start sign",
+        "default": {
+          "fontPath": "./assets/dart-frog.woff",
+          "fontCharacter": "\\e901"
+        }
+      },
+      "dart-frog-stop": {
+        "description": "Dart Frog logo with a stop sign",
+        "default": {
+          "fontPath": "./assets/dart-frog.woff",
+          "fontCharacter": "\\e902"
+        }
+      },
+      "dart-frog-globe": {
+        "description": "Dart Frog logo with a globe sign",
+        "default": {
+          "fontPath": "./assets/dart-frog.woff",
+          "fontCharacter": "\\e903"
+        }
+      }
+    },
+    "configuration": {
+      "properties": {
+        "dart-frog.enableCodeLens": {
+          "type": "boolean",
+          "default": true
+        }
+      }
     }
   },
   "extensionDependencies": [
@@ -87,19 +157,19 @@
   },
   "devDependencies": {
     "@types/glob": "^8.1.0",
-    "@types/mocha": "^10.0.1",
-    "@types/node": "20.4.5",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "20.11.16",
     "@types/vscode": "^1.79.0",
-    "@typescript-eslint/eslint-plugin": "^6.2.1",
-    "@typescript-eslint/parser": "^6.2.1",
-    "@vscode/test-electron": "^2.3.2",
-    "c8": "^8.0.0",
-    "eslint": "^8.46.0",
-    "glob": "^10.3.3",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "@vscode/test-electron": "^2.3.9",
+    "c8": "^9.1.0",
+    "eslint": "^8.56.0",
+    "glob": "^10.3.10",
     "mocha": "^10.2.0",
     "proxyquire": "^2.1.3",
-    "sinon": "^15.1.2",
-    "typescript": "^5.1.6"
+    "sinon": "^17.0.1",
+    "typescript": "^5.3.3"
   },
   "dependencies": {
     "semver": "^7.5.4"

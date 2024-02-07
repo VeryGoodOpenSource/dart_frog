@@ -5,6 +5,7 @@ homepage: https://dartfrog.vgv.dev
 repository: https://github.com/VeryGoodOpenSource/dart_frog
 issue_tracker: https://github.com/VeryGoodOpenSource/dart_frog/issues
 documentation: https://dartfrog.vgv.dev/docs/overview
+topics: [server, backend, dart-frog, websocket]
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -18,4 +19,4 @@ dev_dependencies:
   http: ^1.0.0
   mocktail: ^1.0.0
   test: ^1.19.2
-  very_good_analysis: ^5.0.0
+  very_good_analysis: ^5.1.0

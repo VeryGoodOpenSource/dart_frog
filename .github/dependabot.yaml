@@ -7,11 +7,15 @@ updates:
   - package-ecosystem: "npm"
     directory: "/docs"
     schedule:
-      interval: "daily"
+      interval: "weekly"
   - package-ecosystem: "npm"
     directory: "/extensions/vscode"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+    ignore:
+      # Updating @types/vscode requires unnecessarily bumping the VS Code engine version, see:
+      # https://github.com/VeryGoodOpenSource/dart_frog/issues/1033
+      - dependency-name: "@types/vscode"
   - package-ecosystem: "pub"
     directory: "/bricks/create_dart_frog/hooks"
     schedule:

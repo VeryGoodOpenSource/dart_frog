@@ -1,18 +1,33 @@
 import * as vscode from "vscode";
 import {
-  installCLI,
-  newRoute,
-  newMiddleware,
-  updateCLI,
-  create,
-} from "./commands";
+  DebugOnRequestCodeLensProvider,
+  RunOnRequestCodeLensProvider,
+} from "./code-lens";
 import {
-  readDartFrogCLIVersion,
+  OpenApplicationStatusBarItem,
+  StartStopApplicationStatusBarItem,
+} from "./status-bar";
+import {
+  canResolveDartFrogProjectPath,
   isCompatibleDartFrogCLIVersion,
   isDartFrogCLIInstalled,
   openChangelog,
+  readDartFrogCLIVersion,
   readLatestDartFrogCLIVersion,
+  suggestInstallingDartFrogCLI,
 } from "./utils";
+import {
+  create,
+  debugDevServer,
+  installCLI,
+  newMiddleware,
+  newRoute,
+  startDaemon,
+  startDebugDevServer,
+  startDevServer,
+  stopDevServer,
+  updateCLI,
+} from "./commands";
 
 /**
  * This method is called when the extension is activated.
@@ -27,52 +42,71 @@ import {
  */
 export function activate(
   context: vscode.ExtensionContext,
-  suggestInstallingCLI: () => Promise<void> = suggestInstallingDartFrogCLI,
   ensureCompatibleCLI: () => Promise<void> = ensureCompatibleDartFrogCLI
 ): vscode.ExtensionContext {
   if (!isDartFrogCLIInstalled()) {
-    suggestInstallingCLI();
+    suggestInstallingDartFrogCLI();
   } else {
     ensureCompatibleCLI();
   }
 
+  updateAnyDartFrogProjectLoaded();
+
   context.subscriptions.push(
-    vscode.commands.registerCommand("extension.create", create),
-    vscode.commands.registerCommand("extension.install-cli", installCLI),
-    vscode.commands.registerCommand("extension.update-cli", updateCLI),
-    vscode.commands.registerCommand("extension.new-route", newRoute),
-    vscode.commands.registerCommand("extension.new-middleware", newMiddleware)
+    vscode.window.onDidChangeActiveTextEditor(updateAnyDartFrogProjectLoaded),
+    vscode.workspace.onDidChangeWorkspaceFolders(
+      updateAnyDartFrogProjectLoaded
+    ),
+    vscode.commands.registerCommand("dart-frog.create", create),
+    vscode.commands.registerCommand("dart-frog.install-cli", installCLI),
+    vscode.commands.registerCommand("dart-frog.update-cli", updateCLI),
+    vscode.commands.registerCommand("dart-frog.new-route", newRoute),
+    vscode.commands.registerCommand("dart-frog.new-middleware", newMiddleware),
+    vscode.commands.registerCommand("dart-frog.start-daemon", startDaemon),
+    vscode.commands.registerCommand(
+      "dart-frog.start-dev-server",
+      startDevServer
+    ),
+    vscode.commands.registerCommand("dart-frog.stop-dev-server", stopDevServer),
+    vscode.commands.registerCommand(
+      "dart-frog.debug-dev-server",
+      debugDevServer
+    ),
+    vscode.commands.registerCommand(
+      "dart-frog.start-debug-dev-server",
+      startDebugDevServer
+    ),
+    vscode.languages.registerCodeLensProvider(
+      "dart",
+      new DebugOnRequestCodeLensProvider()
+    ),
+    vscode.languages.registerCodeLensProvider(
+      "dart",
+      new RunOnRequestCodeLensProvider()
+    ),
+    new StartStopApplicationStatusBarItem(),
+    new OpenApplicationStatusBarItem()
   );
+
   return context;
 }
 
 /**
- * Suggests the user to install Dart Frog CLI.
+ * Sets "dart-frog:anyDartFrogProjectLoaded" context to "true" if a Dart Frog
+ * project is loaded in the workspace, or "false" otherwise.
  *
- * This method should be called upon activation of the extension whenever
- * Dart Frog CLI is not installed in the user's system.
+ * This provides "dart-frog:anyDartFrogProjectLoaded" as a custom when clause,
+ * to be used in the "package.json" file to enable or disable commands based on
+ * whether a Dart Frog project is loaded in the workspace.
  *
- * It prompts the user to install Dart Frog CLI. This is optional, the user
- * can choose to install Dart Frog CLI at a later time but the extension may
- * not work as intended until Dart Frog CLI is installed.
- *
- * @see {@link isDartFrogCLIInstalled}, to check if Dart Frog CLI is installed
+ * @see {@link https://code.visualstudio.com/api/references/when-clause-contexts#add-a-custom-when-clause-context} for further details about custom when clause context.
  */
-export async function suggestInstallingDartFrogCLI(): Promise<void> {
-  const selection = await vscode.window.showWarningMessage(
-    "Dart Frog CLI is not installed. Install Dart Frog CLI to use this extension.",
-    "Install Dart Frog CLI",
-    "Ignore"
+function updateAnyDartFrogProjectLoaded(): void {
+  vscode.commands.executeCommand(
+    "setContext",
+    "dart-frog:anyDartFrogProjectLoaded",
+    canResolveDartFrogProjectPath()
   );
-  switch (selection) {
-    case "Install Dart Frog CLI":
-      await installCLI();
-      break;
-    case "Ignore":
-      break;
-    default:
-      break;
-  }
 }
 
 /**

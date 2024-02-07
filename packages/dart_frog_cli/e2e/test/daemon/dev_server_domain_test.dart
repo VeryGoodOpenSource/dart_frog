@@ -86,9 +86,10 @@ void main() {
           params: {
             'workingDirectory': projectDirectory1.path,
             'port': project1Server1Port,
-            'dartVmServicePort': project1Server1Port + 1
+            'dartVmServicePort': project1Server1Port + 1,
           },
         ),
+        timeout: const Duration(seconds: 30),
       );
 
       expect(response.isSuccess, isTrue);
@@ -116,9 +117,10 @@ void main() {
           params: {
             'workingDirectory': projectDirectory2.path,
             'port': project2ServerPort,
-            'dartVmServicePort': project2ServerPort + 1
+            'dartVmServicePort': project2ServerPort + 1,
           },
         ),
+        timeout: const Duration(seconds: 30),
       );
 
       expect(response.isSuccess, isTrue);
@@ -242,20 +244,32 @@ void main() {
       );
     });
 
-    test('stop a dev server on project 1', () async {
-      final response = await daemonStdio.sendDaemonRequest(
-        DaemonRequest(
-          id: '${++requestCount}',
-          domain: 'dev_server',
-          method: 'stop',
-          params: {
-            'applicationId': project1Server1Id,
-          },
+    test('try staggered-stop a dev server on project 1', () async {
+      final (response1, response2) =
+          await daemonStdio.sendStaggeredDaemonRequest(
+        (
+          DaemonRequest(
+            id: '${++requestCount}',
+            domain: 'dev_server',
+            method: 'stop',
+            params: {
+              'applicationId': project1Server1Id,
+            },
+          ),
+          DaemonRequest(
+            id: '${++requestCount}',
+            domain: 'dev_server',
+            method: 'stop',
+            params: {
+              'applicationId': project1Server1Id,
+            },
+          ),
         ),
       );
 
-      expect(response.isSuccess, isTrue);
-      expect(response.result!['exitCode'], equals(0));
+      expect(response1.isSuccess, isTrue);
+      expect(response1.result!['exitCode'], equals(0));
+      expect(response2.isSuccess, isFalse);
     });
 
     test('try to stop same dev server again and expect an error', () async {

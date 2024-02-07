@@ -2,15 +2,19 @@ const cp = require("child_process");
 
 import {
   InputBoxOptions,
-  Uri,
-  window,
   OpenDialogOptions,
   ProgressOptions,
+  Uri,
+  window,
 } from "vscode";
 import {
-  nearestDartFrogProject,
+  isDartFrogCLIInstalled,
+  nearestParentDartFrogProject,
   normalizeRoutePath,
-  resolveDartFrogProjectPathFromWorkspace,
+  quickPickProject,
+  resolveDartFrogProjectPathFromActiveTextEditor,
+  resolveDartFrogProjectPathFromWorkspaceFolders,
+  suggestInstallingDartFrogCLI,
 } from "../utils";
 
 /**
@@ -18,9 +22,11 @@ import {
  *
  * This command is available from the command palette and the context menu.
  *
- * When launching the command from the command palette, the Uri is undefined
- * and the user is prompted to select a valid directory or file to create the
- * route in.
+ * When launching the command from the command palette, the Uri is undefined.
+ * Therefore, the command attempts to resolve a path from the user's active text
+ * editor first and then from the user's workspace folders. If no path can be
+ * resolved from either of those sources, the user is prompted to select a valid
+ * directory or file to create the route in.
  *
  * When launching the command from the context menu, the Uri corresponds to the
  * selected file or directory. Only those directories or dart files under a
@@ -34,14 +40,32 @@ import {
  * @param {Uri | undefined} uri
  */
 export const newRoute = async (uri: Uri | undefined): Promise<void> => {
+  if (!isDartFrogCLIInstalled()) {
+    await suggestInstallingDartFrogCLI(
+      "Running this command requires Dart Frog CLI to be installed."
+    );
+  }
+
   let selectedPath;
   if (uri === undefined) {
-    selectedPath = resolveDartFrogProjectPathFromWorkspace();
+    selectedPath = resolveDartFrogProjectPathFromActiveTextEditor();
 
-    if (selectedPath === undefined) {
+    if (!selectedPath) {
+      const dartFrogProjectsPaths =
+        resolveDartFrogProjectPathFromWorkspaceFolders();
+
+      if (dartFrogProjectsPaths && dartFrogProjectsPaths.length > 0) {
+        const selection = await quickPickProject({}, dartFrogProjectsPaths);
+        if (!selection) {
+          return;
+        }
+        selectedPath = selection;
+      }
+    }
+    if (!selectedPath) {
       selectedPath = await promptForTargetDirectory();
     }
-    if (selectedPath === undefined) {
+    if (!selectedPath) {
       window.showErrorMessage("Please select a valid directory");
       return;
     }
@@ -49,8 +73,8 @@ export const newRoute = async (uri: Uri | undefined): Promise<void> => {
     selectedPath = uri.fsPath;
   }
 
-  const dartFrogProjectPath = nearestDartFrogProject(selectedPath);
-  if (dartFrogProjectPath === undefined) {
+  const dartFrogProjectPath = nearestParentDartFrogProject(selectedPath);
+  if (!dartFrogProjectPath) {
     window.showErrorMessage(
       "No Dart Frog project found in the selected directory"
     );
@@ -130,11 +154,11 @@ function executeDartFrogNewRouteCommand(
   dartFrogProjectPath: string
 ): void {
   cp.exec(
-    `dart_frog new route '${routePath}'`,
+    `dart_frog new route "${routePath}"`,
     {
       cwd: dartFrogProjectPath,
     },
-    function (error: Error, stdout: string, stderr: string) {
+    function (error: Error) {
       if (error) {
         window.showErrorMessage(error.message);
       }

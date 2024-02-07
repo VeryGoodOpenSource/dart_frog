@@ -2,12 +2,13 @@ const cp = require("child_process");
 const path = require("node:path");
 
 import {
+  InputBoxOptions,
+  OpenDialogOptions,
+  ProgressOptions,
   Uri,
   window,
-  InputBoxOptions,
-  ProgressOptions,
-  OpenDialogOptions,
 } from "vscode";
+import { isDartFrogCLIInstalled, suggestInstallingDartFrogCLI } from "../utils";
 
 /**
  * Creates a new Dart Frog project.
@@ -33,6 +34,12 @@ import {
  * @see {@link https://github.com/VeryGoodOpenSource/dart_frog/blob/main/packages/dart_frog_cli/lib/src/commands/create/create.dart Dart Frog CLI `create` command implementation.}
  */
 export const create = async (uri: Uri | undefined): Promise<void> => {
+  if (!isDartFrogCLIInstalled()) {
+    await suggestInstallingDartFrogCLI(
+      "Running this command requires Dart Frog CLI to be installed."
+    );
+  }
+
   let outputDirectory =
     uri === undefined ? await promptForTargetDirectory() : uri.fsPath;
 
@@ -103,11 +110,11 @@ async function executeDartFrogCreateCommand(
   projectName: string
 ): Promise<void> {
   return cp.exec(
-    `dart_frog create '${projectName}'`,
+    `dart_frog create "${projectName}"`,
     {
       cwd: outputDirectory,
     },
-    function (error: Error, stdout: string, stderr: string) {
+    function (error: Error) {
       if (error) {
         window.showErrorMessage(error.message);
       }
