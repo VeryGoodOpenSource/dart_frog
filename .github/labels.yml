@@ -1,0 +1,27 @@
+- name: "product: cli"
+  color: 5a9fe4
+  description: "Issues related to the Dart Frog CLI"
+
+- name: "product: dart frog"
+  color: 5a9fe4
+  description: "Issues related to the Dart Frog core library"
+
+- name: "product: dart frog auth"
+  color: 5a9fe4
+  description: "Issues related to the Dart Frog Auth library"
+
+- name: "product: dart frog gen"
+  color: 5a9fe4
+  description: "Issues related to the Dart Frog Gen library"
+
+- name: "product: dart frog test"
+  color: 5a9fe4
+  description: "Issues related to the Dart Frog Test library"
+
+- name: "product: dart frog web socket"
+  color: 5a9fe4
+  description: "Issues related to the Dart Frog Web Socket library"
+
+- name: "product: vscode extension"
+  color: 5a9fe4
+  description: "Issues related to the Dart Frog VSCode extension"
