@@ -20,7 +20,7 @@ extension on Map<String, String> {
 
 /// Function definition for the predicate function used by Dart Frog Auth
 /// middleware to determine if the request should be authenticated or not.
-typedef Applies = Future<bool> Function(RequestContext);
+typedef Applies = Future<bool> Function(RequestContext context);
 
 Future<bool> _defaultApplies(RequestContext context) async => true;
 
