@@ -33,7 +33,8 @@ class NewCommand extends DartFrogCommand {
   String get name => 'new';
 
   @override
-  final String invocation = 'dart_frog new <route|middleware> "path/to/route"';
+  late final String invocation =
+      'dart_frog new <${subcommands.keys.join('|')}> "path/to/route"';
 
   /// Subcommand for creating a new route.
   @visibleForTesting
@@ -91,12 +92,6 @@ class _NewSubCommand extends DartFrogCommand {
       if (segment.isEmpty) {
         throw UsageException(
           'Route path cannot contain empty segments',
-          '',
-        );
-      }
-      if (segment.contains(r'$')) {
-        throw UsageException(
-          'Route path cannot contain dollar signs',
           '',
         );
       }

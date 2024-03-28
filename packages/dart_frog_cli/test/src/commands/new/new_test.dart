@@ -234,53 +234,6 @@ void main() {
           ),
         );
       });
-
-      test('fails when there dollar signs', () async {
-        final generatorHooks = _MockGeneratorHooks();
-        final directory = Directory.systemTemp.createTempSync();
-
-        when(
-          () => generatorHooks.preGen(
-            vars: any(named: 'vars'),
-            workingDirectory: any(named: 'workingDirectory'),
-            onVarsChanged: any(named: 'onVarsChanged'),
-            logger: any(named: 'logger'),
-          ),
-        ).thenAnswer((_) async {});
-
-        when(
-          () => generatorHooks.postGen(
-            vars: any(named: 'vars'),
-            workingDirectory: any(named: 'workingDirectory'),
-            logger: any(named: 'logger'),
-          ),
-        ).thenAnswer((_) async {});
-
-        when(() => generator.hooks).thenReturn(generatorHooks);
-
-        when(
-          () => generator.generate(any(), vars: any(named: 'vars')),
-        ).thenAnswer((_) async => []);
-
-        Directory('${directory.path}/routes').createSync(recursive: true);
-
-        when(() => argResults.rest).thenReturn(
-          [r'/user/[$id]/route'],
-        );
-
-        command.newRouteCommand.testCwd = directory;
-
-        await expectLater(
-          () async => await command.newRouteCommand.run(),
-          throwsA(
-            isA<UsageException>().having(
-              (p) => p.message,
-              'error message',
-              'Route path cannot contain dollar signs',
-            ),
-          ),
-        );
-      });
     });
 
     test('fails when the route path is empty', () async {
