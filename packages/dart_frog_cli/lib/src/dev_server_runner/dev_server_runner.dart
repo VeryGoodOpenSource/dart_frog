@@ -263,7 +263,7 @@ class DevServerRunner {
 
       final process = _serverProcess = await _startProcess(
         'dart',
-        [enableVmServiceFlag, '--enable-asserts', serverDartFilePath],
+        ['run', enableVmServiceFlag, '--enable-asserts', serverDartFilePath],
         runInShell: true,
       );
 
