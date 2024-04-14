@@ -8,6 +8,7 @@ import 'package:meta/meta.dart';
 typedef ProdServerBuilderConstructor = ProdServerBuilder Function({
   required Logger logger,
   required String dartVersion,
+  required String port,
   required io.Directory workingDirectory,
   required MasonGenerator prodServerBundleGenerator,
 });
@@ -26,6 +27,7 @@ class ProdServerBuilder {
   ProdServerBuilder({
     required this.logger,
     required this.dartVersion,
+    required this.port,
     required this.workingDirectory,
     required this.prodServerBundleGenerator,
     @visibleForTesting
@@ -35,6 +37,9 @@ class ProdServerBuilder {
 
   /// The Dart SDK version used to build the Dockerfile.
   final String dartVersion;
+
+  /// The port number the server should start on.
+  final String port;
 
   /// [Logger] instance used to wrap stdout.
   final Logger logger;
@@ -53,6 +58,7 @@ class ProdServerBuilder {
 
     var vars = <String, dynamic>{
       'dartVersion': dartVersion,
+      'port': port,
     };
 
     logger.detail('[codegen] running pre-gen...');

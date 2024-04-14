@@ -40,6 +40,7 @@ void main() {
           logger: logger,
           prodServerBundleGenerator: generator,
           dartVersion: 'stable',
+          port: '8080',
           workingDirectory: Directory.current,
         ),
         isNotNull,
@@ -51,6 +52,7 @@ void main() {
         final builder = ProdServerBuilder(
           logger: logger,
           dartVersion: 'stable',
+          port: '8080',
           workingDirectory: Directory.current,
           prodServerBundleGenerator: generator,
           runtimeCompatibilityCallback: (_) {
@@ -91,6 +93,7 @@ void main() {
           logger: logger,
           prodServerBundleGenerator: generator,
           dartVersion: 'stable',
+          port: '8080',
           workingDirectory: Directory.current,
           runtimeCompatibilityCallback: (_) {},
         );
