@@ -65,7 +65,7 @@ class ProdServerBuilder {
     await prodServerBundleGenerator.hooks.preGen(
       vars: vars,
       workingDirectory: workingDirectory.path,
-      onVarsChanged: (v) => vars = v,
+      onVarsChanged: (v) => vars..addAll(v),
     );
 
     logger.detail('[codegen] running generate...');
