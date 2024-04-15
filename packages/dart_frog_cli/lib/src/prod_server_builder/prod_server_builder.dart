@@ -56,7 +56,7 @@ class ProdServerBuilder {
   Future<ExitCode> build() async {
     _ensureRuntimeCompatibility(workingDirectory);
 
-    var vars = <String, dynamic>{
+    final vars = <String, dynamic>{
       'dartVersion': dartVersion,
       'port': port,
     };
