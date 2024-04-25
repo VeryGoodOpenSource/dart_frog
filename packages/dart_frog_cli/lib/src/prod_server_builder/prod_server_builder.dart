@@ -27,9 +27,9 @@ class ProdServerBuilder {
   ProdServerBuilder({
     required this.logger,
     required this.dartVersion,
-    required this.port,
     required this.workingDirectory,
     required this.prodServerBundleGenerator,
+    this.port = '8080',
     @visibleForTesting
     RuntimeCompatibilityCallback? runtimeCompatibilityCallback,
   }) : _ensureRuntimeCompatibility =
