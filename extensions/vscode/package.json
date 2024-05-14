@@ -172,7 +172,7 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "semver": "^7.6.0"
+    "semver": "^7.6.2"
   },
   "overrides": {
     "minimatch": "5.1.2"
