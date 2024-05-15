@@ -155,5 +155,5 @@ void main() {
 ```
 
 :::info
-We are stubbing the `context.read` with a real `Request` object so that the `provider` is able to inject the value.
+We are stubbing the `context.request` with a real `Request` object so that the `provider` is able to inject the value.
 :::
