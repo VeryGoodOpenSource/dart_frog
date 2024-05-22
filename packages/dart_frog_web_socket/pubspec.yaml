@@ -12,8 +12,8 @@ environment:
 
 dependencies:
   dart_frog: ^1.0.0
-  shelf_web_socket: ^1.0.3
-  web_socket_channel: ^2.0.0
+  shelf_web_socket: ">=1.0.3 <3.0.0"
+  web_socket_channel: ">=2.0.0 <4.0.0"
 
 dev_dependencies:
   http: ^1.0.0
