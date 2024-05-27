@@ -175,7 +175,6 @@
     "semver": "^7.6.2"
   },
   "overrides": {
-    "minimatch": "5.1.2",
     "path-scurry": "^1.10.4"
   }
 }
