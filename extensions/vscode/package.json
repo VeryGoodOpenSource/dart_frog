@@ -156,12 +156,11 @@
     "test": "rm -rf ./.vscode-test/** && c8 node ./out/test/runTest.js && open coverage/lcov-report/index.html"
   },
   "devDependencies": {
-    "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.6",
     "@types/node": "20.14.0",
     "@types/vscode": "^1.79.0",
-    "@typescript-eslint/eslint-plugin": "^7.9.0",
-    "@typescript-eslint/parser": "^7.10.0",
+    "@typescript-eslint/eslint-plugin": "^7.12.0",
+    "@typescript-eslint/parser": "^7.12.0",
     "@vscode/test-electron": "^2.4.0",
     "c8": "^9.1.0",
     "eslint": "^8.57.0",
