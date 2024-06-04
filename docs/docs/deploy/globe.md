@@ -37,6 +37,10 @@ globe deploy --prod
 
 Congratulations 🎉, you have successfully built and deployed your API on Globe. You can now access your API at the Deployment URL that is available through the Globe dashboard.
 
+## Templates
+
+Globe also provides templates to start your next project quickly with Dart Frog, [check them out here](https://globe.dev/templates?tag=dart-frog).
+
 ## Additional Resources
 
 - [Globe documentation](https://docs.globe.dev/)
