@@ -39,7 +39,7 @@ Congratulations 🎉, you have successfully built and deployed your API on Globe
 
 ## Templates
 
-Globe also provides templates to start your next project quickly with Dart Frog, [check them out here](https://globe.dev/templates?tag=dart-frog).
+Globe also provides templates to start your next project quickly with Dart Frog, [check them out in the Globe templates website](https://globe.dev/templates?tag=dart-frog).
 
 ## Additional Resources
 
