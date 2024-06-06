@@ -18,6 +18,10 @@ on:
       - "packages/dart_frog_cli/test/**"
       - "packages/dart_frog_cli/pubspec.yaml"
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   build:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@v1
