@@ -1,7 +1,3 @@
-# 1.1.1-wip
-
-- chore: optimize `Request.read()`.
-
 # 1.1.0
 
 - feat: support reuse of nested router ([#393](https://github.com/VeryGoodOpenSource/dart_frog/pull/393))
