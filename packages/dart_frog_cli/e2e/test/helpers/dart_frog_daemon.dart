@@ -43,6 +43,7 @@ class DaemonStdioHelper {
   List<Completer<String>> messageCompleters = [];
 
   void _handleStdoutLine(String line) {
+    print(line);
     final messageMatchers = this.messageMatchers;
 
     stdout.writeln('::debug:: <- $line');
