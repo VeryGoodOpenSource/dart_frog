@@ -39,7 +39,9 @@ void main() {
     when(() => context.request).thenReturn(request);
     when(() => request.uri).thenReturn(uri);
     when(() => uri.resolve(any())).thenAnswer(
-      (_) => Uri.parse('http://localhost/todos${_.positionalArguments.first}'),
+      (answer) => Uri.parse(
+        'http://localhost/todos${answer.positionalArguments.first}',
+      ),
     );
     when(() => uri.queryParameters).thenReturn({});
   });
