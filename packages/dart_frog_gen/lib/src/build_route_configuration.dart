@@ -326,7 +326,7 @@ class RouteConfiguration {
   ///
   /// For example:
   ///
-  /// ```
+  /// ```markdown
   /// ├── routes
   /// │   ├── foo
   /// │   │   └── example.dart
@@ -339,7 +339,7 @@ class RouteConfiguration {
   /// Instead, `foo.dart` should be renamed to `index.dart` and placed within
   /// the `foo` directory like:
   ///
-  /// ```
+  /// ```markdown
   /// ├── routes
   /// │   ├── foo
   /// │   │   ├── example.dart
