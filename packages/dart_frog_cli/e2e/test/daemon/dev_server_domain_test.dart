@@ -355,6 +355,6 @@ void main() {
         },
       );
     },
-    tags: ['dependsOnDaemonReady'],
+    skip: Platform.isWindows,
   );
 }

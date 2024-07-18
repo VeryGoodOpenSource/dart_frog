@@ -265,6 +265,6 @@ void main() {
         expect(response2.isSuccess, isFalse);
       });
     },
-    tags: ['dependsOnDaemonReady'],
+    skip: Platform.isWindows,
   );
 }

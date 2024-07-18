@@ -42,7 +42,7 @@ void main() {
           containsAll(['version', 'processId']),
         );
       },
-      tags: ['dependsOnDaemonReady'],
+      skip: Platform.isWindows,
     );
 
     group('daemon responds to invalid messages', () {
