@@ -88,7 +88,14 @@ void main() {
           expect(
             e,
             contains(
-              '''Could not start the VM service: localhost:8181 is already in use.''',
+              '''Could not start the VM service:''',
+            ),
+          );
+
+          expect(
+            e,
+            contains(
+              '''DartDevelopmentServiceException:''',
             ),
           );
         }
