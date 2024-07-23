@@ -171,7 +171,7 @@
     "typescript": "^5.5.3"
   },
   "dependencies": {
-    "semver": "^7.6.2"
+    "semver": "^7.6.3"
   },
   "overrides": {
     "path-scurry": "^1.10.4"
