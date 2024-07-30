@@ -27,12 +27,12 @@ Future<bool> _defaultApplies(RequestContext context) async => true;
 /// Authentication that uses the `Authorization` header with the `Basic` scheme.
 ///
 /// `Basic` scheme expects the header to be in the format:
-/// ```
+/// ```markdown
 /// Authorization: Basic <token>
 /// ```
 ///
 /// Token should be a base64 encoded string of the format:
-/// ```
+/// ```markdown
 /// <username>:<password>
 /// ```
 ///
@@ -99,7 +99,7 @@ Middleware basicAuthentication<T extends Object>({
 /// scheme.
 ///
 /// `Bearer` scheme expects the header to be in the format:
-/// ```
+/// ```markdown
 /// Authorization: Bearer <token>
 /// ```
 ///
