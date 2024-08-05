@@ -88,7 +88,7 @@ final dartFrogProdServerBundle = MasonBundle.fromJson(<String, dynamic>{
     {
       "path": "pubspec.yaml",
       "data":
-          "bmFtZTogZGFydF9mcm9nX3Byb2Rfc2VydmVyX2hvb2tzCnB1Ymxpc2hfdG86IG5vbmUKCmVudmlyb25tZW50OgogIHNkazogIj49My4wLjAgPDQuMC4wIgoKZGVwZW5kZW5jaWVzOgogIGRhcnRfZnJvZ19nZW46IF4yLjAuMAogIGVxdWF0YWJsZTogXjIuMC41CiAgaW86IF4xLjAuMwogIG1hc29uOiBeMC4xLjAtZGV2LjM5CiAgcGF0aDogXjEuOC4xCiAgeWFtbDogXjMuMS4yCgpkZXZfZGVwZW5kZW5jaWVzOgogIG1vY2t0YWlsOiBeMS4wLjAKICB0ZXN0OiBeMS4yNS4wCiAgdmVyeV9nb29kX2FuYWx5c2lzOiBeNS4xLjAK",
+          "bmFtZTogZGFydF9mcm9nX3Byb2Rfc2VydmVyX2hvb2tzCnB1Ymxpc2hfdG86IG5vbmUKCmVudmlyb25tZW50OgogIHNkazogIj49My4wLjAgPDQuMC4wIgoKZGVwZW5kZW5jaWVzOgogIGRhcnRfZnJvZ19nZW46IF4yLjAuMAogIGVxdWF0YWJsZTogXjIuMC41CiAgaW86IF4xLjAuMwogIG1hc29uOiBeMC4xLjAtZGV2LjM5CiAgcGF0aDogXjEuOC4xCiAgeWFtbDogXjMuMS4yCgpkZXZfZGVwZW5kZW5jaWVzOgogIG1vY2t0YWlsOiBeMS4wLjAKICB0ZXN0OiBeMS4yNS4wCiAgdmVyeV9nb29kX2FuYWx5c2lzOiBeNi4wLjAK",
       "type": "text"
     },
     {
