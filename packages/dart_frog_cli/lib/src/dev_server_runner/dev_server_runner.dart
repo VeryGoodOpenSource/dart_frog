@@ -279,12 +279,12 @@ class DevServerRunner {
       }
 
       var hasError = false;
-      process.stderr.listen((_) async {
+      process.stderr.listen((data) async {
         hasError = true;
 
         if (_isReloading) return;
 
-        final message = utf8.decode(_).trim();
+        final message = utf8.decode(data).trim();
         if (message.isEmpty) return;
 
         final isDartVMServiceAlreadyInUseError =
@@ -315,8 +315,8 @@ class DevServerRunner {
         await _target.rollback();
       });
 
-      process.stdout.listen((_) {
-        final message = utf8.decode(_).trim();
+      process.stdout.listen((data) {
+        final message = utf8.decode(data).trim();
         final containsHotReload = message.contains('[hotreload]');
         if (message.isNotEmpty) logger.info(message);
         if (containsHotReload) {
