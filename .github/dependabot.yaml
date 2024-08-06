@@ -25,6 +25,10 @@ updates:
     schedule:
       interval: "daily"
   - package-ecosystem: "pub"
+    directory: "/bricks/dart_frog_new/hooks"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
     directory: "/bricks/dart_frog_prod_server/hooks"
     schedule:
       interval: "daily"

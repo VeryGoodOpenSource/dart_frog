@@ -5,13 +5,14 @@ import 'package:path/path.dart' as path;
 /// If [preferIndex] is true, the path will be converted to a directory path
 /// with an index dart file.
 ///
-/// ```
+/// ```markdown
 /// "/" -> "./routes/index.dart" (if preferIndex is false)
 /// "/" -> "./routes/index.dart" (if preferIndex is true)
 /// "/hello" -> "./routes/hello.dart" (if preferIndex is false)
 /// "/hello" -> "./routes/hello/index.dart" (if preferIndex is true)
 /// "/hello/[name]" -> "./routes/hello/[name].dart" (if preferIndex is false)
 /// "/hello/[name]" -> "./routes/hello/[name]/index.dart" (if preferIndex is true)
+/// ```
 String routeToPath(
   String route, {
   bool preferIndex = false,

@@ -2,7 +2,7 @@ import 'package:path/path.dart' as p;
 
 /// Convert a file path to an API route.
 ///
-/// ```
+/// ```markdown
 /// "../routes/index.dart" -> "/"
 /// "../routes/hello.dart" -> "/hello"
 /// "../routes/hello/world.dart" -> "/hello/world"
