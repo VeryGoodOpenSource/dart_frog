@@ -85,19 +85,16 @@ void main() {
 
           fail('exception not thrown');
         } catch (e) {
+          expect(e.toString(), contains('Could not start the VM service:'));
+
           expect(
-            e,
+            e.toString(),
             contains(
-              '''Could not start the VM service:''',
+              'DartDevelopmentServiceException: Failed to create server socket',
             ),
           );
 
-          expect(
-            e,
-            contains(
-              '''DartDevelopmentServiceException:''',
-            ),
-          );
+          expect(e.toString(), contains('127.0.0.1:8181'));
         }
       },
     );
