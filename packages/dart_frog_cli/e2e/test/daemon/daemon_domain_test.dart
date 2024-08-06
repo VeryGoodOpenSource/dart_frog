@@ -68,7 +68,7 @@ void main() {
         );
       });
 
-      test('daemon process responds to unkown message type', () async {
+      test('daemon process responds to unknown message type', () async {
         await daemonStdio.sendStringMessage('[{}]');
         final protocolError = await daemonStdio.awaitForDaemonEvent(
           'daemon.protocolError',
@@ -79,7 +79,7 @@ void main() {
         );
       });
 
-      test('daemon process responds to unkown message type', () async {
+      test('daemon process responds to unknown message type', () async {
         await daemonStdio.sendStringMessage('[{"id": 0, "method": "foo.bar"}]');
         final protocolError = await daemonStdio.awaitForDaemonEvent(
           'daemon.protocolError',

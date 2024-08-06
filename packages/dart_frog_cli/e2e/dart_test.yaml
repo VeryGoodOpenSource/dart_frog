@@ -1,8 +1,0 @@
-tags:
-  dependsOnDaemonReady:
-    on_os:
-      windows:
-        skip: "Currently failing on windows. Use -P force to force tests."
-        presets:
-          force: 
-            skip: false
