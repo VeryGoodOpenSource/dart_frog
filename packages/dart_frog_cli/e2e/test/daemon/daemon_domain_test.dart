@@ -32,18 +32,13 @@ void main() {
   });
 
   group('daemon domain', () {
-    test(
-      'daemon is ready',
-      () async {
-        final readyEvent =
-            await daemonStdio.awaitForDaemonEvent('daemon.ready');
-        expect(
-          readyEvent.params?.keys,
-          containsAll(['version', 'processId']),
-        );
-      },
-      skip: Platform.isWindows,
-    );
+    test('daemon is ready', () async {
+      final readyEvent = await daemonStdio.awaitForDaemonEvent('daemon.ready');
+      expect(
+        readyEvent.params?.keys,
+        containsAll(['version', 'processId']),
+      );
+    });
 
     group('daemon responds to invalid messages', () {
       test('daemon responds to an invalid message', () async {
