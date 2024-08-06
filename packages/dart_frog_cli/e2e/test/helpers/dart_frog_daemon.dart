@@ -66,7 +66,7 @@ class DaemonStdioHelper {
   /// Awaits for a daemon event with the given [methodKey].
   Future<DaemonEvent> awaitForDaemonEvent(
     String methodKey, {
-    Duration timeout = const Duration(seconds: 1),
+    Duration timeout = _defaultTimeout,
     Matcher? withParamsThat,
   }) async {
     var wrappedMatcher = isA<DaemonEvent>()
@@ -91,7 +91,7 @@ class DaemonStdioHelper {
   /// Awaits for a daemon message that matches the given [messageMatcher].
   Future<DaemonMessage> awaitForDaemonMessage(
     Matcher messageMatcher, {
-    Duration timeout = const Duration(seconds: 1),
+    Duration timeout = _defaultTimeout,
   }) async {
     final wrappedMatcher = _MatchMessageToStdoutLine(messageMatcher);
 
@@ -106,7 +106,7 @@ class DaemonStdioHelper {
   /// Awaits for a string message that matches the given [messageMatcher].
   Future<String> awaitForStringMessage(
     Matcher messageMatcher, {
-    Duration timeout = const Duration(seconds: 1),
+    Duration timeout = _defaultTimeout,
   }) async {
     messageMatchers.add(messageMatcher);
 
@@ -116,7 +116,7 @@ class DaemonStdioHelper {
     }).firstOrNull;
 
     if (existingItem case (final int itemIndex, final String itemValue)) {
-      // if there is a matching message in the cache,
+      // If there is a matching message in the cache,
       // remove all the previous messages from the cache and
       // return the matching message.
       _pastMessagesCache = _pastMessagesCache.skip(itemIndex + 1).toList();
@@ -124,7 +124,7 @@ class DaemonStdioHelper {
       return itemValue;
     }
 
-    // if there is no matching message in the cache,
+    // If there is no matching message in the cache,
     // create a completer and wait for the message to be received
     // or for the timeout to expire.
 
@@ -157,7 +157,7 @@ class DaemonStdioHelper {
   /// [TimeoutException] if the timeout expires.
   Future<DaemonResponse> sendDaemonRequest(
     DaemonRequest request, {
-    Duration timeout = const Duration(seconds: 10),
+    Duration timeout = _defaultTimeout,
   }) async {
     final json = jsonEncode(request.toJson());
 
@@ -183,7 +183,7 @@ class DaemonStdioHelper {
   /// [TimeoutException] if the timeout expires.
   Future<(DaemonResponse, DaemonResponse)> sendStaggeredDaemonRequest(
     (DaemonRequest, DaemonRequest) requests, {
-    Duration timeout = const Duration(seconds: 10),
+    Duration timeout = _defaultTimeout,
   }) async {
     final request1 = requests.$1;
     final request2 = requests.$2;
@@ -230,6 +230,8 @@ class DaemonStdioHelper {
   void dispose() {
     subscription.cancel();
   }
+
+  static const _defaultTimeout = Duration(seconds: 10);
 }
 
 /// A matcher that matches a [DaemonMessage] to a daemon stdout line.
