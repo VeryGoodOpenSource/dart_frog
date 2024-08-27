@@ -12,7 +12,6 @@
     "curly": "warn",
     "eqeqeq": "warn",
     "no-throw-literal": "warn",
-    "semi": "off",
     "max-len": [
       "error",
       {
