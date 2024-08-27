@@ -1,5 +1,7 @@
 [<img src="https://raw.githubusercontent.com/VeryGoodOpenSource/dart_frog/main/docs/static/img/dart_frog.png" align="left" />](https://dartfrog.vgv.dev/)
 
+### Dart Frog CLI
+
 <br clear="left"/>
 
 [![ci][ci_badge]][ci_link]
