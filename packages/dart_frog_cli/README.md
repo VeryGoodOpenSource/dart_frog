@@ -1,5 +1,5 @@
-[![Dart Frog Logo][logo_white]][dart_frog_link_dark]
-[![Dart Frog Logo][logo_black]][dart_frog_link_light]
+[<img src="https://raw.githubusercontent.com/VeryGoodOpenSource/dart_frog/main/docs/static/img/dart_frog_full_logo.svg" align="left" />](https://dartfrog.vgv.dev/)
+
 
 [![ci][ci_badge]][ci_link]
 [![coverage][coverage_badge]][ci_link]
