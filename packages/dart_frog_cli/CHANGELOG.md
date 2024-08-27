@@ -1,3 +1,10 @@
+# 1.2.3
+
+- chore: bump cli_completion from 0.4.0 to 0.5.0 in /packages/dart_frog_cli ([#1288](https://github.com/VeryGoodOpenSource/dart_frog/pull/1288))
+- fix: allow `$` in new commands ([#1321](https://github.com/VeryGoodOpenSource/dart_frog/pull/1321))
+- chore: bump mason from 0.1.0-dev.53 to 0.1.0-dev.57 in /packages/dart_frog_cli ([#1351](https://github.com/VeryGoodOpenSource/dart_frog/pull/1351), [#1404](https://github.com/VeryGoodOpenSource/dart_frog/pull/1404))
+- feat: update cli bundles ([#1380](https://github.com/VeryGoodOpenSource/dart_frog/pull/1380))
+
 # 1.2.2
 
 - feat: update cli bundles ([#1278](https://github.com/VeryGoodOpenSource/dart_frog/pull/1278))
