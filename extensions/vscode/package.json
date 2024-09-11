@@ -152,7 +152,7 @@
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
-    "lint": "eslint src --ext ts",
+    "lint": "eslint src",
     "test": "rm -rf ./.vscode-test/** && c8 node ./out/test/runTest.js && open coverage/lcov-report/index.html"
   },
   "devDependencies": {
