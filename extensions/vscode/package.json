@@ -152,7 +152,7 @@
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
-    "lint": "eslint src --ext ts",
+    "lint": "eslint src",
     "test": "rm -rf ./.vscode-test/** && c8 node ./out/test/runTest.js && open coverage/lcov-report/index.html"
   },
   "devDependencies": {
@@ -163,7 +163,7 @@
     "@typescript-eslint/parser": "^8.5.0",
     "@vscode/test-electron": "^2.4.1",
     "c8": "^10.1.2",
-    "eslint": "^8.57.0",
+    "eslint": "^9.10.0",
     "glob": "^11.0.0",
     "mocha": "^10.7.3",
     "proxyquire": "^2.1.3",

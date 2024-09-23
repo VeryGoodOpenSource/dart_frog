@@ -76,7 +76,6 @@ abstract class RegularExpressionCodeLensProvider extends ConfigurableCodeLensPro
 // eslint-disable-next-line max-len
 abstract class OnRequestCodeLensProvider extends RegularExpressionCodeLensProvider {
   readonly regex: RegExp =
-    // eslint-disable-next-line max-len
     /(Response|Future<Response>|FutureOr<Response>)\s*onRequest\(.*?/g;
 
   public provideCodeLenses(document: TextDocument): ProviderResult<CodeLens[]> {
