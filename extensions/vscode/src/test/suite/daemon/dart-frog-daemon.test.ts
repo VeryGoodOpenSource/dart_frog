@@ -8,7 +8,6 @@ import { RequestVersionDaemonRequest } from "../../../daemon";
 
 suite("DartFrogDaemon", () => {
   let childProcessStub: any;
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   let dartFrogDaemon: any;
 
   beforeEach(() => {
