@@ -8,6 +8,7 @@
     "rootDir": "src",
     "strict": true,
     "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "strictBuiltinIteratorReturn": false
   }
 }
