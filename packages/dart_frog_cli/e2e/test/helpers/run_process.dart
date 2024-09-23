@@ -17,7 +17,7 @@ Future<ProcessResult> runProcess(
     runInShell: runInShell,
   );
 
-  if (result.exitCode != 0) {
+  if (result.exitCode != 0 || _isNotEmpty(result.stderr)) {
     final commandLine = [executable, ...arguments].join(' ');
 
     throw RunProcessException(
@@ -27,6 +27,12 @@ Future<ProcessResult> runProcess(
   }
 
   return result;
+}
+
+bool _isNotEmpty(dynamic data) {
+  if (data is String) return data.isNotEmpty;
+  if (data is List) return data.isNotEmpty;
+  return false;
 }
 
 class RunProcessException implements Exception {

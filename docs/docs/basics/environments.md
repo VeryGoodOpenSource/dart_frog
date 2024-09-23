@@ -31,7 +31,7 @@ When running the server, these environment variables can be passed along directl
 Development server:
 
 ```bash
-DB_URL=... DB_USER=... DB_PASSWORD=... dart_frog server
+DB_URL=... DB_USER=... DB_PASSWORD=... dart_frog dev
 ```
 
 Production server:
