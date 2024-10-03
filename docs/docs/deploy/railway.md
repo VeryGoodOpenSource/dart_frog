@@ -5,11 +5,11 @@ title: 🛤️ Railway
 
 # Railway 🛤️
 
-[Railway](https://railway.app) is a cloud platform that can build, deploy, and monitor your http applications with minimal setup. It embraces private networks so you can link databases with other services easily and securely without needing much knowledge of network security. It also features:
+[Railway](https://railway.app) is a cloud platform that can build, deploy, and monitor your HTTP applications (like APIs made with Dart Frog) with minimal setup. It embraces private networks so you can link databases with other services easily and securely without needing much knowledge of network security. It also features:
 
 - Secret management
 - Autoscaling (both vertically and horizontally), as well as sleeping services when not in use.
-- Auto deployment from Github
+- Auto deployment from GitHub
 - Usage based pricing
 - Hundreds of templates for quickly deploying ready-to-use software
 - Health checks, instant rollbacks, environments, and more
@@ -33,14 +33,14 @@ dev_dependencies:
 ```
 
 :::note
-This guide will show you how to auto-build-and-deploy to Railway using it's integrated build system. However, Railway is also able to deploy pre-built Docker images; so, you can build your application in an external system (like Github Actions) and [deploy to Railway with that image](https://docs.railway.app/overview/the-basics#services).
+This guide will show you how to auto-build-and-deploy to Railway using it's integrated build system. However, Railway is also able to deploy pre-built Docker images. If you rather, you could build your application in an external system (like GitHub Actions) and [deploy to Railway with that image](https://docs.railway.app/overview/the-basics#services).
 :::
 
 ## Deploying
 
 ### 1. Create the Service
 
-To start, in your Railway project, [create a new service connected to your repository](https://docs.railway.app/guides/services#creating-a-service). You'll have to connect to your Github account to select the repository.
+To start, in your Railway project, [create a new service connected to your repository](https://docs.railway.app/guides/services#creating-a-service). You'll have to connect to your GitHub account to select the repository.
 
 :::tip
 If your repository is a _monorepo_ and your Dart Frog project is not the project's root directory, you can specify it's directory in the `Add Root Directory` setting under the `Source Repo` settings.
@@ -49,9 +49,10 @@ If your repository is a _monorepo_ and your Dart Frog project is not the project
 ### 2. Configure the Settings
 
 Scroll to the `Build` section. Adjust these settings: - For `Providers`, Railway should have already detected `Dart` as the language. If it hasn't, add it using the plus button. - For `Custom Build Command`, enter the following command, then click the checkmark to save the setting.
-`bash
-    dart run dart_frog_cli:dart_frog build && dart compile exe build/bin/server.dart -o build/bin/server
-    `
+
+```bash
+dart run dart_frog_cli:dart_frog build && dart compile exe build/bin/server.dart -o build/bin/server
+```
 
 Scroll to the `Deploy` section. For `Custom Build Command`, set the value the following command, then click the checkmark to save the setting.
 
