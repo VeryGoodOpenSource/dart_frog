@@ -29,7 +29,7 @@ In addition, your Dart Frog project must include `dart_frog_cli` in your `dev_de
 
 ```yaml
 dev_dependencies:
-  dart_frog_cli: ^1.2.3
+  dart_frog_cli:
 ```
 
 :::note
