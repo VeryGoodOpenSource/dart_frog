@@ -21,7 +21,8 @@
     "hotreload",
     "intelli",
     "sigint",
-    "devserver"
+    "devserver",
+    "nixpacks"
   ],
   "ignoreWords": ["cleverapps", "WORKDIR"]
 }
