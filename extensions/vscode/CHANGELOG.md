@@ -1,3 +1,7 @@
+# 0.2.4
+
+- Housekeeping and maintenance updates.
+
 # 0.2.3
 
 - chore(deps-dev): bump @types/node from 20.6.0 to 20.6.2 in /extensions/vscode ([#1054](https://github.com/VeryGoodOpenSource/dart_frog/pull/1054))
