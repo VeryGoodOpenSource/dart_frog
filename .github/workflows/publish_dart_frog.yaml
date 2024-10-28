@@ -1,0 +1,16 @@
+name: publish_dart_frog
+
+on:
+  push:
+    tags:
+      - "dart_frog-v*.*.*"
+
+jobs:
+  publish:
+    permissions:
+      id-token: write # Required for authentication using OIDC
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_pub_publish.yml@v1
+    with:
+      working_directory: "packages/dart_frog"
+    secrets:
+      pub_credentials: ${{ secrets.PUB_CREDENTIALS }}
