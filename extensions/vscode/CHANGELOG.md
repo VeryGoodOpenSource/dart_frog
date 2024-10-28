@@ -1,6 +1,7 @@
 # 0.2.4
 
-- Housekeeping and maintenance updates.
+- chore(deps): bump semver from 7.5.4 to 7.6.3 in /extensions/vscode ([#1459](https://github.com/VeryGoodOpenSource/dart_frog/pull/1459))
+- chore(deps-dev): multiple housekeeping and maintenance updates
 
 # 0.2.3
 
