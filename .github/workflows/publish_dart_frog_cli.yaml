@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - "dart_frog_cli-v*.*.*"
+  workflow_dispatch:
 
 jobs:
   publish:
