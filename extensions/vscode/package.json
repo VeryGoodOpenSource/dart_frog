@@ -2,7 +2,7 @@
   "name": "dart-frog",
   "displayName": "Dart Frog",
   "description": "Support for Dart Frog, a minimalistic backend framework.",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "publisher": "VeryGoodVentures",
   "bugs": {
     "url": "https://github.com/VeryGoodOpenSource/dart_frog/issues",
@@ -157,10 +157,10 @@
   },
   "devDependencies": {
     "@types/mocha": "^10.0.9",
-    "@types/node": "22.7.7",
+    "@types/node": "22.8.2",
     "@types/vscode": "^1.79.0",
-    "@typescript-eslint/eslint-plugin": "^8.11.0",
-    "@typescript-eslint/parser": "^8.11.0",
+    "@typescript-eslint/eslint-plugin": "^8.12.0",
+    "@typescript-eslint/parser": "^8.12.0",
     "@vscode/test-electron": "^2.4.1",
     "c8": "^10.1.2",
     "eslint": "^9.13.0",

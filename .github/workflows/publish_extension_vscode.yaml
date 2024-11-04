@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - "vscode-v*.*.*"
+  workflow_dispatch:
 
 jobs:
   publish_extension:
@@ -17,10 +18,12 @@ jobs:
       - name: 📚 Git Checkout
         uses: actions/checkout@v4
 
-      - name: ⚙️ Setup Node
+      - name: 🎯 Setup Node.js (18.x)
         uses: actions/setup-node@v4
         with:
-          node-version: lts
+          node-version: 18.x
+          cache: "npm"
+          cache-dependency-path: extensions/vscode/package-lock.json
 
       - name: 🎉 Publish VS Code Extension
         run: |
