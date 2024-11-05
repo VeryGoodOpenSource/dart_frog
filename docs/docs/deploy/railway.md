@@ -52,7 +52,7 @@ Scroll to the `Build` section. Adjust these settings: - For `Providers`, Railway
 dart run dart_frog_cli:dart_frog build && dart compile exe build/bin/server.dart -o build/bin/server
 ```
 
-Scroll to the `Deploy` section. For `Custom Build Command`, set the value the following command, then click the checkmark to save the setting.
+Scroll to the `Deploy` section. For `Custom Start Command`, set the value the following command, then click the checkmark to save the setting.
 
 ```bash
 ./build/bin/server
