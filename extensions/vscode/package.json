@@ -2,7 +2,7 @@
   "name": "dart-frog",
   "displayName": "Dart Frog",
   "description": "Support for Dart Frog, a minimalistic backend framework.",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "publisher": "VeryGoodVentures",
   "bugs": {
     "url": "https://github.com/VeryGoodOpenSource/dart_frog/issues",
