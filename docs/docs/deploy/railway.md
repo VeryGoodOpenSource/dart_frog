@@ -14,7 +14,7 @@ title: 🛤️ Railway
 - Hundreds of templates for quickly deploying ready-to-use software
 - Health checks, instant rollbacks, environments, and more
 
-This guide will show you how to auto-build-and-deploy to Railway using it's integrated build system. However, Railway is also able to deploy pre-built Docker images. If you rather, you could build your application in an external system (like GitHub Actions) and [deploy to Railway with that image](https://docs.railway.app/overview/the-basics#services).
+This guide will show you how to auto-build-and-deploy to Railway using it's integrated build system. However, Railway is also able to deploy pre-built Docker images. You could also build your application in an external system (like GitHub Actions) and [deploy to Railway with that image](https://docs.railway.app/overview/the-basics#services).
 
 ## Prerequisites
 
