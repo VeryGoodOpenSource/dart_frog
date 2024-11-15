@@ -1,3 +1,7 @@
+# 0.2.6
+
+- chore(deps-dev): multiple housekeeping and maintenance updates
+
 # 0.2.5
 
 - chore(deps-dev): multiple housekeeping and maintenance updates
