@@ -520,9 +520,8 @@ void main() {
             HttpStatus.ok,
           ),
         );
-        final captured = verify(() => context.provide<_User>(captureAny()))
-            .captured
-            .single;
+        final captured =
+            verify(() => context.provide<_User>(captureAny())).captured.single;
         expect(
           (captured as _User Function()).call(),
           equals(user),
