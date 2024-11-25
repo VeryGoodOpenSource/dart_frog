@@ -156,7 +156,7 @@
     "test": "rm -rf ./.vscode-test/** && c8 node ./out/test/runTest.js && open coverage/lcov-report/index.html"
   },
   "devDependencies": {
-    "@types/mocha": "^10.0.9",
+    "@types/mocha": "^10.0.10",
     "@types/node": "22.9.0",
     "@types/vscode": "^1.79.0",
     "@typescript-eslint/eslint-plugin": "^8.15.0",
