@@ -100,7 +100,9 @@ void main() {
                 final containsError = message.contains(
                   'Could not find an option named ',
                 );
-                final contiansInvalidOption = message.contains(
+                // The message should contain the invalid option name but is
+                // differet based on the platform it's running on.
+                final containsInvalidOption = message.contains(
                       '"invalid-option"',
                     ) ||
                     message.contains(
@@ -109,7 +111,7 @@ void main() {
                 final containsUsage = message.contains(
                   'Usage: dart_frog <command> [arguments]',
                 );
-                return containsError && contiansInvalidOption && containsUsage;
+                return containsError && containsInvalidOption && containsUsage;
               }),
             ),
           ),
