@@ -122,7 +122,7 @@ Handler middleware(Handler handler) {
   return handler
       .use(requestLogger())
       .use(
-        bearerTokenAuthentication<User>(
+        bearerAuthentication<User>(
           authenticator: (context, token) {
             final userRepository = context.read<UserRepository>();
             return userRepository.fetchFromAccessToken(token);
