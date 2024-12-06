@@ -98,12 +98,20 @@ void main() {
             any(
               that: predicate<String>((message) {
                 final containsError = message.contains(
-                  'Could not find an option named "invalid-option".',
+                  'Could not find an option named ',
                 );
+                // The message should contain the invalid option name but is
+                // differet based on the platform it's running on.
+                final containsInvalidOption = message.contains(
+                      '"invalid-option"',
+                    ) ||
+                    message.contains(
+                      '"--invalid-option"',
+                    );
                 final containsUsage = message.contains(
                   'Usage: dart_frog <command> [arguments]',
                 );
-                return containsError && containsUsage;
+                return containsError && containsInvalidOption && containsUsage;
               }),
             ),
           ),
