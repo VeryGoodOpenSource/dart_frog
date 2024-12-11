@@ -1,6 +1,6 @@
 # 1.2.0
 
-- feat(dart_frog_auth): add cookie authentication ([#1600](https://github.com/VeryGoodOpenSource/dart_frog/pull/1600))
+- feat: add cookie authentication ([#1600](https://github.com/VeryGoodOpenSource/dart_frog/pull/1600))
 - refactor(dart_frog_auth): added argument name to the Applies typedef ([#1317](https://github.com/VeryGoodOpenSource/dart_frog/pull/1317))
 - fix: auth topics ([#949](https://github.com/VeryGoodOpenSource/dart_frog/pull/949))
 - chore(packages): bump very good analysis ([#983](https://github.com/VeryGoodOpenSource/dart_frog/pull/983))
