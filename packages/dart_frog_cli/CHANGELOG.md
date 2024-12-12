@@ -1,3 +1,7 @@
+# 1.2.5
+
+- fix: update mason version in cli ([#1622](https://github.com/VeryGoodOpenSource/dart_frog/pull/1622))
+
 # 1.2.4
 
 - chore(deps): tighten dependencies ([#1489](https://github.com/VeryGoodOpenSource/dart_frog/pull/1489))
