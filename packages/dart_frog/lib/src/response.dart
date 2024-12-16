@@ -95,7 +95,7 @@ class Response {
           encoding: encoding,
         );
 
-  /// A [shelf.Response.context] key used to determine if if the
+  /// A `shelf.Response.context` key used to determine if if the
   /// [HttpResponse.bufferOutput] should be enabled or disabled.
   ///
   /// See also:
