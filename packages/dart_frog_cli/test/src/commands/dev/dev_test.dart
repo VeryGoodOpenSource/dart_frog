@@ -165,7 +165,6 @@ void main() {
       when(() => argResults['hostname']).thenReturn('ticarica');
       when(() => argResults['port']).thenReturn('1234');
       when(() => argResults['dart-vm-service-port']).thenReturn('5678');
-      when(() => argResults.rest).thenReturn(['--enable-experiment=macros']);
 
       final cwd = Directory.systemTemp;
 
