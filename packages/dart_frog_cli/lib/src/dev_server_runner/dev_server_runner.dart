@@ -233,7 +233,7 @@ class DevServerRunner {
   ///
   /// This method will throw a [DartFrogDevServerException] if called after
   /// [stop] has been called.
-  Future<void> start() async {
+  Future<void> start([List<String> arguments = const []]) async {
     if (isCompleted) {
       throw DartFrogDevServerException(
         'Cannot start a dev server after it has been stopped.',
@@ -258,12 +258,17 @@ class DevServerRunner {
       );
 
       logger.detail(
-        '''[process] dart $enableVmServiceFlag $serverDartFilePath''',
+        '''[process] dart $enableVmServiceFlag $serverDartFilePath ${arguments.join(' ')}''',
       );
 
       final process = _serverProcess = await _startProcess(
         'dart',
-        [enableVmServiceFlag, '--enable-asserts', serverDartFilePath],
+        [
+          enableVmServiceFlag,
+          '--enable-asserts',
+          ...arguments,
+          serverDartFilePath,
+        ],
         runInShell: true,
       );
 

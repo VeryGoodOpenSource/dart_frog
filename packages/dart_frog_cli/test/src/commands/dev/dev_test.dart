@@ -45,7 +45,7 @@ void main() {
     });
 
     test('run the dev server with the given parameters', () async {
-      when(() => runner.start()).thenAnswer((_) => Future.value());
+      when(() => runner.start(any())).thenAnswer((_) => Future.value());
       when(() => runner.exitCode).thenAnswer(
         (_) => Future.value(ExitCode.success),
       );
@@ -53,6 +53,7 @@ void main() {
       when(() => argResults['hostname']).thenReturn('192.168.1.2');
       when(() => argResults['port']).thenReturn('1234');
       when(() => argResults['dart-vm-service-port']).thenReturn('5678');
+      when(() => argResults.rest).thenReturn(['--enable-experiment=macros']);
 
       final cwd = Directory.systemTemp;
 
@@ -90,7 +91,9 @@ void main() {
 
       await expectLater(command.run(), completion(ExitCode.success.code));
 
-      verify(() => runner.start()).called(1);
+      verify(
+        () => runner.start(any(that: equals(['--enable-experiment=macros']))),
+      ).called(1);
 
       expect(givenPort, equals('1234'));
       expect(givenAddress, InternetAddress.tryParse('192.168.1.2'));
@@ -119,12 +122,12 @@ void main() {
         ..testArgResults = argResults
         ..testStdin = stdin;
 
-      when(() => runner.start()).thenAnswer((_) => Future.value());
+      when(() => runner.start(any())).thenAnswer((_) => Future.value());
       when(() => runner.exitCode).thenAnswer(
         (_) => Future.value(ExitCode.success),
       );
 
-      when(() => runner.start()).thenAnswer((_) => Future.value());
+      when(() => runner.start(any())).thenAnswer((_) => Future.value());
       when(() => runner.exitCode).thenAnswer((_) async => ExitCode.unavailable);
 
       await expectLater(command.run(), completion(ExitCode.unavailable.code));
@@ -149,7 +152,7 @@ void main() {
         ..testArgResults = argResults
         ..testStdin = stdin;
 
-      when(() => runner.start()).thenAnswer((_) async {
+      when(() => runner.start(any())).thenAnswer((_) async {
         throw DartFrogDevServerException('oops');
       });
 
@@ -158,7 +161,7 @@ void main() {
     });
 
     test('fails if hostname is invalid', () async {
-      when(() => runner.start()).thenAnswer((_) => Future.value());
+      when(() => runner.start(any())).thenAnswer((_) => Future.value());
       when(() => runner.exitCode).thenAnswer(
         (_) => Future.value(ExitCode.success),
       );
@@ -166,6 +169,7 @@ void main() {
       when(() => argResults['hostname']).thenReturn('ticarica');
       when(() => argResults['port']).thenReturn('1234');
       when(() => argResults['dart-vm-service-port']).thenReturn('5678');
+      when(() => argResults.rest).thenReturn(['--enable-experiment=macros']);
 
       final cwd = Directory.systemTemp;
 
@@ -196,7 +200,7 @@ void main() {
         ),
       ).called(1);
 
-      verifyNever(() => runner.start());
+      verifyNever(() => runner.start(any()));
     });
 
     group('listening to stdin', () {
@@ -233,7 +237,7 @@ void main() {
           ),
         );
 
-        when(() => runner.start()).thenAnswer((_) => Future.value());
+        when(() => runner.start(any())).thenAnswer((_) => Future.value());
 
         when(() => runner.reload()).thenAnswer((_) => Future.value());
         when(() => runner.exitCode).thenAnswer(
@@ -332,9 +336,9 @@ void main() {
       });
 
       test('cancels subscription when dev server throws', () async {
-        final startComplter = Completer<void>();
-        when(() => runner.start()).thenAnswer((_) async {
-          await startComplter.future;
+        final startCompleter = Completer<void>();
+        when(() => runner.start(any())).thenAnswer((_) async {
+          await startCompleter.future;
         });
 
         command.run().ignore();
@@ -347,7 +351,7 @@ void main() {
         verify(() => stdin.echoMode = false).called(1);
         verify(() => stdin.lineMode = false).called(1);
 
-        startComplter.completeError(Exception('oops'));
+        startCompleter.completeError(Exception('oops'));
         await Future<void>.delayed(Duration.zero);
 
         expect(stdinController.hasListener, isFalse);
