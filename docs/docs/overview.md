@@ -54,7 +54,7 @@ To customize the running dev server, you can use the following options:
 - `--dart-vm-service-port` - The port to run the Dart VM service on. Defaults to `8181`. This is required when trying to run multiple dev servers simultaneously on the same host.
 - `--host` - The host to run the dev server on. Defaults to `localhost`.
 - or if you need to pass a custom parameter, you can use do `dart_frog dev -- --enable-experiment=macros`.
-:::
+  :::
 
 :::caution
 Each release of the `dart_frog_cli` supports a specific version range of the `dart_frog` runtime. If the current version of the `dart_frog` runtime is incompatible with the installed `dart_frog_cli` version, an error will be reported and you will need to update your `dart_frog_cli` version or `dart_frog` version accordingly.
