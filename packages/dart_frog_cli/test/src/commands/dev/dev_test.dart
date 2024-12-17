@@ -36,6 +36,7 @@ void main() {
       when<dynamic>(() => argResults['port']).thenReturn('8080');
       when<dynamic>(() => argResults['dart-vm-service-port'])
           .thenReturn('8181');
+      when(() => argResults.rest).thenReturn(['--enable-experiment=macros']);
       when(() => stdin.hasTerminal).thenReturn(false);
     });
 
@@ -121,11 +122,6 @@ void main() {
       )
         ..testArgResults = argResults
         ..testStdin = stdin;
-
-      when(() => runner.start(any())).thenAnswer((_) => Future.value());
-      when(() => runner.exitCode).thenAnswer(
-        (_) => Future.value(ExitCode.success),
-      );
 
       when(() => runner.start(any())).thenAnswer((_) => Future.value());
       when(() => runner.exitCode).thenAnswer((_) async => ExitCode.unavailable);
