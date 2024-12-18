@@ -115,7 +115,7 @@ class DevServerDomain extends DomainBase {
           'applicationId': applicationId,
         },
       );
-    } catch (e) {
+    } on Exception catch (e) {
       return DaemonResponse.error(
         id: request.id,
         error: {
