@@ -183,7 +183,7 @@ class RouteConfigurationDomain extends DomainBase {
           'exitCode': exitCode.code,
         },
       );
-    } catch (e) {
+    } on Exception catch (e) {
       if (!watcher.isCompleted) {
         _routeConfigurationWatchers[watcherId] = watcher;
       }
