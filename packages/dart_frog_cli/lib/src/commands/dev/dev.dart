@@ -131,7 +131,7 @@ class DevCommand extends DartFrogCommand {
     );
 
     try {
-      await _devServerRunner.start();
+      await _devServerRunner.start(results.rest);
       return (await _devServerRunner.exitCode).code;
     } catch (e) {
       logger.err(e.toString());
