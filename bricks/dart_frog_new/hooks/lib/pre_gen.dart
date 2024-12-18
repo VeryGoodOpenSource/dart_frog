@@ -29,7 +29,7 @@ void preGen(
   final RouteConfiguration routeConfiguration;
   try {
     routeConfiguration = buildConfiguration(projectDirectory);
-  } catch (error) {
+  } on Exception catch (error) {
     context.logger.err('$error');
     return exit(1);
   }
