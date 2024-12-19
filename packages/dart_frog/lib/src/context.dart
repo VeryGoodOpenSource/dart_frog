@@ -43,6 +43,21 @@ This can happen if $T was not provided to the request context:
     return (value as T Function())();
   }
 
+  /// Attempt to lookup an instance of [T] from the [request] context.
+  ///
+  /// Returns `null` if [T] is not available within the provided
+  /// [request] context.
+  T? tryRead<T>() {
+    try {
+      return read<T>();
+      // Explicitly catching [StateError] as it's what it throw
+      // when [read] fails
+      // ignore: avoid_catching_errors
+    } on StateError catch (_) {
+      return null;
+    }
+  }
+
   /// Get URL parameters captured by the [Router.mount].
   /// They can be accessed from inside the mounted routes.
   Map<String, String> get mountedParams {
