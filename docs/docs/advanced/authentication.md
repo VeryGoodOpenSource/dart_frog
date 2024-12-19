@@ -248,6 +248,7 @@ Handler middleware(Handler handler) {
 In the above example, only routes that are not `POST` will have authentication checked.
 
 ### Custom Authenticated Responses
+
 In some applications, you'll wish to send a custom response when the request is unauthenticated.
 For example, a website will probably send an HTML page explaining to the user they need to log in before accessing the site.
 
