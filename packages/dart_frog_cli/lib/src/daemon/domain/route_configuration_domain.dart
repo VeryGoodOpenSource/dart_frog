@@ -83,7 +83,7 @@ class RouteConfigurationDomain extends DomainBase {
           },
         ),
       );
-    } catch (e) {
+    } on Exception catch (e) {
       return DaemonResponse.error(
         id: request.id,
         error: {
