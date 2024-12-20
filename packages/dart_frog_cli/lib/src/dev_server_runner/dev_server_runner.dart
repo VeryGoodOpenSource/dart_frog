@@ -233,7 +233,16 @@ class DevServerRunner {
   ///
   /// This method will throw a [DartFrogDevServerException] if called after
   /// [stop] has been called.
-  Future<void> start() async {
+  ///
+  /// The [arguments] are optional and usually expected to be those from
+  /// `ArgResults.rest`; since a `--` signals the **end of options** and
+  /// disables further option processing from `dart_frog dev`. Any [arguments]
+  /// after the `--` are passed into the [Dart tool](https://dart.dev/tools/dart-tool)
+  /// process.
+  ///
+  /// For example, you could use the `--` to enable [experimental flags](https://dart.dev/tools/experiment-flags)
+  /// such as macros by doing `dart_frog dev -- --enable-experiment=macros`.
+  Future<void> start([List<String> arguments = const []]) async {
     if (isCompleted) {
       throw DartFrogDevServerException(
         'Cannot start a dev server after it has been stopped.',
@@ -258,12 +267,17 @@ class DevServerRunner {
       );
 
       logger.detail(
-        '''[process] dart $enableVmServiceFlag $serverDartFilePath''',
+        '''[process] dart $enableVmServiceFlag $serverDartFilePath ${arguments.join(' ')}''',
       );
 
       final process = _serverProcess = await _startProcess(
         'dart',
-        [enableVmServiceFlag, '--enable-asserts', serverDartFilePath],
+        [
+          enableVmServiceFlag,
+          '--enable-asserts',
+          ...arguments,
+          serverDartFilePath,
+        ],
         runInShell: true,
       );
 
