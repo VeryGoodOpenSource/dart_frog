@@ -23,7 +23,7 @@ Future<void> preGen(
   final RouteConfiguration configuration;
   try {
     configuration = buildConfiguration(io.Directory.current);
-  } catch (error) {
+  } on Exception catch (error) {
     context.logger.err('$error');
     return exit(1);
   }
