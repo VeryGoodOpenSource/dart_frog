@@ -83,4 +83,90 @@ void main() {
 
     await server.close();
   });
+
+  group('using tryRead()', () {
+    test('values can be provided and read via middleware', () async {
+      const value = '__test_value__';
+      String? nullableValue;
+      Handler middleware(Handler handler) {
+        return handler
+            .use(provider<String>((_) => value))
+            .use(provider<String?>((_) => nullableValue));
+      }
+
+      Response onRequest(RequestContext context) {
+        final value = context.tryRead<String>();
+        final nullableValue = context.tryRead<String?>();
+        return Response(body: '$value:$nullableValue');
+      }
+
+      final handler =
+          const Pipeline().addMiddleware(middleware).addHandler(onRequest);
+
+      final server = await serve(handler, 'localhost', 3010);
+      final client = http.Client();
+      final response = await client.get(Uri.parse('http://localhost:3010/'));
+
+      await expectLater(response.statusCode, equals(HttpStatus.ok));
+      await expectLater(response.body, equals('$value:$nullableValue'));
+
+      await server.close();
+    });
+
+    test('descendant providers can access provided values', () async {
+      const url = 'http://localhost/';
+      Handler middleware(Handler handler) {
+        return handler.use(
+          provider<Uri?>((context) {
+            final stringValue = context.tryRead<String>();
+            return stringValue == null ? null : Uri.parse(stringValue);
+          }),
+        ).use(provider<String>((context) => url));
+      }
+
+      Response onRequest(RequestContext context) {
+        final value = context.tryRead<Uri?>();
+        return Response(body: value.toString());
+      }
+
+      final handler =
+          const Pipeline().addMiddleware(middleware).addHandler(onRequest);
+
+      final server = await serve(handler, 'localhost', 3011);
+      final client = http.Client();
+      final response = await client.get(Uri.parse('http://localhost:3011/'));
+
+      await expectLater(response.statusCode, equals(HttpStatus.ok));
+      await expectLater(response.body, equals(url));
+
+      await server.close();
+    });
+
+    test('null is returned and no StateError is thrown', () async {
+      Object? exception;
+      Uri? value;
+      Response onRequest(RequestContext context) {
+        try {
+          value = context.tryRead<Uri>();
+        } catch (e) {
+          exception = e;
+        }
+        return Response();
+      }
+
+      final handler = const Pipeline()
+          .addMiddleware((handler) => handler)
+          .addHandler(onRequest);
+
+      final server = await serve(handler, 'localhost', 3012);
+      final client = http.Client();
+      final response = await client.get(Uri.parse('http://localhost:3012/'));
+
+      await expectLater(response.statusCode, equals(HttpStatus.ok));
+      expect(exception, isNull);
+      expect(value, isNull);
+
+      await server.close();
+    });
+  });
 }
