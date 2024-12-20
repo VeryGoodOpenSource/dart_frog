@@ -28,7 +28,7 @@ Future<void> postGen(
     io.File(
       path.join(currentDirectory.path, filename),
     ).renameSync('$containingDirectoryPath/$filename');
-  } catch (error) {
+  } on Exception catch (error) {
     context.logger.err('$error');
     return exit(1);
   }
