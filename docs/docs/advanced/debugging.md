@@ -19,7 +19,7 @@ You can also install the plugin by searching for `Dart Frog` in the extensions t
 :::
 
 - Open your Dart Frog app.
-- Open **Visual Studio Command Pallete** by clicking `Shift` + `Command` + `P` (Mac) / `Ctrl` + `Shift` + `P` (Windows/Linux).
+- Open **Visual Studio Command Palette** by clicking `Shift` + `Command` + `P` (Mac) / `Ctrl` + `Shift` + `P` (Windows/Linux).
 You will see different options as shown in the image below.
 
 ![Dart Frog Plugin Options](images/dart_frog_plugin_options.png)
@@ -38,7 +38,7 @@ You can also select the `Dart Frog: Debug Development Server` option if you alre
 
 - Open your Dart Frog application and run the server using the `dart_frog dev` command.
 - In the terminal, you'll see something like `The Dart VM service is listening on http://127.0.0.1:8181/XXXXXXXXX/`. Copy the URL, as you'll need it in the next steps.
-- Open the **Visual Studio Command Pallete** and search for `Debug: Attach to Dart process`.
-- Paste the URL you copied in the previous steps and press `Enter`. Now the debbuger will stop at the breakpoints you added in your code 🎉.
+- Open the **Visual Studio Command Palette** and search for `Debug: Attach to Dart process`.
+- Paste the URL you copied in the previous steps and press `Enter`. Now the debugger will stop at the breakpoints you added in your code 🎉.
 
 ![Demo - Dart Process](<images/debugging_with_dart_process.gif>)
