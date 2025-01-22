@@ -20,7 +20,7 @@ You can also install the plugin by searching for `Dart Frog` in the extensions t
 
 - Open your Dart Frog app.
 - Open **Visual Studio Command Palette** by clicking `Shift` + `Command` + `P` (Mac) / `Ctrl` + `Shift` + `P` (Windows/Linux).
-You will see different options as shown in the image below.
+  You will see different options as shown in the image below.
 
 ![Dart Frog Plugin Options](images/dart_frog_plugin_options.png)
 
@@ -32,7 +32,7 @@ You can also select the `Dart Frog: Debug Development Server` option if you alre
 
 - Add the breakpoints in your code and try to access the page where you added them. You will now see that the debugger stops at your breakpoints 🎉.
 
-![Demo - Dart Frog Pluggin](<images/debugging_with_plugin.gif>)
+![Demo - Dart Frog Pluggin](images/debugging_with_plugin.gif)
 
 ## Debugging by Attaching to Dart Process 🎯
 
@@ -41,4 +41,4 @@ You can also select the `Dart Frog: Debug Development Server` option if you alre
 - Open the **Visual Studio Command Palette** and search for `Debug: Attach to Dart process`.
 - Paste the URL you copied in the previous steps and press `Enter`. Now the debugger will stop at the breakpoints you added in your code 🎉.
 
-![Demo - Dart Process](<images/debugging_with_dart_process.gif>)
+![Demo - Dart Process](images/debugging_with_dart_process.gif)
