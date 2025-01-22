@@ -6,10 +6,10 @@ title: 🐛 Debugging
 In some cases, you'll want to debug your Dart Frog app, and you might have noticed that by adding just the breakpoint, the debugger doesn't stop there like it does by default in a Flutter app.
 Below, there are two quick and easy options for debugging code in Dart Frog.
 
-## Debugging with Dart Frog Plugin 🐸
+## Debugging with Dart Frog IDE Extension 🐸
 
 :::caution
-This extension is only available for Visual Studio Code, if you are using another IDE, please refer to the Debugging by Attaching to Dart Process section.
+This extension is only available for Visual Studio Code, if you are using another IDE, please refer to the **Debugging by Attaching to Dart Process** section.
 :::
 
 - Go to the Visual Studio Code Marketplace in [here](https://marketplace.visualstudio.com/items?itemName=VeryGoodVentures.dart-frog) and install the extension.
@@ -28,7 +28,7 @@ If you are interested in an extension for Android Studio or OpenVSX there are so
 - Open **Visual Studio Command Palette** by clicking `Shift` + `Command` + `P` (Mac) / `Ctrl` + `Shift` + `P` (Windows/Linux).
   You will see different options as shown in the image below.
 
-![Dart Frog Plugin Options](../../static/img/dart_frog_plugin_options.png)
+![Dart Frog Extension Options](../../static/img/dart_frog_extension_options.png)
 
 - Click on the `Dart Frog: Start and Debug Development Server` option. This will start the Dart Frog server in debug mode.
 
@@ -38,7 +38,7 @@ You can also select the `Dart Frog: Debug Development Server` option if you alre
 
 - Add the breakpoints in your code and try to access the endpoint where it gets hit. You will now see that the debugger stops at your breakpoints 🎉.
 
-![Demo - Dart Frog Plugin](../../static/img/debugging_with_plugin.gif)
+![Demo - Dart Frog Extension](../../static/img/debugging_with_extension.gif)
 
 ## Debugging by Attaching to Dart Process 🎯
 
