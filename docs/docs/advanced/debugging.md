@@ -32,7 +32,7 @@ You can also select the `Dart Frog: Debug Development Server` option if you alre
 
 - Add the breakpoints in your code and try to access the page where you added them. You will now see that the debugger stops at your breakpoints 🎉.
 
-![Demo - Dart Frog Pluggin](images/debugging_with_plugin.gif)
+![Demo - Dart Frog Plugin](images/debugging_with_plugin.gif)
 
 ## Debugging by Attaching to Dart Process 🎯
 
