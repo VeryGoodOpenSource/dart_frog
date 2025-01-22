@@ -12,10 +12,13 @@ Below, there are two quick and easy options for debugging code in Dart Frog.
 This extension is only available for Visual Studio Code, if you are using another IDE, please refer to the **Debugging by Attaching to Dart Process** section.
 :::
 
-:::note
+:::info
 If you are interested in an extension for Android Studio or OpenVSX there are some open issues you can follow to learn more about it.
-**Android Studio** [#1326](https://github.com/VeryGoodOpenSource/dart_frog/issues/1326)
-**OpenVSX** [#907](https://github.com/VeryGoodOpenSource/dart_frog/issues/907)
+
+- **Android Studio** [#1326](https://github.com/VeryGoodOpenSource/dart_frog/issues/1326)
+
+- **OpenVSX** [#907](https://github.com/VeryGoodOpenSource/dart_frog/issues/907)
+
 :::
 
 - Go to the Visual Studio Code Marketplace in [here](https://marketplace.visualstudio.com/items?itemName=VeryGoodVentures.dart-frog) and install the extension.
@@ -32,7 +35,7 @@ You can also install the extension by searching for `Dart Frog` in the extension
 
 - Click on the `Dart Frog: Start and Debug Development Server` option. This will start the Dart Frog server in debug mode.
 
-:::note
+:::info
 You can also select the `Dart Frog: Debug Development Server` option if you already have the server running.
 :::
 
