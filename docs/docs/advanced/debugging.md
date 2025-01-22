@@ -4,7 +4,7 @@ title: 🐛 Debugging
 ---
 
 In some cases, you'll want to debug your Dart Frog app, and you might have noticed that by adding just the breakpoint, the debugger doesn't stop there like it does by default in a Flutter app.
-Below, I'll show you two quick and easy options for debugging code in Dart Frog.
+Below, there are two quick and easy options for debugging code in Dart Frog.
 
 ## Debugging with Dart Frog Plugin 🐸
 
@@ -38,7 +38,7 @@ You can also select the `Dart Frog: Debug Development Server` option if you alre
 
 - Open your Dart Frog application and run the server using the `dart_frog dev` command.
 - In the terminal, you'll see something like `The Dart VM service is listening on http://127.0.0.1:8181/XXXXXXXXX/`. Copy the URL, as you'll need it in the next steps.
-- Open the **Visual Studio Command Palette** and search for `Debug: Attach to Dart process`.
+- Open the **Visual Studio Command Palette** by clicking `Shift` + `Command` + `P` (Mac) / `Ctrl` + `Shift` + `P` (Windows/Linux) and search for `Debug: Attach to Dart process`.
 - Paste the URL you copied in the previous steps and press `Enter`. Now the debugger will stop at the breakpoints you added in your code 🎉.
 
 ![Demo - Dart Process](images/debugging_with_dart_process.gif)
