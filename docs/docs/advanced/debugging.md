@@ -23,7 +23,6 @@ If you are interested in an extension for Android Studio or OpenVSX there are so
 
 1. Go to the Visual Studio Code Marketplace and [install the Dart Frog extension](https://marketplace.visualstudio.com/items?itemName=VeryGoodVentures.dart-frog). You can also install the extension by searching for `Dart Frog` in the [extensions tab in Visual Studio Code](https://code.visualstudio.com/docs/editor/extension-marketplace#_browse-for-extensions).
 2. If you do not have the `Dart` extension installed, visit the [Dart extension page](https://marketplace.visualstudio.com/items?itemName=Dart-Code.dart-code) to install it. You can also install the extension by searching for `Dart` in the [extensions tab in Visual Studio Code](https://code.visualstudio.com/docs/editor/extension-marketplace#_browse-for-extensions).
-
 3. Open your Dart Frog app within Visual Studio Code.
 4. Open the [**Visual Studio Command Palette**](https://code.visualstudio.com/api/ux-guidelines/command-palette) by using `Shift` + `Command` + `P` (Mac) or `Ctrl` + `Shift` + `P` (Windows/Linux).
 
@@ -48,9 +47,8 @@ Another way to run the server in debug mode using the `Dart Frog IDE Extension` 
 ## Debugging by Attaching to Dart Process 🎯
 
 :::caution
-To debug the `Dart Frog server` using this approach, you should have the `Dart` extension installed in Visual Studio Code. If you are using another IDE, make sure you have `Dart` installed.
-
-You can install the extension by searching for "Dart" in the [extensions tab in Visual Studio Code](https://code.visualstudio.com/docs/editor/extension-marketplace#_browse-for-extensions), or directly from the [Visual Studio Code marketplace](https://marketplace.visualstudio.com/items?itemName=Dart-Code.dart-code).
+To debug the `Dart Frog server` using this approach, you should have the [Dart extension](https://marketplace.visualstudio.com/items?itemName=Dart-Code.dart-code) installed in Visual Studio Code. If you are using another IDE, make sure you have [Dart installed](https://dart.dev/get-dart).
+You can install the extension by searching for `Dart` in the [extensions tab in Visual Studio Code](https://code.visualstudio.com/docs/editor/extension-marketplace#_browse-for-extensions), or directly from the [Visual Studio Code marketplace](https://marketplace.visualstudio.com/items?itemName=Dart-Code.dart-code).
 :::
 
 1. Open your Dart Frog application and run the server using the `dart_frog dev` command.
