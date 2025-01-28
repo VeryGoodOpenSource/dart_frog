@@ -59,4 +59,4 @@ You can install the extension by searching for `Dart` in the [Extensions tab in 
 
 Another way to run the server in debug mode is by using **Code Lens** in Visual Studio Code.
 
-![Demo - CoeddLens](../../static/img/debugging_code_lens.gif)
+![Demo - Code Lens](../../static/img/debugging_code_lens.gif)
