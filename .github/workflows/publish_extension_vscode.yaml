@@ -1,0 +1,37 @@
+name: publish_extension_vscode
+
+on:
+  push:
+    tags:
+      - "vscode-v*.*.*"
+  workflow_dispatch:
+
+jobs:
+  publish_extension:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: extensions/vscode
+
+    steps:
+      - name: 📚 Git Checkout
+        uses: actions/checkout@v4
+
+      - name: 🎯 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.11.0
+          cache: "npm"
+          cache-dependency-path: extensions/vscode/package-lock.json
+
+      - name: 🎉 Publish VS Code Extension
+        run: |
+          npm install -g @vscode/vsce 
+
+          echo "${{ secrets.VSCODE_CREDENTIALS }}" > vscode-credentials
+          vsce login VeryGoodVentures < vscode-credentials
+
+          tag=${GITHUB_REF#refs/*/}
+          version=$(echo $tag | sed -En "s/^(.*)-v(.*)/\2/p")
+          vsce publish "${version}" --no-update-package-json

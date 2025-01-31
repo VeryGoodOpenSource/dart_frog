@@ -1,3 +1,16 @@
+# 0.2.6
+
+- chore(deps-dev): multiple housekeeping and maintenance updates
+
+# 0.2.5
+
+- chore(deps-dev): multiple housekeeping and maintenance updates
+
+# 0.2.4
+
+- chore(deps): bump semver from 7.5.4 to 7.6.3 in /extensions/vscode ([#1459](https://github.com/VeryGoodOpenSource/dart_frog/pull/1459))
+- chore(deps-dev): multiple housekeeping and maintenance updates
+
 # 0.2.3
 
 - chore(deps-dev): bump @types/node from 20.6.0 to 20.6.2 in /extensions/vscode ([#1054](https://github.com/VeryGoodOpenSource/dart_frog/pull/1054))

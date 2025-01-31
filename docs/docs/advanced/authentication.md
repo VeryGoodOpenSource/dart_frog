@@ -14,9 +14,7 @@ layering the foundation for more advanced authentication. See below for more det
 
 ## Dart Frog Auth
 
-The authentication methods provided in `dart_frog_auth` are based on `Authorization` specification,
-as defined in [`General HTTP`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication). Here you will find support
-for `Basic` and `Bearer` authentications, which are common authentication methods used by many developers.
+The authentication methods provided in `dart_frog_auth` use different HTTP headers depending on the method. Basic and Bearer authentication use the `Authorization` header, as defined in [`General HTTP`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication), while Cookie-based authentication uses the `Cookie` header, as defined in [`HTTP Cookies`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies). The package provides support for Basic, Bearer, and Cookie-based authentications, which are common authentication methods used by many developers.
 
 ## Basic Authentication
 
@@ -124,7 +122,7 @@ Handler middleware(Handler handler) {
   return handler
       .use(requestLogger())
       .use(
-        bearerTokenAuthentication<User>(
+        bearerAuthentication<User>(
           authenticator: (context, token) {
             final userRepository = context.read<UserRepository>();
             return userRepository.fetchFromAccessToken(token);
@@ -139,6 +137,50 @@ context and the token sent on the authorization header and returns a user if any
 for that token.
 
 Again, just like in the basic method, if a user is returned, it will be set in the request
+context and can be read on request handlers, for example:
+
+```dart
+import 'package:dart_frog/dart_frog.dart';
+import 'package:blog/user.dart';
+
+Response onRequest(RequestContext context) {
+  final user = context.read<User>();
+  return Response.json(body: {'user': user.id});
+}
+```
+
+In the case of `null` being returned (unauthenticated), the middleware will automatically send an unauthorized `401` in the response.
+
+### Cookie-based Authentication
+
+To implement cookie-based authentication, you can use the `cookieAuthentication` middleware:
+
+```dart
+// routes/admin/_middleware.dart
+import 'package:dart_frog/dart_frog.dart';
+import 'package:dart_frog_auth/dart_frog_auth.dart';
+import 'package:blog/user.dart';
+
+Handler middleware(Handler handler) {
+  final userRepository = ...;
+  return handler
+      .use(requestLogger())
+      .use(
+        cookieAuthentication<User>(
+          authenticator: (context, cookies) {
+            final userRepository = context.read<UserRepository>();
+            return userRepository.fetchFromAccessCookies(cookies);
+          }
+        ),
+      );
+}
+```
+
+The `authenticator` parameter must be a function that receives two positional argument the
+context and the cookies set in the cookie header and returns a user if any is found
+for that token.
+
+Just like in the basic and bearer methods, if a user is returned, it will be set in the request
 context and can be read on request handlers, for example:
 
 ```dart

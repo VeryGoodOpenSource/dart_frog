@@ -16,6 +16,17 @@ extension on Map<String, String> {
 
   String? bearer() => authorization('Bearer');
   String? basic() => authorization('Basic');
+  Map<String, String>? cookies() {
+    final cookieString = this['Cookie'];
+    if (cookieString == null) return null;
+
+    final cookiesEntries = cookieString.split('; ').map((cookie) {
+      final [key, value] = cookie.split('=');
+      return MapEntry(key, value);
+    });
+
+    return Map.fromEntries(cookiesEntries);
+  }
 }
 
 /// Function definition for the predicate function used by Dart Frog Auth
@@ -146,6 +157,54 @@ Middleware bearerAuthentication<T extends Object>({
         final authorization = context.request.headers.bearer();
         if (authorization != null) {
           final user = await call(authorization);
+          if (user != null) {
+            return handler(context.provide(() => user));
+          }
+        }
+
+        return Response(statusCode: HttpStatus.unauthorized);
+      };
+}
+
+/// Authentication that uses the `Cookie` header.
+///
+/// Cookie authentication expects cookies to be sent in the format:
+/// ```markdown
+/// Cookie: key1=value1; key2=value2;
+/// ```
+///
+/// This is typically done in web applications where the cookie is set with the
+/// `Set-Cookie` header, then sent with every request by a browser.
+///
+/// The cookie format and contents are up to the user. Typically they will
+/// identify a logged in session.
+///
+/// In order to use this middleware, you must provide a function that will
+/// return a user object from the cookies and request context.
+///
+/// If the given function returns null for the given cookies,
+/// the middleware will return a `401 Unauthorized` response.
+///
+/// By default, this middleware will apply to all routes. You can change this
+/// behavior by providing a function that returns a boolean value based on the
+/// [RequestContext]. If the function returns false, the middleware will not
+/// apply to the route and the call will have no authentication validation.
+Middleware cookieAuthentication<T extends Object>({
+  required Future<T?> Function(
+    RequestContext context,
+    Map<String, String> cookies,
+  ) authenticator,
+  Applies applies = _defaultApplies,
+}) {
+  return (handler) => (context) async {
+        if (!await applies(context)) {
+          return handler(context);
+        }
+
+        final cookies = context.request.headers.cookies();
+
+        if (cookies != null) {
+          final user = await authenticator(context, cookies);
           if (user != null) {
             return handler(context.provide(() => user));
           }

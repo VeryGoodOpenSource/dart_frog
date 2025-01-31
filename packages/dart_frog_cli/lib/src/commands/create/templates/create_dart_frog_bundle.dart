@@ -26,7 +26,7 @@ final createDartFrogBundle = MasonBundle.fromJson(<String, dynamic>{
     {
       "path": "pubspec.yaml",
       "data":
-          "bmFtZToge3tuYW1lLnNuYWtlQ2FzZSgpfX0KZGVzY3JpcHRpb246IEFuIG5ldyBEYXJ0IEZyb2cgYXBwbGljYXRpb24KdmVyc2lvbjogMS4wLjArMQpwdWJsaXNoX3RvOiBub25lCgplbnZpcm9ubWVudDoKICBzZGs6ICI+PTMuMC4wIDw0LjAuMCIKCmRlcGVuZGVuY2llczoKICBkYXJ0X2Zyb2c6IF4xLjAuMAoKZGV2X2RlcGVuZGVuY2llczoKICBtb2NrdGFpbDogXjEuMC4wCiAgdGVzdDogXjEuMTkuMgogIHZlcnlfZ29vZF9hbmFseXNpczogXjUuMS4wCg==",
+          "bmFtZToge3tuYW1lLnNuYWtlQ2FzZSgpfX0KZGVzY3JpcHRpb246IEEgbmV3IERhcnQgRnJvZyBhcHBsaWNhdGlvbgp2ZXJzaW9uOiAxLjAuMCsxCnB1Ymxpc2hfdG86IG5vbmUKCmVudmlyb25tZW50OgogIHNkazogIj49My4wLjAgPDQuMC4wIgoKZGVwZW5kZW5jaWVzOgogIGRhcnRfZnJvZzogXjEuMS4wCgpkZXZfZGVwZW5kZW5jaWVzOgogIG1vY2t0YWlsOiBeMS4wLjMKICB0ZXN0OiBeMS4yNS41CiAgdmVyeV9nb29kX2FuYWx5c2lzOiBeNS4xLjAK",
       "type": "text"
     },
     {
@@ -58,7 +58,7 @@ final createDartFrogBundle = MasonBundle.fromJson(<String, dynamic>{
     {
       "path": "pubspec.yaml",
       "data":
-          "bmFtZTogY3JlYXRlX2RhcnRfZnJvZ19ob29rcwoKZW52aXJvbm1lbnQ6CiAgc2RrOiAiPj0zLjAuMCA8NC4wLjAiCgpkZXBlbmRlbmNpZXM6CiAgbWFzb246IF4wLjEuMC1kZXYuMzkKICBwYXRoOiBeMS44LjEKCmRldl9kZXBlbmRlbmNpZXM6CiAgbW9ja3RhaWw6IF4xLjAuMAogIHRlc3Q6IF4xLjI1LjAKICB2ZXJ5X2dvb2RfYW5hbHlzaXM6IF41LjEuMAo=",
+          "bmFtZTogY3JlYXRlX2RhcnRfZnJvZ19ob29rcwoKZW52aXJvbm1lbnQ6CiAgc2RrOiAiPj0zLjAuMCA8NC4wLjAiCgpkZXBlbmRlbmNpZXM6CiAgbWFzb246IF4wLjEuMC1kZXYuMzkKICBwYXRoOiBeMS44LjEKCmRldl9kZXBlbmRlbmNpZXM6CiAgbW9ja3RhaWw6IF4xLjAuMAogIHRlc3Q6IF4xLjI1LjAKICB2ZXJ5X2dvb2RfYW5hbHlzaXM6IF42LjAuMAo=",
       "type": "text"
     },
     {

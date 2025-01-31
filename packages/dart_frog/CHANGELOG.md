@@ -1,3 +1,8 @@
+# 1.2.0
+
+- chore(deps): bump very_good_analysis from 5.1.0 to 6.0.0 in /packages/dart_frog ([#1432](https://github.com/VeryGoodOpenSource/dart_frog/pull/1432))
+- chore(deps): bump mime from 1.0.6 to 2.0.0 in /packages/dart_frog ([#1528](https://github.com/VeryGoodOpenSource/dart_frog/pull/1528))
+
 # 1.1.0
 
 - feat: support reuse of nested router ([#393](https://github.com/VeryGoodOpenSource/dart_frog/pull/393))

@@ -1,3 +1,22 @@
+# 1.2.5
+
+- fix: update mason version in cli ([#1622](https://github.com/VeryGoodOpenSource/dart_frog/pull/1622))
+
+# 1.2.4
+
+- chore(deps): tighten dependencies ([#1489](https://github.com/VeryGoodOpenSource/dart_frog/pull/1489))
+- chore(deps): bump mason from 0.1.0-dev.58 to 0.1.0-dev.59 in /packages/dart_frog_cli ([#1494](https://github.com/VeryGoodOpenSource/dart_frog/pull/1494))
+- chore(deps): bump pub_updater from 0.4.0 to 0.5.0 in /packages/dart_frog_cli ([#1495](https://github.com/VeryGoodOpenSource/dart_frog/pull/1495))
+- chore(deps): bump mason from 0.1.0-dev.59 to 0.1.0-dev.60 in /packages/dart_frog_cli ([#1504](https://github.com/VeryGoodOpenSource/dart_frog/pull/1504))
+- chore(deps): bump mason from 0.1.0-dev.60 to 0.1.0 in /packages/dart_frog_cli ([#1602](https://github.com/VeryGoodOpenSource/dart_frog/pull/1602))
+
+# 1.2.3
+
+- chore: bump cli_completion from 0.4.0 to 0.5.0 in /packages/dart_frog_cli ([#1288](https://github.com/VeryGoodOpenSource/dart_frog/pull/1288))
+- fix: allow `$` in new commands ([#1321](https://github.com/VeryGoodOpenSource/dart_frog/pull/1321))
+- chore: bump mason from 0.1.0-dev.53 to 0.1.0-dev.57 in /packages/dart_frog_cli ([#1351](https://github.com/VeryGoodOpenSource/dart_frog/pull/1351), [#1404](https://github.com/VeryGoodOpenSource/dart_frog/pull/1404))
+- feat: update cli bundles ([#1380](https://github.com/VeryGoodOpenSource/dart_frog/pull/1380))
+
 # 1.2.2
 
 - feat: update cli bundles ([#1278](https://github.com/VeryGoodOpenSource/dart_frog/pull/1278))

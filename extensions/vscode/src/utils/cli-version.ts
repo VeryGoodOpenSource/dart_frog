@@ -20,6 +20,7 @@ export function readDartFrogCLIVersion(): string | undefined {
     const decodedResult = new TextDecoder().decode(result);
     return decodedResult.split("\n", 1).at(0);
   } catch (error) {
+    console.error(error);
     return undefined;
   }
 }
@@ -40,6 +41,7 @@ export function readLatestDartFrogCLIVersion(): string | undefined {
     }
     return lines.at(2)?.split(" ").at(-1);
   } catch (error) {
+    console.error(error);
     return undefined;
   }
 }
