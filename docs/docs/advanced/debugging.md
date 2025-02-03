@@ -40,9 +40,9 @@ You can also select the `Dart Frog: Debug Development Server` option if you alre
 
 :::tip
 Another way to run the server in debug mode using the `Dart Frog IDE Extension` is by using [Code Lens](https://code.visualstudio.com/blogs/2017/02/12/code-lens-roundup) in Visual Studio Code.
-:::
 
 ![Demo - Code Lens](../../static/img/debugging_code_lens.gif)
+:::
 
 ## Debugging by Attaching to Dart Process 🎯
 
