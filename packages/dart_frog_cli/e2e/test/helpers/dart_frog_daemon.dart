@@ -8,11 +8,7 @@ import 'package:test/test.dart';
 
 /// Starts the dart_frog daemon in the given directory.
 Future<Process> dartFrogDaemonStart() {
-  return Process.start(
-    'dart_frog',
-    ['daemon'],
-    runInShell: true,
-  );
+  return Process.start('dart_frog', ['daemon'], runInShell: true);
 }
 
 /// Converts a raw message from the daemon stdout
@@ -69,8 +65,11 @@ class DaemonStdioHelper {
     Duration timeout = _defaultTimeout,
     Matcher? withParamsThat,
   }) async {
-    var wrappedMatcher = isA<DaemonEvent>()
-        .having((e) => '${e.domain}.${e.event}', 'is $methodKey', methodKey);
+    var wrappedMatcher = isA<DaemonEvent>().having(
+      (e) => '${e.domain}.${e.event}',
+      'is $methodKey',
+      methodKey,
+    );
 
     if (withParamsThat != null) {
       wrappedMatcher = wrappedMatcher.having(
@@ -111,9 +110,10 @@ class DaemonStdioHelper {
     messageMatchers.add(messageMatcher);
 
     // Check if there is already a matching message in the cache.
-    final existingItem = _pastMessagesCache.indexed.where((pair) {
-      return messageMatcher.matches(pair.$2, {});
-    }).firstOrNull;
+    final existingItem =
+        _pastMessagesCache.indexed.where((pair) {
+          return messageMatcher.matches(pair.$2, {});
+        }).firstOrNull;
 
     if (existingItem case (final int itemIndex, final String itemValue)) {
       // If there is a matching message in the cache,
@@ -221,10 +221,7 @@ class DaemonStdioHelper {
 
     final result = await Future.wait([responseMessage1, responseMessage2]);
 
-    return (
-      result.first as DaemonResponse,
-      result.last as DaemonResponse,
-    );
+    return (result.first as DaemonResponse, result.last as DaemonResponse);
   }
 
   void dispose() {
@@ -237,7 +234,7 @@ class DaemonStdioHelper {
 /// A matcher that matches a [DaemonMessage] to a daemon stdout line.
 class _MatchMessageToStdoutLine extends CustomMatcher {
   _MatchMessageToStdoutLine(Matcher matcher)
-      : super('Message to stdout line', 'message', matcher);
+    : super('Message to stdout line', 'message', matcher);
 
   @override
   Object? featureValueOf(dynamic actual) {
