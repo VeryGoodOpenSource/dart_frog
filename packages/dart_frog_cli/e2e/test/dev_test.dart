@@ -84,7 +84,7 @@ void main() {
           });
 
           fail('exception not thrown');
-        } catch (e) {
+        } on Exception catch (e) {
           expect(e.toString(), contains('Could not start the VM service:'));
 
           expect(
@@ -131,6 +131,6 @@ extension<T> on Future<T> {
   Future<void> ignoreErrors() async {
     try {
       await this;
-    } catch (_) {}
+    } on Exception catch (_) {}
   }
 }
