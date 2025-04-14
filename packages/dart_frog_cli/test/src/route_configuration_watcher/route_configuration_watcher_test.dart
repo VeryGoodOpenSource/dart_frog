@@ -29,8 +29,9 @@ void main() {
       watcherController.close();
     });
 
-    when(() => directoryWatcher.events)
-        .thenAnswer((_) => watcherController.stream);
+    when(
+      () => directoryWatcher.events,
+    ).thenAnswer((_) => watcherController.stream);
 
     routeConfigurationWatcher = RouteConfigurationWatcher(
       logger: logger,
@@ -114,11 +115,7 @@ void main() {
       watcherController.add(
         WatchEvent(
           ChangeType.MODIFY,
-          path.join(
-            Directory.current.path,
-            'routes',
-            'index.dart',
-          ),
+          path.join(Directory.current.path, 'routes', 'index.dart'),
         ),
       );
 
@@ -129,11 +126,7 @@ void main() {
       watcherController.add(
         WatchEvent(
           ChangeType.MODIFY,
-          path.join(
-            Directory.current.path,
-            'public',
-            'index.html',
-          ),
+          path.join(Directory.current.path, 'public', 'index.html'),
         ),
       );
 

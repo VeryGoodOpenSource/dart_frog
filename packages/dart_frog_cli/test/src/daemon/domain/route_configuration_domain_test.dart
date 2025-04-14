@@ -233,18 +233,13 @@ void main() {
               id: '12',
               domain: 'route_configuration',
               method: 'watcherStop',
-              params: {
-                'watcherId': 'id',
-              },
+              params: {'watcherId': 'id'},
             ),
           ),
           equals(
             const DaemonResponse.success(
               id: '12',
-              result: {
-                'watcherId': 'id',
-                'exitCode': 0,
-              },
+              result: {'watcherId': 'id', 'exitCode': 0},
             ),
           ),
         );
@@ -260,17 +255,13 @@ void main() {
                 id: '12',
                 domain: 'route_configuration',
                 method: 'watcherStop',
-                params: {
-                  'watcherId': 123,
-                },
+                params: {'watcherId': 123},
               ),
             ),
             equals(
               const DaemonResponse.error(
                 id: '12',
-                error: {
-                  'message': 'Malformed message, invalid watcherId',
-                },
+                error: {'message': 'Malformed message, invalid watcherId'},
               ),
             ),
           );
@@ -313,9 +304,7 @@ void main() {
             equals(
               const DaemonResponse.error(
                 id: '12',
-                error: {
-                  'message': 'Missing parameter, watcherId not found',
-                },
+                error: {'message': 'Missing parameter, watcherId not found'},
               ),
             ),
           );
@@ -331,19 +320,13 @@ void main() {
               id: '12',
               domain: 'route_configuration',
               method: 'watcherStop',
-              params: {
-                'watcherId': 'id',
-              },
+              params: {'watcherId': 'id'},
             ),
           ),
           equals(
             const DaemonResponse.error(
               id: '12',
-              error: {
-                'watcherId': 'id',
-                'message': 'error',
-                'finished': true,
-              },
+              error: {'watcherId': 'id', 'message': 'error', 'finished': true},
             ),
           ),
         );
@@ -359,19 +342,13 @@ void main() {
               id: '12',
               domain: 'route_configuration',
               method: 'watcherStop',
-              params: {
-                'watcherId': 'id',
-              },
+              params: {'watcherId': 'id'},
             ),
           ),
           equals(
             const DaemonResponse.error(
               id: '12',
-              error: {
-                'watcherId': 'id',
-                'message': 'error',
-                'finished': false,
-              },
+              error: {'watcherId': 'id', 'message': 'error', 'finished': false},
             ),
           ),
         );
@@ -380,8 +357,9 @@ void main() {
 
     group('watcherGenerateRouteConfiguration', () {
       setUp(() async {
-        when(() => watcher.forceRouteConfigurationRegeneration())
-            .thenReturn(_configuration);
+        when(
+          () => watcher.forceRouteConfigurationRegeneration(),
+        ).thenReturn(_configuration);
 
         await domain.handleRequest(
           const DaemonRequest(
@@ -401,9 +379,7 @@ void main() {
               id: '12',
               domain: 'route_configuration',
               method: 'watcherGenerateRouteConfiguration',
-              params: {
-                'watcherId': 'id',
-              },
+              params: {'watcherId': 'id'},
             ),
           ),
           equals(
@@ -428,17 +404,13 @@ void main() {
                 id: '12',
                 domain: 'route_configuration',
                 method: 'watcherGenerateRouteConfiguration',
-                params: {
-                  'watcherId': 123,
-                },
+                params: {'watcherId': 123},
               ),
             ),
             equals(
               const DaemonResponse.error(
                 id: '12',
-                error: {
-                  'message': 'Malformed message, invalid watcherId',
-                },
+                error: {'message': 'Malformed message, invalid watcherId'},
               ),
             ),
           );
@@ -481,9 +453,7 @@ void main() {
             equals(
               const DaemonResponse.error(
                 id: '12',
-                error: {
-                  'message': 'Missing parameter, watcherId not found',
-                },
+                error: {'message': 'Missing parameter, watcherId not found'},
               ),
             ),
           );
@@ -491,8 +461,9 @@ void main() {
       });
 
       test('when cannot generate route config', () async {
-        when(() => watcher.forceRouteConfigurationRegeneration())
-            .thenReturn(null);
+        when(
+          () => watcher.forceRouteConfigurationRegeneration(),
+        ).thenReturn(null);
 
         expect(
           await domain.handleRequest(
@@ -500,9 +471,7 @@ void main() {
               id: '12',
               domain: 'route_configuration',
               method: 'watcherGenerateRouteConfiguration',
-              params: {
-                'watcherId': 'id',
-              },
+              params: {'watcherId': 'id'},
             ),
           ),
           equals(
