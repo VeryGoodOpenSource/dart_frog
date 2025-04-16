@@ -34,6 +34,17 @@ Response onRequest(RequestContext context) {
 }
 ```
 
+If you want to attempt to `read` a value that has not been provided, it will throw a `StateError`. However, if you want to _attempt_ to `read` a value whether it's provided or not, you can use `context.tryRead<T>()`. If no value matching that time has been provided, it will return `null`.
+
+```dart
+import 'package:dart_frog/dart_frog.dart';
+
+Response onRequest(RequestContext context) {
+  final greeting = context.tryRead<String>();
+  return Response(body: greeting ?? 'Default Greeting');
+}
+```
+
 ### Extracting Providers
 
 In the above example, we defined the `provider` inline. This is fine for simple cases, but for more complex providers or providers which you want to reuse, it can be helpful to extract the provider to its own file:
